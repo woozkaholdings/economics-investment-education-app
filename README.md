@@ -291,7 +291,8 @@ device until someone changes it.
 2. Put that provider's **public** site id or ingest key in `src/lib/analyticsConfig.js` and set
    `provider` to `"plausible"`, `"posthog"` or `"custom"`.
 3. **`npm run analytics-check`** — verify the key is accepted *before* you ship it.
-4. `npm run build`, then redeploy.
+4. Commit and push to `main`. The workflow builds and publishes; § Deploying › To publish an
+   update says how to verify that the live site picked it up.
 
 ⛔ **A green build is not evidence that analytics works, and neither is a 200 from the
 provider.** Sending is fire-and-forget by design, and PostHog’s capture endpoint answers

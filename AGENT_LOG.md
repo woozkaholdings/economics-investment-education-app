@@ -106,10 +106,10 @@ for the history. No open P1/P2 items.
 > owner for a decision rather than restating a blocker.**
 >
 > **O-1. A URL. ✅ CLOSED 2026-09-05** (owner-directed, interactive; open 2026-08-17 → 2026-09-05,
-> **19 days**), commit `cf1aab3`. The app is live at
-> <https://magnificent-mochi-73aecc.netlify.app>, and since 2026-09-06 `npm run check-deployed`
-> verifies that against the running site rather than against a report. `README.md` § Deploying owns
-> the URL, the site id, the verification and the update procedure — including what cost the time:
+> **19 days**), commit `cf1aab3`. The app went live that day on Netlify; **the canonical host has
+> been GitHub Pages since 2026-09-07** (O-4), and since 2026-09-06 `npm run check-deployed`
+> verifies the running site rather than a report. `README.md` § Deploying owns
+> the URL, the verification and the update procedure — including what cost the time:
 > **"deployed" and "reachable" were three steps and the repo's instructions described one** (an
 > unclaimed Netlify Drop is password-protected and expires in about an hour; a *claimed* drop still
 > lands with Production visibility **Private**, redirecting visitors to a login, until that is
@@ -148,7 +148,8 @@ for the history. No open P1/P2 items.
 >    The check probes `/decide/`, which validates the token, and carries an invalid-token
 >    control that must come back 401 or it refuses to give a verdict.
 > 4. `npm run build`.
-> 5. Redeploy `dist/` to <https://magnificent-mochi-73aecc.netlify.app>.
+> 5. Commit and push to `main`. The Pages workflow builds and publishes; then run
+>    `npm run check-deployed` (README § Deploying).
 > **Then §4.3's Phase-0 gate becomes measurable for the first time** — and only then; a per-device
 > `localStorage` log still cannot be aggregated across installs.
 > ✏️ **`LAUNCH_READINESS.md`'s Instrumentation section agrees with this item as of 2026-09-06.** Until
@@ -166,41 +167,20 @@ for the history. No open P1/P2 items.
 > that flag is the honest one. **Nothing here is wrong or blocked — this is a scale change the
 > original decision did not contemplate, and the owner should either re-affirm it or cap it.**
 >
-> **O-4 (new 2026-09-07, and it inverts what this repo believes about where the app is). The
-> canonical URL returns 404 and the RETIRED one returns 200.** Measured this run with controls:
-> `https://woozkaholdings.github.io/economics-investment-education-app/` → **404** (the instrument's
-> own nonexistent-path control fired first, so the 404 is real); the Netlify site the 09-07 decision
-> retired → **200, serving `index-B1mndoLB.js`** with `market.json` at `asOf 2026-09-04`. A
-> nonexistent `*.netlify.app` subdomain → 404, so that 200 is not a catch-all. **`LAUNCH_PLAN.md`
-> §10.10 — "the app is live at <the Netlify URL>" — is the document that is telling the truth**, and
-> `README.md`, the one the migration updated, was the one describing a dead host as live and a live
-> host in the past tense. Corrected this run.
-> **Two owner actions, and they are independent:**
-> 1. **Publish the canonical site.** README § Deploying already carries the measured blocker (this
->    repository is private; Pages from a private repo needs a paid plan) and its three routes. This
->    run re-confirmed the premise rather than restating it: unauthenticated `GET` of the repo API →
->    **404** against a **200** control on a public repo, `git ls-remote` over HTTPS → *Repository not
->    found*, and `woozkaholdings.github.io/` itself → **404**, so no Pages site is published from the
->    account at all. ⚠️ The account's plan is **not** visible from here; do not write down which of
->    the three routes is needed (see the environment note on local vs global absence).
-> 2. **Actually retire the old host** — delete or unpublish the Netlify site — or decide to keep it
->    and drop the `retired-origin` marker from README § Deploying, saying there why. Until one of
->    those, two versions of the app are reachable and only one is watched.
-> **What is no longer an owner action: noticing.** `npm run check-deployed` now reads
-> `retired-origin` markers from README and fails while a retired origin still answers with a Vite
-> bundle. It is the first thing in this repo that looks at a host other than the canonical one.
-> ✅ **HALF CLOSED 2026-09-07, hours later, owner-directed ("publish the canonical site").** Action
-> 1 is **DONE and certified**: the owner made the repository public and set Settings › Pages ›
-> Source to GitHub Actions; `npm run check-deployed` reports the canonical URL serving HEAD with the
-> entry bundle **byte-identical** and the 404 control firing. ⭐ **The diagnosis that unblocked it is
-> the part worth keeping:** four workflow runs had failed and the obvious reading — a broken build —
-> was wrong. Every one had a **green `build` job** and failed on `actions/deploy-pages@v4` in the
-> **`deploy`** job, which is gated on a repository setting that no re-run substitutes for. **Read
-> which job failed, not that the run failed.** ⛔ **Action 2 is still open and is now SAFE to do**,
-> which it was not this morning: Netlify was the only reachable copy, so deleting it would have
-> taken the app offline. The canonical site is verified, so the old host can go.
-> ⚠️ **And the branch this run's own entry recorded as unexercised — "canonical serves HEAD but a
-> retired origin is up" — fired for the first time on that same check, exactly as written.**
+> **O-4. ✅ CLOSED 2026-09-10, both halves: one owner action and one owner decision.** Found
+> 2026-09-07: the canonical GitHub Pages URL returned 404 while the Netlify host that day's move
+> retired still served the app. **Action 1, publish the canonical site,** closed the same day, when
+> the owner made the repository public and set Settings › Pages › Source to GitHub Actions. ⭐ The
+> diagnosis worth keeping: four workflow runs had a green `build` job and failed on
+> `actions/deploy-pages@v4` in the `deploy` job, which waits on that setting. **Read which job
+> failed, not that the run failed.** **Action 2, retire the old host or keep it and say so,**
+> closed 2026-09-10, when the owner chose to keep Netlify up (`3efa938`). README § Deploying
+> dropped its `retired-origin` marker and now says the site serves a frozen build that nothing
+> watches. Re-measured 2026-09-11: Netlify `/` → **200** serving `index-B1mndoLB.js`, and a
+> nonexistent `*.netlify.app` subdomain → **404** (control). ⚠️ **Still true:** an old Netlify link
+> reaches a copy that falls further behind with every push, and no check here will notice. Retiring
+> it for real means deleting the site and putting the marker back; `scripts/check-deployed.mjs` has
+> the format.
 
 >
 > **O-5 (new 2026-09-08, and it is the residual of item 74 rather than a new discovery). Publishing
@@ -7567,3 +7547,86 @@ was added.
 **Log size.** `MEASURED log-size: file 655819 b, run log 220314 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change, and the notes
 are in the archivable run log.
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 BOUND — the previous run was residual pick #2, so this pick came from the owner-facing block, not from any note) — O-2's last step told the owner to redeploy to the Netlify host that stopped publishing on 2026-09-07, the Plausible example in the file O-2 has the owner edit named the same host, and O-4 still called open an action the owner had closed the day before
+
+**The pick.** Rule 1 bars a third residual, so the open q041 / L22 / L42 notes were not candidates. Weighed and
+declined: **item 160**, whose ⛔ stop line says the remainder is class B and O-3's call; and **§3.0.2**, the
+least-cited §3.0 clause (1 live / 9 archive; control `localStorage` 31 / 396). All 44 English openers were
+re-screened (control: L29 reads concrete). The main path still holds. The only definition-first openers are
+`essentials` 10-15, which item 94's note gates on the owner, and L25/L44, which pass on a metaphor and on a named
+person in sentence 2, the two shapes the 2026-09-04 audit ruled false positives.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** `3efa938` (2026-09-10) recorded the owner's decision to leave the Netlify site up and removed
+  README's `retired-origin` marker. The O-block did not follow: O-4 said action 2 "is still open", O-1 said "The
+  app is live at" the Netlify URL, and O-2 step 5 said "Redeploy `dist/` to" it.
+- **The surface was wider than the backlog.** Fixed-string `netlify` over the docs, `src/` and `scripts/`, with
+  control `github.io`. `LAUNCH_PLAN.md` §2.1's Hosting row, in the authoritative plan, still read "Netlify, live
+  since 2026-09-05" and called git-connected GitHub Pages hosting off the table. `src/lib/analyticsConfig.js` gave
+  `magnificent-mochi-73aecc.netlify.app` as the Plausible domain example and said the deploy is "`npm run build`
+  then drag `dist/`". README § Analytics step 4 said "then redeploy". `DECISIONS.md` § Hosting said "Netlify is
+  retired" and had no record of the 09-10 decision.
+- **Why it is not tidiness.** A Plausible site registered from that example counts only visitors to the frozen
+  copy, so the canonical site would report zero. §4.3's gate would then read "nobody finishes lesson 1" for a
+  reason that is not true, which is the silent-empty-dashboard failure `analyticsConfig.js`'s own header warns
+  about.
+- **Live, not read off the commit.** Netlify `/` → **200** serving `index-B1mndoLB.js`; a nonexistent
+  `*.netlify.app` subdomain → **404** (control fired). `npm run check-deployed` → **exit 1**, the canonical site
+  serving `index-DF5NKDNV.js` against local `index-cYfTo8_j.js`, because the local `origin/main` ref is `ae789b4`,
+  4 commits behind HEAD. That gap is the unpushed lesson fixes, not this run's work.
+- **Nothing reads the edited text.** `check-analytics.mjs` imports the config's values only. No script reads the
+  §2.1 row. `check-backlog.mjs` does not parse O-items (`O-2`/`O-4` over `scripts/` → 0; control `backlog` in that
+  file → 17).
+
+#### What shipped
+- **`AGENT_LOG.md` O-block.** O-2 step 5 is now "Commit and push to `main` … then run `npm run check-deployed`".
+  O-1 says the app went live on Netlify and that Pages has been canonical since 09-07; "the site id" was dropped
+  because README no longer carries one. **O-4 is collapsed to its conclusion (W-7.2 rule 1)**: 35 lines / 3,330 b
+  → 14 lines / 1,270 b. The script asserted that both anchors occur exactly once and that O-5 follows before
+  writing.
+- **`LAUNCH_PLAN.md`.** §2.1's Hosting row now names GitHub Pages, with the 09-07 reason and the 09-10 decision.
+  §10.10's dated closure is verbatim, plus a one-line pointer that its URL is historical.
+- **`DECISIONS.md` § Hosting.** One amendment bullet recording the 09-10 decision, citing `3efa938`.
+- **`README.md` § Analytics step 4**, and three comments in **`src/lib/analyticsConfig.js`**: the turn-on step,
+  reason 1's deploy mechanism, and the Plausible example (now `woozkaholdings.github.io`). Reason 1's conclusion
+  is unchanged; only its mechanism is now true.
+- **Deliberately not edited:** `DECISIONS.md:210` (the 2026-09-05 analytics entry's "drag `dist/`" rationale is a
+  dated record whose conclusion still holds), item 18's dated 2026-09-05 "redeploy" line, `check-deployed.mjs`'s
+  dated comment about §10.10, and README's historical Netlify sections.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Stale-phrase re-scan (O-2's redeploy step, "Netlify, live since", "then drag", the example domain, README's "then redeploy", "The app is live at") | 2 hits left, both dated records named above: `LAUNCH_PLAN.md:713` (now with its pointer) and `DECISIONS.md:210`. Control: "The app is live at" → 1 in the scratchpad pristine copy and 1 now |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0; backlog **397,099 → 395,108 b** |
+| `scripts/build-out-of-tree.sh` | **exit 0**; all **28** `dist/assets` files **byte-identical** by sha256 before vs after; entry stays `index-cYfTo8_j.js`. The new comment text is in **0** built files; control `plausible.io` → **1** |
+| Browser | not run, on purpose: nothing a learner renders changed, and a byte-identical bundle proves that more strongly than a screenshot |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 83 added/removed diff lines match `dalio|principles|should buy|should
+sell|we recommend|buy now|good time to buy|for kids|for children|kids mode|as of 20[0-9][0-9]|guarantee|will
+crash|you should` **0 / 0**; a planted `now is a good time to buy stocks` → **1**. No lesson, market figure or
+learner-visible date was touched.
+**DECISIONS.md conflict: none.** The amendment narrows "Netlify is retired" to what the owner decided and cites the
+commit. The "committed `.js` file, not an env var" decision is kept.
+**Already-done item: none reversed.** O-4's action-1 conclusion and its "read which job failed" diagnosis are kept,
+and the `retired-origin` capability is described, not removed. ⚠️ **The check found one thing against me:** my first
+draft of the DECISIONS bullet was headed "AMENDED 2026-09-10", which dated my own edit to the owner's decision day.
+It was corrected to "AMENDED 2026-09-11, recording the owner decision of 2026-09-10" before commit.
+**My own verification claim.** Every row reproduces from the commands named. Limits: "a Plausible domain is the
+hostname, with no path" is knowledge about Plausible, not measured against its docs. And `check-deployed` keeps
+exiting 1 until the owner pushes, which this commit does not change. W-6.2: not a residual. W-6.3: `scripts/`
+untouched, no instrument added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- The q041, L22 and L42 notes are unchanged and still open. The next run is free of rule 1 again.
+
+**Owner-facing, one line:** `origin/main` is 4 commits behind HEAD (the lesson 15 / 21 / 27 / 41 fixes), and they
+reach learners on the next push. The live `market.json` is `asOf 2026-09-10`, so without a push Sectors goes dark on
+2026-09-15.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 662321 b, run log 228807 b, floor 433514 b (backlog 395108 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry).

@@ -117,7 +117,7 @@ web-only, no backend, all state in `localStorage`.
 | State | `localStorage` | Supabase accounts + sync | Closed as current approach; revisit with real accounts. |
 | Payments | none | Route depends on §4.3 phase and the §2.1 platform call | Not built. See §4 — the current phase has no payment code by design. |
 | Analytics | local event sink (`src/lib/analytics.js`) | PostHog | Events are defined and fire; the log is capped and stays on the device. Wiring a provider is owner-blocked on an account and key (§9.2, backlog item 18). |
-| Hosting | **Netlify, live since 2026-09-05** (§10.10, `README.md` § Deploying) | same — the host is not load-bearing | $0 at launch scale. `origin` is unusable here, so git-connected hosting (the normal Vercel / GitHub Pages flow) is off the table; `DECISIONS.md` records why a direct-upload host is what that leaves. This cell said "Vercel / EAS Hosting" until 2026-09-07; it went stale on 2026-09-05, when the app went live on a host it did not name. |
+| Hosting | **GitHub Pages, canonical since 2026-09-07**, published on every push to `main` (`README.md` § Deploying owns the URL) | same — the host is not load-bearing | $0 at launch scale. `DECISIONS.md` § Hosting has the reasoning: on 2026-09-07 the owner made `origin` usable and the repository public, which removed the one fact that had ruled out git-connected hosting. The first host, Netlify (live 2026-09-05, §10.10), is left up by owner decision of 2026-09-10 and serves a frozen build that no push updates. Until 2026-09-11 this cell still named Netlify and called GitHub Pages off the table. |
 
 ### 2.2 Code structure
 
@@ -726,6 +726,9 @@ it, build the smallest test this week. Never sit in ambiguity longer than a week
   closure as evidence of a user.** §10.6 (building instead of distributing) is the open entry that
   now carries the weight, and its standing rule — half of weekly hours to distribution until 1,000
   MAU — starts applying from today rather than from some later launch.
+  ✏️ **The URL in this closure is historical (note added 2026-09-11).** GitHub Pages became the
+  canonical host on 2026-09-07, and `README.md` § Deploying owns the current URL. The Netlify site
+  is left up by owner decision (2026-09-10) and serves a frozen build.
 
 Closed items are **regressions to guard against**, not settled history — every change near this
 content should be checked against them.

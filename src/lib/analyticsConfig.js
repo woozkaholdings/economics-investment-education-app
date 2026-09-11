@@ -8,7 +8,8 @@
 //
 // ─────────────────────────────────────────────────────────────────────────
 // TO TURN IT ON: set `provider` to one of "plausible" | "posthog" | "custom"
-// and fill in that provider's field below. Then `npm run build` and redeploy.
+// and fill in that provider's field below. Then commit and push to `main`,
+// which rebuilds and publishes the site (README § Deploying).
 // Nothing else in the app changes. To turn it off again, set "none".
 //
 // VERIFY IT BEFORE YOU DEPLOY:  npm run analytics-check
@@ -26,8 +27,9 @@
 //
 // WHY THIS IS A COMMITTED .js FILE AND NOT AN ENVIRONMENT VARIABLE.
 // Three reasons, in order of weight:
-//   1. The deploy is `npm run build` then drag `dist/` (README § Deploying).
-//      A build-time env var adds a step that is silently skippable — forget it
+//   1. The deploy is a push to `main`, and CI builds whatever is committed
+//      (README § Deploying). A build-time env var would have to be set again,
+//      separately, in the workflow: a step that is silently skippable. Miss it
 //      and the build succeeds with analytics quietly off, which is the exact
 //      failure this whole item exists to end.
 //   2. DECISIONS.md's "content and config live in `.js` modules, not JSON"
@@ -51,7 +53,8 @@ export const analyticsConfig = {
   provider: "none",
 
   // provider: "plausible" — the domain exactly as registered in Plausible
-  // (no scheme, no trailing slash), e.g. "magnificent-mochi-73aecc.netlify.app".
+  // (no scheme, no trailing slash), e.g. "woozkaholdings.github.io", the host of
+  // the canonical URL in README § Deploying. The old Netlify copy is not it.
   // `host` only needs changing for a self-hosted Plausible.
   plausible: {
     domain: "",

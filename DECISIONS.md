@@ -993,6 +993,11 @@ Add a new entry when a run makes a choice future work should be able to look up 
   published by `.github/workflows/deploy-pages.yml` on every push to `main`. **Netlify is retired.**
   `scripts/deploy.mjs` and the `npm run deploy` script are **deleted**; `.gitignore` keeps its <!-- path-ok: scripts/deploy.mjs — DELETED 2026-09-07 when Netlify was retired. Named here as history: this sentence exists to say the file is gone, so the reference must never resolve. Restoring the file to make this marker unnecessary would be undoing the decision, not fixing a path. -->
   `.netlify-token` line so a leftover token file can still never be committed.
+- ✏️ **AMENDED 2026-09-11, recording the owner decision of 2026-09-10: "retired" means retired as
+  the publishing host, not taken down.** The owner chose to leave `https://magnificent-mochi-73aecc.netlify.app` answering
+  rather than delete it. It serves a frozen build that no push updates and no check watches.
+  `README.md` § Deploying records this and how to retire the site for real (commit `3efa938`). No
+  reason for keeping it up was given, so none is written here.
 - ⭐ **What changed was a PREMISE, not a preference — and the old entry below states it in its own
   words.** Its closing constraint reads: *"`origin` is unusable in this project, so git-connected
   hosting (the normal GitHub Pages / Vercel flow) is off the table. That is what favors a
