@@ -125,7 +125,7 @@ export const lessonContent = {
       },
       {
         "heading": "Traditional vs Roth: Pagar Impuestos Ahora o Después",
-        "body": "Traditional se financia con dinero sin gravar (reduce el impuesto de este año), pero los retiros en la jubilación se gravan como ingreso normal.\n\nRoth se financia con dinero ya gravado, pero los retiros calificados en la jubilación son completamente libres de impuestos.\n\nCuál conviene depende de una comparación que nadie puede saber con certeza: la tasa de impuestos de hoy frente a la de dentro de décadas."
+        "body": "Traditional se financia con dinero sin gravar (normalmente reduce el impuesto de este año), pero los retiros en la jubilación se gravan como ingreso normal.\n\nRoth se financia con dinero ya gravado, pero los retiros calificados en la jubilación son completamente libres de impuestos.\n\nCuál conviene depende de una comparación que nadie puede saber con certeza: la tasa de impuestos de hoy frente a la de dentro de décadas."
       }
     ],
     "takeaway": "El tipo de cuenta no cambia en qué puedes invertir — cambia cuándo llega el impuesto. Esa diferencia, compuesta durante décadas, es la razón de ser de estas cuentas.",

@@ -7630,3 +7630,103 @@ reach learners on the next push. The live `market.json` is `asOf 2026-09-10`, so
 
 **Log size.** `MEASURED log-size: file 662321 b, run log 228807 b, floor 433514 b (backlog 395108 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry).
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was an owner-facing-block pick, and this pick came from a census of lesson bodies never read for accuracy, not from any note) — lesson 6 said the Traditional and Roth versions of a 401(k) and an IRA "differ in exactly one place: when the tax bill comes due", and the IRS lists at least two more: an income limit on Roth IRA contributions and required withdrawals that Roth accounts do not have
+
+**The pick.** First a sweep of all 46 English quiz items. Every candidate it found was already decided or already
+noted: `q043` (rewritten by the owner-directed L41 fix), `q045`'s "like a wage" (kept as a distractor in the L43
+entry), `q046` (kept in the L44 entry), `q026`'s "two-thirds" crossover (derived at ~6.9% and recorded), and `q011`'s
+"set by the Federal Reserve" (noted 2026-09-10). None was re-litigated. Then the lesson census re-ran over both logs
+(`grep -c -w -F` on `L<n>` / `lesson <n>` / `Lesson <n>`, so `L3` does not count `L30`). Its lowest counts among the
+lessons not read in recent runs were **L8 18 / 1, L6 25 / 0, L18 27 / 0, L28 30 / 0, L31 31 / 2**. Control: L37's
+"nine times" lines → **2**. Read in English: **L3, L6, L8, L18, L19, L20, L28, L31.** L3, L8, L19, L20, L28 and L31
+have no flat sentence-level error. L18 has a note below. L6 has the defect. The open `q041` note was weighed against
+it and not taken: L6's is a flat factual error with a primary source, and q041's is an unstated premise in a stem.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claims.** L6 §2: *"Both the 401(k) and the IRA come in two versions that differ in exactly one place: when the
+  tax bill comes due."* The next paragraph says a Traditional account *"lowers the saver's taxable income the year they
+  contribute"*, with no condition. The es/ko/zh/ja L6 bodies are condensed summaries (item 93), so they carry the flat
+  "lowers" claim (`reduce el impuesto de este año`, `올해 세금을 줄여주지만`, `能降低当年应税收入`, `その年の課税所得を減らせる`)
+  but not "exactly one place".
+- **Sources, each with a control (IRS pages, read through WebFetch's summarizer).** *Roth IRAs*: *"Your Roth IRA
+  contribution might be limited based on your filing status and income."* *Retirement topics – RMDs*: the rules apply
+  to *"traditional IRAs, SEP IRAs, SIMPLE IRAs, 401(k) plans …"* (control: Traditional had to be named, and it is).
+  *"You're not required to take withdrawals from Roth IRAs … [or] Designated Roth accounts in a 401(k) or 403(b) plan
+  while the account owner is alive."* *IRA deduction limits*: *"Your deduction may be limited if you (or your spouse …)
+  are covered by a retirement plan at work and your income exceeds certain levels."* The first URL tried
+  (`…roth-ira-contributions-that-you-can-make-for-2025`) returned **404**, and nothing rests on it.
+- **Not previously decided.** `exactly one place` → **0** in the live log, DECISIONS, CLAIMS, LAUNCH_PLAN and
+  LAUNCH_READINESS. **3** hits in the archive, all unrelated uses (the Stock/Bond glossary, a chart unit, the §3.0.5
+  guard). `lowers the saver's taxable income` → **0** everywhere (control `localStorage` 32 / 396 / 13 / 3 / 3 / 3).
+  `git log -S` → `26da666` (lesson added), then only file splits.
+- **Other surfaces, kept.** The glossary's `IRA` entry says the versions *"differ in when tax is paid"*, which is not
+  "only". `q020` asks for the *"key difference"*. Neither was touched.
+- **Pre-edit build `index-cYfTo8_j.js` (= HEAD `fc28af2`).** The old en string → `lessonContent.essentials.en`, the old
+  es form → the es chunk. The ko/zh/ja old-form probes were controlled against scratchpad pristine copies instead, **1**
+  each.
+
+#### What shipped
+`lessonContent.essentials.{en,es,ko,zh,ja}.js`, **1 / 1** lines each (each body is one line). The edit script asserted
+that all **7** old strings occurred exactly once and all 7 new strings zero times before writing anything.
+- en §2: *"Both the 401(k) and the IRA come in two versions, **and the biggest difference between them is** when the
+  tax bill comes due."* · *"it **usually** lowers the saver's taxable income"* · a new closing sentence: *"Smaller rules
+  differ too, such as income limits on Roth IRA contributions and required withdrawals from Traditional accounts."*
+  **No figure, age or year** (digits in that sentence → 0), so nothing in it goes stale when the IRS moves a threshold.
+- es `normalmente reduce`, ko `대개 올해 세금을`, zh `通常能降低`, ja `通常はその年の`. The condensed summaries were not given
+  the new English sentence; that is item 93's debt, not this edit's.
+- L6 stays at its `minutes` (no §2 FAIL), and no track opener moved. Ledger: L6 es/ko/zh/ja re-marked `ai` after reading
+  each against the new English (**12 / 12**). `refresh-readiness.mjs --write`: en chars **152,576 → 152,720**, plus the
+  §10.4 volume sentence (`LAUNCH_READINESS.md` **2 / 2**). The catalog stays at 161 min.
+- ⚠️ **O-3, disclosed:** four machine-written clause edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit script | **7/7** old = 1 / new = 0 before the write, and 0 / 1 after |
+| `npm test` | After edit + re-mark: **exit 1**, the two expected readiness FAILs (§4.3 catalog row, §10.4 sentence). After `--write`: **exit 0**; WARN/FAIL lines **identical** to this run's pre-edit baseline (`diff`), WARN 3, FAIL 0. ⚠️ **After appending this entry: exit 0, but one NEW WARN** that the baseline did not have: *"the run log is under its budget by less than ONE run's worth of writing (0.51 run(s) left …) Remedy: an archiving pass."* It was caused by this entry's own bytes, not by the content edit |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-cYfTo8_j.js` → **`index-C6h9tgZ0.js`** |
+| `dist/assets` grep | all **7** new strings → their own `lessonContent.essentials.<lang>` chunk; all **7** old forms → no file (each probe controlled above); control `Pay Tax Now or Later` → en chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8873` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-C6h9tgZ0.js`; seeded disclaimer + completed `[1..5]` + `en`, navigated to `?cb=2#/lesson/6`, read in a separate call |
+| Live `#/lesson/6`, language set through the real `<select>` (native setter + `change`), switch and read in separate calls | **en: all 3 new strings true, both old false. es/ko/zh/ja: new true, old false. Every language: its own §2 heading control true, negative false, no English sentence leaking in.** `html lang` en/es/ko/zh-Hans/ja; entry `index-C6h9tgZ0.js` on every read. The pane reported a 0×0 viewport, so `read_page` was empty; every read was a DOM text read |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added and removed diff lines under `src/` match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids mode|as of
+20[0-9][0-9]|guarantee|will crash|you should|open a roth|choose roth|choose traditional|best account` **0 / 0**; a
+planted `now is a good time to buy stocks` → **1**. `check-blindspot` ran inside the green `npm test`. The edit makes
+the lesson *less* prescriptive: it names rules that differ and recommends neither version. §2's closing *"not
+something this lesson can answer for any specific person"* is untouched. No date, threshold or market figure was
+added, which is also why the income limit and the RMD age are named without numbers.
+**DECISIONS.md conflict: none.** Content stays in `.js` modules, and `minutes` stays derived (unchanged).
+**Already-done item: none reversed.** The glossary `IRA` entry and `q020` are untouched. The 2026-09-10/11 lesson and
+glossary fixes are in other files. Item 167's arithmetic sweep is unaffected, because nothing here is a figure.
+**My own verification claim.** Every row reproduces from the commands named. The limits: all three IRS quotes came
+through the summarizer, so a reviewer should reopen the pages rather than trust the quotes. And "Smaller rules" is a
+judgment of scale: for a high earner, the Roth IRA income limit decides whether the account is available at all, and
+"smaller" understates that. W-6.2: not a residual. W-6.3: `scripts/` changed only in the ledger JSON (12 / 12, net 0).
+No instrument was added.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L6 takeaway: "it changes when the tax bill comes due. That single difference …"** It contrasts retirement accounts
+  with a brokerage account (not Traditional vs Roth), and for a Roth the growth is never taxed rather than taxed later.
+  A simplification in a takeaway. **Not picked by default.**
+- **L6 §1: an IRA is "the equivalent that anyone can open on their own"**. Contributing needs taxable compensation
+  (knowledge, not measured). **Not picked by default.**
+- **L18 §1: Alex's 6% is "the same example 'Compound Interest' … walked through"**. L3's example is $1,000 at 6%, not
+  $2,000 over ten years: the same rate, not the same example. **Not picked by default.**
+- **L18 §2's marshmallow paragraph** says later research "sharpens" the core finding. The 2018 replication is usually
+  read as weakening its long-run prediction. A contested framing, not measured. **Not picked by default.**
+- The `q041`, L22 and L42 notes are unchanged and still open.
+
+**Owner-facing, one line:** `origin/main` is behind HEAD by the lesson 15 / 21 / 27 / 41 fixes, the O-block fix and
+this commit, and they reach learners on the next push. The live `market.json` is `asOf 2026-09-10`, so without a push
+Sectors goes dark on 2026-09-15.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** `MEASURED log-size: file 669754 b, run log 236240 b, floor 433514 b (backlog 395108 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). After it: `MEASURED log-size: file
+679617 b, run log 246103 b, floor 433514 b (backlog 395108 b), archive 3881729 b, 3 live day(s)`, and the new WARN
+above. No backlog change, and the notes are in the archivable run log. ⭐ **The next run has a clean pick that is not a
+residual: the archiving pass that WARN names.**
