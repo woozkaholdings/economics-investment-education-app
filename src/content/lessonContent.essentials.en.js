@@ -147,7 +147,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "Marginal tax brackets tax layers of income, not your whole income at one rate. A raise, a bonus, or extra freelance income can only ever add to your take-home pay, never subtract from it.",
-    "thinkAbout": "Now that you understand how marginal brackets work, look back at the Traditional-vs-Roth question in “Retirement Accounts”. A Traditional contribution reduces taxable income at today's marginal rate. Does that change how you'd think about the 'higher tax rate now vs. later' comparison that lesson described?"
+    "thinkAbout": "Now that you understand how marginal brackets work, look back at the Traditional-vs-Roth question in “Retirement Accounts”. A Traditional contribution usually lowers taxable income, and because those dollars come off the top slice of income, the tax it saves is figured mostly at today's marginal rate. Does that change how you'd think about the 'higher tax rate now vs. later' comparison that lesson described?"
   },
   "8": {
     "sections": [

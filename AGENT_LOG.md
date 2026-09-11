@@ -6538,3 +6538,70 @@ chunk**. A 3 s read reproduces the void pass, not a pass or a fail. The O-3 limi
 
 **Log size.** Before this entry: `MEASURED log-size: file 581956 b, run log 146941 b, floor 435015 b` (the previous
 entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (owner-directed, interactive: "fix the lesson 7 thinkAbout line too") — lesson 7's thinkAbout said a Traditional contribution "reduces taxable income at today's marginal rate", which is unconditional where lesson 6 says "usually", and it puts the rate on the income rather than on the tax saved, which is only mostly at the marginal rate
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim, in all five languages.** en *"A Traditional contribution reduces taxable income at today's marginal rate."*;
+  es `reduce el ingreso gravable a la tasa marginal de hoy`; ko `오늘의 한계세율로 과세 대상 소득을 줄입니다`; zh
+  `按今天的边际税率减少应税收入`; ja `今日の限界税率で課税所得を減らします`.
+- **Two defects.** (1) **Unconditional.** L6 §2 says a Traditional account *"usually"* lowers taxable income, in every
+  language (es `normalmente`, ko `대개`, zh `通常能`, ja `通常は`). L7 §2, fixed earlier today (`3074fd0`), says an IRA
+  deduction is *"any deduction it earns"*. (2) **The rate is on the wrong quantity.** Taxable income falls by the
+  contribution amount. It is the tax saved that follows the marginal rate, and only for dollars inside the top
+  bracket.
+- **Control on "mostly".** L7 §1's own bucket model, run on the app's illustrative brackets (`moneyVisuals.js:209`: 10%
+  to $20k, 20% to $50k, 30% above), at $60,000 income: $0 contribution → **$0** saved (control); **$5,000** →
+  **$1,500**, exactly 30%; **$15,000** → **$4,000** (3,000 at 30% + 1,000 at 20%), an average of **26.7%**. So
+  "exactly at the marginal rate" is false for a contribution larger than the top slice, and "mostly" is the true
+  word. This was scripted, and the edit was chained to abort if any assertion failed.
+- **The cross-reference holds.** The *"'higher tax rate now vs. later' comparison that lesson described"* is L6 §2 ¶3
+  in en, and its own last sentence in each translation.
+- **The only surface.** Fixed-string scans of all of `src/` for the five old phrases → each **1** file, its own
+  `lessonContent.essentials.<lang>.js`. Control `Tax Brackets Are Layers, Not a Single Rate` → en file.
+- **Not previously decided.** The old en phrase and `L7 thinkAbout` → **1** each in the live log (this session's
+  note), **0** in the archive, DECISIONS, CLAIMS, LAUNCH_PLAN and LAUNCH_READINESS (control `localStorage` 22 / 410 /
+  13 / 3 / 3 / 3). `git log -S` → `3306bad` (2026-08-06, lesson added), then only splits.
+- **Pre-edit build `index-NQuxDE_o.js` (= HEAD `cc25e63`).** The old en phrase and the §1 heading control →
+  `lessonContent.essentials.en`.
+
+#### What shipped
+`lessonContent.essentials.{en,es,ko,zh,ja}.js`, one sentence each. The edit script asserted old = 1 / new = 0 in all
+five files before writing, and 0 / 1 after. Pristine copies are in the scratchpad.
+- en *"A Traditional contribution **usually lowers** taxable income, and **because those dollars come off the top slice
+  of income, the tax it saves is figured mostly at today's marginal rate.**"* · es `normalmente reduce el ingreso
+  gravable, y como esos dólares salen de la porción más alta del ingreso, el impuesto que ahorra se calcula sobre todo a
+  la tasa marginal de hoy` · ko `대개 과세 대상 소득을 줄이며, 그 금액이 소득의 가장 위층에서 빠지기 때문에 절약되는 세금은 주로
+  오늘의 한계세율로 계산됩니다` · zh `通常能减少应税收入，而且这部分钱是从收入最上层扣掉的，所以省下的税主要按今天的边际税率计算` · ja
+  `通常、課税所得を減らします。その分は所得の一番上の層から差し引かれるため、節約できる税金は主に今日の限界税率で計算されます`
+- Each "usually" reuses its own language's L6 §2 word. The opening and closing questions are unchanged, and the
+  line still asks the learner to think rather than telling them which account to choose.
+- **Knock-on.** L7 stays at its `minutes`. Ledger: L7 es/ko/zh/ja re-marked `ai`. `refresh-readiness.mjs --write`: en
+  chars **152,809 → 152,912**, plus the §10.4 volume sentence.
+- ⚠️ **O-3, disclosed:** four machine-written sentence edits, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Bracket control | **3/3** assertions pass (above); the edit ran only after them |
+| Node import probe | ⚠️ **The first run never executed**: an apostrophe in `today's` closed the shell's single-quoted `node -e` string, and Node exited on a SyntaxError before importing anything. That is an instrument failure, not a content result. Re-run from a scratchpad file: **5/5**, new sentence in each thinkAbout, old phrase absent module-wide, own-language opening-question control present, negative absent |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to this session's pre-edit baseline (`diff`), WARN 3, FAIL 0 |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-NQuxDE_o.js` → **`index-De_4OJqD.js`** |
+| `dist/assets` grep | all **5** new sentences → their own `lessonContent.essentials.<lang>` chunk; all **5** old phrases → no file; controls (en, zh) → own chunk; negative → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8877` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-De_4OJqD.js`; seeded disclaimer + completed `[1..6]` + `en`, navigated to `?cb=2#/lesson/7` |
+| Live `#/lesson/7`, language set through the real `<select>`, 8 s wait (the previous entry's finding), switch and read in separate calls | **en/es/ko/zh/ja: new true, old false, control true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; entry `index-De_4OJqD.js` on every read. No read came back void |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** The 5 added and 5 removed diff lines match the standing pattern plus `choose
+traditional|choose roth|best account|open a roth|contribute to` **0 / 0**; a planted `now is a good time to buy
+stocks` → **1**. The sentence explains a mechanism and still leaves the Traditional-vs-Roth call to L6's *"not
+something this lesson can answer for any specific person"*. **DECISIONS.md conflict: none.** **Already-done item:
+none reversed.** The L6 fix (`8334695`) and the L7 §2 fix (`3074fd0`) are what this line now agrees with. **My own
+verification claim.** Every row reproduces from the commands named. Limits: the bracket figures are the app's
+illustrative ones, not the IRS's, which is sufficient because the claim is structural. "Mostly" assumes the
+contribution is not much larger than the top slice, which is the common case and not a universal one. Plus O-3.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 587955 b, run log 152940 b, floor 435015 b` (the previous
+entry's `npm test`, unchanged since). After it: not retyped (W-7.2 rule 4).

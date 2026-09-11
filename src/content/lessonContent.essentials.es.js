@@ -147,7 +147,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "Los tramos fiscales gravan capas de ingreso, no todo el ingreso a una sola tasa. Un aumento nunca puede restar de tu sueldo neto, solo sumar.",
-    "thinkAbout": "Ahora que entiendes los tramos marginales, piensa en la pregunta Traditional vs Roth de la lección “Cuentas de Jubilación”. Una aportación Traditional reduce el ingreso gravable a la tasa marginal de hoy. ¿Cambia eso tu forma de pensar la comparación?"
+    "thinkAbout": "Ahora que entiendes los tramos marginales, piensa en la pregunta Traditional vs Roth de la lección “Cuentas de Jubilación”. Una aportación Traditional normalmente reduce el ingreso gravable, y como esos dólares salen de la porción más alta del ingreso, el impuesto que ahorra se calcula sobre todo a la tasa marginal de hoy. ¿Cambia eso tu forma de pensar la comparación?"
   },
   "8": {
     "sections": [
