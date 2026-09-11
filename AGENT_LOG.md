@@ -7022,3 +7022,68 @@ added, and the ratio is unmoved.
 **Log size.** `MEASURED log-size: file 602318 b, run log 166813 b, floor 435505 b (backlog 397099 b),
 archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). The backlog is unchanged,
 no numbered item was added, and the notes are here in the archivable run log.
+
+### 2026-09-11 (owner-directed, interactive: "fix the business failure claim in lesson 44 too") — lesson 44 called a business that consumes years and returns nothing "the ordinary outcome", and the measured fact is narrower: most new businesses close within five years, and closing is not the same as returning nothing
+
+**The pick** is the owner's, and it is the first note under the entry above. That entry pushed as `e709605`,
+and `check-deployed` certified it live.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L44 §2: *"A business can consume years and return nothing, which is the ordinary outcome
+  rather than the unlucky one."* es/ko/zh/ja say the same. It is the only surface: a five-language grep also
+  hits es/ja **L41's takeaway** ("the ordinary result of a subject that fell between the others", which is
+  unrelated) and ko **L31** (productive debt, also unrelated). The draft `drafts/income-hierarchy.en.md:302` carries it
+  too, and is left as a record for the same reason as line 295 above.
+- **UK, ONS Business demography 2023 bulletin.** A quote-only read: *"The five-year survival rate for UK
+  businesses born in 2018 is 39.4%"*, with the definition *"active in terms of employment and/or turnover"*.
+  So about 61% of that cohort had closed within five years, and the majority outcome is **closure**. ⚠️
+  Instrument note: the first fetch opened with "NO SURVIVAL RATE FOUND" and then quoted the 39.4% itself.
+  The summarizer contradicted itself, so the figure was re-read with a prompt that only quotes.
+- **What was NOT measured, and why the fix does not claim it.** "Returned nothing" is a claim about the
+  owner's **return**, and closure data cannot see that. A closed business may have paid its owner for years,
+  or been sold, or retired. Headd (2003), the standard closure-vs-failure paper, could not be read: the
+  Semantic Scholar abstract is **null**, and Springer redirects to a sign-in. **US:** BLS returned **403** to
+  automated access, which was not circumvented, and the SBA FAQ PDF returned **404**. Eurostat's page has no
+  survival rate. So **one jurisdiction** supports "closing is common", and **no source** read this session
+  supports "returning nothing is ordinary".
+- **Not previously decided.** Logs, `DECISIONS.md` and `CLAIMS.md`: the only hit is this morning's note.
+  HEAD was `e709605` and matched `origin/main` before editing.
+- **On the build, `index-D3SGxhni.js` (= HEAD):** the old sentence was in each language's
+  `lessonContent.money.<lang>` chunk, control present, negative → no file.
+
+#### What shipped
+`lessonContent.money.{en,es,ko,zh,ja}.js`, the second half of the one sentence (**1 / 1** each). English:
+*"A business can consume years and return nothing, **and closing within its first few years is common
+rather than a rare stroke of bad luck.**"* The first half stays, because "can" states a possibility and not
+a frequency. The contrast with bad luck, which is the paragraph's point against a ladder picture of
+income, stays attached to the claim the data supports. No figure was added. es/ko/zh/ja carry the same
+meaning (`cerrar en sus primeros años es algo común, no un raro golpe de mala suerte` / `처음 몇 년 안에 문을
+닫는 일은 드문 불운이 아니라 흔한 일입니다` / `而在头几年里就关门，是很常见的事，并不是罕见的坏运气` /
+`最初の数年のうちに廃業するのは、まれな不運ではなく、よくあることです`). Ledger: L44 es/ko/zh/ja re-marked `ai`
+(**8 / 8**). `refresh-readiness.mjs --write`: en chars **152,327 → 152,356** (`LAUNCH_READINESS.md` **2 / 2**).
+⚠️ **O-3, disclosed:** four new machine-written clauses, unreviewed by a fluent reader.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Node import probe | **5/5**: new present, old absent module-wide, kept first half present, creditor-fix control present, negative absent |
+| `npm test` | **exit 0**; WARN/FAIL lines **identical** to the committed `e709605` state (`diff`), WARN 3, FAIL 0; readiness agrees at 152,356 |
+| `scripts/build-out-of-tree.sh` (unpiped) | **exit 0**; entry `index-D3SGxhni.js` → **`index-CHHfeuFa.js`** |
+| `dist/assets` grep | each new clause → its own `lessonContent.money.<lang>` chunk; **5 old forms → no file**; control → en chunk; negative → no file |
+| Live, `index-CHHfeuFa.js` (404 control fired on the static server), `#/lesson/44`, real `<select>` change event, one call per language | **en/es/ko/zh/ja: new true, old false, kept true, control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Added lines match
+`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
+mode|as of 20xx|today|guarantee|will crash|expect a|start a business|you should` **0** times (removed: 0),
+against **19** in `check-blindspot.mjs`. The new clause describes how often businesses close and does not
+tell a reader to start or avoid one. The lesson's closing line, *"nothing in this track will tell you which
+to pursue"*, still holds. The 39.4% appears only in this entry.
+**DECISIONS.md conflict: none.** The lessons' 2026-08-25 approval says nothing about this wording.
+**Already-done item: none reversed.** The creditor fix `e709605` is untouched, and it is the control.
+**My own verification claim.** Every row reproduces from the commands named. The limits: one jurisdiction
+(UK, one cohort) backs "common". "First few years" stretches a five-year window slightly. The ONS page was
+read through the summarizer, so reopen it. Plus O-3.
+
+**Log size.** `MEASURED log-size: file 611886 b, run log 176381 b, floor 435505 b (backlog 397099 b),
+archive 3881729 b, 3 live day(s)` (`npm test`, 2026-09-11, before this entry). No backlog change.
