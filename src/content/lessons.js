@@ -165,7 +165,7 @@ export function lessonPlacement(id, all = lessons) {
 // ═══════════════════════════════════════════════════════════════════════════
 export const lessons = [
   {
-    id: 29, track: "economy", icon: "🔄", color: "#2563eb", minutes: 2,
+    id: 29, track: "economy", icon: "🔄", color: "#2563eb", minutes: 3,
     title: {"en":"Transactions: The Building Block","es":"Transacciones: El Pilar Fundamental","ko":"거래: 경제의 기본 단위","zh":"交易：经济的基石","ja":"取引：経済の基本単位"},
     subtitle: {"en":"Every time you buy something, you create a transaction","es":"Cada vez que compras algo, creas una transacción","ko":"무언가를 살 때마다 거래가 만들어집니다","zh":"每次购买都创造一笔交易","ja":"何かを買うたびに取引が生まれる"},
   },

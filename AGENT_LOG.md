@@ -7544,3 +7544,62 @@ does not apply**; this reaches learners on the next push (**O-5**).
 
 **Log size.** Before this entry: `MEASURED log-size: file 674300 b, run log 239285 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and its single "Seen, deliberately NOT fixed" note says the opposite of a pick ("so the next run does not read this file as a template"); this pick came from the lesson-body census, re-run on the seven economy-track lessons it had never reached) — lesson 29, the **first lesson of the main path**, told every new install that "the biggest buyer and seller of all is the government", and US households buy **about four times** what every level of government buys
+
+#### The pick
+The census had covered 16 of 44 lessons and **none of the economy track's openers**. Economy is the main path — a new install opens on lesson 29 — so the seven unread economy lessons (29, 31, 32, 34, 36, 38, 40) were read in full this run. Lesson 29 carried the sharpest defect and has the largest audience of any text in the app.
+
+**The sentence, as it shipped in all five languages:**
+> "Households, businesses, and banks all take part, **but the biggest buyer and seller of all is the government**, which plays two very different roles:"
+
+#### Step 3.5 — the premise re-measured with controls. It HELD, and the claim is not ambiguous but inverted on the reading the sentence itself sets up
+The sentence names households and businesses and then contrasts them with government, so it reads as a **sector** comparison. On that reading it is false, and not narrowly.
+- **Instrument:** FRED CSV (`fredgraph.csv?id=`, no key) — `PCEC`/`PCE` (personal consumption), `GCE` (government consumption expenditures and gross investment, all levels), `GPDI`, `NETEXP`, `GDP`, `W068RCQ027SBEA` (total government current expenditures).
+- **Control 1 (instrument is live):** a nonexistent series id returns **HTTP 404** against the real ids' **200**.
+- **Control 2 (the series are the ones I think they are):** the NIPA identity. `PCE + GPDI + GCE + NETEXP = 32,486.106` vs `GDP = 32,486.066` for 2026 Q2 — **agreement to 0.04 of 32,486**, which no mismatched series set would produce.
+- **The verdict, 2026 Q2:** households **$22,100B = 68.0% of GDP**; government purchases **$5,544B = 17.1%**; business investment **$5,718B = 17.6%**. **Households buy 3.99x what all government buys.** Even counting *every* government dollar including transfers ($11,468B, 35.3% of GDP — money handed to households, who then do the buying) households are still **1.93x** larger.
+- **Where the original sentence came from and why it is not simply a typo:** it is the "How the Economic Machine Works" framing, where the point is that government is the largest *single entity*. That is defensible. **The app's sentence lost the word that carried it**, and the surrounding clause converts it into a sector claim.
+
+#### The figures I chose, and the one I rejected for rotting
+I first wrote *"roughly four times"* (3.99x today). **Measured across history before committing to it:** `PCE/GCE` ranges **3.19x–4.00x over the last 20 years** (n=82 quarters) and **2.38x–4.24x since 1947** — so "four times" is at the very top of its range and would be wrong within a few years. Shipped **"more than three times"**, which holds for every quarter of the last 20 years. `PCE/GDP` is **66.1%–68.8%** over the same 20 years, so **"about two thirds"** is durable. **A figure that is exactly right today and wrong in three years is the defect this log keeps re-finding; it is cheaper to pick the robust form now.**
+
+#### What shipped
+The paragraph, in all five languages (en/es/ko/zh/ja), now reads (en):
+> "Households, businesses, and banks all take part, **and households do most of the actual buying — US consumer spending is about two thirds of the economy, more than three times what every level of government buys.** The government is still worth pausing on, because the one word covers two institutions that work in completely different ways:"
+
+This **keeps** the lesson's structure — it still hands off to the Central Government / Central Bank bullets, and now names a better reason for the hand-off (one word, two institutions) than a magnitude claim that was wrong.
+- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js` — one paragraph each.
+- `src/content/lessons.js` — lesson 29 `minutes` **2 → 3**. The English body grew 33 words to **503**, and `round(503/200) = 3`. ⚠️ **It is 4 words past the boundary, and I deliberately did not trim to get back under it.** Shaving four words to keep a nicer label is exactly the "softer restatement" `CLAIMS.md` warns about, one document over. §3.0.5's four-minute rule for a track opener is still satisfied.
+- `scripts/translation-review-ledger.json` — the four non-English entries for lesson 29 re-marked (they went stale the moment the English changed). **Confined to lesson 29**: 24 changed lines = 4 languages x 3 fields, verified in the diff.
+- `CLAIMS.md`, `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md` — regenerated by `npm run readiness`, not hand-edited; the catalog total moved 163 → 164 min.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting **exactly 1 match per file**, refusing to write otherwise — 5/5 written |
+| Old claim gone / new text present (source) | **5/5 files**, old-claim hits **0**, new-text hits **1,1** |
+| ⚠️ **First control FAILED and voided its own scan** | my `grep -c -F "a\|b"` made `\|` literal, so it returned 0 for all five — **including the "old claim is gone" zero.** Re-run in node; control then fired **5/5** and the zeros became readable. *A scan whose control returns nothing proves nothing* — this is the second time this repo has caught that shape, and the first where I wrote the broken instrument. |
+| `npm test` | **PASS, 0 failures.** Caught two real follow-ons I had not made: the stale `minutes` and the stale translation ledger |
+| Build | ⚠️ `npm run build` **failed** (iCloud-synced `node_modules` holds the other Mac's CPU binaries — the known 2026-09-10 state). `scripts/build-out-of-tree.sh` built clean in 563 ms, as that script exists to do |
+| Built bundle carries the fix | all **5** `lessonContent.economy.*` chunks: new text present, old claim absent — **control 5/5** |
+| **Live walk of the built app** | `dist/` served statically, Browser pane at `#/lesson/29`: the corrected paragraph renders, flows into both bullets, and the header reads **"≈3 min"**, matching the new `minutes` |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: nothing found.** `npm run check-blindspot` PASSes. §10.2 — the change **removes** a Dalio-derived claim and adds no attribution. §10.1 — no advice language; nothing tells a learner to do anything. §10.3 — untouched. **§2.3 / the Markets-tab stale-data rule is the one that actually bites here, and I checked it rather than waving at it:** the two figures I added are structural NIPA shares, not live market readings, and I measured their stability over 82 quarters precisely so they are not a dated number in disguise.
+- **DECISIONS.md conflict: none** (control: `localStorage` → 13 hits, so the file was really read). Content stayed `.js` modules; no state, build or platform decision is touched.
+- **Already-done backlog item: no.** "Completed and pruned" mentions lesson 29 once — a **rejected figure/visual design** for it, a different artifact from this prose. (Control: the same scan returns 54 hits for "glossary", so it is not returning empty.)
+- ⭐ **A find that argues for the fix, against the old text:** lesson 29's own pre-read check asks *"What drives the economy?"* and scores **"Only government spending" as wrong**. The body was quietly undercutting the lesson's own quiz — and the learner meets the quiz *before* the paragraph.
+- **My own verification claim.** Every row above reproduces from the command named. **Limits I own:** (1) the four non-English paragraphs are **mine, and no fluent reviewer has read any of them** — the ledger records them as `ai`, which is honest and is the O-3 scale problem, not a fix to it; (2) "more than three times" is durable over the last 20 years and **not** over the full postwar record (it dips to 2.38x in the 1960s–70s), which the sentence does not date — I judged that acceptable for a claim written in the present tense about the US economy today, and it is a judgment, not a measurement; (3) I verified the paragraph renders in **English**; the other four were verified in the bundle, not on screen.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Lesson 36's takeaway contradicts its own body.** The body hedges the yield-curve signal three times (the 1966 false positive; the 2022–24 inversion running "well past the 'typical' 12-18 month lead time"; the term premium), and the **takeaway** then states it flat: *"It's the bond market screaming that rate cuts are coming — and that means economic weakness ahead."* Same shape as the L43/L44 summary-column defect fixed 2026-09-11. **This is the strongest content candidate I leave on the table; a run that wants a content pick should take it rather than re-list it.**
+- **Lesson 38's phase-return ranges** (+14–28% Expansion, −22–35% Contraction, +38–50% post-trough) carry no source and no phase-dating scheme, so nothing in the repo can check them. Unlike the balance-sheet bars, there is no series to compare against without first fixing a definition of the phases — **naming the obstacle so the next run does not start by assuming a FRED check is available.**
+
+**⚠️ The log-size WARN is now over budget, and this run knew it.** `npm test` warned at **0.18 runs left** *before* this entry was written, and this entry is larger than that headroom. I picked the learner-visible defect over the chore deliberately: the archiving remedy is mechanical with a twelve-times-proven recipe, the FAIL budget (350,000 b) is still ~40% away, and the census has found a real defect on **every** pick it has made. **W-5.3's thirteenth archiving pass is the clean, non-residual pick for the next run.**
+
+**Owner-facing, one line:** lesson 29 — the first thing a new install reads — told every learner that government is the economy's biggest buyer, and households outbuy all government roughly 4:1; fixed in all five languages. Reaches learners on the next push (**O-5**). The four translations are mine and unreviewed by a fluent speaker (**O-3**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 683421 b, run log 248406 b, floor 435015 b (backlog 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).

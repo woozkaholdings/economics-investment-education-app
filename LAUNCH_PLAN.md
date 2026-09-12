@@ -375,7 +375,7 @@ increasingly check this and it widens the audience at near-zero cost.
 ### 4.0 What is actually for sale
 
 Measure before pricing. The lesson content today is
-**44 lessons, ~154,000 characters of English body text, ~163 minutes of reading end to end**.
+**44 lessons, ~154,000 characters of English body text, ~164 minutes of reading end to end**.
 That is roughly **26,800 words** — a short book, not the long magazine article this line described
 when the catalog held twelve lessons.
 
@@ -457,7 +457,7 @@ Each phase has a gate. Do not skip a gate because the next phase is more excitin
 | **2 — Subscription alongside** | $3.99/mo · $24.99/yr for data + review + new tracks. Keep the one-time unlock. | Renewal at month 2 ≥60% |
 | **3 — Family & institutional** | Family plan (one purchase, several children's bands — parent-held, **no child accounts**). Begin credit-union / employer outreach. | — |
 
-Phase 0 is where the app is now, and its first gate is **met** (44 lessons / 163 min) — the ≥40
+Phase 0 is where the app is now, and its first gate is **met** (44 lessons / 164 min) — the ≥40
 lesson-count clause since 2026-08-09, the ~2-hour clause since 2026-08-15. What remains is the second
 clause, **≥40% of installers finishing lesson 1, and it is not measurable at all**: no analytics
 provider is wired (§9.2), so that rate is *unknown*, not low. **The work standing between this
