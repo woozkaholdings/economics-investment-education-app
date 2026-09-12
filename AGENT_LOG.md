@@ -7080,3 +7080,142 @@ learners on the next push (O-5).
 
 **Log size.** Before this entry: `MEASURED log-size: file 630533 b, run log 195518 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — see the ruling below, which is the first thing this entry settles because the previous run's heading names it) — lesson 30 told learners the gap between US credit outstanding and the monetary base "has only widened over time as the economy has grown", and FRED puts that ratio at **70.6x in 2008 and 21.7x today** — it has *narrowed by roughly two-thirds*, and both reversals are the QE this same track teaches seven lessons later
+
+#### W-6.2 rule 1 — the ruling, stated before the work because it is the only contestable thing in this run
+The previous entry's heading says *"residual pick #2 in this chain, which the rule allows; **the next run may not
+take a third**."* This run's item **appears in that entry's "Seen, deliberately NOT fixed" list**, so a strict
+reader can call this a third consecutive residual pick. **Both readings are recorded here rather than the
+convenient one.**
+- **The reading taken: this is a census pick, not a residual of the previous run.** The chain the previous entry
+  warned about is **L35 → L39**, two defects *that run and its predecessor found themselves*. L30 was found by the
+  **lesson-body census**, a documented and repeatedly-used pick source — **four prior entries open with
+  "W-6.2 rule 1 free … this pick came from the census, not from any note"** (`6175`, `6338`, `6745`, and `5919`
+  by its converse). L30 has been **re-listed, never re-derived**, in three entries.
+- **The rule's own stated defect is "the filed residual then becomes the next pick *by default*."** The previous
+  run did the opposite of filing-and-defaulting: it **declined** the item and wrote, in that same list, *"the next
+  run that wants a content pick should take one rather than re-listing it."* Being told to take it is not taking
+  it by default.
+- ⚠️ **The counter-argument, not smoothed away:** the item was still, literally, on the previous entry's residual
+  list, and a future run is free to rule the other way. **If it does, the remedy is the rule's own — the next run
+  picks from `LAUNCH_PLAN.md`, the owner-facing block, or refills the backlog.** This entry does not get to decide
+  that for it.
+
+#### The pick, and its premise re-measured with controls (step 3.5) — the premise HELD, and it is worse than the note claimed
+The note carried forward three entries said only that the clause was "still open". **Nothing in it was a measured
+figure, so there was nothing to reproduce — the claim had to be derived from scratch**, which is the step-3.5 case
+where the item's characterization is the thing under test.
+- **Instrument:** FRED CSV (`fredgraph.csv?id=`, no key), `TCMDO` (all-sectors debt securities and loans,
+  quarterly, $M) over `BOGMBASE` (monetary base, monthly, $B), 270 matched quarters, 1959-01 → 2026-04.
+- **Controls, and they are what make the zeros below readable:** a nonexistent series id returns **HTTP 404**
+  against the real ids' **200**; and the monetary base reads **$831B (2008-01)**, **$1,666B (2008-12)**,
+  **$3,728B (2014-01)**, **$5,002B (2020-06)**, **$6,413B (2021-12)** — the published doubling across the 2008
+  crisis and the 2020 expansion, which is what says the series is the one I think it is.
+- **The verdict, and the claim is not marginally wrong but directionally inverted:**
+
+  | | ratio (credit ÷ monetary base) |
+  |---|---|
+  | 2008-01 (peak of the whole series) | **70.6x** |
+  | 2021-10 (post-peak trough) | **14.7x** — **−79%** |
+  | 2026-04 (latest) | **21.7x**, still **69% below** the 2008 peak |
+  | 1986-04 / 2006-04 | 44.6x / 61.5x — **today is LOWER than both** |
+
+  The ratio **fell in 99 of 269 quarters**. "Only widened" is false in **37%** of the series' own history, and the
+  two largest moves in it are both *narrowings*.
+- **Why this one mattered more than an ordinary wrong number: the cause of the narrowing is QE**, which **this same
+  track teaches in L37** ("QE injects money… QT drains money"). The lesson was telling a learner a trend whose
+  reversal the learner is taught seven lessons later as the central monetary fact of the era.
+- ⭐ **Where the sentence came from, which changes what the fix is allowed to do.** `git log -S` reaches
+  **`790cd77` (2026-08-02), which *introduced* it** — as the fix for stale hardcoded figures ("~$50T credit vs ~$3T
+  actual money"), deliberately replaced with "figure-free framing that teaches the same concept without going
+  stale". **That fix was right and is not being undone: the replacement clause carries zero digits (verified per
+  language, below).** Only its incidental directional error is corrected. **This completes `790cd77`; it does not
+  reverse it.**
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js`, one clause replaced in each (`git diff --numstat` **1/1 ×5**). The
+edit script asserted old = 1 / new = 0 per file before writing and 0 / 1 after, and refused the file otherwise;
+pristine copies were kept in the scratchpad and are what the baseline run below was taken against.
+- en: *"— a gap that **has been there for as long as the records go back, though its width swings a lot depending
+  on how much money the Fed is injecting or draining**."*
+- **The magnitude claim is untouched in all five languages** — "many times larger than the monetary base (M0)"
+  still opens the sentence, and it is true (21.7x). **Only the trend clause moved.**
+- **"injecting or draining" is L37's own takeaway vocabulary in each language, not invented phrasing**: es
+  *"inyectando o drenando"*, ko *"공급하느냐 회수하느냐"*, zh *"注入资金还是抽走资金"*, ja *"注入しているか吸収しているか"* —
+  each lifted from that lesson's `takeaway` in that language, so the two lessons now point at each other by
+  construction.
+- **No digits and no dates added in any language** (measured on the clause text itself, per language: **0** digits,
+  **0** `Month YYYY`, against a plant control that scores 4 and 1). §2.3's shape is untouched.
+- **The other two places that carried this phrasing were checked and needed nothing.** `markets.js`'s 2026-08-25
+  comment records that "base money supply" appeared in three places — the glossary `Credit` entry, this lesson, and
+  its quiz explanation. **Both of the others carry only the magnitude claim and no trend claim**, so the three
+  surfaces now agree; had the trend clause lived in the glossary too, fixing the lesson alone would have *created*
+  the contradiction this run set out to remove.
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; base $831B/2008-01, $1,666B/2008-12, $5,002B/2020-06 match published |
+| `npm test` **baseline**, taken by restoring the pristine files *before* comparing | **exit 0, WARN 3 / FAIL 0** — the same 3 (option-length cue, translation completeness, review coverage) |
+| `npm test` after the content edit | **exit 1** — stale ledger (4 pairs) + §10.4/§4.3 generated figures, **both expected and both fixed rather than exempted** |
+| `npm test` final | **exit 0, WARN 3 / FAIL 0 — identical to the baseline** |
+| Ledger / readiness scope | `translation-review mark 30 <lang>` ×4 and `refresh-readiness --write` touched **8 ledger lines + 2 LAUNCH_READINESS lines and nothing else** — checked because a past run's `--write` re-recorded 32 ratios for a one-lesson edit |
+| `npm run check-blindspot` | **exit 0** (own controls: 8 timing patterns each firing, 33 advice patterns clean) |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-Cro1VqSg.js` |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.economy.<lang>` chunk; all **5** old → **no file**; positive control present, negative control absent |
+| Live, `python3 -m http.server` on `127.0.0.1:8897` | index **200**, nonexistent path **404** (control fired) |
+| Live `#/lesson/30`, real `<select>`, 4 s waits | **en/es/ko/zh/ja: new true, old false, magnitude claim true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; header "LESSON 2 OF 12 · HOW THE ECONOMY WORKS" |
+| Rendered paragraph read back from the live DOM | full sentence correct in the built app |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found — after one of my own instruments was caught lying twice.**
+- ⚠️ **Instrument defect 1, caught by a control I nearly did not run.** My first cross-corpus scan used
+  `grep -rnoE ".{80}(only widened).{40}"` and returned **nothing, exit 1** — which reads exactly like a clean
+  sweep. **`grep` here is ugrep: bounded repetition aborts on complexity and prints no matches.** Re-run with
+  `-F` per pattern plus controls: the five old clauses → **0 files**, `monetary base` (known present) → **5
+  files**, `zzz-not-in-corpus` → **0**. **The zeros are only readable because the positive control fired.**
+- ⚠️ **Instrument defect 2: I misread my own diff.** A digit count over the changed *lines* returned **11 digits
+  added** — alarming, and wrong: each "line" here is an entire lesson body as one JSON string, so it carried the
+  pre-existing `$8`, `$15,000`, `$20,000`. Re-measured **on the clause text I actually wrote: 0 digits in all five
+  languages.** The same run also reported "25 added lines" where `--numstat` says **5**. **A positive that is not
+  read is the same mistake as a control that does not fire.**
+- Over the real diff: Dalio/Bridgewater **0**, advice verbs **0** (plant control fires at 1), `Month YYYY` **0**
+  (plant control 1), child-facing kids framing **0**. `check-blindspot` exit 0 independently.
+
+**DECISIONS.md conflict: none.** `credit|monetary base|M0|widen` → 9 hits (control `localStorage` → 13), all
+unrelated: glossary term-sense disambiguation, pre-split track labels, and a ledger-widening note. Nothing there
+rules on this claim.
+
+**Already-done backlog item: this is the one check that changed how the fix was written.** `git log -S` shows the
+clause was **introduced** by `790cd77`, a *completed* fix for stale figures. Redoing that fix in reverse — putting
+numbers back — would have undone finished work. **The clause shipped here is digit-free by measurement**, so
+`790cd77`'s property is preserved and only its error is corrected. The archive carries **1** mention (that fix's
+own entry) and the live log **3**, all notes; **the sentence has never been edited on its merits.**
+
+**My own verification claim.** Every row reproduces from the command named, and **three rows exist because a
+control disagreed with me first**. Limits I own: (1) the ratio is **US-only** and pairs a *quarterly* credit series
+with the *first month* of each quarter's base — a within-quarter mismatch of at most weeks, immaterial at a swing
+of 70.6x → 14.7x but real; (2) `TCMDO` is one of several defensible "total credit" aggregates, and a different one
+would move the levels, **though not the direction — no US credit aggregate grew fast enough between 2008 and 2014
+to outrun a base that went 4.5x**; (3) the four translations are verified by me for **presence, placement and
+vocabulary reuse**, not for fluency.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census residual list is now ONE item, not two.** **L37 §2**'s *"$95 billion a month starting in 2022"*
+  remains — and a first look says it needs a real measurement rather than a reword: the Fed's caps were
+  **$47.5B/month from June 2022** and reached **$95B only in September 2022**, so "starting in 2022" is
+  defensible-but-misleading, and **$95B was a cap the realized runoff rarely hit**. ⚠️ **Whoever takes it should
+  also check whether the sentence's present-tense framing survives at all** — QT ended, and the lesson reads as
+  though it is ongoing. **That is a bigger edit than a clause swap, which is why this run did not bolt it on.**
+- **L30's `thinkAbout` and takeaway were read and are clean** — neither restates the trend claim, so no second
+  clause needed to move.
+
+**Owner-facing, one line:** nothing new for the owner; **O-3 applies** — four machine-written clauses ship here
+unreviewed by a fluent reader, though each reuses vocabulary already shipped in that language. `market.json` is
+**1 day old (asOf 2026-09-11)**, so nothing is stranded and this fix reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 641786 b, run log 206771 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
