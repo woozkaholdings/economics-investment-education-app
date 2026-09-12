@@ -6022,3 +6022,41 @@ One sentence rescoped and one added, in five languages (`src/content/lessonConte
 **Owner-facing, one line:** in Korean and Japanese, the correct answer to lesson 25's quiz said a long horizon "would have had" room to recover rather than "would have" room; one verb ending each, quiz scoring unchanged. Reaches learners on the next push (**O-5**).
 
 **Schedule:** not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and named no residual; the pick came from the lesson-body census, re-run) — lesson 11 told learners that "most actively managed funds don't reliably beat a comparable index fund after fees" was **"that lesson's own point"**, meaning “Stocks, Bonds & Diversification”, and that lesson says **nothing about active funds, index funds or fees** in any of its five languages. The misattribution dates from the lesson's creation (`5859239`, 2026-08-06, as "Lesson 12's own point") and survived the 2026-08-20 number-to-title conversion, which renamed it rather than checked it
+
+#### The pick
+Census re-run (mentions of `lesson N` / `LN` across `AGENT_LOG.md` + archive; control `lesson 45`, which does not exist, returns 1, the previous entry's own control mention). Skipping lessons already read clean or fixed this week (L24, L26, L22, L41, L21, L2, L8, L25), the floor is **L9 (33), L11 (34), L28 (34)**. I read all three English bodies. **L9 and L28 are clean enough to leave** (L28's retail-trading claim matches Barber & Odean's online-investor findings as I know them; not fetched). **L11 carries the defect.** Its fee arithmetic was re-derived and holds: $10,000 at 6.95% for 30 years is **$75,070** ("roughly $75,000"), at 5.95% **$56,630** ("around $57,000"), a **24.6%** gap ("roughly a quarter").
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim, from the shipped English (§1 ¶2):** *"…commonly charges 0.5%-1.5% a year — and **that lesson's own point about diversification applies here too**: most actively managed funds don't reliably beat a comparable index fund after fees, over long periods."* "That lesson" is “Stocks, Bonds & Diversification” (L5), named earlier in the same paragraph.
+- **L5 does not say it, measured in all five languages:** en `active` 0, `index` 0; ko `액티브`/`인덱스` 0; zh `主动`/`指数` 0; ja `アクティブ`/`インデックス` 0; es `índice` 0. **Control:** each language's word for diversification fires (en 5, es 5, ko 7, zh 10, ja 10). ⚠️ en `fee` returned 7, and every hit is inside **coffee**, the lesson's running example — a probe that looked like a positive and was not.
+- **Only the English carries it.** L11 is abridged in all four translations, and each states the active-fund fact without the attribution (es *y la mayoría de los fondos gestionados activamente no superan…*, ko/zh/ja likewise). So the fix brings the English into line with what the translations already say.
+- **Origin:** `git log -S"own point about diversification"` → `5859239` (2026-08-06, "Lesson 12's own point"; lesson 12 of that day was the diversification lesson, and `grep -i actively` over that commit's `lessons.js` hits only lesson 23's own text and a tax paragraph). `7046854` (2026-08-20) converted it to "that lesson's". `own point about diversification` → **0** hits in `AGENT_LOG.md`, the archive, `DECISIONS.md` and `CLAIMS.md` (control: `localStorage` 13 in `DECISIONS.md`), so nothing had decided it.
+
+#### What shipped
+- `src/content/lessonContent.essentials.en.js`: the clause now reads *"…commonly charges 0.5%-1.5% a year — **and over long periods,** most actively managed funds don't reliably beat a comparable index fund after fees."* The fact is kept; only the false credit is gone. The L11 `thinkAbout`'s reference to L5 (*diversification, not stock-picking skill, is what an index fund already provides*) was left: L5 does say a many-company fund diversifies "without picking individual stocks themselves".
+- `src/content/lessons.js`: **lesson 11 `minutes` 4 → 3.** This was not optional. The lesson counted **exactly 700 words**, READING_MODEL's 3.500 boundary, which rounds to 4; the edit removed 9 words, leaving **691 → 3.455 → 3**. Measured with a scratch recount against both the edited file and the scratchpad original (original computes 4, matching what was stored, which is the control). Total catalog minutes **165 → 164**, still well over §4.3's 120.
+- Generated: `LAUNCH_READINESS.md`, `LAUNCH_PLAN.md` (§ figure sentence), `CLAIMS.md` A6 cell via `npm run readiness -- --write`; `scripts/translation-review-ledger.json`, lesson 11's four entries re-marked `ai` (the translations were already consistent with the new English, so this re-mark is accurate rather than a formality).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting exactly 1 old / 0 new, both files; original copied to scratchpad first |
+| `npm test` | first run **exit 1**: minutes (4 vs computed 3), and §10.4 ledger figure → fixed as above → **exit 0, 3 WARN / 0 FAIL**, the standing three (O-3 coverage, 47 abridged pairs, item-160 length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0 |
+| Built bundle | old probe (`own point about diversification`) **0** across all chunks; new clause **1** in `lessonContent.essentials.en-*`; control containing a straight apostrophe (*funds don't reliably beat…after fees.*) **1**, so the zero is not an escaping artifact |
+| Live walk | `dist/` served statically, Browser pane at `#/lesson/11` with lessons 1-10 seeded complete: **LESSON 11 OF 15 · MONEY BASICS (OPTIONAL)**, **≈3 min**; new clause **true**, old **false**, control (§1 ¶2 opener) **true**, negative control **false** |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, proven able to see the edited file.** Planted *"You should buy index funds now."* after the new clause → `check-blindspot` **exit 1** (`§10.1 investment-advice-adjacent language`); restored from the scratchpad copy, `cmp`-equal → **exit 0**. The edit removes a claim and adds none. No attribution (§10.2), no kids surface (§10.3), no date or market figure (§2.3).
+- **DECISIONS.md conflict:** none. The minutes change follows READING_MODEL as `DECISIONS.md` defines it rather than overriding it.
+- **Already-done item:** no. The 2026-08-20 title conversion touched this sentence mechanically and did not check the claim; nothing in "Completed and pruned" covers cross-reference *accuracy*.
+- **My own claim:** every row reproduces from the command named. **Limits:** the active-fund underperformance fact itself was not re-measured this run (it is unchanged, and SPIVA's long-horizon scorecards support it as I know them). I checked L11's cross-references only, not the corpus's other titled references. A sweep of "does the lesson named actually say what it is credited with" has never been run and is the obvious generalization; noted, not numbered.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Cross-references are checked for form, not content:** `check-data.mjs` §16b fails on a numeric "Lesson N" and nothing reads whether the named lesson says what it is credited with. This defect is that class. A census of the 237 references converted on 2026-08-20, checking each credited claim against its named lesson, is a real sweep a run could take. It needs reading, not a regex, so no check is proposed (W-6.3: `scripts/` is the heavier side).
+
+**Owner-facing, one line:** the English fee lesson credited "most active funds don't beat index funds after fees" to the diversification lesson, which never says that; the credit is removed (the fact stays), and because the lesson sat exactly on a rounding boundary it now shows ≈3 min instead of ≈4. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
