@@ -106,7 +106,7 @@ import {
   symlinkSync,
   rmSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
+import { tmpdir, homedir } from "node:os";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -625,14 +625,39 @@ say();
 // dependencies differ from what is installed now, its bundle will not reproduce
 // and it will be skipped — a silent miss, which is why a failed identification
 // says "not identified", never "not deployed".
+//
+// ⚠️ WHICH node_modules, and why it is no longer simply the repo's (2026-09-12).
+// This repo sits in an iCloud-synced folder shared by an x86_64 and an arm64
+// Mac, so the in-tree node_modules can hold native rollup/esbuild binaries
+// built for the OTHER CPU — the exact state scripts/build-out-of-tree.sh
+// exists for. When it does, every build here dies on a native
+// MODULE_NOT_FOUND, the control below fails, and `--identify` does nothing at
+// all on that machine. Measured 2026-09-12: it was in that state, and the
+// failure named no cause because buildAt discarded the error. So the deps root
+// is now CHOSEN rather than assumed — the in-tree one first, then the
+// out-of-tree cache build-out-of-tree.sh maintains — and whichever one the
+// control accepts builds every candidate. If none does, the real error prints.
+const depsRoots = () => {
+  const work = process.env.ECYCLES_BUILD_DIR || join(homedir(), ".cache", "ecycles-build");
+  return [join(ROOT, "node_modules"), join(work, "node_modules")].filter(
+    (d, i, a) => a.indexOf(d) === i && existsSync(join(d, "vite", "bin", "vite.js")),
+  );
+};
+
+// Paths in this section are printed relative to the repo when they are inside
+// it and with $HOME elided when they are not, because the out-of-tree cache is
+// neither and an absolute iCloud path wraps three times in a terminal.
+const shortPath = (p) => (p.startsWith(ROOT) ? relative(ROOT, p) || "." : p.replace(homedir(), "~"));
+
 async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
   if (!liveBuf) {
     say("  (--identify needs the live entry bundle, which did not download.)");
     return null;
   }
-  const viteBin = join(ROOT, "node_modules", "vite", "bin", "vite.js");
-  if (!existsSync(viteBin)) {
-    say("  (--identify needs vite installed; run `npm install`.)");
+  const roots = depsRoots();
+  if (roots.length === 0) {
+    say("  (--identify needs vite installed; run `npm install`, or");
+    say("   `scripts/build-out-of-tree.sh` if this folder is CPU-mismatched.)");
     return null;
   }
 
@@ -645,7 +670,11 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
     .filter(Boolean);
 
   // Build one commit into a throwaway tree and return its entry bundle.
-  const buildAt = (rev) => {
+  // `lastError` is kept because the catch below used to discard it outright,
+  // which is precisely how a probe that could not build anything reported
+  // "no build" and left the cause to be re-derived by hand.
+  let lastError = "";
+  const buildAt = (rev, depsRoot) => {
     const dir = mkdtempSync(join(tmpdir(), "check-deployed-"));
     try {
       // `set -o pipefail` is load-bearing: without it bash reports the exit
@@ -659,12 +688,27 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
         ["-c", `set -o pipefail; git archive ${rev} | tar -x -C "${dir}"`],
         { cwd: ROOT },
       );
-      symlinkSync(join(ROOT, "node_modules"), join(dir, "node_modules"));
-      execFileSync(process.execPath, [viteBin, "build"], { cwd: dir, stdio: "ignore" });
+      symlinkSync(depsRoot, join(dir, "node_modules"));
+      execFileSync(process.execPath, [join(depsRoot, "vite", "bin", "vite.js"), "build"], {
+        cwd: dir,
+        stdio: ["ignore", "ignore", "pipe"],
+      });
       const html = readFileSync(join(dir, "dist", "index.html"), "utf8");
       const name = html.match(ENTRY_RE)?.[1];
       return name ? { name, buf: readFileSync(join(dir, "dist", name)) } : null;
-    } catch {
+    } catch (err) {
+      // The LINE that names the cause, not the tail of the stack. A build that
+      // dies on a native binding puts "Error: Cannot find module
+      // @rollup/rollup-darwin-arm64 …" in the middle of its output and
+      // "Node.js v24.18.0" at the end, so slicing the tail reports the version
+      // as the reason. Anchored at column 0 so the `throw new Error(` source
+      // echo, which is indented, cannot win.
+      const lines = String(err?.stderr?.toString?.() || err?.message || err)
+        .split("\n")
+        .filter((l) => l.trim());
+      lastError = (lines.find((l) => /^[A-Za-z]*Error: \S/.test(l)) || lines.at(-1) || "")
+        .trim()
+        .slice(0, 160);
       return null;
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -676,18 +720,37 @@ async function identifyDeployedCommit(liveBuf, localEntryName, limit) {
   // CONTROL. Rebuilding HEAD in a throwaway tree must reproduce the dist/ built
   // here by `npm run build`. If it does not, this probe cannot recognize ANY
   // commit, and a run of misses would read exactly like "the deploy is ancient".
-  const headProbe = buildAt(shas[0]);
-  if (!headProbe || headProbe.name !== localEntryName) {
-    say(`     ⛔ control FAILED — rebuilding HEAD gave ${headProbe?.name ?? "no build"},`);
-    say(`        but dist/ here is ${localEntryName}. The probe cannot recognize a`);
-    say("        commit it just built, so a miss below would mean nothing. Not run.");
+  // Each candidate deps root gets one attempt; the FIRST that reproduces dist/
+  // is the one every candidate below is built with, so the identification never
+  // mixes two dependency trees.
+  let headProbe = null;
+  let deps = null;
+  for (const root of roots) {
+    const probe = buildAt(shas[0], root);
+    if (probe && probe.name === localEntryName) {
+      headProbe = probe;
+      deps = root;
+      break;
+    }
+    const why = probe ? probe.name : lastError ? `no build — ${lastError}` : "no build";
+    say(`     · deps ${shortPath(root)} → ${why}`);
+  }
+  if (!headProbe) {
+    say(`     ⛔ control FAILED — no dependency tree rebuilt HEAD as ${localEntryName},`);
+    say("        which is what dist/ here is. The probe cannot recognize a commit it");
+    say("        just built, so a miss below would mean nothing. Not run.");
+    say("        A native MODULE_NOT_FOUND above means this folder's node_modules is");
+    say("        built for the other CPU — run `scripts/build-out-of-tree.sh` once");
+    say("        (it populates the out-of-tree cache this probe falls back to), then");
+    say("        re-run this check.");
     return null;
   }
   say(`     ✓ control: a rebuild of HEAD reproduces dist/ (${localEntryName})`);
+  say(`       deps: ${shortPath(deps)}`);
 
   for (let i = 0; i < shas.length; i++) {
     const rev = shas[i];
-    const built = i === 0 ? headProbe : buildAt(rev);
+    const built = i === 0 ? headProbe : buildAt(rev, deps);
     if (built && built.buf.equals(liveBuf)) {
       const meta = execFileSync(
         "git",
