@@ -6857,3 +6857,113 @@ O-5's "goes dark 2026-09-12" date has already moved. Today's lesson fixes reach 
 
 **Log size.** Before this entry: `MEASURED log-size: file 608639 b, run log 173624 b, floor 435015 b` (this run's
 `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (scheduled dev-agent; the pick came straight off the previous entry's "Seen, deliberately NOT fixed" list, which had already half-measured it) — lesson 35 taught that "2021-2023" is a case of the Fed leaning hard toward price stability, and the Fed did not raise its target rate once in 2021, while the same lesson's thinkAbout says "2022-23"
+
+**The pick.** The 2026-09-11 entry above left four unfixed observations from its nine-lesson English read. The first
+of them — L35 §3's year span — is the only one it had already put a number against, so it is the one that could be
+settled rather than re-opened. Item 160 was not re-weighed (stop line unchanged). No archiving was due:
+`check-log-size` put the run log at **73.8%** of warn, **8.4 runs** of headroom, 2 live days.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L35 §3 ("The Fed's Dual Mandate: Two Goals That Can Conflict"), last paragraph: *"…2021-2023 is
+  widely read as a case where the Fed judged inflation was overheating and leaned hard toward the price-stability
+  half of the mandate, accepting some risk to the employment half."* All five languages carry it, once each, all at
+  line 138 of `lessonContent.economy.<lang>.js`.
+- **Measured, FRED CSV, no key.** `DFEDTARU` (fed funds target, upper limit), 2019-01-01 → today. **The series takes
+  exactly one value, 0.25, on all 365 days of 2021** — zero changes. The first hike is **2022-03-17** (0.25 → 0.50);
+  eleven hikes follow through **2023-07-27**, ending at **5.50** (i.e. a 5.25-5.50% target range). Controls: a
+  nonexistent series id returns **HTTP 404** against the real id's **200**, and the 2020-03-16 cut to 0.25 — a
+  published fact this run did not take from the file — is present at that date.
+- **CPI, same source.** `CPIAUCSL` year-over-year: **1.4%** Jan 2021, **5.3%** by mid-2021, **7.2%** by the end of it.
+  Control: the mid-2022 peak reads **9.0%** on the seasonally adjusted series, against the 9.1% published on the
+  unadjusted one — close enough to say the instrument is pointed at the right series, and the text quotes neither.
+- **So the premise is confirmed and sharper than the note that raised it.** 2021 is not a weak case for the claim;
+  it is the opposite of it. Inflation went from 1.4% to 7.2% across a year in which the Fed did not move rates at
+  all. The tightening the sentence describes is **2022-2023**, which is what the lesson's own thinkAbout has said
+  all along.
+- **The only surface.** `git grep -F "2021-2023"` over the whole tree, minus `AGENT_LOG*`: **five files, one hit
+  each**, the five language modules. Control `2022-23` (the thinkAbout): **1 per file**, same five. `DECISIONS.md`,
+  `CLAIMS.md`, `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md`: **0** (control `localStorage` → 13 / 3 / 3 in the three that
+  have it).
+- **Never checked for accuracy before.** `git log -S` reaches only the split commit and `c62036b`, the run that wrote
+  the section. The archive's nine mentions are all §10.1 or §2.3 passes clearing it as *historical framing, not
+  prediction* ("2021-2023 … is historical framing"); **none of them asked whether the years were right.**
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js`, one sentence replaced by two in each. The edit script asserted
+old = 1 / new = 0 in all five before writing and 0 / 1 after; pristine copies were kept in the scratchpad and are
+what every restore in this run used.
+- en: *"This tension is exactly why Fed decisions get debated so heavily rather than following a fixed formula.
+  Through all of 2021 the Fed did not raise its target rate once, holding it near zero while inflation climbed past
+  5%; then eleven increases across 2022 and 2023 took that rate to 5.25-5.50%, leaning hard toward the
+  price-stability half of the mandate and accepting some risk to the employment half."*
+- es/ko/zh/ja carry the same two sentences, the same eleven increases and the same 5.25-5.50%.
+- **The section reads better for it, which is why it is two sentences rather than a year corrected to "2022-2023".**
+  §3's subject is the two halves of the mandate pulling apart. The 2021 hold *is* that tension — inflation above
+  target while the rate stays at the floor — and the 2022-23 tightening is the Fed picking a half. The old sentence
+  named an outcome; the new one shows the trade-off the section is about.
+- The next sentence ("A Fed reading the data differently … could reasonably lean the other way") is untouched and
+  still follows.
+- **Knock-on.** L35 stays at 4 minutes. Ledger: L35 es/ko/zh/ja re-marked `ai`. `refresh-readiness.mjs --write`:
+  en chars **153,560 → 153,669**, the §10.4 volume sentence, and nothing in LAUNCH_PLAN moved. §33 did not fire.
+- ⚠️ **O-3, disclosed:** four machine-written two-sentence replacements, unreviewed by a fluent reader.
+
+#### ⚠️ The first draft tripped §2.3, and that is worth more than the fix
+The sentence as first written said *"from March 2022 to July 2023"* — the precise dates, straight off the FRED
+series. `npm test` **failed**: §2.3 catches a `Month YYYY` shape in teaching copy because it reads as live/current.
+The dates are historical and the guard does not care, correctly — it cannot tell. **The guard was obeyed rather than
+exempted**: the text now says "across 2022 and 2023", which is the span the thinkAbout already used, and the
+paragraph lost nothing a learner needs. Two things follow, and the second one is a finding:
+1. This is the closed §2.3 blindspot firing on a live attempt to reintroduce its shape. It works.
+2. **It fired on English only.** The four translations said `2022年3月`, `de marzo de 2022`, `2022년 3월` — the same
+   dates in the same paragraph — and passed clean. The pattern is English month names. Recorded below, not filed.
+
+#### Verification
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; the 2020-03-16 cut present; CPI peak reads 9.0% SA vs 9.1% NSA published |
+| Node import probe (real module, from a file) | **5/5**: new text present, old absent, own-language control present, negative absent, 3 sections |
+| `npm test` | **exit 0**, WARN 3 / FAIL 0 |
+| Baseline control for that | HEAD's seven touched files swapped in from `git show` (never `checkout --`), `npm test` run, restored from the scratchpad copies: HEAD is also **exit 0, WARN 3**, and the WARN/FAIL lines **diff byte-identical** to this tree's. The swap-and-restore was verified by `git status` before and after, and by the edited string counting 0 while swapped and 1 after |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-E9b-M51S.js` → **`index-DVgIm0kB.js`** |
+| `dist/assets` grep | all **5** new → their own `lessonContent.economy.<lang>` chunk; all **5** old → no file; negative → no file. ⚠️ The English heading control first read "(no file)" — the probe had a typographic apostrophe where the corpus has an ASCII one. **The control caught the instrument, not the build**; re-run with the right character it fires, along with the section title and the untouched next sentence |
+| Live, `python3 -m http.server` on `127.0.0.1:8881` | index **200**, nonexistent path **404** (control fired), served `index.html` names `index-DVgIm0kB.js` |
+| Live `#/lesson/35`, 8 s waits, language switched through the real `<select>` | **en/es/ko/zh/ja: new true, old false, `2021-2023` false, own-language control true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; header reads "LESSON 7 OF 12 · HOW THE ECONOMY WORKS" |
+| ⚠️ Seeding note for the next run | `ecycles_completed_lessons` must hold **numbers**. Seeded as `["29".."34"]` the app showed **Progress: 0/44** and the deep link returned "THAT LESSON ISN'T OPEN YET" — `isLessonUnlocked` does `completedLessons.includes(lesson.id)` and `lesson.id` is a number. The strings persist fine and read back fine; only the strict compare fails, so the seed looks like it worked |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Over the 5 added and 5 removed diff lines: Dalio **0**, advice verbs **0**,
+`Month YYYY` **0** (it was 1 before the redraft above), live-figure shapes **0**, child-facing kids framing **0**.
+Plants fire **1/1/1** (`now is a good time to buy stocks`, `Ray Dalio says`, `in March 2022`) — the third is the one
+that matters here, since it is the shape this run actually had to remove. `check-blindspot` ran inside the green
+`npm test`. **DECISIONS.md conflict: none** — a content edit, no architectural surface. **Already-done backlog item:
+none reversed.** The archive's §2.3 pass lists `2021-2023` among the historical figures it cleared; removing it does
+not reopen anything, because §2.3 is about live-looking dates and the paragraph still carries three year figures.
+**My own verification claim.** Every row reproduces from the commands named, and two rows exist because the control
+disagreed with me first. Limits to own: "eleven increases" counts changes in `DFEDTARU`, which move the day after
+each FOMC decision, so a reader counting announcement dates gets the same eleven on slightly different days. And
+"inflation climbed past 5%" is headline CPI year-over-year; core PCE, the Fed's own target measure, crossed 5% later
+and peaked lower. The text says neither which index nor an exact figure beyond "past 5%", which headline CPI
+(5.3% by mid-2021) and core PCE (above 5% in 2022) both survive.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **§2.3's `Month YYYY` guard is English-only**, measured above on a real edit that passed in four languages and
+  failed in one. It is a guard gap, not a live defect — no translation currently carries such a date that the English
+  does not. Worth a pick if a run is already in `check-data.mjs`.
+- Still open from the previous entry, unchanged and not re-derived here: **L30 §2**'s "a gap that has only widened
+  over time", **L39 §2**'s "CPI cooling as weaker demand pulls prices down" against L32, and **L37 §2**'s "$95
+  billion a month starting in 2022".
+- **L35 §3 now carries three dated figures in one paragraph** (2021, 2022-2023, 5.25-5.50%) plus the thinkAbout's
+  "2022-23". None is stale-able — they are all closed history — but the paragraph is at the density where a fourth
+  would be one too many.
+
+**Owner-facing, one line:** `npm run check-deployed` gives **NO VERDICT** while build inputs are uncommitted, which is
+the correct refusal and the state this run is in until the commit lands; `public/data/market.json` was sitting
+uncommitted from the market job at `asOf 2026-09-11` (fresh, 0 days) and is committed **separately** by this run so it
+is not stranded — today's lesson fix and that data both reach learners on the next push (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 619428 b, run log 184413 b, floor 435015 b` (this run's
+`npm test`). After it: not retyped (W-7.2 rule 4).
