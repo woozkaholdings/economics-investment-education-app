@@ -7439,3 +7439,108 @@ only** — no prose was rewritten, so no fluency question arises.
 
 **Log size.** Before this entry: `MEASURED log-size: file 665735 b, run log 230720 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "build the FRED check for the chart values" — **this run argued the check was not due, the owner overruled, and the argument turned out to be half wrong**) — `scripts/check-balance-sheet.mjs`: the five balance-sheet bars are now re-derived from FRED `WALCL` on demand, and the half that needs no network runs on every `npm test`
+
+#### The argument I lost, and the part of it that was actually wrong
+The previous entry filed this as a note rather than a numbered item, reasoning under **W-6.2 rule 3** that the
+learner-visible failure was only "a bar drifting by one decimal", which the endpoint convention "now prevents by
+construction". **The owner said build it. The reasoning was wrong in a specific way, and the specific way is a
+whole branch of this file:**
+- **The convention prevents drift only for eras that have CLOSED.** Every one of the five has, which is what made
+  the argument look sound. **Nothing whatsoever stopped the next run from adding a bar for an era still in
+  progress** — and a bar over an open era is *precisely* the 6.7 defect, re-created on a fresh key.
+- So the check does not only re-derive values. **`checkErasAreClosed()` WARNs on any era window whose end is not in
+  the past**, which is the rule the 6.7 bug broke, written as a tripwire for the next bar rather than as a comment
+  I wrote and then argued nobody needed to enforce.
+- ⭐ **The general lesson, which is mine and not the owner's:** "prevented by construction" is a claim about the
+  code that exists. **It is not a claim about the code the next run writes.**
+
+#### What shipped
+`scripts/check-balance-sheet.mjs` (290 lines) + `package.json` (2 lines).
+- **`npm run check-balance-sheet`** — the full check, including FRED.
+- **`npm test` gains `check-balance-sheet.mjs --offline`.** ⚠️ **The split follows the repo's existing convention
+  rather than my preference:** measured before writing anything, **`npm test` makes no network calls** and the two
+  checks that do — `check-deployed`, `analytics-check` — are deliberately outside it. A network round trip on
+  every run would make the suite slow and flaky offline.
+- **FRED needs no key on this route** (`fredgraph.csv?id=`), so the check has no credential and no setup step. The
+  repo's own `fetch-market-data.mjs` uses the keyed API and hides that this route exists.
+
+**The four things it tests, and each one is a defect that actually happened or nearly did:**
+1. **Each bar vs FRED.** `WALCL`'s max (expansions) or min (tightenings) over that era's window, rounded through
+   `balanceSheetFormat` — the app's own formatter, imported, not retyped. This is the 6.7 defect.
+2. **Every stated value appears in all five `balanceSheetDescription` strings**, each in its own decimal form (es
+   uses a comma). **This is the near-miss:** the 6.7 fix had to change *six* places, and the scan that found them
+   ran unquoted the first time and reported one. Five would have shipped, leaving the chart disagreeing with its
+   own screen-reader text.
+3. **Spec/data drift, both directions** — a bar with no era window FAILs (nothing would check it), and a window
+   with no bar FAILs. The windows live in the script, not in `markets.js`, because shipping test scaffolding in the
+   app bundle is exactly what `check-payload.mjs` exists to object to; this closes the cost of that split.
+4. **Open eras WARN**, per above.
+
+**FAIL / WARN / NO VERDICT split, by who owns the remedy** — copied from `check-market-freshness.mjs`'s design and
+`check-deployed.mjs`'s refusal: a wrong value, a missing description figure or an unchecked bar **FAIL** (the repo
+owns them); an open era **WARNs**; and FRED being unreachable, the 404 control not firing, or the CSV parsing to
+under 1,000 rows give **⛔ NO VERDICT** — never a silent pass. **An instrument that cannot measure says so.**
+
+#### Verification — five controls, every one of which fired
+| Control | Result |
+|---|---|
+| `--self-test` (perturbs the `covid` bar's stated value by +0.4) | **exactly one MISMATCH, on `covid`; exit 1** — the comparison is not blind |
+| 404 control (nonexistent series id) | **404 against `WALCL`'s 200**, each run |
+| Parse control (>1000 weekly rows) | **1,239 rows, 2002-12-18 .. 2026-09-09** |
+| **Planted description drift** (`ja` set to 6.6 while the bar reads 6.5) | **FAIL naming `ja` specifically**; exit 1 |
+| **Planted new bar with no era window** (`qt3`) | **FAIL on the missing window + 5 FAILs on the absent description figures**; exit 1 |
+| **Planted open era** (`qt2` ending 2099) | **WARN**, with the 6.7 defect named in the message |
+| Restores | each plant restored **from a scratchpad copy, never `git checkout --`**; `git diff` back to **0 changed lines** after each |
+
+**Live result, all five bars:** `pre08` 0.9 = 0.922T (max 2008-01-02) · `qe123` 4.5 = 4.516T (max 2015-01-14) ·
+`qt1` 3.8 = 3.760T (min 2019-08-28) · `covid` 9.0 = 8.965T (max 2022-04-13) · `qt2` 6.5 = 6.536T (min 2025-12-03).
+**PASS, 0 failures.** The table also prints each bar's distance to the next rounding boundary — the quantity that
+went wrong on `qt2` while nothing was watching (tightest is `qt1` at 0.010T).
+
+#### Step 5 — adversarial self-check
+⭐ **The repo's own tooling caught a real bug in my check, within a minute of it being wired in.** `check-data.mjs`
+§23 failed the first `npm test`: I had computed "today" as `new Date().toISOString().slice(0, 10)`, **which is
+tomorrow's date every evening east of UTC** — so `checkErasAreClosed()` would have stopped warning several hours
+early, and the machine this repo runs on is east of UTC. Fixed by importing **`todayStr()` from
+`src/utils/date.js`**, the same function the app compares against, with a comment saying why. **I wrote a check to
+catch drift and shipped a date bug into it; an existing check caught me. That is the argument for this file
+landing, made against its author.**
+**W-6.3, quoted and re-measured as the rule requires** (it asks any run proposing a check to look at the ratio
+first and say which side the proposal falls on): `scripts/` **22,353** lines vs app code **10,196** — **2.19x**,
+**exactly the 2.19x W-7.0 recorded on 2026-09-06**. This file's ~220 lines are **0.022x** of it. **The proposal
+falls on the side that does not move the number**, and the ratio has now held flat for six days rather than
+resuming its climb.
+**Duplication: none.** `grep 'balanceSheet' scripts/*.mjs` returns **nothing** outside the new file (control: 8
+files under `src/` reference it), so no existing check covered these values — this is new coverage, not a second
+opinion on an existing one.
+**DECISIONS.md conflict: none** (control `localStorage` → 13); nothing there rules on network use in checks, and
+the offline default follows observed convention rather than a recorded decision.
+**Blindspot register: nothing found.** The diff is a script and one `package.json` line — no learner-facing copy,
+no dates in content, and `check-blindspot` passes inside `npm test`.
+**My own verification claim.** Every row above reproduces from the command named, and **four of the seven rows are
+deliberately planted failures**, because a check whose only evidence is "it passed" is the thing this repo keeps
+learning not to trust. Limits I own: (1) the era windows are **my** boundaries — each measured value lands within
+0.05T of its stated one, comfortably inside the rounding the chart displays, but a differently-drawn window could
+select a different extreme, which is why each window carries a `why` string naming what it is supposed to catch;
+(2) the check proves the bars match `WALCL`, **not** that `WALCL` is the right series for a bar labeled "the Fed's
+balance sheet" — it is total assets, which is the honest reading of that label but includes facilities outside QE
+and QT; (3) `--offline` in `npm test` means **the FRED half runs only when someone runs it**, so a value that
+disagrees with FRED is caught on demand, not automatically. Making it automatic would put a network call in the
+suite, which is the trade named above and is the owner's to revisit.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Nothing else in `markets.js` is tied to a source this way** — the yield-curve descriptions, sector copy and
+  rate principles are qualitative and have no series behind them, so there is nothing for an analogous check to
+  compare against. **Named here so the next run does not read this file as a template to replicate across the
+  module.**
+
+**Owner-facing, one line:** `npm run check-balance-sheet` is the new command; it needs no key and no setup, and
+`npm test` is unchanged in speed because the FRED half is opt-in. Nothing here touches learner prose, so **O-3
+does not apply**; this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 674300 b, run log 239285 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
