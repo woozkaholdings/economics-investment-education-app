@@ -7342,3 +7342,100 @@ lands; (3) the four translations are verified by me for presence, placement and 
 
 **Log size.** Before this entry: `MEASURED log-size: file 654483 b, run log 219468 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "do the markets.js chart bar next") — the balance-sheet chart's last bar read **6.7**, which was the level on the day it was written rather than the end of the tightening it is labeled for; the other four bars are all their era's endpoint, so the outlier was the value, not the convention — and at +$22.3B/month the bar was **about twelve days** from rendering as 6.8
+
+#### The decision the previous entry said had to come first, and it was settled by the file's own words rather than by taste
+The note I filed said a run must decide **whether `qt2` denotes that era's trough (6.5) or today's level (6.7,
+drifting)** before touching the digit. **It did not need a judgment call: `balanceSheetDescription` already says
+which**, in all five languages — *"3.8 **after** the first tightening, 9.0 **after** the pandemic response, 6.7
+**after** the second tightening"*. **Every bar is the level *after* its era.** The comment above the series says
+the same thing from the other side: labeled *"by era rather than by date so it reads unambiguously as history"*.
+- ⭐ **So the question "trough or today?" was malformed, and saying so is the finding.** The series already had a
+  rule; **one bar was not following it.** I went looking for a decision and found a defect.
+
+#### Premise re-measured with controls (step 3.5) — four bars ARE the control
+Read every bar as "the extreme reached before the next phase began" and check it against FRED `WALCL`:
+
+| bar | stated | measured | → |
+|---|---|---|---|
+| `pre08` (max before QE1) | 0.9 | **0.922T** (2008-01-02) | 0.9 ✅ |
+| `qe123` (max at QE3's end) | 4.5 | **4.516T** (2015-01-14) | 4.5 ✅ |
+| `qt1` (min at QT1's trough) | 3.8 | **3.760T** (2019-08-28) | 3.8 ✅ |
+| `covid` (max, 2022 peak) | 9.0 | **8.965T** (2022-04-13) | 9.0 ✅ |
+| `qt2` (min at QT2's trough) | **6.7** | **6.536T** (2025-12-03) | **6.5 ❌** |
+
+**Four of five reproduce exactly. The fifth is the only one that does not — and it matches *today's* reading
+(6.741T → 6.7) instead**, which is precisely the reading the file's own comment rules out. **A four-bar control
+firing on its own convention is what makes the fifth bar's disagreement a measurement rather than a preference.**
+- ⛔ **Why this was a defect and not a number to top up, which is the whole reason the value moved rather than
+  being refreshed:** a bar that tracks "today" **drifts forever**. `WALCL` stood at **$6,740.6B** rising
+  **+$22.3B/mo**, so it was **+$9B — about twelve days — from crossing 6.75 and rendering as 6.8**. Topping it up
+  to 6.7 would have bought under a fortnight. **An endpoint cannot go stale; that is the point of the convention.**
+- ✅ **The caption's claim was checked because this change could have broken it.** Deepening the second fall takes
+  it 2.3 → 2.5. *"Two large rises, each followed by a smaller fall"* still holds: falls **0.7 < 3.6** and
+  **2.5 < 5.2**. Had it not, the caption would have had to move with the bar.
+
+#### What shipped
+`src/content/markets.js` only — **six values and a comment, no other file.**
+- `balanceSheetHistory.qt2.value` **6.7 → 6.5**, and the same figure in `balanceSheetDescription` for **all five
+  languages** (es carries it as `6,7 → 6,5`, its own decimal comma). Each of the six was asserted present exactly
+  once before the write and replaced exactly once after, refusing otherwise.
+- **A comment recording the convention**, because the next bar added to this series is where it would go wrong
+  again: every bar is its era's endpoint, the four measurements that establish that, and the drift argument for
+  why an endpoint is the right shape. **The rule now lives next to the data instead of in a run-log entry.**
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instrument | 404 control vs 200; four bars reproduce their stated value to one decimal |
+| `npm test` | **exit 0, WARN 3 / FAIL 0** — identical to the baseline (no ledger churn: this is not lesson content) |
+| `npm run check-blindspot` | **exit 0** |
+| `scripts/build-out-of-tree.sh` | **exit 0** |
+| Live, `python3 -m http.server` on `127.0.0.1:8899` | index **200**, nonexistent **404** (control fired) |
+| **Call site 1** — lesson 37's inline figure (`LessonVisual.jsx`) | rendered bars **0.9 / 4.5 / 3.8 / 9.0 / 6.5**; `6.7` absent |
+| **Call site 2** — Reference › Market Dashboard (`MarketSignals.jsx`) | rendered bars **0.9 / 4.5 / 3.8 / 9.0 / 6.5** |
+| Accessible description, both screens | `role="img"` aria-label reads *"…9.0 after the pandemic response, **6.5** after the second tightening"* |
+| Non-English | `ja` aria-label reads *"…パンデミック対応後は9.0、第2次引き締め後は**6.5**。"*, bars identical |
+| Screenshot | chart renders with the last bar visibly shorter than `covid`; era labels correct in `ja` |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and §2.3 moves the right way.** `check-blindspot` exit 0. This change
+**removes** a figure that silently tracked the present with no as-of date — `DECISIONS.md`'s binding rule is *"the
+UI never presents figures as current without showing when they were taken"*, and a bar labeled as history that
+quietly followed today's balance sheet was the shape that rule exists to prevent. **The fix strengthens §2.3
+compliance rather than merely not offending it.** No Dalio, no advice language, no kids framing in the diff.
+**DECISIONS.md conflict: none** (control `localStorage` → 13).
+**Already-done backlog item: checked specifically, because this file carries one.** Item **163(c)** made this
+series render one decimal (`balanceSheetFormat = n.toFixed(1)`, added because `9.0` rendered as `9`). **I changed a
+value, never the formatter** — it is untouched at `markets.js:443` and both call sites still pass it, and the live
+proof is that **all five bars render one decimal in both screens**, including the one I edited. `git log -S 'value:
+6.7'` reaches only **`79d9507`** ("Rebuild app from scratch"), so the number is original authoring that has never
+been revisited on its merits — nothing completed is being undone.
+**My own verification claim.** Every row reproduces from the command named, and **both call sites were checked
+separately** rather than one being inferred from the other — the file's own comment names two, and a fix verified
+on one screen is not verified on the other. Limits I own: (1) the four control bars are matched to *my* choice of
+era windows, and a different window boundary could in principle pick a different extreme — but each measured value
+lands within 0.05 of the stated one, which is tighter than the rounding the series displays; (2) `WALCL` is total
+assets, so the trough includes facilities outside the runoff — the bar is labeled as the balance sheet, so that is
+the right series for it, but it is not a QT-only number; (3) the four translated descriptions changed a **digit
+only** — no prose was rewritten, so no fluency question arises.
+- ⚠️ **One instrument defect, caught by a control.** My first scan for restatements ran
+  `grep -rnF "6.7" src/ --include=*.js` **unquoted**, and zsh glob-expanded `--include=*.js` so the scan errored
+  and found **nothing** — which reads as "only one place to fix". Re-run quoted, it found **six**. **Five of the
+  six would have shipped unfixed**, leaving the chart at 6.5 and every screen-reader description still saying 6.7.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census residual list stays empty**; this item came off the previous entry's note and closes it.
+- **`balanceSheetHistory` has no guard tying its values to anything**, unlike the lesson figures §28 checks. A
+  check could re-derive the five endpoints from FRED — **but W-6.2 rule 3 asks what learner-visible failure it
+  would catch, and the honest answer is "a bar drifting by one decimal", which is what the endpoint convention now
+  prevents by construction.** Filed as a note, not built, and not numbered.
+
+**Owner-facing, one line:** nothing new; this run touched no lesson prose, so **O-3 does not apply to it**.
+`market.json` is 1 day old, and this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 665735 b, run log 230720 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
