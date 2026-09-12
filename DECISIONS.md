@@ -206,8 +206,9 @@ Add a new entry when a run makes a choice future work should be able to look up 
     Umami) need no consent banner and weigh ~1-2 KB but cost money or measure less. The seam means
     that choice no longer blocks the code, so it should be made on its merits rather than by
     whoever happens to be editing this file.
-  - **Config is a committed `.js` file, not an environment variable.** The deploy is `npm run build`
-    then drag `dist/`; a build-time env var is silently skippable, and forgetting it produces a
+  - **Config is a committed `.js` file, not an environment variable.** The deploy was then `npm run build`
+    then drag `dist/` (since 2026-09-07 it is a push to `main` that a workflow builds, and the
+    reasoning holds unchanged there); a build-time env var is silently skippable, and forgetting it produces a
     successful build with analytics quietly off — the precise failure this item exists to end.
     Nothing in the file is secret: an ingest key or site id is public by construction, and the file
     says so in a ⛔ block that names the private-key values that must never go there.

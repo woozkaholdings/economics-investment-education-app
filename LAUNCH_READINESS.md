@@ -133,7 +133,9 @@ for a real provider," and there is nothing left to swap.** What is still open is
 run cannot take: create an account at one provider, paste its **public** site id / ingest key into
 `src/lib/analyticsConfig.js` and set `provider`, run **`npm run analytics-check`** to confirm the key
 is actually accepted *before* building (PostHog's capture endpoint answers HTTP 200 to any key at
-all, so nothing else in this repo can tell you), then `npm run build` and `npm run deploy`. Until
+all, so nothing else in this repo can tell you), then `npm run build`, commit and push to `main` (the
+Pages workflow publishes it), and confirm with `npm run check-deployed` — `README.md` § Deploying.
+(Until 2026-09-12 this sentence ended in `npm run deploy`, a command deleted on 2026-09-07.) Until
 that lands the installer-completion half of the Phase 0 gate above stays unmeasurable off-device,
 though it is inspectable per-device via `localStorage.getItem("ecycles_analytics_log")`.
 

@@ -5877,3 +5877,38 @@ The join rule gains a second, **narrower** shape. A group's last element may now
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Before this entry: `MEASURED log-size: file 561158 b, run log 122322 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed, so no residual chain is running; the pick came from sweeping, for the first time, every `npm run <name>` in the repo's live docs against `package.json`) — **`LAUNCH_READINESS.md` told the owner to finish O-2 with `npm run deploy`, a command deleted on 2026-09-07** — the last step of the one owner action on the critical path pointed at nothing
+
+#### The pick
+The previous four entries each named `DECISIONS.md` lines 209-210 ("`npm run build` then drag `dist/`") as stale and left it. Rather than take that one line on its own, I asked what class it belongs to — **docs that name a deploy step that no longer exists** — and swept the class. The sweep found a worse instance nobody had named: an *instruction*, not a rationale.
+
+#### Step 3.5 — the premise measured with controls
+- **Instrument:** a scratchpad scan of all **114** tracked `.md/.mjs/.js/.jsx/.sh/.yml/.html/.json` files (excluding `AGENT_LOG*`, the archive, `reviews/` and `working_files/`, which are dated records) for `npm run <name>`, checked against `package.json`'s `scripts`. **CONTROL:** an injected `npm run definitely-not-a-script` is reported, and `build` resolves. 12 distinct names seen, 116 references.
+- **Result: 6 dead references, all to `deploy`.** Five are already historical — `DECISIONS.md` 994/1009/1039/1041 (the superseded 2026-09-06 decision, under its own ⚠️ banner) and `README.md:109` (says it is deleted). **One is a live instruction:** `LAUNCH_READINESS.md:136`, O-2's step list — "…then `npm run build` and `npm run deploy`."
+- **The replacement was measured, not recalled:** `.github/workflows/deploy-pages.yml` triggers on `push: branches: [main]`; `check-deployed` exists in `package.json`; `README.md` § Deploying is the owner of the procedure (and O-2 in this log already says steps 4-5 are build, then push and `check-deployed`).
+
+#### What shipped
+- `LAUNCH_READINESS.md`: the sentence now ends "…then `npm run build`, commit and push to `main` (the Pages workflow publishes it), and confirm with `npm run check-deployed` — `README.md` § Deploying", plus one dated parenthetical saying what it used to say.
+- `DECISIONS.md` 209-210: "The deploy **is** … drag `dist/`" → "The deploy **was then** … drag `dist/` (since 2026-09-07 it is a push to `main` that a workflow builds, and the reasoning holds unchanged there)". The decision's argument — a build-time variable is silently skippable — is as true in CI, so the record is annotated, not rewritten.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting exactly 1 anchor occurrence and the replacement landing exactly once — `APPLIED 2/2` (a first wording was restored from scratchpad copies and redone, to fix a guessed date) |
+| Sweep re-run | 0 live instructions naming `npm run deploy`; the 6 remaining hits are all historical, including the new parenthetical |
+| `npm test` | **exit 0** (read directly), 3 WARN / 0 FAIL — the three standing WARNs |
+| Build | `scripts/build-out-of-tree.sh` exit 0 |
+| Scope | `git status --porcelain` = the 2 docs + this log. `Migration/` and `UIUX/` are the user's untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register:** satisfied by scope — neither doc is bundled (the `src/` hits for `DECISIONS.md` are code comments citing it; no content, figure, date, attribution or advice wording changed). Not re-planted, since the edit adds no prose a learner reads.
+- **DECISIONS.md conflict:** none — the edit agrees with the 2026-09-07 deploy decision (Pages on push) and preserves the analytics decision's reasoning (control: 7 `src/` files still use `localStorage`, untouched).
+- **Already-done item:** no — O-4/O-5 and the 09-07 move changed README and deleted the script, but never touched this sentence; this completes that move rather than redoing it.
+- **My own claim:** reproducible from the scan named. **Limit:** it reads only the literal `npm run <name>` form; `npm test`, `npx`, and prose like "run the deploy script" are invisible to it. No check was committed (W-6.2 rule 3: no learner-visible failure).
+
+**Owner-facing, one line:** the readiness scorecard's instructions for finishing analytics (O-2) ended with `npm run deploy`, which no longer exists; they now say push to `main` and run `npm run check-deployed`, matching the README. **O-5** (live site behind — and Sectors goes stale for visitors today), **O-6** and **O-3** are unchanged and still yours.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 570597 b, run log 131761 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4). Backlog: 0 b added.
