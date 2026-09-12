@@ -66,9 +66,32 @@ const GROUPED = /,/;
 // the rule that makes it one rather than two numbers is STRICTLY DESCENDING
 // UNITS. That is the whole guard against greedy summing: `5만 4만` is two
 // separate amounts (50,000 and 40,000), not 90,000, and `3 100` is 3 and 100,
-// not 3,100. A chunk with no unit can only ever stand alone. §61 asserts both
-// of those refutations directly, because a parser that sums whatever it sees
-// would pass every presence test in this repo for the wrong reason.
+// not 3,100. §61 asserts both of those refutations directly, because a parser
+// that sums whatever it sees would pass every presence test in this repo for
+// the wrong reason.
+//
+//   THE COMMA-GROUPED TAIL, added 2026-09-12. A group’s last element may also
+//   be a thousands-grouped chunk carrying NO unit of its own: Japanese writes
+//   15,000 as `1万5,000`, and until this was added the parser read that as two
+//   amounts, 10,000 and 5,000, and the real figure as absent. Measured that day
+//   over `src/content` and `src/locales`: 3 instances, all `1万5,000`, all in
+//   `lessonContent.economy.ja.js` (lessons 30 and 31) — which no check reads,
+//   so this was a latent false negative rather than a live one. It is exactly
+//   the trap backlog item 127 filed: a figure the parser cannot see is
+//   indistinguishable from a figure that is not there.
+//
+//   TWO CONDITIONS, AND BOTH ARE LOAD-BEARING — this tail does NOT get the
+//   whitespace tolerance the unit+unit case has.
+//   (a) NO SEPARATOR AT ALL. `1万5,000` is one written token; `5만 3,000` with
+//       a space is two amounts in any reading, and joining it would invent
+//       53,000. The unit+unit case can afford whitespace because two descending
+//       units are unambiguous on their own; a bare number after a space is not.
+//   (b) STRICTLY LESS THAN THE GROUP’S LAST MULTIPLIER. `1万15,000` is not a
+//       positional decomposition of anything, so it stays two amounts. The rule
+//       refuses rather than guesses.
+//   What it does NOT change: a comma-grouped chunk still cannot TAKE a unit, so
+//   the Korean `$4,000만` (“only $4,000”) refutation above is untouched — that
+//   is a mantissa rule and this is a tail rule, and §61 pins both.
 export function amountsIn(text) {
   const found = new Set();
   if (typeof text !== "string" || text.length === 0) return found;
@@ -86,15 +109,18 @@ export function amountsIn(text) {
     const mult = unit ? UNITS[unit] : 1;
     if (!Number.isFinite(value)) { flush(); continue; }
 
+    const gap = text.slice(group?.end ?? 0, m.index);
+    const grouped = GROUPED.test(m[1]);
+
     const joins = group !== null
-      && unit !== ""                                        // unit-less chunks stand alone
-      && group.lastMult > 1                                 // and cannot be extended
-      && mult < group.lastMult                              // strictly descending
-      && /^\s*$/.test(text.slice(group.end, m.index));      // adjacent, whitespace only
+      && group.lastMult > 1                                 // a unit-less group cannot be extended
+      && (unit !== ""
+        ? mult < group.lastMult && /^\s*$/.test(gap)        // unit tail: strictly descending, whitespace only
+        : grouped && value < group.lastMult && gap === ""); // comma-grouped tail: no separator at all
 
     if (joins) {
       group.total += value * mult;
-      group.lastMult = mult;
+      group.lastMult = unit ? mult : 1;                     // nothing may follow a comma-grouped tail
       group.end = m.index + m[0].length;
     } else {
       flush();
@@ -122,4 +148,7 @@ export const SPECIMENS = [
   { note: "REFUTATION — a unit-less number never joins a group", text: "3 100 그리고 1,050", expect: [3, 100, 1050] },
   { note: "REFUTATION — Korean `만` after a comma-grouped amount is the particle \"only\", not a myriad", text: "그중 $50,000를 넘는 $4,000만 30% 구간에", expect: [50000, 4000, 30] },
   { note: "and the same character without a comma IS the myriad — the Korean markets copy's own figure", text: "월 $6000억 규모", expect: [600000000000] },
+  { note: "ja — comma-grouped TAIL, which is how lessons 30 and 31 write 15,000; read as 10000 and 5000 until 2026-09-12", text: "今すぐ1万5,000ドルを渡す", expect: [15000] },
+  { note: "REFUTATION — a SPACE before the grouped tail blocks the join; joining it would invent 53,000", text: "5만 3,000", expect: [50000, 3000] },
+  { note: "REFUTATION — a grouped tail not smaller than the multiplier is not a decomposition; refuse rather than guess", text: "1万15,000", expect: [10000, 15000] },
 ];

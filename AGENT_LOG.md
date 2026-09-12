@@ -5828,3 +5828,52 @@ Both edits are **restorations of English already in the corpus**, in the currenc
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Before this entry: `MEASURED log-size: file 549000 b, run log 110164 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "fix numerals.mjs to read 1万5,000 correctly" — so W-6.2 rule 1 does not arise; the previous entry had named this as a note rather than an item precisely because it had **zero live instances**, and the owner took it anyway) — `amountsIn()` read Japanese **`1万5,000` as two amounts, 10,000 and 5,000**, and the real figure as absent; with the comma-grouped tail admitted, lessons 30 and 31's Japanese bodies now state **exactly the numerals their English states**
+
+#### Step 3.5 — the premise re-measured from scratch, not carried over from the entry that filed it
+- **The defect reproduces on the shipped module, first command:** `amountsIn("1万5,000ドル")` → **`[5000, 10000]`**; `"4万5,000円"` → `[5000, 40000]`.
+- **CONTROLS — six forms the shipped parser gets RIGHT, asserted before touching it**, because a "fix" that breaks these is worse than the defect: `11万5千円`→115000, `$4,000만 30%`→[30, 4000] (the Korean *only*-particle refutation), `5만 4만`→two amounts, `3 100`→[3, 100], `5만 달러`→50000, `$50,000`→50000. **All six correct as shipped.**
+- **The corpus, measured rather than recalled:** scanning `src/content` + `src/locales` as text (38 files) for a comma-grouped run following a myriad unit → **3 instances, all `1万5,000`, all in `lessonContent.economy.ja.js`** (lessons 30 and 31). **CONTROL:** the same scan for the unit+unit form the parser already reads → **9 instances**, so the scanner is not simply blind.
+- **The "zero live instances" half of the note re-derived rather than trusted.** All non-specimen call sites of `amountsIn` enumerated: **§21** (lesson 7's `bracketCaption`), **§50** (lesson 23's body + `moneyVisuals`), **§53** (lesson 17's body). The broken form is in the **economy** track, which none of them reads. **So this was latent, and the premise for taking it is the trap, not a live failure** — item 127's *"the false negative is indistinguishable from the figures being absent."*
+
+#### What shipped — `scripts/numerals.mjs` only, +37 / −8
+The join rule gains a second, **narrower** shape. A group's last element may now be a thousands-grouped chunk carrying **no unit of its own**, under two conditions that are both load-bearing:
+- **(a) No separator at all.** `1万5,000` is one written token. `5만 3,000` with a space is two amounts in any reading and joining it would **invent 53,000**. The existing unit+unit case keeps its whitespace tolerance — two descending units are unambiguous on their own; a bare number after a space is not.
+- **(b) Strictly less than the group's last multiplier.** `1万15,000` is not a positional decomposition of anything, so it stays two amounts. **The rule refuses rather than guesses.**
+`group.lastMult` is set to 1 after such a tail, so nothing can follow it. **What did NOT change: a comma-grouped chunk still cannot TAKE a unit**, so the `$4,000만` refutation is untouched — that is a *mantissa* rule and this is a *tail* rule. The comment block says which is which, and dates the measurement rather than asserting a fact about the corpus.
+
+**Three specimens added to `SPECIMENS`** (9 → 12, refutations 3 → 6), which is where §61 already exercises this module — no new section, no new threshold: the fix itself, and the two refutations above.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting **exactly 1** occurrence per anchor and refusing otherwise — `APPLIED 2/2`, then `APPLIED 1/1` for the specimens |
+| Specimen matrix | **12/12 exact set equality**, including the 2 new refutations and the 6 pre-existing forms re-asserted unchanged |
+| ⭐ **Live-input control — the fix moves nothing any check reads** | fingerprinted `amountsIn()` over **220 live inputs** (every string in `moneyVisuals` + all 44 lessons x 5 languages of section bodies) before and after. **Exactly 2 lines differ:** `lesson30.ja` 10000 → **15000**, `lesson31.ja` {5000, 10000} → **{15000}**. The other 218 are byte-identical |
+| ⭐ **And the 2 that moved are now RIGHT** | `L30` en `[0, 8, 5000, 15000, 20000]` vs ja `[0, 1, 8, 5000, 15000, 20000]` (the extra 1 is *"ビール1杯"*, "a beer" in English); `L31` en `[15000]` **=** ja `[15000]`, where ja read `[5000, 10000]` before |
+| **Plant A — the specimen catches an under-read** | disabled the new branch → `check-data` **exit 1, §61: read "今すぐ1万5,000ドルを渡す" as [5000, 10000]; the specimen says [15000]` |
+| **Plant B — and an over-read, the opposite direction** | dropped the no-separator guard → **exit 1, §61: read "5만 3,000" as [53000]; the specimen says [3000, 50000]` |
+| | **Both plants fire, so the three new specimens are load-bearing rather than decorative** |
+| Restore | `cmp`-identical to the fixed file after each plant; `check-data` **exit 0** |
+| `npm test` | **exit 0** (read directly, not through a pipe), 3 WARN / 0 FAIL — the three standing WARNs, identical to the baseline. §21, §50, §53 and §61 all green, §61 now reporting 12 specimens / 6 refutations |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Scope | `git status --porcelain` = **exactly `scripts/numerals.mjs`**. `Migration/` and `UIUX/` are the **user's** untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: satisfied by scope, and the scope was measured rather than assumed.** A previous run established by plant that `check-blindspot` does not scan `scripts/`, so a green exit here would prove nothing. Instead: scanned all **74** `.js`/`.jsx`/`.css`/`.html` files under `src/` plus `index.html` for a reference to this module → **one hit, and it is the word "numerals" inside a prose comment in `charts.jsx`, not an import.** **CONTROL:** the same walk for `localStorage` returns **7** files, so the scanner is not silently returning nothing. **Not one byte of this file reaches a learner's bundle**; no content, attribution, figure or date changed. ⚠️ Worth recording that the first read of this scan showed `HIT src/components/charts.jsx` and **looked exactly like a real import** — the claim only survived because the hit was opened.
+- **DECISIONS.md conflict: none** (0 hits for `numerals` or `amountsIn`; control: 13 `localStorage`). Nothing there governs numeral parsing.
+- **Already-done backlog item: no, and the reverse.** This is the note the **previous entry** filed, which said in terms *"a run that touches `numerals.mjs` for any reason should take it; a run should not touch that file only for this."* The owner directed it, which is the one route that clause left open. Nothing in "Completed and pruned" touches this module.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the live-input fingerprint covers section **bodies** and `moneyVisuals`; it does not cover `takeaway`/`thinkAbout`, glossary or quiz text — so "218 unchanged" is a statement about the surfaces the four call sites read, which is the claim that matters, not about every string in the app. (2) The new rule is **narrower than the general problem**: `1万5千` and `1万5,000` are both read, `一万五千` (Chinese numerals) is still deliberately out of scope, as the module header has always said. (3) Lessons 30 and 31 were **already correct in Japanese** — this run fixed the instrument, not the content, and no learner sees a different app because of it.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **§21 and §53 could now be pointed at more lessons than they are**, since the parser reads a form it could not before. Not proposed as work: W-6.2 rule 3 asks what learner-visible failure a new anchor would catch, and there is no candidate figure in lessons 30-31 that a *figure* renders. Named so the next run does not read this fix as an invitation.
+- **`DECISIONS.md` lines 209-210 still describe the deploy as "`npm run build` then drag `dist/`"** — stale since 2026-09-07, named by two previous runs, still one line, still unfixed.
+- **The live site is 19 commits behind plus the two from today** (**O-5**); this commit is instrument-only and changes nothing a learner would see, so it does not lengthen the learner-visible half of that queue.
+- **The backlog was not touched this run**, deliberately: **W-7.2 rule 5's test falls tomorrow, 2026-09-13**, and measures the backlog against 425,473 b. It stood at **400,430 b** and this entry adds **0 b** to it.
+
+**Owner-facing, one line:** done — the parser now reads `1万5,000` as 15,000, and the proof that it matters is that lessons 30 and 31's Japanese bodies now state exactly the numerals their English states, where one of them previously read as two wrong figures. **Nothing a learner sees changed**: the Japanese lessons were already correct, it was the checking tool that could not see them, so this closes a trap rather than a bug. The fix is pinned by three new specimens that I proved fail in **both** directions — one if the fix is reverted, one if it is made greedy. **O-5**, **O-6** and **O-3** are unchanged and still yours.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 561158 b, run log 122322 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4).
