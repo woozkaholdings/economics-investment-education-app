@@ -5767,3 +5767,64 @@ Thirteen passes have been correct. This one was not, twice, and both were stoppe
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** After the cut and before this entry: `MEASURED log-size: file 538450 b, run log 99614 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After this entry: not retyped (W-7.2 rule 4). **One live day; the next pass is not due until the run log crosses 250,000 b again.**
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed, so no residual chain is running; the pick is a corpus-wide sweep of a class that has never been swept) — **do the four translations state the numbers their English lesson states?** 176 pairs swept, **129 verified clean, one real defect**: lesson 13's worked example for fractional shares — *"$50 worth of a stock trading at $500"* — is **present in `en`, `zh` and `ja` and absent from `es` and `ko`**, in a pair that every existing instrument reports as fully translated
+
+#### The pick, and the two items it is NOT
+Backlog **item 160** (the quiz option-length cue) is the loudest standing WARN and was the first candidate; it was **rejected on its own stop-line**, which says in terms that everything still open in it is class B and class B is O-3's decision. Re-reading that before editing is the whole of step 3.5 for a rejected pick. The archiving pass is **not due** — one live day, run log at 44.1% of warn.
+
+So the pick came from asking which class of learner-visible defect has **never** been looked for. Probed `AGENT_LOG.md` + archive + `DECISIONS.md` for ten phrasings of a numeral-parity sweep: **0 hits in all three**, against controls `numerals.mjs` (2/8/0) and `abridged` (22/132/0) which fire. The one `figure parity` hit in the archive is a 2026-08-24 instruction to a *translator* run about lesson 39, not a sweep. **Never swept.**
+
+#### Step 3.5 — the premise re-measured with controls, and the instrument was wrong three times before it was right
+The premise here is the instrument, so the instrument is what had to be controlled. **The first sweep reported 82 of 176 pairs differing. Every one of the top-ranked findings was a false positive**, and naming the four classes is the useful part of this entry:
+1. **Decades written as words.** `L34 es` and `L36 es` "missing" 1920/1980 — the Spanish says *"los años veinte"* and *"los años ochenta"*. Idiomatic and correct.
+2. **Word-scale units, in two directions.** `L37 es` "missing" $95B/$600B/$1.75T — Spanish states them as *"$85 mil millones"* and *"$1.75 billones"* (long scale), which is right. `L37 zh` the same via `万亿`/`亿`.
+3. ⚠️ **A blind spot in the shipped parser itself.** `L30/L31 ja` read as "missing 15,000" because `amountsIn()` reads **`1万5,000` as 10000 and 5000**: the GROUPED rule that correctly stops the Korean *only*-particle trap (`$4,000만`) also stops a comma-grouped **tail** of a descending group, which is how Japanese normally writes 15,000. The ja text is correct; the parser could not see it.
+4. **Written-out English.** `L26 ko/ja` "invented" 200 — the English says *"Two hundred dollars"* in words, as do `es` and `zh`; only ko/ja use digits. `numerals.mjs` documents written-out English as deliberately out of scope.
+
+Rebuilt with all four classes controlled (word-scale expansion on the English side, decade-word suppression per language, and a corrected grouping rule), behind **7 two-sided parser controls asserted as exact set equality before any finding prints** — including the two refutations a greedy parser fails (`$4,000만 30%` → `[30, 4000]`, not 40,000,000; `5만 4만` → two amounts, not one) and the `1万5,000 → 15000` case that the shipped parser gets wrong. **All 7 fired.** Abridged pairs are excluded by the same `0.7 x` per-language p90 rule `translation-completeness.mjs` uses, not by a threshold of my own.
+
+**Result: 46 abridged (item 93 debt, out of scope), 129 clean, 1 defect.** A second pass in the opposite direction — figures a translation states that the English does not, floored at 100 to drop list markers — returned **3 candidates, all three false positives** (classes 2 and 4 above). **No translation in this corpus states a wrong number, and none invents one.** That is the reassuring half and it is a measurement, not an impression.
+
+#### The defect
+`en`: *"fractional shares — a slice of one share, like **$50 worth of a stock trading at $500** — instead of requiring a purchase in whole-share amounts…"*
+`zh` and `ja` both carry it (`用50美元买入一只每股500美元的股票`, `1株500ドルの株を50ドル分だけ`). `es` reads only *"una parte de una acción"* and `ko` only *"완전한 한 주가 아니라 주식의 일부만 사는 것으로"* — **the concrete example is gone, and it is the thing that makes the concept land.**
+
+⭐ **Why no existing instrument can see this.** `L13 es` is **1.02** against an es reference of 1.16 and `L13 ko` is **0.49** against 0.58 — both comfortably above the abridged line, so §33 reports them **fully translated**, and the review ledger reports them **100% reviewed**. A pair can be full-length, reviewed, and still be missing the one clause that carries the teaching. **Length is not content, and this is the first measurement in this repo that separates them at the level of a single claim.**
+
+⭐ **And it is drift from authored intent, not a condensation choice** — confirmed in the archive rather than assumed: the run that wrote this lesson (then lesson 25) recorded *"used only clearly-labeled illustrative figures ($500 uninvested cash, **$50 of a $500 stock**, a 5% limit-order gap)"* and *"All five languages."* The example was meant to be in all five and reached three.
+
+#### What shipped
+- `lessonContent.essentials.es.js` **+43 b**: `una parte de una acción` → `una parte de una acción, como $50 de una acción que cotiza a $500`.
+- `lessonContent.essentials.ko.js` **+57 b**: `…주식의 일부만 사는 것으로,` → `…주식의 일부만 사는 것으로(예를 들어 한 주에 $500인 주식을 $50어치만),`.
+- `LAUNCH_READINESS.md` §10.4's **generated** volume sentence, via `npm run readiness -- --write`: es 154,445 → **154,487**, ko 74,525 → **74,554**. `npm test` failed until this was regenerated, which is that check working.
+Both edits are **restorations of English already in the corpus**, in the currency form each file already uses (`$` prefix, measured in both) — not new claims. §33's baseline was **not** touched: the ratios moved 1.02→1.03 and 0.49→0.50, inside the 0.03 tolerance. (Regenerating that baseline for a one-lesson edit rewrites every recorded ratio, which is the trap to avoid here.)
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting **exactly 1** occurrence per anchor and refusing otherwise, then re-asserting the replacement landed exactly once — `APPLIED 2/2` |
+| Parser controls | **7/7** exact-set, including 3 refutations — asserted before any finding printed |
+| Defect cleared | sweep re-run: `L13 es` and `L13 ko` **both gone**; clean pairs 124 → **126**; the 4 remaining rows are the verified false-positive classes |
+| Rendered prose | read back through `lessonContent.js` in en/es/ko — the example reads correctly in both languages and the sentence still parses as one sentence |
+| `npm test` | **exit 0** (read directly, not through a pipe), 3 WARN / 0 FAIL — the three standing WARNs, identical to the pre-edit baseline |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-n_yxT7O5.js` 272.00 kB |
+| Scope | `git status --porcelain` = exactly the 3 files. `Migration/` and `UIUX/` are the **user's** untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- ✅ **Blindspot register: the control fired, on the file I actually edited.** Planted *"Con las tasas así de bajas, ahora es buen momento para comprar acciones."* into `lessonContent.essentials.es.js` (plant landed: 46,415 → 46,489 b, presence asserted) → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**. Restored from a scratchpad copy, **`cmp`-identical**, exit 0. So the green result on my real change is evidence and not a scope accident. §10.2 (no Dalio), §10.3 (no kids framing), §2.3 (no date, no live-looking figure — the $50/$500 pair is an illustrative example, which is exactly the distinction the authoring run reasoned through and recorded).
+- **DECISIONS.md conflict: none.** Content-only edit to `.js` content modules, consistent with the `.js`-not-JSON decision; no state, storage or platform change (control: 13 `localStorage`, 20 `lessonContent`, 0 `fractional`).
+- **Already-done backlog item: no.** `AGENT_LOG.md` has **0** hits for `fractional share`; the archive's 3 are all the 2026-08 authoring run, which *adds* this example rather than removing it — so this restores its work rather than undoing it. Not item 93 either: these two pairs are **not abridged**, which is the whole point of the finding.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the sweep reads **digits**; written-out numbers in any of the five languages are invisible to it, which is class 4 above and is why "129 clean" means *no digit disagreement*, not *no numeric disagreement*. (2) It compares **sets per lesson**, not per sentence — a figure that moved to the wrong sentence inside the right lesson passes. (3) The es and ko clauses are **mine and unreviewed by a fluent speaker**, like every other translation in this corpus (**O-3**). (4) The instrument is a scratchpad reading aid and is **deliberately not committed** — it has no threshold that could be a gate, and W-6.2 rule 3's question ("what learner-visible failure would this check catch?") is answered by the *fix*, not by keeping the scanner.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⚠️ **`scripts/numerals.mjs` cannot read `1万5,000`** (class 3 above), and it is used by the shipped §21 and §53. **Live instances today: zero** — those sections read lessons 7 and 17, and the form appears in lessons 30 and 31, which nothing anchors. So this is a latent false-negative of exactly the shape item 127 filed (*"the false negative is indistinguishable from the figures being absent"*), not a live defect, and W-6.2 rule 2 says a zero-instance residual is a note. **The one-line fix is known and measured** — let a comma-grouped chunk join a descending group as its tail while still refusing to *take* a unit, which keeps the `$4,000만` refutation passing; my sweep's parser runs it with both controls green. A run that touches `numerals.mjs` for any reason should take it; a run should not touch that file only for this.
+- **`DECISIONS.md` lines 209-210 still describe the deploy as "`npm run build` then drag `dist/`"** — stale since 2026-09-07 and named by the run before last. Still unfixed, still one line, still inside an analytics decision this run had no reason to touch.
+- **The live site is still 19 commits behind** (**O-5**) and this run adds a twentieth learner-visible commit to that queue. Two more languages of lesson 13 are corrected in the repo and not on the web.
+- **The backlog was not touched this run, deliberately:** W-7.2 rule 5's test falls **tomorrow, 2026-09-13**, and measures the backlog against 425,473 b. It stood at **400,430 b** at the start of this run and this entry adds **0 b** to it.
+
+**Owner-facing, one line:** I checked, for the first time, whether the Spanish, Korean, Chinese and Japanese lessons state the same numbers as the English ones — **129 of 176 pairs are clean, nothing states a wrong number and nothing invents one**, and the single real gap is fixed: lesson 13's example of a fractional share ("$50 of a $500 stock") had quietly gone missing from the Spanish and Korean, even though both pairs read as fully translated on every gauge we have. **O-5** (the live site is now 20 commits behind, including this) is your push; **O-6** (automate the archiving pass?) and **O-3** (unreviewed machine translation, which these two new clauses are also part of) are still waiting on you, unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 549000 b, run log 110164 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
