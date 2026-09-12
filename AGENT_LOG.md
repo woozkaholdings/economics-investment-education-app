@@ -5912,3 +5912,51 @@ The previous four entries each named `DECISIONS.md` lines 209-210 ("`npm run bui
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Before this entry: `MEASURED log-size: file 570597 b, run log 131761 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4). Backlog: 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was a scheduled sweep pick whose only notes were limits of its own instrument, not a nomination; the pick came from re-running the lesson-body census past the four lessons 2026-09-12's earlier run read clean) — lesson 25's **takeaway** and its quiz **explanation** told learners that money left invested for fifteen years "has time to recover from **any** bad stretch long before he'd ever withdraw it", while the lesson's own body says *historically*, lesson 44 — ten lessons earlier on the same track — says *"'it usually recovers' is a statement about averages"*, and FRED puts the Nikkei 225 **71% down fifteen years after its 1989 peak and 34 years from regaining it**
+
+#### The pick
+Census re-run (mentions of `lesson N` / `LN` across `AGENT_LOG.md` + archive, and in headings; control: `lesson 45`, which does not exist, returns 0). After L24/L26/L22/L2 — read clean by the 09-12 run that fixed `check-deployed --identify` — and L42/L41 (fixed), the floor is **L8 (23/1), L21 (29/2), L25 (29/3)**. I read all three bodies and their quiz questions (`q022`, `q035`, `q039`). **L8 and L21 are clean enough to leave** (one arguable L8 point below). **L25 carries the defect.**
+
+#### Step 3.5 — the premise measured, with controls
+- **The overclaim, quoted from the shipped English.** Body §2 (hedged): *"time is what turns a bad stretch into something that, **historically**, has had room to recover before it's ever needed."* Takeaway (unhedged): *"Money you won't touch for many years **has time to recover** from a bad stretch."* `q039` explain (unhedged and universal): *"its fifteen-year horizon gives it time to recover from **any** bad stretch long before he'd ever withdraw it."* The explain is what a learner reads the moment they answer.
+- **Internal contradiction, measured rather than argued.** Money track order is `41,42,43,44,16,…,25,…` (read from `lessons.js`), so L44 comes first, and its body says: *"An investment can fall and stay fallen for a decade, and 'it usually recovers' is a statement about averages, not about the particular decade you happen to need the money in."* The economy track also names **Japan in 1989** among "history's most painful downturns". L25's takeaway and explain contradict both.
+- **External, from FRED `NIKKEI225`** (fredgraph.csv, no key; **control:** a nonexistent series id returns an HTML error page, not CSV; the 1989-12-29 close reads **38,915.87**, the widely published record close). **2004-12-29: 11,381.56 (−70.8%)** — fifteen years on, the exact horizon in the question. First close back above the 1989 peak: **2024-02-22**. ⚠️ **Limit I own:** that is a price index and excludes dividends; Japanese dividend yields over the period were low, so total return fifteen years on was still deeply negative, but I did not measure a total-return series.
+- **Not previously decided.** `any bad stretch` → **0** hits in `AGENT_LOG.md`, the archive, `DECISIONS.md`, `CLAIMS.md` and `LAUNCH_PLAN.md` (control: `localStorage` 26/431/13/3/3). `git log -S` puts the takeaway at `8a3377a` (2026-08-08, the lesson's creation) and the explain at the language splits only — neither sentence has been revisited. `q039` appears in item 160 solely as a **length** candidate (class A); nothing there touches its explain.
+- **All five languages carry the unhedged form** (read field by field): es *cualquier mal período*, ko *어떤 나쁜 시기에서도*, zh *从任何一段糟糕行情中*, ja *どんな悪い時期からも*.
+
+#### What shipped
+Two sentences, five languages each — `src/content/lessonContent.money.{en,es,ko,zh,ja}.js` (lesson 25 takeaway) and `src/content/quizText.{en,es,ko,zh,ja}.js` (`q039` explain). English now reads:
+- takeaway: *"Money you won't touch for many years has **more** time to recover from a bad stretch — **historically that has usually been enough, though not always** — which is what makes the trade-off for potential growth worth weighing."*
+- explain: *"…so its fifteen-year horizon gives it **far more room** to recover from a bad stretch before he'd withdraw it — **historically usually enough, though not a guarantee**."*
+
+The translations carry the same hedge in each language's own construction (ko splits the takeaway into two sentences rather than force a polite-form clause inside dashes).
+**Deliberately NOT done:** the **keyed option** (`opts[3]`, *"would give it room to recover from a temporary drop"*) is untouched. It is modal and self-limiting ("temporary"), and it is a length-sensitive item-160 class-A option — editing it moves §65 in five languages, which is O-3's territory. The body is untouched; it was the correct half. **No number was added to the lesson** — the Nikkei figure is evidence for the edit, not content; adding a dated market figure to a money-judgment lesson is a §2.3-shaped risk for no learner gain, since L44 already makes the point.
+- `scripts/translation-review-ledger.json` — lesson 25's four entries re-marked via `translation-review.mjs mark … ai`: **4 hunks, 24 lines, all lesson 25**. ⚠️ The ledger hashes **lesson content only**; the `quizText` edits are covered by no ledger, which is pre-existing and not changed here.
+- `LAUNCH_READINESS.md` — regenerated by `npm run readiness -- --write`: English chars 154,568 → **154,637**, §10.4 volume sentence. Lesson 25's `minutes` unchanged (`npm test` agrees).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher, 10 anchors, each asserted **exactly 1** old and **0** new before writing, all-or-nothing — `WROTE 10/10 into 10 files`; originals copied to scratchpad first |
+| `npm test` | first run **exit 1** (ledger stale ×4, then readiness figures) → fixed as above → **exit 0, 3 WARN / 0 FAIL** — the three standing WARNs (O-3 coverage, 47 abridged pairs, item 160 length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0, `dist/index.html` timestamped this run |
+| Built bundle | old-phrase probes **0** in every language; new en takeaway **1** (`lessonContent.money.en-*`), new en explain **1** (`quizText.en-*`), new zh/ko/es/ja probes present in their `quizText` chunks; **control** (body's *"historically, has had room to recover"*) **1** |
+| Live walk | `dist/` served statically, Browser pane at `#/lesson/25` with lessons 41-44 and 16-24 seeded complete: header **LESSON 14 OF 17 · THINKING ABOUT MONEY**, not locked; new takeaway **true**, old **false**, body hedge **true**, negative control **false**. The `q039` explain was verified in the bundle, **not rendered** |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, and proven able to see the edited file.** Planted *"You should buy stocks now."* right after the new `q039` explain in `quizText.en.js` → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**; restored from a scratchpad copy, `cmp`-equal → **exit 0**. The change moves **away** from §10.1: it removes a recovery guarantee from an investing explanation. §10.2: no attribution added. §10.3: untouched. §2.3: no date or market figure added.
+- **DECISIONS.md conflict:** none — content stays `.js`, no state/build/platform decision touched.
+- **Already-done item:** no. Item 160 touched `q039` for option length only; the sixth quiz note (explain-vs-keyed-answer) checked that explains justify the keyed option, which this one still does — it swept alignment, not overclaiming.
+- **My own claim:** every row reproduces from the command named. **Limits:** the four translations are mine and no fluent reader has seen them (ledger says `ai`, O-3); the Nikkei figure is a price series, not total return; the S&P 500 has no 15-year nominal loss in the modern record I know of, so this is a *not-always* correction, not a *usually-not* one — and the new wording says exactly that.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L8 §3** says sorting applicants into risk groups "is what keeps the pool viable **at all**", beside "applications ask about health history". Compulsory enrollment is the other textbook answer to adverse selection, and it is how the health systems of ko/ja readers (and US ACA community rating) work. Arguable rather than wrong — the example is life insurance — so left; a run wanting a content pick could take it.
+- **`q039` `opts[3]` in ko/ja** renders "would give it room" as a counterfactual past (*있었을 것이기 때문이다* / *余地があったはず*), i.e. "would have had room". Meaning-shifting but inside item 160's length-locked option; O-3.
+- **Backlog untouched** (0 b), for W-7.2 rule 5's 2026-09-13 test.
+
+**Owner-facing, one line:** lesson 25's takeaway and its quiz explanation promised learners that fifteen years of invested money would recover from "any" bad stretch before it was needed — which the same track's lesson 44 already says is only an average, and which Japan's market after 1989 disproves — so both now say "historically usually, not always", in all five languages. It reaches learners on the next push (**O-5**); translations unreviewed by a fluent speaker (**O-3**); **O-6** still waiting on you.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 575499 b, run log 136663 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4). Backlog: 0 b added.
