@@ -204,6 +204,23 @@ for the history. No open P1/P2 items.
 > the market.json the live host actually served and projects the date the live screen goes dark. It is
 > an advisory and never fails the verdict, deliberately.
 
+> **O-6 (new 2026-09-12, decision not action, and its trigger condition was set by a previous run
+> rather than by this one). Thirteen archiving passes have each reimplemented the same move by hand.**
+> The twelfth pass (2026-09-11) parked the automation question behind an explicit test: *“If the
+> thirteenth pass also needs no recipe change, put the automation question to the owner rather than
+> deciding it in a run.”* **This run is the thirteenth and the recipe did not move** — the same
+> assertions, the same four proofs, the same two tamper plants, all reused verbatim.
+> **Why a run must not just build it.** W-6.2 rule 3 asks what learner-visible failure a new check
+> would catch, and the honest answer here is **none** — no learner can see the agent log. W-6.3 asks
+> which side of the instrument-to-app ratio a proposal falls on, and a mover script falls on the
+> `scripts/` side, which is already **2.19x** the app. Against that: the one defect these passes have
+> ever shipped (an inverted archive section) is precisely the step a script cannot get wrong, and this
+> repo has twice concluded a standing manual recipe belongs in a script (`npm run clean-tree`, the
+> former `npm run deploy`: *“nobody should have to remember”*).
+> **The question, and it is a genuine trade, not a formality:** automate the move (more `scripts/`
+> mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
+> proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
+
 > ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
 >
 > **The week shipped 113 commits, build and tests green, and the app went LIVE. That is the largest
@@ -733,6 +750,16 @@ archive-reading proofs, and a one-line live deletion failed only the reconstruct
 **On the note below: one pass without a change is not "stopped moving".** The mover and the proof
 stayed in the scratchpad for the note's own W-6.3 reason. If the thirteenth pass also needs no recipe
 change, put the automation question to the owner rather than deciding it in a run.
+
+✅ **A THIRTEENTH PASS RAN 2026-09-12 (scheduled dev-agent).** 2026-09-10 moved (**5 entries,
+37,166 b**), run log **271,710 → 234,544 b** (108.7% → 93.8% of warn), file **706,725 → 669,559 b**.
+The level WARN fired and the instrument named the cut; one day cleared it, so one day moved. **No
+clause was reworded and no budget was touched.** Two scheduled runs had deferred this while naming
+it, which is why it was over the warn line rather than approaching it.
+**The recipe did not move this pass either — so the question the twelfth pass parked is now DUE, and
+it is the owner’s.** That pass wrote: *“If the thirteenth pass also needs no recipe change, put the
+automation question to the owner rather than deciding it in a run.”* It needed none. The condition is
+met and the question is filed as **O-6** in the owner block above — not decided here.
 
 📝 **Note for the next pass, filed rather than built (W-6.2 rule 2 — a NOTE, not a numbered item).**
 Seven passes have each reimplemented the move by hand, and the one defect that has actually shipped —
@@ -4919,433 +4946,6 @@ same journey.
 
 ## Run log
 
-### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free, but the pick was forced before any backlog read mattered: `npm run build` exited 1 on the first command of the run) — the machine this task runs on cannot build this repo, because the other Mac's `node_modules/` synced over it through iCloud, and npm's own error message tells the reader to delete a tracked file
-
-**The pick.** The baseline `npm run build` failed: *Cannot find module @rollup/rollup-darwin-arm64*,
-with npm's advice to *"try `npm i` again after removing both package-lock.json and node_modules"*.
-`npm test` passed in the same tree (exit 0), because no check loads a native binary. **So every
-learner-visible change a run makes here is unverifiable, and the failure's own remedy deletes a tracked
-file and, per the owner's migration notes, breaks the other Mac.** Fixing that came before any backlog item.
-
-#### Step 3.5 — premise measured, with controls, before editing
-- **Which machine.** `uname -m` **arm64**, `sysctl.proc_translated` **0**; `/usr/local/bin/node` is a
-  **universal** binary, so the slice that runs follows the calling shell. The untracked `Migration/`
-  notes (owner material, read only) record the setup: the dev agent moved to this arm64 Mac on
-  2026-09-07; the market-data and weekly-review tasks stay on the x86_64 Mac; the folder, `.git/`
-  and `node_modules/` included, syncs through iCloud.
-- **What is installed.** `node_modules/@rollup/` holds only **`rollup-darwin-x64`**, and
-  `node_modules/@esbuild/darwin-x64/bin/` is **empty** — dir mtimes 2026-09-09 20:07. **The tree builds
-  under neither CPU:** `arch -x86_64 npm run build` also exits 1 (esbuild: *"installed for another platform"*;
-  the binary it wants is the missing file).
-- **Not a stalled-run backlog.** No commit since `3bb7bfe` (09-09 20:11 EDT). Session list: the last
-  "Economic app dev agent" session ended 2026-09-10 00:12 UTC, the one that made `3bb7bfe`, and none started
-  after it, so the 18-hour gap is the schedule not firing, **not runs dying on this**. A transcript
-  search for `rollup-darwin-x64` hits only the 09-07 migration session, so the 09-09 runs built normally
-  and the breakage postdates them.
-- **The out-of-tree route reproduces HEAD, with a control.** Copied the build inputs to the scratchpad,
-  arm64 `npm ci` + `npm run build` → **exit 0**, entry bundle **`index-DKsM5VMX.js`**, the hash
-  `3bb7bfe`'s entry reported; `cmp` against the synced `dist/` copy → identical, and the full fileset matches.
-- **The probe's two directions.** `node -e 'require("rollup")'` and an esbuild `transformSync` →
-  **exit 1 / 1** on the synced tree, **0 / 0** on the out-of-tree copy (0.16 s together).
-- **No iCloud conflict copy** of any tracked file (`* 2.*` at the root: none).
-
-#### What shipped
-- **`scripts/bootstrap-node.sh`** (+30 lines), which every run executes first: after choosing a
-  Node it loads rollup's and esbuild's native binaries with that Node. If they do not load, it prints a
-  ⛔ to stderr naming the CPU and the installed platform packages, points at the new script, and says not to delete
-  `package-lock.json` or reinstall in place. **stdout and exit status are unchanged**, so every
-  existing `BIN_DIR="$(scripts/bootstrap-node.sh)"` caller behaves exactly as before.
-- **`scripts/build-out-of-tree.sh`** (new, 96 lines): `npm run build` with dependencies in
-  `$HOME/.cache/ecycles-build` (outside iCloud). `npm ci` re-runs only when `package.json`,
-  `package-lock.json` or the Node CPU changes, and the result is mirrored back into `./dist` (`--no-copy-back` to skip). It refuses
-  a work dir inside the repo, `~/Documents`, `~/Desktop` or iCloud Drive, **before creating anything**,
-  and refuses to run if `check-deployed.mjs`'s `BUILD_INPUTS` line changes without it.
-- **`README.md`**: one paragraph under Running locally.
-- ⛔ **Not touched: the synced `node_modules/` itself.** Reinstalling it here would sync arm64 binaries to
-  the x86_64 Mac. That is the owner's call (see the end of this entry).
-
-W-6.2 rule 3's sentence, since this adds tooling: **without it, a run on this Mac cannot build, so no
-learner-visible change can be checked in the built app before it ships.** W-6.3 on this tree,
-tracked `scripts/` lines over `src/` minus `content/`+`locales/`: **23,383 / 10,656 = 2.19x before, 2.20x
-after** (+96 lines). Same instrument both sides; not comparable to earlier entries' method.
-
-#### Verification — every branch run, exit codes read directly
-| Case | Result |
-|---|---|
-| bootstrap, synced (broken) tree | ⛔ naming `@esbuild/darwin-x64 @rollup/rollup-darwin-x64` and `darwin-arm64`; stdout `/usr/local/bin`; exit 0 |
-| bootstrap, healthy copy | "the rollup and esbuild native binaries load under this Node."; exit 0 |
-| bootstrap, no `node_modules` | silent about deps; exit 0 |
-| build-out-of-tree `--no-copy-back`, cold | `npm ci` for darwin-arm64, exit 0, `index-DKsM5VMX.js`; `diff -r` vs synced `dist/` → **0 lines, 32 = 32 files** |
-| same, warm | "already match this lockfile", no install, exit 0 |
-| default (copy-back) | exit 0; `dist/` before/after `diff -r` exit 0 |
-| work dir in repo / relative into repo / `~/Documents` | exit 2, **dir not created** (each checked) |
-| drifted `BUILD_INPUTS` (planted in a scratch copy; plant grepped at 1) | exit 2 |
-| npm not on PATH / unknown arg | exit 2 / exit 1 |
-
-⚠️ **One control of mine was not what I labeled it.** A "scratchpad path is accepted" probe ran with
-npm off PATH and stopped at the npm guard, which runs **before** the path guard, so it proved only the
-npm guard. The real acceptance evidence is the cold build from the default `~/.cache` path above.
-`bash -n` clean on both scripts. **`npm test` failed once, correctly:** §26 flagged README naming
-`scripts/build-out-of-tree.sh` while the file was untracked (§26 resolves against the git index). After
-staging: **`npm test` exit 0, warnings 3 → 3.** `npm run check-blindspot` exit 0.
-
-#### Step 5 — adversarial self-check
-**Blindspot register: nothing found.** No lesson, locale, market or kids file changed; the diff greps
-**0** for `dalio|principles|should buy|should sell|we recommend|for kids|for children` against a
-positive control (`node_modules`) at **12**. No date or figure reaches `dist/`: `dist/` is byte-identical
-before and after.
-**DECISIONS.md conflict: none.** `node_modules|icloud|out-of-tree|bootstrap-node|rollup|esbuild` → **0**
-hits, against `localStorage` at **13**. Vite is untouched, `package.json` is untouched, and the Pages
-workflow still runs `npm ci && npm run build`.
-**Already-done backlog item: none.** `out-of-tree|icloud|native binar` → **0** hits in this log,
-against `bootstrap-node` at **8**. `bootstrap-node.sh`'s one job ("which bin directory builds this
-repo") is extended, not duplicated.
-**My own verification claim.** Every row above is reproducible from the commands named. Two limits:
-(1) **I did not observe the x86_64 Mac.** "A reinstall here breaks it" is the migration notes' claim
-plus today's mirror-image measurement on this Mac, not a test on that Mac. (2) **Who installed x64 at
-20:07 is not established**, and nothing here claims it. `npm run check-deployed -- --identify` still symlinks the synced
-`node_modules/`, so it will fail on this Mac in the same state. Seen, not fixed: out of scope for one run.
-
-#### ⛔ For the owner — a decision, not a restated blocker
-**Should `node_modules/` keep syncing between the two Macs?** Your migration notes already name the
-fix (exclude it from iCloud on both Macs, e.g. `node_modules.nosync` + symlink, then `npm ci` on each).
-Until that happens, **whichever Mac installs last breaks the other one's `npm run build`.** This run
-worked around that for the dev agent without touching either Mac's copy; it did not decide the question.
-
-**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
-
-**Log size.** `MEASURED log-size: file 556249 b, run log 120744 b, floor 435505 b (backlog 397099 b),
-archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog floor is unchanged; this run
-added no numbered item.
-
-### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's residual, `check-deployed -- --identify` symlinking the synced `node_modules/`, was seen and deliberately not taken; this pick came from a sweep of the least-mentioned files in `src/`) — the parent guide tells a parent that one scarce toy getting pricier "is exactly what grown-ups mean by inflation", and every definition of inflation this app teaches says the opposite
-
-**The pick.** Counting each `src/` file's basename across both logs put `MarketSignals.jsx` (3) and
-`ParentGuide.jsx` (5) at the bottom of the screens. Both have had layout and a11y passes; **neither's
-content has been read for accuracy.** Item 167's fifth note swept glossary↔lesson agreement across
-`markets.js` and `economicSignals.js`, **not `kidsContent.js`**. `markets.js`'s `rateEffects` read
-clean (directions only, hedged notes). `kidsContent.js` did not.
-
-#### Step 3.5 — premise measured on the built app, with a control in the same page load
-- **The defect.** `kidsContent["5-8"].lessons[1]`: the kid-facing text is *"If everyone wants the same
-  toy but there aren't many, the price goes UP. That's like inflation!"* (an analogy, and fine as one).
-  Its `why`, the line addressed to the parent, said *"This is exactly what grown-ups mean by inflation —
-  prices for things like groceries and gas can rise the same way."* **Too many buyers for one scarce good
-  is a relative price change, not inflation.** Inflation is a rise across the general price level.
-- **The app's own definition is the control, and it disagrees with the sentence.** English lessons:
-  economy *"When spending and incomes grow faster than the town can really produce … that's inflation"*;
-  essentials lesson 9 *"when spending and incomes across an economy grow faster than the goods and
-  services actually produced, prices rise"*; glossary `Inflation` *"When prices rise because spending
-  grows faster than production."* All three are economy-wide, and none is about one good.
-- **Live, `index-DKsM5VMX.js` (= HEAD), Reference → Kids → Ages 5-8:** subject sentence present
-  **true**, control `TRANSACTION` (the row above, known present) **true**, same page load.
-- **Not previously decided.** `grown-ups mean` → **0** hits across both logs against `kidsContent` at
-  **56**. Item 167(d) deliberately left `kidsContent.js:84`'s `$2+ trillion` alone. That is a different row
-  and a different class, and it is still untouched.
-
-#### What shipped
-One line, `src/content/kidsContent.js` (`git diff --numstat` **1 / 1**): the `why` in all five
-languages now reads, in English, *"One toy getting pricier is just that toy. Inflation is when prices of
-almost everything — groceries, gas, rent — rise together, usually because spending across the whole
-economy grows faster than what gets produced, so the same money buys less."* That is the app's own
-definition, hedged with "usually" (cost-push inflation exists). The translations reuse each language's
-existing term from essentials lesson 9 (`inflación`, `인플레이션`, `通胀`, `インフレ`), carry **no quotation
-marks** (§56's per-language repertoire) and **no digits** (ja writes `ひとつ`, not `1つ`). The kid-facing
-`text` is unchanged: the analogy stays, and the parent now gets the bridge instead of a false equation.
-⚠️ **O-3, disclosed:** the four translations are new unreviewed machine prose replacing old unreviewed
-machine prose on the same unit (~130-300 code points each). No fluent reader has checked them.
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; §66 `0/192` under threshold (this `why` is not in `READ_COMPLETE`, and every new translation is longer than the old); §55 and §56 hold; §10.3 both `ok` |
-| `scripts/build-out-of-tree.sh` | **exit 0**; `Reference-D7EZqbym.js` 68.92 kB → **`Reference-DH3_Im7Z.js` 69.76 kB**, entry → `index-BFgba3Tq.js` |
-| `dist/assets` grep | new string in **all 5 languages** → `Reference-DH3_Im7Z.js`; old string in en/es/ko/zh/ja → **no file**; control `TRANSACTION`/`TRANSACCIÓN` → `Reference-DH3_Im7Z.js` |
-| Live, `index-BFgba3Tq.js`, language set through the real `<select>` change event | **en/es/ko/zh/ja: new true, old false, control true**, `html lang` and the age tab label switching each time |
-
-⚠️ **One instrument miss of my own, caught by its own output:** the first multi-language pass looked for
-the picker among buttons and returned `no picker button` for all five languages. The picker is a
-`<select>`. English had been verified separately on that load; the other four were verified only on the
-second pass, above.
-
-#### Step 5 — adversarial self-check
-**Blindspot register: nothing found.** Added lines grep **0** for
-`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
-mode|as of 20xx|today`, against **1** over the whole `kidsContent.js` (positive control). No date or
-figure added. §10.3: the `why` still addresses an adult and renders only in `ParentGuide.jsx`.
-`check-blindspot` passed inside `npm test`.
-**DECISIONS.md conflict: none.** Its `kidsContent|ParentGuide` hits (lines 330-349, 507, 723) record
-that kids copy stays parent-facing and that content is `.js` modules. This edit keeps both and changes
-no shape.
-**Already-done backlog item: none.** Item 21 added the `why` field (2026-08-16); nothing since corrected
-this row's meaning (`36c0f5a`/`899426c` completed abridged *translations*, which is §66's class, not accuracy).
-**My own verification claim.** Every row above is reproducible from the commands named. The limit:
-**the claim that one good's price rise is not inflation rests on the standard textbook definition plus
-the app's own three definitions**, not on a source fetched this run. W-6.3: `scripts/` untouched, ratio
-unmoved.
-
-#### Seen on the same read, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **ko/ja `9-12.lessons[6].text` teach a US checkout.** All five languages say the shelf price usually
-  isn't what you pay because sales tax is added at the register (ja: `売上税`). Japan has required
-  tax-inclusive display since April 2021, and Korean shelf prices include VAT, **so for a ja/ko parent the
-  blurb describes a country they are not in.** That is from knowledge, not measured this run; it is also a
-  localization decision (O-3-shaped), not a wording fix.
-- **Two unsourced superlatives in `why` lines**: `9-12.lessons[5]` *"the single habit that keeps adult
-  budgets … out of trouble"* and `13-17.lessons[3]` *"the single biggest predictor of whether a first
-  bank account … stays out of trouble"*. Both are empirical claims nothing in the corpus supports, and
-  both are rhetorical overreach rather than a wrong definition. Lower priority than this run's fix.
-  **Neither is picked by default.**
-
-**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
-
-**Log size.** `MEASURED log-size: file 564398 b, run log 128893 b, floor 435505 b (backlog 397099 b),
-archive 3881729 b` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged; this run added
-no numbered item and put its notes here, in the archivable run log, rather than under item 21.
-
-### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's two notes both end "not picked by default" and were not taken; this pick came from a sweep of content modules never read for accuracy) — lesson 3's compound-interest caption says the gap "is more than twice as wide" by year 30, and no reading of that sentence is true; the app's own figure instrument declined to assert it on 2026-08-28 for exactly that reason and nobody fixed the sentence
-
-**The pick.** Item 160 was checked first (the standing `npm test` WARN) and **not** taken: its ⛔ stop line
-says everything still open is class B, which is O-3's. `sectors.js` and `policyScenarios.js` read clean.
-`moneyVisuals.js` has **44** mentions across both logs and **0** of them are about accuracy, against
-`lessonTerms` at 2 (a control showing the grep can hit). Five of its seven figures have `check-data.mjs`
-guards (§21, §50, §53, §54, §57). Lesson 3's compound figure and lesson 27's loss figure have none.
-
-#### Step 3.5 — premise measured, with controls, before editing
-- **The data is right.** Recomputed `1000·1.06^t` and `1000+60t` in Node (control `1.06^10` =
-  1.790847697, published value, fired): **7/7 compound and 7/7 simple values match** the shipped series.
-- **The caption is not.** `compoundCaption.en`: *"…so the gap widens every year — and by year 30 **it** is
-  more than twice as wide."* The subject is the gap, and the sentence does not say twice as wide as what.
-  Measured: the gap at 30 is **$2,943**, which is **1.64×** the year-25 gap and **2.92×** the year-20 gap.
-  No natural referent gives "twice". What the chart shows at its right edge is the compound **balance** at
-  **2.051×** the simple one ($5,743 / $2,800). es/ko/zh/ja all make the same "the gap is more than
-  double" claim.
-- **Not previously decided.** `AGENT_LOG.archive.md:28996` (item 136, 2026-08-28) saw it: *"deliberately
-  **not** asserted, because 'twice as wide' as what is genuinely ambiguous"*. That run declined to encode
-  the sentence in `figureClaims` and did not fix it, so this run reverses nothing. `DECISIONS.md` has no
-  entry on the wording. (My first "known present" control for that grep, `budgetCaption`, returned **0**
-  and so proved nothing. `bracketCaption` at **3** is the control that fired.)
-- **Live, `index-BFgba3Tq.js` (= HEAD), `#/lesson/3`, one page load:** subject **true**, lesson-body
-  control `Rule of 72` **true**, negative control **false**. ⚠️ Two instrument misses, both caught by their
-  own controls. (1) The first pass seeded `localStorage` and then changed only the hash. `useAppState`
-  reads `seenDisclaimer` once at mount, so the page stayed on the first-run dialog and every probe read
-  false, the positive control included. A real `location.reload()` fixed it. (2) The title probe read
-  false because CSS uppercases the title in `innerText`; `figcaption` shows it present.
-
-#### What shipped
-`src/content/moneyVisuals.js`, `compoundCaption` only (`git diff --numstat` **5 / 5**). English now
-ends *"— and by year 30 the compound balance is more than double the simple one."*, which is 2.051×, true
-as measured. The other four languages say the same thing (`el saldo compuesto es más del doble que el
-simple` / `복리 잔액이 단리 잔액의 두 배를 넘습니다` / `复利的余额已超过单利的两倍` /
-`複利の残高が単利の2倍を超えます`). The first half of the caption, the data, the title and the description are
-unchanged. ⚠️ **O-3, disclosed:** four unreviewed machine translations replace four unreviewed ones, in a
-file `DECISIONS.md:721-739` records as **outside** translation-ledger coverage. No fluent reader has checked them.
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; §55 and §56 hold over 1,239 strings per language |
-| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; `LessonReader-BRP-xIFf.js` 94.01 kB → **`LessonReader-DsBnwP7-.js` 94.15 kB**; entry `index-BFgba3Tq.js` → **`index-DNIjzpEU.js`** |
-| `dist/assets` grep | new string, all 5 languages → `LessonReader-DsBnwP7-.js`; the 5 old strings → **no file**; control `Simple interest adds $60 a year forever` → `LessonReader-DsBnwP7-.js` |
-| Live, `index-DNIjzpEU.js`, `#/lesson/3`, language set through the real `<select>` change event | **en/es/ko/zh/ja: new true, old false, same-caption control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
-
-#### Step 5 — adversarial self-check
-**Blindspot register: nothing found.** Added lines grep **0** for
-`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
-mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). No date,
-no market figure, and no return claim: the 6% stays the lesson's teaching rate under `illustrationNote`,
-and "more than double" describes that example's arithmetic, not an expectation. `check-blindspot`
-passed inside `npm test`.
-**DECISIONS.md conflict: none.** Its two `moneyVisuals` hits (721-739) are the ledger-scope note, which
-this entry discloses rather than contradicts. Content stays a `.js` module, and no state or build path changed.
-**Already-done backlog item: none.** Item 27 created the caption (`39513e9`, 2026-08-16) and item 136
-declined to assert it. `git log -S'more than twice as wide'` shows only the creating commit.
-**My own verification claim.** Every row above is reproducible from the commands named. The limit: "no
-natural referent gives twice" rests on the gap ratios measured above against the obvious comparisons
-(the previous sample, 10 years earlier, the simple balance, simple interest earned: 1.64 / 2.92 / 1.05 /
-1.64). A reader could invent some other referent, and that is itself the defect. W-6.3: `scripts/` is
-untouched and the ratio has not moved.
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **The new caption now carries a checkable ratio, and nothing checks it.** Change lesson 3's teaching rate
-  to 5% and the balance ratio at 30 becomes **1.73×**, so the caption goes false with every check green.
-  The learner-visible failure is real (W-6.2 rule 3 passes), but there are zero live instances and the rate
-  has never moved. **Not picked by default.**
-
-**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
-
-**Log size.** `MEASURED log-size: file 571681 b, run log 136176 b, floor 435505 b (backlog 397099 b),
-archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
-and no numbered item was added.
-
-### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's only note, the unchecked caption ratio, ends "not picked by default" and was not taken; this pick came from a sweep of content modules never read for accuracy) — two quiz explanations send the learner to "option 0", "option 1" and "option 3" on answer options that carry no numbers, and a learner who counts from 1 lands "option 3" on the correct answer
-
-**The pick.** Counting each `src/content/` module's mentions across both logs, and how many of those
-mention accuracy: `economicSignals.js` 15 / 0 (read, clean: hedged and dateless) and `quizText.en.js`
-11 / 1. The quiz is the module a learner is graded on, so it was read end to end against `quizMeta.js`.
-The answer key held (46/46 matched by reading). The explanations did not.
-
-#### Step 3.5 — premise measured, with controls, before editing
-- **The defect.** `q041` (lesson 27) and `q042` (lesson 28) name distractors by **zero-based array index**:
-  *"Sunk cost (option 0)"*, *"FOMO (option 1, “Everyone Can't Be Wrong — Can They?”)"*, *"loss aversion
-  (option 3, …)"*. That is 4 references per language and 20 in all (`opción N` / `선택지 N` / `选项N` /
-  `選択肢N`), and no other quiz or lesson string has one (grep, all five languages).
-- **What the learner sees.** `Question.jsx` renders each option as bare text: no number, no letter, no
-  shuffle anywhere in `src/`. So "option 0" names nothing on screen. A learner who counts from 1 reads
-  "FOMO (option 1)" as *Sunk cost* and "loss aversion (option 3)" as *Overconfidence*, **the correct
-  answer**, in the explanation that is supposed to rule it out.
-- **Live, `index-DNIjzpEU.js` (= HEAD), `#/lesson/28`, state seeded then `location.reload()`:** clicked
-  option index 1. The explanation contained `(option 1` **true** and `(option 3` **true**, and a label
-  regex over the four option texts returned **false**. Controls: `FOMO` in the body **true**, a
-  nonexistent string **false**.
-- **Not previously decided.** `AGENT_LOG.archive.md:34758` and `:34856` each checked that these refs
-  "still resolve" after an edit, meaning against the array and never against the screen, so this
-  reverses nothing. `git log -S'(option 0)'` → `95e60a5` (the 2026-08-17 quiz split, which carried the
-  text over from `quizData.js`).
-- **Same file, one word, disclosed as a second fix:** `q044` (lesson 42, `b6c9bc9`) said *"neither is worth
-  more **per pound**"* of two **$1,000** amounts. es/ko/ja say per dollar (`por dólar` / `1달러당` /
-  `1ドルあたり`) and zh says per unit (`单位价值`). §55 cannot see it: "pound" is not a spelling variant.
-
-#### What shipped
-`quizText.{en,es,ko,zh,ja}.js` (`git diff --numstat` en **3 / 3**, the other four **2 / 2** each). All 20
-index parentheticals are gone. Each distractor is already named by the words its option starts with,
-and the two lesson-title cross-references are kept as bare parentheticals, so §16's title-reference
-checks see the same text. en `per pound` → `per dollar`. **No option text, option order, `quizMeta.js`
-or answer index changed.** The translations are **deletions only**, so this adds no new machine prose
-(O-3 unaffected). ko keeps `매몰비용은`, since `용` ends in a consonant.
-⚠️ **One slip of my own, caught before verification:** the first es `replace_all` dropped the trailing
-space and wrote `hundidoes` / `hundidotrata`. Repaired; `grep -c` for both is **0**, and the live es read
-below asserts `El costo hundido trata` is present.
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` | **exit 0**, WARN **3 → 3**, FAIL **0**; WARN/FAIL lines **byte-identical** before/after (`diff`); §16b 0 in all languages; §55/§56 hold over 1,239 strings per language |
-| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; `quizText.en-CBxzlRI7.js` etc.; entry `index-DNIjzpEU.js` → **`index-BbEqwSdA.js`** |
-| `dist/assets` grep | 7 new strings → their own language's `quizText` chunk (3 also match `lessonContent.money.<lang>`, which carries its own reference to that title); **12 old forms → no file**; control `Present bias means an immediate reward` → `quizText.en-CBxzlRI7.js` |
-| Live, `index-BbEqwSdA.js`, `#/lesson/28`, language set through the real `<select>` change event | **en/es/ko/zh/ja: positional ref false, title kept true, new sunk-cost clause true, options unlabeled**; `html lang` en/es/ko/zh-Hans/ja |
-| Live, same load, en | `#/lesson/27`: positional ref **false**, new clause **true**. `#/lesson/42`: `per dollar` **true**, `per pound` **false** |
-| Instrument controls | the positional regex **fires** on the old en and ko wording and stays **silent** on the new; negative body string **false** |
-
-#### Step 5 — adversarial self-check
-**Blindspot register: nothing found.** Added lines grep **0** for
-`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
-mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). Nothing was
-added except the word "dollar". `check-blindspot` passed inside `npm test`.
-**DECISIONS.md conflict: none.** Its 3 hits for `quizText|explain|(option` are a glossary sweep (494), the
-translation-review option (b) (711) and quiz append order (877). Order is untouched.
-**Already-done backlog item: none.** The two archived checks verified that these refs resolved; removing
-the refs leaves nothing depending on option order.
-**My own verification claim.** Every row is reproducible from the commands named. The limit: "a learner
-counts from 1" is a reading of how people count, not a user study. But "option 0" names nothing visible
-under any reading, and that part is measured. W-6.3: `scripts/` is untouched and the ratio has not moved.
-
-#### Seen on the same read, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **Nothing guards against a positional option reference coming back.** W-6.2 rule 3's sentence exists
-  ("an explanation pointing a learner at 'option 3' when options carry no numbers"), but there are zero
-  live instances. **Not picked by default.**
-- **`q021`: "A raise can never shrink your take-home pay"** holds for brackets alone. Credit and benefit
-  cliffs are exceptions; that comes from knowledge and was not measured this run. The question is scoped to
-  brackets, so this is overreach at the edge, not a wrong definition. **Not picked by default.**
-- `q025`'s "two-thirds of the way through" crossover depends on the rate (roughly 42% at 4% and 67% at
-  7%, computed this run). **Already recorded:** `moneyVisuals.js:744-764` derives the figure's curve from
-  that phrase at about 6.9%. Not a new finding.
-
-**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
-
-**Log size.** `MEASURED log-size: file 578338 b, run log 142833 b, floor 435505 b (backlog 397099 b),
-archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
-and no numbered item was added.
-
-### 2026-09-10 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's notes all end "not picked by default" or "already recorded" and were not taken; this pick came from the same sweep of content modules never read for accuracy) — the glossary defined GDP as the value of "all goods/services produced", which counts the flour and then the bread, and said the Fed sets a rate that "influences ALL other rates" when its own Interest Rate entry and lesson 35 both say otherwise
-
-**The pick.** Counting each `src/content/` module's log mentions, and how many of those concern accuracy:
-`glossary.js` **86 / 0** and `markets.js` **47 / 0**, the two largest modules never read for accuracy
-(control: `quizText.en.js` at **8 / 1**, the previous run's pick, so the counter can hit). Both were
-read end to end in English. `markets.js` produced no finding (see the last note). The glossary produced
-three candidates, and step 3.5 dropped one of them.
-
-#### Step 3.5 — premise measured, with controls, before editing
-- **Dropped: `Yield Curve`'s "Inverted = recession signal within 12-18 months".** It sits against
-  `markets.js`'s "not every inversion was followed by one", but item (b) (2026-09-05, `AGENT_LOG.md`
-  ~2230) checked this exact line and kept it **deliberately**: *"do not re-derive this"*. Not reversed.
-  ⚠️ Instrument miss, caught by its control: the first `ugrep` for `invert` returned **nothing** although
-  `markets.js` contains "inverted" (the multibyte `.{0,N}` pattern exceeded ugrep's complexity limit,
-  silently there and loudly on the other two greps). `/usr/bin/grep` hit the control on the re-run.
-- **GDP.** BEA's page (`bea.gov/data/gdp/gross-domestic-product`, fetched this run; control: it had to
-  quote a definition verbatim or say it found none) defines GDP as the value of the **final** goods and
-  services produced in the US, *"without double counting the intermediate goods and services used up to
-  produce them"*, and reports **real** GDP. The glossary said *"Total value of all goods/services
-  produced. Rising = expansion."* ko/zh/ja also said "all" (`모든` / `所有` / `全ての`), and es said "total
-  value of goods and services produced". Nothing better is on the path: lesson 39 is `defined-here` for
-  GDP and says "the total value of everything the economy produced".
-- **Fed Funds Rate.** The Fed's open-market page (fetched; control: it had to give a dated target-range
-  row, and it did: **3.50-3.75%, 2025-12-11**) describes "the target range set by the FOMC". The glossary
-  said *"Set by the Fed. THE key rate that influences ALL other rates."* The same file's `Interest Rate`
-  entry says "most other rates" and lesson 35 says "nearly every other rate", so the app disagreed with
-  itself one tab apart. es/ko/zh/ja carried both claims (`TODAS` / `다른 모든` / `所有其他` / `他のすべて`).
-- **Live, `index-BbEqwSdA.js` (= HEAD `df47efb`), `dist/` served statically, Reference › Glossary:** old
-  GDP **true**, "ALL other rates" **true**, "Set by the Fed." **true**. Controls: CPI "PCE price index"
-  **true**, Interest Rate "most other rates" **true**. Negative **false**. ⚠️ The first probe read **all
-  false, controls included**: it looked for the tile before the hub had rendered. The controls are what
-  said so.
-- **Not previously decided.** Logs grep for `goods/services produced|ALL other rates|Set by the
-  Fed|final goods`: only archive:730 (added GDP's rule of thumb and did not judge the definition) and
-  archive:8208 (quotes it as an example). `DECISIONS.md` has no glossary-wording entry. Both strings
-  date to the 2026-08-02 monolith split (`98a79ce`).
-
-#### What shipped
-`src/content/glossary.js`, the `f` of two entries only (`git diff --numstat` **2 / 2**). **GDP:** the final
-goods and services produced within a country over a period; inputs are not counted again (the flour a
-bakery buys is already inside the price of its bread); **real (inflation-adjusted)** GDP rising =
-expansion. The rule-of-thumb sentence is kept word for word. **Fed Funds Rate:** the Fed does not set it
-directly; it sets a target range and steers the market rate into it. The rate influences **most** other
-rates, from mortgages to savings accounts, which is the `Interest Rate` entry's own wording. `s` and `ex`
-are untouched in both. ⚠️ **O-3, disclosed:** eight new machine-written `f` strings (es/ko/zh/ja × 2), in
-a file whose header records it as outside translation-ledger coverage. No fluent reader has checked them.
-
-#### Verification
-| Check | Result |
-|---|---|
-| Node import of `glossary.js` | new strings **10/10** present, old forms **10/10** absent, 43 terms; CPI control present, negative absent |
-| `npm test` | **exit 0**; WARN/FAIL lines **identical** before/after (`diff`), WARN 3, FAIL 0; §55/§56 hold over 1,239 strings per language |
-| `scripts/build-out-of-tree.sh` (copy-back) | **exit 0**; entry `index-BbEqwSdA.js` → **`index-DEzHCSTd.js`** |
-| `dist/assets` grep | the 10 new strings → `markets-C9nU5ptm.js`, the chunk the CPI control lands in; 7 of 8 old forms → no file; `由美联储设定` → `quizText.zh` (a different surface, see the first note) |
-| Live, `index-DEzHCSTd.js`, Reference › Glossary, language set through the real `<select>` change event | **en/es/ko/zh/ja: both new true, both old false, CPI control true, negative false**; `html lang` en/es/ko/zh-Hans/ja |
-| Live, same load, `#/lesson/38`, GDP chip | new definition **false before the click, true after**; `aria-expanded` true; old false |
-
-#### Step 5 — adversarial self-check
-**Blindspot register: nothing found.** The 2 added lines grep **0** for
-`dalio|principles|should buy|should sell|we recommend|buy now|good time to buy|for kids|for children|kids
-mode|as of 20xx|today|guarantee`, against **17** in `check-blindspot.mjs` (positive control). The
-2025-12-11 range appears only in this entry and never in the app, so no live-looking figure was added.
-Both entries still say what a thing IS, the header's §10.1 rule. `check-blindspot` passed inside `npm test`.
-**DECISIONS.md conflict: none.** Its glossary hits are Back navigation and the curated chip map. Content
-stays a `.js` module.
-**Already-done backlog item: none reversed.** Item (b)'s kept yield-curve line is untouched, and
-archive:730's GDP rule of thumb is kept word for word.
-**My own verification claim.** Every row reproduces from the commands named. The limits: both external
-pages were read through WebFetch's summarizer, which quoted them, so a reviewer should reopen the two
-URLs rather than trust the quotes. The bakery flour is an illustration of an intermediate good under
-BEA's definition, not a measured figure. W-6.3: `scripts/` is untouched and the ratio has not moved.
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **The quiz still says the rate is "set by the Federal Reserve"**: `quizText.{en,es,zh}.js:128`
-  `explain`. ko/ja did not match the pattern and were not read. It is common shorthand in an explanation
-  about the ripple to other rates, and the glossary one tap away is now precise. **Not picked by default.**
-- **Lesson 39's inline GDP line** ("the total value of everything the economy produced") is missing
-  "final" too. It is analogy prose inside ledger-reviewed lesson bodies in five languages. **Not picked by
-  default.**
-- **es glossary mixes "el Fed" and "la Fed"**: CPI's `f` says "del Fed", and Fed Funds now says "La Fed",
-  matching its own `ex`. Pre-existing, O-3's class. **Not picked by default.**
-- `markets.js`'s balance-sheet bars (0.9 / 4.5 / 3.8 / 9.0 / 6.7 $T) were **not** checked against a
-  source this run. Its caption says the shape, not the level, is the point.
-
-**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
-
-**Log size.** `MEASURED log-size: file 585373 b, run log 149868 b, floor 435505 b (backlog 397099 b),
-archive 3881729 b, 2 live day(s)` (`npm test`, 2026-09-10, before this entry). The backlog is unchanged
-and no numbered item was added.
-
 ### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 free — the previous run's notes all end "not picked by default" and were not taken; this pick came from a census of lesson BODIES never read for accuracy) — lesson 33 names the US in 2008 as a long-term debt peak, then tells the learner that almost nobody alive remembers the last time it peaked, and its figure repeats that sentence as a caption
 
 **The pick.** The last four runs counted `src/content/` modules by log mentions. That census cannot see
@@ -7666,3 +7266,62 @@ en (490ch, up from 143; the track's takeaways run 119–395ch, so this is the lo
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Before this entry: `MEASURED log-size: file 694104 b, run log 259089 b, floor 435015 b (backlog 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4). **The archiving pass is still the clean non-residual pick, and is now one run more overdue.**
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #2 in this chain, which the rule allows: the previous TWO scheduled runs each closed by nominating this pass, and rule 1's limit is three) — W-5.3's **thirteenth** firing: the run log had gone **over** its warn budget rather than near it, the oldest live day moved in one piece, and the recipe did not move for the second pass running — which is the condition the twelfth pass set for escalating the automation question to the owner
+
+#### The pick, and why the two runs that deferred it were right to and this one is not deferring again
+The last two scheduled entries both closed on this pass. **Both were right on their own terms** — each traded a chore against a real learner-visible defect on the main path, and each said so with a measurement. What changed is which side of the line the number sits on:
+
+| run | run log | vs 250,000 b warn | their call |
+|---|---|---|---|
+| 2026-09-12 (lesson 29) | 248,406 b | **0.18 runs left**, still under | took the content defect |
+| 2026-09-12 (lesson 36) | 259,089 b | 9,089 b **over** | took the content defect |
+| this run | **271,710 b** | **21,710 b over, 108.7% of warn** | took the pass |
+
+⚠️ **Measured this run, not read off the log:** `MEASURED log-size: file 706725 b, run log 271710 b, floor 435015 b (backlog 396609 b), archive 4002486 b, 3 live day(s)`. The overage has now doubled in two runs while being named in both. **A deferral that is correct twice is a trend the third time**, and the FAIL at 350,000 b is the point at which `npm test` exits 1 and *no run can commit anything*.
+
+#### Step 3.5 — the premise re-measured with controls. It HELD, and my first probe was the thing that failed
+- **The trigger.** `check-log-size.mjs` printed the cut plan itself: *move 2026-09-10 (37,166 b), leaving 234,544 b, under the warn budget*. A plan from the instrument is a pointer, not a premise, so it was re-derived independently.
+- **Independent re-derivation, and it matched byte-exactly.** A scratchpad script split the run log at `^### 2026-\d\d-\d\d` and summed each day: **09-10 = 37,166 b**, 09-11 = 169,594 b, 09-12 = 64,938 b. **The strong control is that the days sum to the run log with ZERO bytes unattributed** — no region is invisible to the splitter, which is the failure mode that would make a clean-looking cut wrong.
+- ⚠️ **CONTROL THAT FAILED FIRST, and it was mine, not the repo's.** My first pass at counting live day-headings reported **4** days including a `2026-08-28` and a `2026-09-07` — dates with no live entries at all. Cause: `sed 's/:.*\(2026-[0-9-]*\).*/ \1/'` is **greedy**, so it captured the *last* date appearing anywhere on the heading line rather than the heading's own date, and several headings quote other dates in their prose. Re-extracted positionally (`substr($0,5,10)`): **5 × 09-10, 21 × 09-11, 6 × 09-12 = 32**, and a file-wide control returns the identical three-day histogram, so no live heading sits outside the run log.
+- **CONTROL, headings against the commits that wrote them (items 142/174).** `git log --format=%ad -- AGENT_LOG.md` gives **09-10: 5, 09-11: 21, 09-12: 6** — matching the heading histogram one-to-one on every day. A day whose entries and commits disagreed would be a split or duplicated region.
+- **Premise HOLDS.** The script's own controls passed too (sections sum byte-exactly; the splitter distinguishes an interleaved day from a contiguous one at identical weight).
+
+#### What shipped
+- **2026-09-10 → `AGENT_LOG.archive.md`** under `## Archived 2026-09-10`: **5 entries, 37,166 b**, appended verbatim in live-file order, which is commit order. Archive title `(2026-08-01 → 2026-09-09)` → `2026-09-10`.
+- Run log **271,710 → 234,544 b** (108.7% → 93.8% of warn); file **706,725 → 669,559 b**; archive grew by exactly **37,190 b** = the 37,166 b block + the 24 b section heading.
+- **W-5.3** records the thirteenth firing. **No clause was reworded, no budget was touched, no script changed** — W-5.3's date-vs-byte defect is still open and is still the owner's to fix (items 115/121).
+- **O-6 filed** in the owner block — see below.
+- The move ran as a scratchpad script that asserts, *before producing anything*: the anchor occurs exactly once; the day has 5 headings; all 5 file-wide headings for that day are inside the run log; the day is the **oldest** live day and its marks are contiguous; **a later day exists** (never archive every day); the block starts at the top of the run log and ends on a blank line; the block is 37,166 b; the archive has no section for that day, ends on a blank line, and its title is in its expected state. It writes only to scratchpad paths.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Pre-cut baseline | `npm test` **exit 0**, 4 WARN / 0 FAIL — the three standing ones (translation review, translation completeness, option-length cue) plus the log-size WARN this pass exists to clear |
+| Proofs, re-derived from `git show HEAD:` copies | **P1** the block read back *out of the new archive*, re-inserted, rebuilds HEAD's live file byte for byte. **P2** new archive == HEAD archive (title advanced) + heading + the block cut **independently** from HEAD's live file. **P3** 5/5 headings once in the archive, **0** live. **P4** everything above the run log byte-identical. **All four true** |
+| Plants (scratchpad copies only) | One-character tamper inside the moved block → P1 **false**, P2 **false**, P3/P4 true. One-line live deletion → P1 **false**, P2/P3/P4 true. **Each failed exactly the proofs it targeted**, so "all true" above is a measurement and not a vacuous pass |
+| Install guard | HEAD re-checked `3d46a6f` (unmoved) and both files `cmp`-equal to their `git show HEAD:` copies *immediately before* the copy; installed outputs then `cmp`-equal to the proven ones — **669,559 b** and **4,039,676 b** |
+| Post-cut `npm test` | **exit 0, 3 WARN / 0 FAIL.** The log-size WARN is **gone**; `MEASURED log-size: file 669559 b, run log 234544 b, floor 435015 b, 2 live day(s)`, and the script's control 3 re-attributes 100% of the smaller run log |
+| Build | `scripts/build-out-of-tree.sh` clean in **569 ms** (iCloud `node_modules` holds the other Mac's binaries — the known 2026-09-10 state). No source file was touched, so this is a regression guard, not a rebuild of the change |
+| Scope | `git diff --name-only` = **exactly the two log files**; **zero** files under `src/`, `public/` or `scripts/`. `Migration/` and `UIUX/` stayed untracked and untouched |
+| Above the run log | HEAD vs now: **27 added lines, 0 deletions** — the 10-line W-5.3 tally and the 17-line O-6, and nothing reworded or removed anywhere in the backlog |
+
+#### Step 5 — adversarial self-check
+- ⚠️ **Blindspot register: the check PASSES and I am explicitly NOT citing that as evidence, because the control proved it cannot see this change.** I planted *"Now is a good time to buy bonds."* into my own O-6 text and `check-blindspot` still exited **0** — it scans `src/`, not `AGENT_LOG.md`. **A passing check outside its own scan scope is not a result.** The load-bearing evidence is the scope row above: this change touches **no file under `src/`**, so §10.1, §10.2, §10.3 and the §2.3 stale-data rule have no surface to regress on. Plant restored, `cmp`-equal.
+- **DECISIONS.md conflict: none** (control: 13 `localStorage` hits, so the file was really read). Nothing there governs archiving mechanics; the 2026-09-08 `FILE_CEILING` raise is recorded there and **no budget was touched by this run**.
+- ⛔ **The conflict that WAS live, and it is W-5.3's own:** that clause says a *rule change* — making the action clause byte-driven — **is the owner's to make, and a run must not pick unilaterally.** This run therefore performed **only the action**, on `check-log-size.mjs`'s budget exactly as the nine passes since 2026-08-29 have. The 27-added/0-deleted diff above is the proof that no clause moved.
+- **Already-done backlog item: no, and this is the distinction that matters.** W-5.3 is a **standing rule that fires on measurement**, not a completed item — thirteen firings are thirteen intended repeats, and the tally in W-5.3 is where that is recorded. Control: the "Completed and pruned" region is not vacuous (18 `glossary` hits), and no archiving pass appears in it.
+- **My own verification claim:** every row reproduces from the command named. **Limits I own:** (1) the four proofs test *this* move against HEAD — they say nothing about whether an earlier pass mis-ordered an older archive section, and the known inverted 09-04 section is still in the archive; (2) the build proves no regression but exercises nothing this change touched, because this change touches no source; (3) the archive is now **4.0 MB** and nothing checks its internal date ordering — named here, deliberately not built (W-6.2 rule 3: no learner-visible failure).
+
+#### The one thing this run escalated rather than decided
+The twelfth pass set an explicit test: *"If the thirteenth pass also needs no recipe change, put the automation question to the owner rather than deciding it in a run."* **It needed none** — same assertions, same four proofs, same two plants, reused verbatim. The condition is met, so the question is filed as **O-6** and left for the owner. Building the mover would be ~200 lines of new `scripts/` mass for a gain **no learner can see**, against a ratio already at 2.19x; leaving it manual is what has kept it correct thirteen times. **That is a real trade and not a run's to settle.**
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **W-7.2 rule 5's test is 2026-09-13 and this run moves the number the wrong way, which is worth stating plainly rather than netting out.** The backlog went **396,609 → 399,026 b** (+2,417 b: the tally and O-6). It is still **26,447 b under** the 425,473 b baseline, but *archiving does not help that test at all* — archiving moves the run log, and rule 5 measures the backlog. **This run shrank the file by 37 KB and grew the region rule 5 watches.** The two are not substitutes.
+- **Lesson 38's phase-return ranges** remain uncheckable without first fixing a phase-dating scheme — unchanged from the previous two entries, still not a FRED-checkable claim.
+
+**Owner-facing, one line:** housekeeping only — no learner-visible change. The agent log's run log had grown past its budget and two runs had deferred the cleanup; one day (37 KB) moved to the archive, clearing the warning with the file's history preserved verbatim. **One decision is waiting for you: O-6** — thirteen archiving passes have each been done by hand, and whether to automate that is a genuine trade this run deliberately did not settle. **O-3** (unreviewed machine translation) and **O-5** (nothing pushes, so the live site's market data is current by coincidence) are unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 669559 b, run log 234544 b, floor 437432 b (backlog 399026 b)` (this run's `npm test`, post-cut). After it: not retyped (W-7.2 rule 4). **Two live days; the next pass is not due until the run log crosses 250,000 b again.**
