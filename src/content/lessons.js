@@ -200,7 +200,7 @@ export const lessons = [
     subtitle: {"en":"How the Fed steers the economy","es":"Cómo el Fed dirige la economía","ko":"연준이 경제를 조종하는 방법","zh":"美联储如何引导经济","ja":"FRBが経済を舵取りする方法"},
   },
   {
-    id: 36, track: "economy", icon: "📐", color: "#9333ea", minutes: 4,
+    id: 36, track: "economy", icon: "📐", color: "#9333ea", minutes: 5,
     title: {"en":"The Yield Curve: Crystal Ball","es":"La Curva de Rendimiento: Bola de Cristal","ko":"수익률 곡선: 수정 구슬","zh":"收益率曲线：水晶球","ja":"イールドカーブ：水晶玉"},
     subtitle: {"en":"A historically reliable recession predictor since 1955","es":"Un predictor de recesión históricamente fiable desde 1955","ko":"1955년 이후 역사적으로 신뢰할 수 있는 경기침체 예측 지표","zh":"自1955年以来历史上较为可靠的衰退预测指标","ja":"1955年以来、歴史的に信頼性の高い景気後退予測指標"},
   },
