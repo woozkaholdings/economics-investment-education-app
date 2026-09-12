@@ -7219,3 +7219,126 @@ unreviewed by a fluent reader, though each reuses vocabulary already shipped in 
 
 **Log size.** Before this entry: `MEASURED log-size: file 641786 b, run log 206771 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "take the L37 QT item next" — so W-6.2 rule 1 does not arise, and the ruling in the previous entry is neither reinforced nor overturned by this run) — lesson 37 told learners "The Fed ran QT at $95 billion a month starting in 2022", and $95 billion was a **ceiling the runoff never reached** (realized **−$73.7B/mo**) that took effect in **September**, three months after QT started at half that — and the sentence stopped in 2024, leaving out that the balance sheet **stopped shrinking in December 2025**
+
+#### The premise re-measured (step 3.5) — the previous entry's note was RIGHT about the cap and WRONG about the tense, and the tense is my own error to correct
+The note I filed one entry ago said the sentence's "present-tense framing" might not survive. **Measured: it is
+already past tense in all five languages** — "ran" / "ejecutó" / "시행했고" / "实施" / "進め". **There was no tense
+error.** The real omission is that the sentence ends its story in 2024 while the program ended in late 2025.
+- **Instrument:** FRED `WALCL` (total assets, weekly), split by `TREAST` and `WSHOMCB`; **404 control** on a
+  nonexistent series id against **200** on the three real ones.
+- **Control that the series is the one I think it is:** `WALCL` peaks at **$8,965B on 2022-04-13** — the lesson's
+  own "$9 trillion peak in 2022", stated one section earlier, reproduced independently.
+- **Realized pace against the published caps:**
+
+  | window | cap | realized (WALCL) |
+  |---|---|---|
+  | 2022-06 → 2022-09 | $47.5B/mo | **−$29.8B/mo** |
+  | 2022-09 → 2024-06 | **$95B/mo** | **−$73.7B/mo** |
+  | 2024-06 → 2025-04 | $60B/mo | −$55.4B/mo |
+  | 2025-04 → 2025-12 | $40B/mo | −$23.3B/mo |
+  | **2025-12 → 2026-09** | — | **+$22.3B/mo (GROWING)** |
+
+- **Why the $95B cap was never met, measured rather than asserted:** in that window Treasuries ran off at
+  **−$57.6B/mo against a $60B cap** (essentially at the cap) while MBS ran off at **−$16.9B/mo against a $35B
+  cap** — under half. The shortfall is **almost entirely the mortgage leg**, which is why the replacement sentence
+  names mortgage bonds specifically rather than hand-waving at "the pace".
+- ⭐ **The end of QT is not read off a memory of an announcement — it is in the data.** `WALCL`'s post-peak trough
+  is **$6,536B on 2025-12-03**, and the weeks around it turn cleanly (−16, **trough**, +3, +18, +24, +60). The
+  balance sheet has risen **+$205B over the 9 months since**, sustained. **A trough that deep followed by nine
+  months of growth is the program ending, not a wobble.**
+- **Total drawdown: $2,430B ($2.43T) over 3.6 years**, peak to trough.
+- ✅ **Cross-checked against a surface I did not touch.** `markets.js`'s `balanceSheetHistory` chart runs
+  **9.0 → 6.7 ($−2.3T)**; my FRED figure is **8.965 → 6.536 ($−2.43T)**. **Two independent surfaces agree**, which
+  is what let the new sentence say "more than $2 trillion" without inventing a number.
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js` (one clause each) **+ `lessons.js` (`minutes` 3 → 4)**. Edit script
+asserted old = 1 / new = 0 before writing and 0 / 1 after, per file, refusing otherwise.
+- en: *"The Fed started QT in mid-2022, and once it was up to full speed the cap was $95 billion a month — though
+  the runoff actually came in below that ceiling, because its mortgage bonds were being paid back more slowly than
+  the cap allowed. It eased off in 2024 and stopped shrinking the balance sheet in late 2025, by which point more
+  than $2 trillion had come off the $9 trillion peak."*
+- **Three defects fixed, and the distinction is the teaching point:** (1) $95B is now a **cap**, not the rate the
+  Fed "ran QT at"; (2) it attaches to "once it was up to full speed" rather than to the start; (3) the story now
+  **ends**. A learner who previously finished this paragraph believed QT was a $95B/month program that was merely
+  "slowing".
+- Punctuation follows each language's repertoire: ASCII `—` in en/es/ko, full-width `——` in zh/ja (both already
+  used that form in this same body).
+- **`$9 trillion peak` and the QE figures above it are untouched** — they were re-measured and are right.
+
+#### The minutes field — a real product consequence, taken rather than dodged
+`npm test` failed with *"lessons[8] (id 37): minutes is 3, but its text computes to 4"*. **This is the check
+working, not an obstacle.** Measured with `check-data.mjs`'s own `lessonWords` rule (title + subtitle + headings +
+bodies + takeaway + thinkAbout + the end-of-lesson check's question, options and explanation, at 200 wpm):
+**690 words → 3.450 → 3** before, **733 → 3.665 → 4** after. **The lesson sat 0.05 under the rounding boundary and
+43 words tipped it.**
+- **I took the 4 rather than trimming back under 699 words.** `DECISIONS.md` § *How a lesson's `minutes` estimate
+  is computed* says `minutes` is **"derived, never authored"**, so the honest display for 3.665 is 4; buying back
+  the old figure would have meant deleting the causal clause that is the substance of this fix.
+- Knock-on, all generated: catalog total **162 → 163 min** in `LAUNCH_READINESS.md` §4.3, `LAUNCH_PLAN.md`'s
+  Phase-0 content gate and `CLAIMS.md` A6 — **the gate still reads "met"** on both clauses.
+- ⚠️ **Disclosed plainly: this run made a lesson longer.** 43 English words for three factual corrections is a
+  trade I think is right, but it is a trade, and the ~2-hour curriculum total moved because of it.
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; `WALCL` peak **$8,965B / 2022-04-13** reproduces the lesson's own "$9T in 2022" |
+| Trough is a turn, not noise | **$6,536B / 2025-12-03**, +$205B over the 9 months since; adjacent weeks printed |
+| Independent corroboration | `markets.js` chart **9.0 → 6.7** vs FRED **8.965 → 6.536** |
+| `npm test` after content edit | **exit 1, 2 FAIL** — the minutes check and the stale ledger/readiness figures, **all three expected and all three fixed rather than exempted** |
+| `npm test` final | **exit 0, WARN 3 / FAIL 0** — identical to the baseline this run started from |
+| Ledger / readiness scope | `mark 37 <lang>` ×4 + `refresh-readiness --write` → **8 ledger lines, 2 + 3 + 1 doc lines, nothing else** |
+| `npm run check-blindspot` | **exit 0**; §2.3's live-date guard clean on the added "late 2025" (a historical event, not a `Month YYYY` freshness shape) |
+| `scripts/build-out-of-tree.sh` | **exit 0** |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.economy.<lang>` chunk; all **5** old → **no file**; positive control present, negative absent |
+| Live, `python3 -m http.server` on `127.0.0.1:8898` | index **200**, nonexistent **404** (control fired) |
+| Live `#/lesson/37`, real `<select>`, 4 s waits | **en/es/ko/zh/ja: ending clause true, cap clause true, old false, no English leak, negative false**; `html lang` en/es/ko/zh-Hans/ja; header "LESSON 9 OF 12 · HOW THE ECONOMY WORKS" |
+| The minutes change reached the UI | reader renders **"≈4 min"** |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Over the diff: Dalio/Bridgewater **0**, advice verbs **0**, child-facing kids
+framing **0**, `Month YYYY` **0**. `check-blindspot` exit 0 independently, and its §2.3 module passes on the added
+"late 2025" — **correctly, because §2.3 guards *fake freshness*, and a completed 2025 event is history**. The
+distinction matters here more than usual: this run deliberately added a date, and the guard was consulted rather
+than assumed.
+**DECISIONS.md conflict: none — and one clause was actively *followed* rather than merely not-violated.** The
+`minutes` decision ("derived, never authored") is what settled the 3-vs-4 question above. `credit|balance sheet|
+minutes|reading` → hits reviewed, control `localStorage` → 13.
+**Already-done backlog item: none.** `git log -S "ran QT at $95 billion"` reaches **`2afcb42`** ("Rewrite all 17
+lessons with real-life examples", owner-directed) and three mechanical chunk-splits — **the sentence has never been
+edited on its merits**, so nothing completed is being undone.
+**Consistency with surfaces I did not touch: checked, and all three agree.** The `QT` and `QE` glossary entries are
+**mechanism-only, dateless and figure-free**, so they cannot go stale against this; `MarketSignals.jsx` carries no
+QT figures; `markets.js`'s chart corroborates the drawdown. **Had any of them asserted an ongoing QT, fixing the
+lesson alone would have created the contradiction this run set out to remove** — the same trap the L30 run hit.
+**My own verification claim, and one correction to my own previous entry.** Every row reproduces from the command
+named. **The previous entry's residual note told the next run to check whether "the sentence's present-tense
+framing survives at all" — it was past tense all along, in all five languages, and I wrote that note.** A flagged
+suspicion is not a measurement, and it is recorded here because it was mine. Limits I own: (1) the realized paces
+are computed off **weekly** `WALCL` snapshots nearest each cap-change date, so each is ±1 week — immaterial at
+−73.7 vs a 95 cap, real at the margins; (2) `WALCL` is *total assets*, so it includes facilities outside the
+runoff caps — which is why the Treasury/MBS split is reported separately and is where the cap comparison actually
+lands; (3) the four translations are verified by me for presence, placement and terminology, not fluency.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⚠️ **`markets.js`'s `balanceSheetHistory` last bar is about to go stale by rounding, and this is a measurement,
+  not a hunch.** `qt2` is **6.7**; `WALCL` stood at **$6,740.6B** on 2026-09-09 and is rising **+$22.3B/mo**, so it
+  crosses **6.75 — which renders as 6.8 — in roughly two weeks.** ⛔ **Not fixed here because the number is not the
+  question:** the bar is labeled `"Second tightening"` and the file's comment says the series is labeled *"by era
+  rather than by date so it reads unambiguously as history"* — so a future run must first decide **whether the bar
+  denotes that era's trough (6.5) or today's level (6.7, drifting)**. Deciding that is the work; editing the digit
+  is not. **The census residual list is now EMPTY** — both carried-forward items are closed.
+- **L37's `thinkAbout` was read and left alone:** it asks who benefits most from QE and is unaffected by the QT
+  correction.
+
+**Owner-facing, one line:** **O-3 applies** — four machine-written clauses ship unreviewed by a fluent reader; and
+**this run lengthened one lesson**, moving the curriculum total to 163 min (gate still met). `market.json` is
+1 day old, so nothing is stranded and this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 654483 b, run log 219468 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
