@@ -6967,3 +6967,116 @@ is not stranded — today's lesson fix and that data both reach learners on the 
 
 **Log size.** Before this entry: `MEASURED log-size: file 619428 b, run log 184413 b, floor 435015 b` (this run's
 `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-11 (scheduled dev-agent; W-6.2 rule 1 — residual pick #2 in this chain, which the rule allows; the next run may not take a third) — lesson 39 tells the learner that in Contraction "weaker demand pulls prices down", and lesson 32 tells the same learner that in most downturns prices keep rising and only a deep enough pullback produces deflation — the defect commit `992a057` already fixed once, surviving in a second lesson
+
+**The pick.** The previous entry left three unfixed observations from the nine-lesson English read. This is the one
+that is an **internal contradiction between two main-path lessons**, not just a claim to check against a source —
+and the sentence it contradicts is itself the product of a fix (`992a057`, *"Lesson 32 taught that a recession is
+when prices fall"*), which makes this the same defect in a lesson that pass did not reach. Item 160 was not
+re-weighed (stop line unchanged). No archiving was due: the run log stood at **78.2%** of warn, 2 live days.
+
+#### Step 3.5 — premise measured, with controls, before editing
+- **The claim.** L39 §2 ("From Gauges to a Diagnosis"), Contraction paragraph: *"GDP falling, **CPI cooling as
+  weaker demand pulls prices down**, PMI below 50, VIX elevated or spiking…"*. "Pulls prices down" is the price
+  **level** falling — deflation.
+- **All five languages carry it, once each**, and the translations are not softer: es *"tira de los precios hacia
+  abajo"*, ko *"물가를 끌어내리면서"*, zh *"把价格往下拉"*, ja *"物価を引き下げて"*. Tree-wide, minus the logs:
+  the English phrase appears in **one file** (`git grep -F -l`), the five language modules each carry their own.
+- **The contradiction, quoted from the other lesson.** L32 §2: *"In most downturns prices keep rising, just more
+  slowly; only when the pullback is deep enough for the overall price level to actually fall do you get deflation."*
+  All five languages carry that too. **A learner reading the economy track in order meets both.**
+- **Measured, FRED CSV, no key** — `CPIAUCSL` (CPI, SA) against `USREC` (NBER recession indicator), 12 postwar US
+  recessions, 1948→now:
+  - the price **level** was lower at the recession's end than at its start in **2 of 12** (1948-49, and the
+    two-month 2020 recession);
+  - year-over-year CPI went **negative in any month in 2 of 12** (1948-49, 2008-09);
+  - so in **10 of 12** prices kept rising throughout — **L32 is right and L39 is wrong**, and the error is not
+    marginal.
+  - "CPI cooling" itself **survives**: YoY was lower at the end than the start in **9 of 12** (the exceptions are
+    the 1973-75 and 1980 oil-shock recessions and 1953-54). So the fix is to the **mechanism clause**, not to the
+    gauge reading — which is why "CPI cooling" stays in the sentence.
+  - **Controls:** a nonexistent series id returns **HTTP 404** against the real ids' **200**; YoY at 2009-07 reads
+    **-2.0%** against the published ~-2.1%, and the mid-2022 peak reads **9.0%** on the SA series against the 9.1%
+    published on the NSA one — the same SA/NSA gap the previous entry measured, which is what says the instrument
+    is pointed at the right series.
+- **Never fixed and never decided.** `git log -S` on the English phrase reaches only `6f5c48c`, the mechanical
+  language split — **the sentence has never been edited on its merits.** In `AGENT_LOG.md` the phrase appears
+  **twice**, both this week's notes (the census entry and the residual list); in `AGENT_LOG.archive.md`, **0**
+  (control `lesson 35` → 7 in the live log).
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js`, one clause replaced in each (`git diff --numstat` **1/1 ×5**). The
+edit script asserted old = 1 / new = 0 per file before writing and 0 / 1 after, and refused the file otherwise;
+pristine copies were kept in the scratchpad and are what every restore in this run used.
+- en: *"CPI cooling as weaker demand **eases the pressure on prices (in most downturns that means prices rising
+  more slowly, not falling)**"*.
+- **The parenthetical is L32's sentence, not a new claim** — es reuses *"los precios siguen subiendo, solo que más
+  despacio"*, ko *"오르되 그 속도만 느려집니다"*, zh *"物价仍在上涨，只是涨得更慢"*, ja *"上がり続けながらその勢いが鈍る"*,
+  each lifted from that lesson's own wording in that language. The two lessons now agree **by construction**
+  rather than by a translator's luck.
+- Punctuation follows each language's existing repertoire: ASCII `()` in en/es/ko, full-width `（）` in zh/ja
+  (measured in these files: zh 52/4 and ja 44/4 full-width vs ASCII; ko and es **0** full-width).
+- No digits and no dates added in any language, so §2.3's shape is untouched. L39 stays at 3 minutes.
+- **Not touched:** the Trough line's "CPI low", and L32's sentence itself (**0** occurrences in the diff).
+- ⚠️ **O-3, disclosed:** four machine-written clauses, unreviewed by a fluent reader — though each reuses a phrase
+  already shipped in that language rather than inventing one.
+- **Knock-on.** Ledger: L39 es/ko/zh/ja re-marked `ai` (they went STALE, correctly, the moment the English moved).
+  `refresh-readiness.mjs --write`: en chars **153,669 → 153,750**, §4.3's catalog row and §10.4's volume sentence.
+  Nothing in `LAUNCH_PLAN.md` moved.
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; 2009-07 YoY **-2.0%** vs published ~-2.1%; 2022-06 **9.0% SA** vs 9.1% NSA |
+| Node import probe (real modules, 5 langs) | **5/5**: new present, old absent, own-language control present, negative absent, 2 sections |
+| `npm test` | **exit 0**, WARN 3 / FAIL 0 — identical to the baseline taken before any edit (same 3 warnings: item 160's option-length cue, translation completeness, review coverage) |
+| Intermediate failures, both expected and both fixed rather than exempted | after the content edit `npm test` failed on the **stale ledger** (4 pairs) and then on **§10.4/§4.3's generated figures**; `translation-review.mjs mark` and `refresh-readiness.mjs --write` cleared them |
+| `npm run check-blindspot` | **exit 0** (its own controls: 8 timing patterns each firing, 33 advice patterns clean on 2 shipped sentences) |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-NLK41WkZ.js` |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.economy.<lang>` chunk; all **5** old → **no file**; heading control and **L32's contradicting sentence** both present in the en chunk; negative control → no file |
+| Live, `python3 -m http.server` on `127.0.0.1:8893` | index **200**, nonexistent path **404** (control fired); served `index.html` names `index-NLK41WkZ.js` |
+| Live `#/lesson/39`, real `<select>`, 4 s waits | **en/es/ko/zh/ja: new true, parenthetical true, old false, own-language control true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; header "LESSON 11 OF 12 · HOW THE ECONOMY WORKS" |
+| Screenshot | full-scale renders the paragraph correctly; ⚠️ the **0.6-scale** call came back **solid black** — a scaled-screenshot artifact, not the page. The DOM probes above are the evidence; the image is not |
+| ⚠️ Seeding, confirming the previous entry's note and adding to it | `ecycles_completed_lessons` as **numbers** is necessary but not sufficient — written *after* the app had already read it, the deep link still said "THAT LESSON ISN'T OPEN YET". **Seed, then reload**; the app reads the key once at init |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found — after one of my own controls failed and was fixed.** Over the 10 content
+diff lines: Dalio/Bridgewater **0**, advice verbs **0**, `Month YYYY` **0**, live-figure shapes **0**, child-facing
+kids framing **0**. ⚠️ **Two instrument defects caught by their controls, not by inspection:** (1) my first advice
+pattern scored **0 on its own plant** (`now is a good time to buy stocks`) — widened until the plant fired at 1,
+and the diff still scores 0; (2) the bare month-name grep scored **1** on the diff, and the hit is **`mayoría`**
+inside the Spanish clause, not a month — the §2.3 shape that actually matters (`Month YYYY`) is **0** on the diff
+against **1** on its plant. **A control that does not fire, and a positive that is not read, are the same mistake.**
+**DECISIONS.md conflict: none.** `deflation|recession|CPI|indicator` → 4 hits (control `localStorage` → 13), and
+all four are unrelated: FRED as the data source, a glossary-coverage count, the track description, and the
+2026-09-06 deploy entry that *cites* the L32 error as its motivation. **This change extends that fix; it does not
+contradict anything.** **Already-done backlog item: none reversed — the opposite.** `992a057` fixed L32 and did not
+reach L39; L32's sentence is untouched here (**0** in the diff), and the phrase has **0** hits in the archive.
+**My own verification claim.** Every row reproduces from the commands named, and three rows exist because a control
+disagreed with me first. Limits I own: (1) the recession counts are **US, postwar, CPI-SA** — the lesson's gauge
+list is generic, and a reader applying it to a country with a different inflation history gets a different ratio,
+though "prices usually keep rising in a downturn" is the safer generalization everywhere; (2) "2 of 12 saw the
+level fall" counts the **start and end months** of each NBER episode, so an episode whose level dipped and
+recovered inside the window is not counted — the YoY-negative column (also 2) is the cross-check; (3) the four
+translations are verified for **presence and placement**, not for fluency, by me.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Still open from the census, untouched and not re-derived here:** **L30 §2**'s *"a gap that has only widened
+  over time"* and **L37 §2**'s *"$95 billion a month starting in 2022"*. ⚠️ **Both have now been carried forward
+  three entries** — the next run that wants a content pick should take one rather than re-listing it.
+- **§2.3's `Month YYYY` guard is English-only** (measured by the previous entry on a live edit). Unchanged, and
+  this run added no dated shape in any language.
+- **L39 §2's Trough line says "CPI low"** where the other four gauges in the same sentence are described as
+  directions. It is not wrong — inflation is typically at its cycle low there — and it was left alone to keep this
+  change to one clause.
+
+**Owner-facing, one line:** `npm run check-deployed` gives **NO VERDICT** while build inputs are uncommitted, which
+is the correct refusal and the state this run is in until the commit lands; `public/data/market.json` was already
+committed by the market job at `asOf 2026-09-11` (0 days old), so nothing is stranded and this run's fix reaches
+learners on the next push (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 630533 b, run log 195518 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
