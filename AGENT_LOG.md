@@ -5995,3 +5995,30 @@ One sentence rescoped and one added, in five languages (`src/content/lessonConte
 **Schedule:** the cron is the owner's lever; not read, not compared, not touched.
 
 **Log size.** Backlog: 0 b added. Totals not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "do the q039 ko/ja option fix next" — so W-6.2 rule 1 does not arise; named as a note two entries up) — `q039`'s **keyed option** in Korean and Japanese said the fifteen-year horizon **would have had** room to recover (*여유가 있었을 것* / *余地があったはず*), a past counterfactual, while the same option says he **is paying** for stability now and the English says it **would give** it room; one verb ending each
+
+#### Step 3.5 — the premise re-measured
+- **The mistranslation.** en `opts[3]`: *"He's paying for stability … since its long time horizon **would give** it room to recover from a temporary drop before he'd ever withdraw it"* — present conditional, about an arrangement that is ongoing and a withdrawal fifteen years off. ko: *대가를 치르고 **있다** — … 회복할 여유가 **있었을** 것이기 때문이다* (present progressive main clause, past-conjectural reason: "because it would have had room"). ja: *代償を払って**いる**——… 回復する余地が**あった**はずだから* ("because it should have had room"), and *はず* on a past tense reads as an expectation about something already settled. Both put the reason in the past while the claim and the withdrawal are present and future.
+- **es and zh checked and left:** es *le **daría** margen* is the conditional, matching English. zh *本可以让它…有空间* ("could otherwise give it room") is standard for a present counterfactual in zh and does not force a past reading, so it stays.
+- **Length, because this is an item-160 class-A option:** code points en/ko/ja/es/zh = 178/97/81/213/60 against distractor maxima 120/56/53/140/35. The keyed option is the longest in every language before the edit and after it, so no longest/shortest outcome can move. §65 measured before and after: **en 56.5/2.2, es 54.3/2.2, ja 52.2/4.3, ko 54.3/0.0, zh 52.2/2.2, identical**.
+
+#### What shipped
+`src/content/quizText.ko.js`: *있었을 것이기 때문이다* → ***있을*** *것이기 때문이다*. `src/content/quizText.ja.js`: *余地があったはずだから* → *余地が**ある**はずだから*. One code point shorter each. No ledger entry: the translation ledger hashes lesson content only, and `quizText` has none (noted in the lesson-25 entry above).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | patcher asserting exactly 1 old (anchored on the closing quote, so it cannot match inside the explain) and 0 new per file: `WROTE 2` |
+| `npm test` | **exit 0, 3 WARN / 0 FAIL**, the standing three; §65 line byte-identical in figures to the pre-edit run |
+| Build | `scripts/build-out-of-tree.sh` exit 0; old probes **0**, new probes **1** each in `quizText.ko-*` / `quizText.ja-*` |
+| Live walk | `dist/` served statically, language `ko`, `#/lesson/25` seeded unlocked: header **레슨 14 / 17 · 돈에 대해 생각하기**; new option **true**, old **false**, negative control **false**. The first read returned all-false with the page not yet rendered and was **not** taken as a result; the re-read also showed the earlier ko takeaway fix (*대개는 그 시간이 충분했습니다*), confirming it is the lesson-25 reader. ja verified in the chunk only |
+
+#### Step 5 — adversarial self-check
+- **Blindspot:** the edit changes tense only, adds no claim, attribution, figure or date. Not re-planted: the same guard was proven against `quizText.en.js` in the lesson-25 entry today, and `check-blindspot` exits 0 on this tree.
+- **DECISIONS.md / already-done:** no conflict. Item 160 fixes option *length*, and this changes one code point without changing which option is longest.
+- **My own claim:** reproducible from the commands named. **Limit:** the tense reading is my judgment of ko/ja grammar, with no fluent reviewer (O-3). The zh keep is also judgment.
+
+**Owner-facing, one line:** in Korean and Japanese, the correct answer to lesson 25's quiz said a long horizon "would have had" room to recover rather than "would have" room; one verb ending each, quiz scoring unchanged. Reaches learners on the next push (**O-5**).
+
+**Schedule:** not read, not touched. **Log size:** backlog 0 b added.
