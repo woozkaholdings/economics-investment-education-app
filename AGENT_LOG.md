@@ -6060,3 +6060,38 @@ Census re-run (mentions of `lesson N` / `LN` across `AGENT_LOG.md` + archive; co
 **Owner-facing, one line:** the English fee lesson credited "most active funds don't beat index funds after fees" to the diversification lesson, which never says that; the credit is removed (the fact stays), and because the lesson sat exactly on a rounding boundary it now shows ≈3 min instead of ≈4. Reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #1 in a new chain, which the rule allows: the previous scheduled run's "Seen, deliberately NOT fixed" note named this sweep as "a real sweep a run could take") — lesson 17 told learners that “Taxes” shows **"more earned is always more kept"**, and since `e561b4d` (2026-09-11) “Taxes” says the opposite: near a benefits cliff *"a small raise can leave a household with less money overall"*. The echo was in all five languages; that fix's own surface scan named three other echoes and missed this one
+
+#### The pick — the cross-reference content census, run over the English corpus
+Every `“Title”` reference in `lessonContent.{essentials,economy,money}.en.js` was extracted with 300 chars of context and resolved to its lesson by title prefix: **58 references** (the previous entry's "237" counts the translations too). Each credited claim was read against the named lesson's English body, takeaway and thinkAbout. **56 hold** — including the ones that looked like candidates: L4 → Productivity Growth's "good debt vs. bad debt" (L31 has that section), L18 → Compound Interest's 6% example (L3 uses 6%), L40 → the Long-Term Debt Cycle family's mortgage eating their paycheck (L33, verbatim idea), L43 → Does It Put Money In Your Pocket "later" (`lessonPlacement`: L43 is money position 3, L16 is 5), L38 → Interest Rates' rate transmission (L35 walks it through), L35 → Reading Economic Indicators' 2% target (L39 states it). **One is a real contradiction (this fix); one is a small overstatement (below).**
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim, all five languages (L17 §1 last ¶):** en *"“Taxes” … covers why a raise can never actually reduce your take-home pay — brackets tax layers of income, **so more earned is always more kept**."*; es *ganar más siempre es quedarse con más*; ko *더 벌면 항상 더 남습니다*; zh *挣得越多留下的总是越多*; ja *多く稼げば必ず多く残ります*.
+- **What the named lesson says (L7 §1 ¶3, shipped):** *"near one of those limits (what's called a benefits cliff) a small raise can leave a household with less money overall even while its take-home pay goes up."* Its takeaway carries the same caveat. The first half of L17's sentence (take-home pay cannot fall) matches L7; the second half generalizes past take-home pay to what is "kept", which L7 now explicitly denies.
+- **Why it survived:** `git log -S"more earned is always more kept"` → `bb7f772` (2026-08-07, lesson added). The L7 fix `e561b4d`'s archived entry lists its surface scan (`can never`, `never subtract`, `less money overall`, `shrink your take-home`, `can only ever add`) and names L7's subtitle, `q021`'s explain and L10's thinkAbout as echoes that "speak only of take-home pay and stay true". L17 is not in that list. `more kept` → **0** in `AGENT_LOG.md`, `DECISIONS.md`, `CLAIMS.md` (control: `benefits cliff` → 4 in the archive, the L7 entry), so nothing had decided to keep it.
+
+#### What shipped
+- `src/content/lessonContent.money.{en,es,ko,zh,ja}.js`: the clause now reads en *"so only the new slice is taxed at the higher rate."* (es *así que solo la porción nueva paga la tasa más alta*; ko *새로 늘어난 부분에만 더 높은 세율이 붙습니다*; zh *所以只有新增的那一层按更高税率征税*; ja *高い税率がかかるのは新しく増えた部分だけです*). That is the bracket mechanism exactly as L7 teaches it, and it keeps the sentence's point: Priya's raise did arrive in full. Node patcher asserted 1 old / 0 new per file before writing; originals in the scratchpad.
+- `scripts/translation-review-ledger.json`: L17 es/ko/zh/ja re-marked `ai` via `translation-review.mjs mark`. The translations were edited alongside the English, so this is accurate rather than a formality.
+- `LAUNCH_READINESS.md`: `npm run readiness -- --write` (English 154,773 → 154,788 chars, and the §10.4 volume sentence). Minutes unchanged at **164**; no lesson crossed a rounding boundary (`npm test`'s minutes check passes).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1**, only the expected §10.4 ledger mismatch (4 stale L17 entries) → re-marked + readiness write → **exit 0, 3 WARN / 0 FAIL**, the standing three (O-3 AI-only review share, 47 abridged pairs, option-length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (`scripts/bootstrap-node.sh`: system Node v24.18.0; in-tree `node_modules` cannot build, as it warns) |
+| Built bundle | all 5 old clauses → **no file**; all 5 new → exactly their own `lessonContent.money.<lang>-*` chunk; control *"Priya's raise reached her bank account exactly as expected"* (straight apostrophe) → en chunk; negative probe → no file |
+| Live walk | **not done** this run. The bundle grep shows each string in the chunk `LessonReader` loads for that language; nothing structural changed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planted *"You should buy index funds now."* after the new en clause → `check-blindspot` **exit 1** (`§10.1 investment-advice-adjacent language reintroduced`); restored from the scratchpad copy, `cmp`-equal → **exit 0**. The edit narrows a claim and adds no advice, attribution, kids surface or date.
+- **DECISIONS.md conflict:** none. **Already-done:** this finishes what `e561b4d` started, and does not redo it. The three echoes that run kept were re-read and still only talk about take-home pay.
+- **My own claim:** every row reproduces from the command named. **Limits:** the census covered English only. The translations' references were not read one by one, though the four L17 translations carried the same defect and were fixed. Translation quality is AI-only, as before (O-3). "Holds" means the named lesson says it; the census did not re-check whether the claim is true in the world.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L10 §2** says “Taxes” explained that an employer "withholds **and pays part of**" payroll tax automatically. L7 says only *withholds*. L10's next sentence introduces the employer's half as "what that lesson didn't say", so the learner ends up with the right picture. It is a misquote, but it does no harm.
+
+**Owner-facing, one line:** lesson 17 said a raise always means more money kept, crediting the taxes lesson, which since yesterday says a benefits cliff can make a raise leave a household with less; the sentence now states only the bracket rule, in all five languages. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
