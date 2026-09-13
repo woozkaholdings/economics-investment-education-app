@@ -125,7 +125,7 @@ export const quizText = [
       "The interest rate on 30-year Treasury bonds only",
       "A rate set directly by Congress"
     ],
-    "explain": "The Fed Funds Rate is the rate banks charge each other overnight, set by the Federal Reserve. It's the master signal that ripples out to mortgages, savings accounts, and credit cards."
+    "explain": "The Fed Funds Rate is the rate banks charge each other overnight. The Federal Reserve sets a target range for it and steers the market rate into that range. It's the master signal that ripples out to mortgages, savings accounts, and credit cards."
   },
   {
     "q": "During the 'Trough' phase of the economic cycle, historically:",

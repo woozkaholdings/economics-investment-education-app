@@ -125,7 +125,7 @@ export const quizText = [
       "La tasa de interés solo de los bonos del Tesoro a 30 años",
       "Una tasa fijada directamente por el Congreso"
     ],
-    "explain": "Es la tasa que los bancos se cobran entre sí de un día para otro, fijada por la Reserva Federal. Es la señal maestra que se propaga a las hipotecas, las cuentas de ahorro y las tarjetas de crédito."
+    "explain": "Es la tasa que los bancos se cobran entre sí de un día para otro. La Reserva Federal fija un rango objetivo para ella y conduce la tasa de mercado hacia ese rango. Es la señal maestra que se propaga a las hipotecas, las cuentas de ahorro y las tarjetas de crédito."
   },
   {
     "q": "Durante la fase de 'Valle' del ciclo económico, históricamente:",

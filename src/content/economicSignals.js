@@ -15,11 +15,11 @@ export const economicSignals = [
     key: "policyRate",
     name: { en: "Fed funds rate", es: "Tasa de fondos federales", ko: "연방기금금리", zh: "联邦基金利率", ja: "FF金利" },
     what: {
-      en: "The overnight rate the Fed sets — the lever behind most other borrowing costs.",
-      es: "La tasa a un día que fija la Fed, la palanca detrás de la mayoría de las demás tasas.",
-      ko: "연준이 정하는 익일물 금리 — 다른 대부분의 금리에 영향을 주는 지표.",
-      zh: "美联储设定的隔夜利率——影响其他多数借贷成本的关键杠杆。",
-      ja: "FRBが定める翌日物金利 — 他の多くの金利に影響する基準。",
+      en: "What banks charge each other overnight, averaged over the month. The Fed sets a target range and steers this rate into it — the lever behind most other borrowing costs.",
+      es: "Lo que los bancos se cobran entre sí a un día, en promedio mensual. La Fed fija un rango objetivo y conduce esta tasa hacia él, la palanca detrás de la mayoría de las demás tasas.",
+      ko: "은행들이 서로 하루짜리 자금을 빌릴 때 적용하는 금리의 월평균. 연준은 목표 범위를 정하고 이 금리를 그 안으로 유도합니다 — 다른 대부분의 금리에 영향을 주는 지표.",
+      zh: "银行间隔夜拆借利率的月度平均值。美联储设定目标区间，并引导该利率落在区间内——影响其他多数借贷成本的关键杠杆。",
+      ja: "銀行間のオーバーナイト金利の月平均。FRBは誘導目標レンジを定め、この金利をその範囲に誘導します — 他の多くの金利に影響する基準。",
     },
   },
   {

@@ -6175,3 +6175,41 @@ Bound by rule 1, so no note from the last two entries was eligible. I read L29-L
 **Owner-facing, one line:** the QE lesson said the Fed printed an "unlimited" amount in 2020, beside its own $9 trillion peak. It now says the 2020 pledge had no preset limit and the purchases came to about $4.6 trillion, in all five languages. This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was BOUND and took a census pick, and its three notes each called themselves arguable; this pick came from reading, for the first time in a run, the content modules longest untouched: `economicSignals.js` and `sectors.js`, each with 1 commit, last 2026-08-04) — Reference → "The economy right now" shows **3.63%** under the caption **"The overnight rate the Fed sets"**, and the Fed set no such number: FRED puts the August 2026 target range at **3.50–3.75%**, and 3.63 is the **monthly average of the market rate** (`FEDFUNDS`). The glossary one tap away already says *"The Fed does not set it directly"* (since `38a66f4`). The quiz explanation for the same term said *"set by the Federal Reserve"*. Both are fixed, in all five languages
+
+#### The pick, and why an old note does not make it a residual
+The 2026-09-10 glossary entry (archive ~l.48501) noted the quiz's *"set by the Federal Reserve"* as common shorthand, not picked by default. That run had not looked at `economicSignals.js`. The note is three days and many runs old, not the previous run's residual, so rule 1 does not apply. **What makes this pick different from that note is a measured number:** the signals caption sits beside a live value, and that value is provably not a rate anyone set.
+
+#### Step 3.5 — the premise measured, with controls
+- **Instrument:** FRED `fredgraph.csv` (no key) for `FEDFUNDS`, `DFF`, `DFEDTARL`, `DFEDTARU`, 2023-07 → 2026-09-12.
+- **Controls:** `FEDFUNDS` 2026-08-01 = **3.63**, identical to `public/data/market.json` → `economics.policyRate` (same series id, same date), so I am reading the same number the screen shows. 2023-08: `FEDFUNDS` **5.33** inside target **5.25–5.50**, the range L35 already teaches, so the target series are read correctly.
+- **Measured:** 2026-08-01/15/29: target **3.50–3.75** on all three dates, `DFF` 3.63. The displayed value is the effective rate, a volume-weighted market rate averaged over the month (`FEDFUNDS` is monthly), not a policy setting. **The premise held.**
+- **Surface scan (Node, not grep: ugrep aborted on the bounded pattern, as the memory note warns):** `target range|overnight|fed funds rate|federal funds rate` over `src/content` + `src/locales`. **Control:** it found the glossary's *"does not set it directly"*. There were two real claims that the Fed sets the rate: `economicSignals.policyRate.what` (5 langs) and `quizText.*` q011 `explain` (5 langs; ko *연방준비제도가 정하는*, zh *由美联储设定*, ja *連邦準備制度が設定する*, which the 09-10 note had not read). L35's "master dial … when the Fed turns it" is a metaphor about influence, not a claim about who sets the number, so it is left alone. The q011 distractor "A rate set directly by Congress" is correctly wrong and unchanged.
+
+#### What shipped
+- `src/content/economicSignals.js` `policyRate.what`: *"What banks charge each other overnight, averaged over the month. The Fed sets a target range and steers this rate into it — the lever behind most other borrowing costs."* Translations are phrased the way the glossary's own es/ko/zh/ja Fed Funds entries already are ("rango objetivo", "목표 범위", "目标区间", "誘導目標レンジ"). "Averaged over the month" also explains why this row's "As of" reads the 1st of the previous month while the yields read yesterday.
+- `src/content/quizText.{en,es,ko,zh,ja}.js` q011 `explain`: the "set by" clause became *"The Federal Reserve sets a target range for it and steers the market rate into that range."* The master-signal sentence is unchanged.
+- Node patcher asserted old=1/new=0 before and old=0/new=1 after, for all 10 strings. Originals are in the scratchpad. Quiz text and the signals module are outside `translation-review-ledger.json` (lesson content only, per its header), so no ledger or readiness figure moved. `refresh-readiness --check` passed inside `npm test`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` before edit | exit 0, 3 WARN / 0 FAIL (the standing three) |
+| `npm test` after edit | **exit 0, 3 WARN / 0 FAIL**, option-length cue unchanged at 56.5/54.3/54.3/52.2/52.2% (`explain` is not an option) |
+| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 via `bootstrap-node.sh` |
+| Built bundle | 5 old phrases (en signals, en quiz, ko/zh/ja signals-or-quiz) → **no file**. 6 new phrases → `Reference-*` (en, es signals) and `quizText.{en,ko,zh,ja}-*`. Control (unchanged unemployment caption) → `Reference-*`. Negative probe → no file. Non-ASCII probes hit, so Vite is not escaping them and the old-phrase misses are real |
+| Live walk | `dist/` served statically, Browser pane at 375×812 light: Reference → Sectors → "The economy right now". Fed funds row caption **67 px (4 lines)**, row 137 px, value `3.63%` still right-aligned, `scrollWidth` 375 = viewport (no horizontal overflow). Screenshot taken |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, and shown to see both edited files.** Planting *"You should buy index funds now."* into the edited `economicSignals.js` (count 1) made `check-blindspot` **exit 1** (`§10.1 … reintroduced`). The same plant into `quizText.en.js` also gave **exit 1**. Each file was restored from its scratchpad copy (`cmp`-equal), and the clean run gave **exit 0**. The edit adds no date, no market figure, no advice, no attribution and no kids surface.
+- **DECISIONS.md / CLAIMS.md:** neither mentions the fed funds rate or a target range. **Already-done:** this does not undo `38a66f4`; it makes two surfaces agree with it.
+- **Could the new text be wrong?** Since 2008 the FOMC has set a 25-bp target range, and `DFEDTARL/U` confirm one for every date read. The effective rate is a market rate the Fed steers with administered rates (IORB, ON RRP). "Steers this rate into it" is accurate and says no more than the glossary does. "Averaged over the month" is true of `FEDFUNDS`, which `fred.js` fetches; it would become false if someone switched the series to daily `DFF`. **Limit:** that coupling is not guarded, and it is noted here rather than built (W-6.2 rule 3: the learner-visible failure would be one adjective). No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **`sectors.js` XLI "Machinery, airlines, railroads and **builders**"** (ko *건설*, ja *建設*). GICS puts homebuilders (household durables) in Consumer Discretionary. Industrials holds construction & engineering and building products. "Builders" reads most naturally as homebuilders to a US beginner, but the word is ambiguous and the ETF composition was not measured this run. Arguable, not picked.
+- **Glossary "Yield Curve" `f`: "Inverted = recession signal within 12-18 months"** is unhedged, while the signals caption and L36 (since its 2026-09-12 takeaway fix) say not every inversion was followed by one. "Signal" is not "certainty", so this is arguable. It is the nearest remaining echo of the L36 class if a run wants one.
+
+**Owner-facing, one line:** the Reference screen labeled the 3.63% fed funds reading as "the rate the Fed sets". The Fed set a 3.50–3.75% range; 3.63 is the market rate's monthly average. The caption and the matching quiz explanation now say so, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
