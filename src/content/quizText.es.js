@@ -72,7 +72,7 @@ export const quizText = [
     "opts": [
       "Alza inmediata",
       "Inflación baja",
-      "Recesión en 12-18 meses",
+      "Mayor riesgo de recesión",
       "PIB fuerte"
     ],
     "explain": "Las curvas invertidas han precedido a cada recesión de EE.UU. desde 1955, aunque no toda inversión termina en recesión. Cuando las tasas cortas están por encima de las largas, es una señal de debilidad económica por delante."

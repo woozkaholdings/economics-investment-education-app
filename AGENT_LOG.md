@@ -2266,14 +2266,13 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       five languages before editing; see the run log. The replacement anchors on a **closed
       interval** — "the 12-18 month window … closed at the end of 2023 without a US recession" —
       because the obvious alternative ("no recession *yet*") is a §2.3 liability that nothing checks.
-      ⚠️ **Two neighbours were checked and deliberately NOT changed; do not re-derive this.** `12-18`
-      appears on three surfaces, not one: the prompt, the end-of-lesson **quiz** question
-      (`quizText.*.js:75`) and the **glossary** `Yield Curve` entry. Both neighbours state the
-      *general* pattern, which is what the lesson teaches and what the 1955 record supports, and the
-      quiz's `explain` already carries the hedge. **The defect was the present tense, not the 12-18
-      month figure** — widening the fix to all three would have hedged the lesson's own thesis on the
-      strength of one episode. "this time is different" leaves lesson 36 but stays in lesson 33,
-      where the corpus actually teaches it as bubble psychology.
+      ⛔ **CORRECTED 2026-09-13: the 12-18 month figure itself was wrong, and this item's "do not
+      re-derive" rested on a record nobody had measured.** FRED (`GS10`−`GS1`, `GS10`−`TB3MS`,
+      `T10Y2Y` vs `USREC`) puts only 2-3 of 6-10 inversion episodes inside 12-18 months; leads ran
+      ~6 months to ~2 years. The lesson body (twice), THINK prompt, quiz option and glossary now state
+      that range; the 1955 claim and the hedge are unchanged. See the 2026-09-13 run log.
+      "this time is different" leaves lesson 36 but stays in lesson 33, where the corpus actually
+      teaches it as bubble psychology.
       ORIGINAL TEXT, kept verbatim because the entry above refers to it:
       > **(b) Lesson 36 (Yield Curve): the THINK question contradicts the lesson body on the same
       > screen.** The body's second section now says the 2022 inversion "stayed inverted for roughly
@@ -6213,3 +6212,47 @@ The 2026-09-10 glossary entry (archive ~l.48501) noted the quiz's *"set by the F
 **Owner-facing, one line:** the Reference screen labeled the 3.63% fed funds reading as "the rate the Fed sets". The Fed set a 3.50–3.75% range; 3.63 is the market rate's monthly average. The caption and the matching quiz explanation now say so, in all five languages. This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 — residual pick #1 in a new chain, which the rule allows: the previous run was a free pick and its second note named the glossary's "12-18 months" line) — lesson 36 taught a **"typical lead time of 12-18 months"** from yield-curve inversion to recession, the quiz keyed **"Recession within 12-18 months"** as what an inversion predicts, and the glossary said the same. **FRED puts only 2-3 of 6-10 episodes inside that window**; leads ran from about six months to about two years. Four surfaces, all five languages
+
+#### The pick, and the ruling it reverses
+The glossary note was called arguable because "signal" is not "certainty". Before picking, I read backlog item (b) (2026-09-05, ~l.2269). It kept the quiz and glossary figures "deliberately" because they matched "what the 1955 record supports", and it said *do not re-derive this*. **That ruling never measured the lead times.** It measured the present tense. Per the "verify decisions still hold" rule, I re-measured the number instead of re-reading the ruling.
+
+#### Step 3.5 — the premise measured, with controls
+- **Instrument:** FRED `fredgraph.csv` (no key) for `GS10`, `GS1`, `TB3MS`, `T10Y2Y` (daily → monthly mean) and `USREC`. **Controls:** `GS10` 2023-08 **4.17** < `TB3MS` **5.30**, which is the inversion L36 teaches. `USREC` is 1 at 2008-06 and 2020-03. Derived NBER peaks: 1957-08, 1960-04, 1969-12, 1973-11, 1980-01, 1981-07, 1990-07, 2001-03, 2007-12, 2020-02, which are the published dates. `USREC` is 0 through 2026-08.
+- **Measured, two methods, because the answer depends on how an episode is defined:**
+  - *Episode start → next recession (USREC first month):* 10y-1y leads **9, 8, 9, 17, 18, 12, 24, 7** (plus 1965-12 → 49, the 1966 false positive L36 already names). **3 of 8 in 12-18.** 10y-3m **12, 6, 14, 8, 17, 9**: **3 of 6**. 2s10s (from 1976) **17, 19, 34, 14, 23**: **2 of 5**.
+  - *First inversion in the 36 months before each NBER peak:* 10y-3m **2 of 7**, 10y-1y **2 of 10**.
+  - Under every spread and method, fewer than half the episodes fall in 12-18 months. Nearly every lead is between ~6 and ~24 months. The exceptions (34 or 36 months) come from episodes the windowing merges.
+- **The premise held, and it was wider than the note.** The same figure was the body's "typical lead time", section 2's "'typical' 12-18 month lead time", and the THINK prompt's "12-18 month window". Surface scan (Node, all five scripts' month words plus "lead time"/선행 시차/领先期/先行期間/anticipación over `src`+`public`): 25 hits, all in these four surfaces. **Control:** a Spanish money-lesson "dos meses de anticipación" hit and is unrelated. `CLAIMS.md`, `DECISIONS.md`, `LAUNCH_PLAN.md` and `README.md` have no hits.
+
+#### What shipped
+- **L36 §1** (5 langs): "…with a typical lead time of 12-18 months" → *"— though the lead time has varied widely, from about six months to about two years."*
+- **L36 §2** (5 langs): "…well past the 'typical' 12-18 month lead time" → *"…with no recession having followed — even though earlier recessions had usually arrived within about two years of an inversion."*
+- **L36 THINK** (5 langs): *"The yield curve inverted in mid-2022, and two years later — longer than earlier recessions had usually taken to follow an inversion — there was still no US recession. Does that make the signal wrong — or does it mean a historical pattern was never a promise about any single episode?"* It is still a closed interval (2022 → 2024), per item (b)'s reasoning. ⚠️ **My first draft said "about as long as earlier recessions had usually taken", which implies a typical two-year lead. The measured median is about a year.** I caught it on re-read before testing and re-patched it count-asserted in all five languages.
+- **Quiz** (keyed option, index unchanged): "Recession within 12-18 months" → **"Higher recession risk ahead"** (es *Mayor riesgo de recesión*, ko *경기침체 위험 증가*, zh *衰退风险上升*, ja *景気後退リスクの高まり*). The `explain` ("preceded every US recession since 1955 … not a perfect predictor … signals economic weakness ahead") is unchanged and now names the option it explains.
+- **Glossary `Yield Curve` `f`** (5 langs): *"Inverted = recession warning, historically about 6 months to 2 years ahead."*
+- Node patcher: old=1/new=0 before and old=0/new=1 after for all 25+5 strings; it writes nothing if any pre-check fails. Originals are in the scratchpad. Ledger: L36 es/ko/zh/ja re-marked `ai`. `npm run readiness -- --write`: en 155,030 → **155,174** chars, minutes unchanged at 164. Backlog item (b)'s "do not re-derive" paragraph is replaced by its correction (one paragraph, no layered original, per W-7.2 rule 2).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` before edit | exit 0, 3 WARN / 0 FAIL |
+| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L36 ×4 stale) |
+| `npm test` final | **exit 0, 3 WARN / 0 FAIL**. Option-length cue: en/es/ko/ja unchanged. **zh 52.2% → 50.0%**, because the zh keyed option is no longer the longest, so zh drops out of the WARN line |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | 6 old phrases (en ×2, es, ko, zh, ja) → **no file**. 8 new phrases → their own `quizText.<lang>-*` / `lessonContent.economy.en-*` / `markets-*` (glossary) chunks. Controls: unchanged "Every US recession since 1955 was preceded by an inversion" and "Immediate stock rally" → their chunks. Negative probe → no file |
+| `grep 12-18 / 12~18 / 12〜18 / 12 a 18` over `src` | **0**. The same pattern returned 25 hits before the edit, which is the control |
+| Live walk | **not done**: text only, no layout-bearing string longer than before except the §1 clause |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see both kinds of edited file.** Planting *"You should buy index funds now."* after the new clause in `lessonContent.economy.en.js` → `check-blindspot` **exit 1** (§10.1). The same plant in `glossary.js` → **exit 1**. Each file was restored from its scratchpad copy (`cmp`-equal), and the clean run → **exit 0**. No date-relative wording, advice, attribution or kids surface was added.
+- **DECISIONS.md / already-done:** this reverses item (b)'s *neighbour ruling*, not its fix. The THINK prompt is still a closed interval, and the 1955 claim, the 1966 false positive and the hedge are all kept. That ruling's own warning, "don't hedge the lesson's thesis on one episode", is respected: the change rests on ~8 episodes per spread, not on 2022.
+- **Could the new text be wrong?** "About six months to about two years" covers every episode-start lead except the 1966 false positive and one merged 2s10s episode (1998 → 34). "Usually … within about two years" is hedged for exactly that case. "Two years later … still no US recession" holds: `USREC` is 0 from 2022-07 through 2026-08. **Limits:** lead-time counts depend on the spread and on episode definition, so the range is rounded, not exact. §2's "the longest stretch on record" for the 2s10s inversion was not measured this run. No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L36 §2 "stayed inverted for roughly two years, the longest stretch on record".** Plausible for 2s10s since 1976, but unmeasured. `T10Y2Y` is already in the scratchpad instrument if a run wants it.
+
+**Owner-facing, one line:** the yield-curve lesson, its quiz and the glossary taught that an inversion means recession "within 12-18 months". Past recessions arrived anywhere from about six months to two years after one, and most fell outside that window. All three now teach the real range, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog net −1 line (item (b) paragraph replaced).

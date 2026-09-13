@@ -72,7 +72,7 @@ export const quizText = [
     "opts": [
       "Immediate stock rally",
       "Low inflation",
-      "Recession within 12-18 months",
+      "Higher recession risk ahead",
       "Strong GDP growth"
     ],
     "explain": "Inverted yield curves have preceded every US recession since 1955 — a strong track record, though not every inversion has been followed by a recession, so it isn't a perfect predictor. When short rates exceed long rates, it signals economic weakness ahead."
