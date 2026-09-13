@@ -6095,3 +6095,40 @@ Every `“Title”` reference in `lessonContent.{essentials,economy,money}.en.js
 **Owner-facing, one line:** lesson 17 said a raise always means more money kept, crediting the taxes lesson, which since yesterday says a benefits cliff can make a raise leave a household with less; the sentence now states only the bracket rule, in all five languages. Reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #2 in this chain, which the rule allows: the previous run's own Limits line named the untaken half of its census, "the translations' references were not read one by one") — lesson 12 and its quiz `q026` told learners that a mortgage's interest-heavy early payments are **"the same compounding math from “Compound Interest”"**, and “Compound Interest” says the opposite: its debt warning is scoped to *"interest you don't pay off"*, and its §3 says interest paid out each period puts you *"back to simple interest"* — which is what every regular mortgage payment does. In all five languages, in both places
+
+#### The pick — two sweeps, and the one that came back clean is reported first
+- **Translated cross-references vs. English (the nominated sweep).** Every title-quote span (`“”` en/es, `“”`/`《》` zh, `「」`/`『』` ko/ja) was resolved to a lesson by normalized title prefix, per lesson and per field, and the per-language sets compared to English. **Control:** English resolves **58**, the previous census's count, independently re-derived. Translations resolve es 55 / ko 55 / zh 55 / ja 56. **Every diff read by hand; none is a defect:** L6→“Compound Interest”, L9→“Compound Interest” and L11→“Stocks, Bonds & Diversification” are missing in all four languages because the whole clause is absent. L6, L9 and L11 are all in the recorded abridged set, per `translation-completeness`: L6 at 0.41/0.20/0.12/0.17. That is item 93's debt, not a new finding. L32/L40's "missing 4,15" is resolver ambiguity: English “Credit” prefix-matches “Credit Scores…” and “Credit Reports…”. L30 ja "extra 42" is 「お金」 prefix-matching lesson 42's title. **Result: no translation adds or drops a lesson credit outside abridged lessons.**
+- **Quiz explanations (never in either census).** `quizText.en.js` carries 6 lesson credits. Four hold. `q026` (lesson 12) credits “Compound Interest” with the mortgage split, and that led to lesson 12's body, which says the same.
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim (L12 §2 ¶2 and `q026` explain, en):** *"This is the same compounding math from “Compound Interest”, running against the borrower … — interest is charged on the full remaining balance, so…"*. es/ko/zh/ja say the same (*misma matemática del interés compuesto* / *복리 수학과 동일* / *复利数学原理相同* / *複利の数学とまったく同じ*).
+- **What the named lesson says (L3, shipped):** debt compounds when it is *"interest you don't pay off"*. The same qualifier appears in all four translations (*que no pagas* / *갚지 않은 이자* / *没还清的利息* / *払っていない利息*). If the interest is withdrawn each period, *"you're back to simple interest"*. A standard mortgage payment pays that month's interest in full, so no interest is charged on interest. The front-loading L12 describes comes from exactly the reason its own dash-clause gives: interest on a large balance. **L12's credit contradicts L3's own qualifier.**
+- **Not re-litigated:** the "roughly two-thirds" crossover. Re-computed this run (3% → 0.23 of term, 6% → 0.62, 7% → 0.67; **control:** 6% crosses at month 223, the textbook ~222). It is already recorded in `moneyVisuals.js:744-764` and the 2026-09-10/11 entries. FRED `MORTGAGE30US` 2026-09-10 = **6.76%**, so the lesson's hedged figure is in range today.
+- **Never examined:** `compounding math` / `simple interest` near mortgage → 0 hits in both logs, `DECISIONS.md` and `CLAIMS.md`. The previous census counted L12's credit as one of its 56 that "hold", because L3 does say debt compounds. It read the credit, not the qualifier.
+
+#### What shipped
+- `src/content/lessonContent.essentials.{en,es,ko,zh,ja}.js` (L12 §2): en now *"This isn't the compounding from “Compound Interest”: that lesson's warning about debt is about interest you don't pay off, and each regular payment on a standard mortgage pays that month's interest in full. The cause is simpler — interest is charged on the full remaining balance, so…"*. The rest of the paragraph is unchanged, and the four translations say the same.
+- `src/content/quizText.{en,es,ko,zh,ja}.js` (`q026` explain): *"…so early payments are mostly interest. This isn't the compounding from “Compound Interest”: each payment covers that month's interest in full, so no interest is charged on interest."* Options untouched.
+- The Node patcher asserted exactly 1 old and 0 new per file before writing; originals are in the scratchpad. `translation-review-ledger.json`: L12 es/ko/zh/ja re-marked `ai`. `LAUNCH_READINESS.md` via `npm run readiness -- --write` (English 154,788 → 154,907 chars; minutes unchanged at **164**).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1**: the expected §10.4 ledger mismatch (4 stale L12 entries) and the §4.3/§10.4 figures. After re-mark and readiness write: **exit 0, 3 WARN / 0 FAIL**, the standing three. The option-length cue is unchanged at 56.5/54.3/54.3/52.2/52.2% |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | 5 old phrases → **no file**. All 10 new phrases → exactly their own `lessonContent.essentials.<lang>-*` / `quizText.<lang>-*` chunk. Control (unchanged L12 clause) → en chunk; negative probe → no file |
+| Live walk | **not done**; nothing structural changed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planted *"You should buy index funds now."* after the new en clause (count 1) → `check-blindspot` **exit 1** (`§10.1 … reintroduced`). Restored from a scratchpad copy of the edited file, `cmp`-equal → **exit 0**. The edit corrects a mechanism and adds no advice, attribution, kids surface or date.
+- **DECISIONS.md / figures:** `moneyVisuals.js`'s split-band derivation depends only on "two-thirds", not on "compounding"; `compound` near mortgage/split in `charts.jsx`, `moneyVisuals.js`, `DECISIONS.md`, `CLAIMS.md` → 0. **Already-done:** no. The crossover item is untouched.
+- **Could the new text be wrong?** "Each regular payment … pays that month's interest in full" is true of a standard fully amortizing loan paid on schedule, which is the loan L12 describes ("A 30-year loan"). Negative-amortization and deferred-payment loans are the exceptions, and "standard" and "regular" carry that scope. **My own claim:** every row reproduces from the command named. **Limits:** translations are AI-only (O-3); no fluent reader has seen the new ko/zh/ja/es wording.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L11 §2** summarizes L3 as *"unpaid interest compounds too"* and applies it to fees. That is correct: a fee taken from a balance lowers the base every later year's growth compounds on. Checked because it sits next to this defect; it holds.
+
+**Owner-facing, one line:** the mortgage lesson and its quiz said early payments are interest-heavy because of "compounding", while the compound-interest lesson teaches that interest you pay off each month doesn't compound; both now give the real reason (interest on a large balance), in all five languages. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
