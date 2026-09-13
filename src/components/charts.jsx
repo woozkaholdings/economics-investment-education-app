@@ -1601,7 +1601,7 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
 // WHY A PICTURE, in the lesson's own words. Lesson 33's third section states
 // both spans and then leaves the arithmetic to the reader:
 //
-//     "each one arrives every 5-8 years"
+//     "one has come along every 5-8 years on average"
 //     "The long-term cycle spans 75-100 years"
 //     "almost nobody alive personally remembers the last time it peaked"
 //

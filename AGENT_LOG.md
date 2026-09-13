@@ -6294,3 +6294,40 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the four-phases lesson said stocks fall 22–35% on average during a recession. That is the average stock-market crash, which usually starts before the recession and ends before it does; across the recessions themselves, prices fell about 8% on average. The lesson now teaches that timing gap instead of the misplaced numbers, in all five languages. This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 free — the previous run shipped a census pick, and its only note (L35's "12-24 months") called itself arguable; this pick came from reading L33 against FRED) — lesson 33 told learners that short-term debt cycles each arrive "every 5-8 years, so **by adulthood most people have direct memory of at least two or three**", and **no US birth cohort from 1960 to 2008 lived through three recessions between the ages of 6 and 17**. Most lived through one or two. The 5-8 year average holds (6.5 years since WWII), but **only 2 of 11 actual gaps fall inside it**. The sentence now says "on average", gives the real spread, and says "at least one or two", in all five languages
+
+#### Step 3.5: the premise measured, with a control
+- **Why L33:** no run had ever measured "5-8 years" (grep over both logs: every hit only checks that translations preserved it, or that the NestedCycles chart matches the prose).
+- **Instrument:** FRED `USREC` monthly, keyless (Node, scratchpad `rec.mjs`). **Control:** the derived post-1945 peaks and troughs (1948-11/1949-10 … 2007-12/2009-06, 2020-02/2020-04) match NBER's published dates exactly.
+- **Measured:** peak-to-peak gaps in months: 56, 49, 32, 116, 47, 74, 18, 108, 128, 81, 146. **Mean 6.48 years**, but only **2 of 11** gaps fall in 60-96 months. Trough-to-trough: mean 6.41 years, also 2 of 11. The range runs from 18 months (1980→81) to 146 months (2007→20).
+- **Cohorts** (born mid-year B, recessions overlapping ages 6-17): 1960 → 2, 1970 → 2, 1975 → 2, 1980 → **1**, 1985 → **1**, 1990 → 2, 1995 → 2, 2000 → **1**, 2005 → **1**, 2008 → **1**. None reaches three. "Lived through several" for adults today holds (born 1978, the median adult: 6).
+- **The premise broke on the memory clause.** The average is defensible, but "arrives every 5-8 years" reads as regular, the same shape as L36's "typical 12-18 months" fixed earlier today.
+- **Why "5-8 years" stays:** `nestedCyclesShortLabel` (markets.js) lifts "every 5-8 years" from this sentence in each language, and check-data §71 (c) bounds the chart's cycle count by it. The mean sits inside the range, so the phrase stays with "on average". Changing the framework number (L32 subtitle, quiz q003 key, chart) is a separate, arguable decision and is not made here.
+- **Surface scan:** grep for `5-8`/`5–8`/`5 to 8`/`two or three`/`8 years` in five scripts over `src`, `public` and the root docs. The memory claim appears **only in L33 × 5 languages**. **Control:** the same scan found the known `5-8` hits in lessons.js, quizText.*, markets.js and kidsAges58, and those were left alone.
+
+#### What shipped (L33 §3, en/es/ko/zh/ja)
+- en: "each one arrives every 5-8 years, so by adulthood most people have direct memory of at least two or three." → *"in the US one has come along every 5-8 years on average since World War II, though the actual gap between recessions has run from a year and a half to more than twelve years, so most people remember at least one or two by the time they reach adulthood."* es/ko/zh/ja carry the same content, and each keeps its chart-label substring (`cada 5 a 8 años`, `5-8년마다`, `每5-8年`, `5-8年ごとに`).
+- Node patcher: old=1/new=0 before and old=0/new=1 after, for all five. Originals are in the scratchpad. The charts.jsx NestedCycles header comment quoted the old sentence, and its quote was updated to match.
+- Ledger: L33 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: LAUNCH_PLAN "~27,000 words" → "~27,100" (generated). `translation-completeness --write` was not run (memory note).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L33 ×4 stale) |
+| `npm test` final (after the comment edit) | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
+| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
+| Built bundle | old en/zh/ja phrases → **no file**. New phrase in each language → its own `lessonContent.economy.<lang>-*` chunk. Control ("The long-term cycle spans 75-100 years") → en chunk. Negative probe → no file |
+| Live walk | not done: one sentence of text in a card that already wraps |
+
+#### Step 5: adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new sentence (count 1) → `check-blindspot` **exit 1**. Restored (`cmp`-equal) → **exit 0**. No date, live figure, attribution or kids surface was added.
+- **DECISIONS.md / already-done:** the NestedCycles decision (item 27, §71) depends on "5-8 years" being in the prose, and it still is. The test run confirms §71 is green. Nothing redone.
+- **Could the new text be wrong?** "On average every 5-8 years": 6.5 by both peak and trough measures. "A year and a half to more than twelve": 18 and 146 months. "At least one or two by adulthood": every cohort measured got 1 or 2. **Limits:** a recession between ages 6 and 17 is a proxy for "remember", and the numbers are US-only (the sentence now says "in the US"). No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **"5-8 years" as the framework's cycle length** (L32 subtitle, quiz q003 key, NestedCycles label and alt text). The mean holds, but since 1982 the gaps have averaged about 9.7 years (108, 128, 81, 146 months). Changing it touches a quiz key and a chart guard. Arguable.
+
+**Owner-facing, one line:** the long-term debt cycle lesson said everyone remembers two or three recessions by adulthood. Nobody born since 1960 lived through three between ages 6 and 17, and most lived through one or two. The sentence now says "at least one or two", and notes that the gap between recessions has ranged from 1.5 to 12 years, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
