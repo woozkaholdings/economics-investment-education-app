@@ -6132,3 +6132,46 @@ Every `“Title”` reference in `lessonContent.{essentials,economy,money}.en.js
 **Owner-facing, one line:** the mortgage lesson and its quiz said early payments are interest-heavy because of "compounding", while the compound-interest lesson teaches that interest you pay off each month doesn't compound; both now give the real reason (interest on a large balance), in all five languages. Reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 BOUND — the previous two scheduled runs were residual picks #1 and #2, so this run could not take a third; the pick came from a fresh read of all twelve economy-track English lessons) — lesson 37's THINK prompt told learners the Fed "printed … **unlimited** in 2020", and its figure list gave COVID QE's size as **"Unlimited"**, three lines above the same lesson's own **$9 trillion peak**. The 2020 pledge had no preset cap; the money created did: FRED puts it at **about $4.6 trillion** over the two years of purchases
+
+#### The pick
+Bound by rule 1, so no note from the last two entries was eligible. I read L29-L40 (en) end to end against what I could check. Most figures held on inspection: L35's eleven hikes to 5.25-5.50%, L36's 1966 and 2022-24 inversions, L37's QE1 $1.75T / QE2 $600B / 10x peak, L33's "over 95" arithmetic. One claim failed. **Prior history, read before picking:** the 2026-08 dated-framing fix (archive ~l.1962) left "unlimited in 2020" alone as "a backward-looking historical fact"; that was a check for *now*-claims, not accuracy. Backlog (d) (2026-09-05) fixed the `$2+ trillion` half of the same sentence and did not examine "unlimited". **Neither read tested whether "unlimited" is a quantity that happened.**
+
+#### Step 3.5 — the premise measured, with controls
+- **Instrument:** FRED `fredgraph.csv` (no key) for `WALCL`, `TREAST`, `WSHOMCB`, 2007-06 → 2022-12. **Controls:** `WALCL` 2022-04-13 = **8,965,487** ($8.97T, the peak already recorded in backlog (a)) and 2007-08-01 = **870,261** (the lesson's "roughly $900 billion"). Both reproduce, so the series and dates are being read correctly.
+- **Measured:** Treasuries 2020-03-11 **2.523T** → 2022-03-16 **5.758T** (+3.235T); MBS **1.372T** → **2.730T** (+1.358T); securities **+4.59T**. Total assets 2020-03-11 **4.312T** → 2022-03-16 **8.954T** (+4.64T). Any window from the March 2020 start to the March 2022 end of net purchases gives **4.6-4.7T**. "About $4.6 trillion" is the securities figure, rounded down from neither.
+- **What "unlimited" named:** the FOMC's 2020-03-23 commitment to buy "in the amounts needed". That was an open-ended pledge, not a size. The THINK prompt's grammar ("printed $1.75 trillion … and unlimited") makes it an amount, and L37's last body paragraph gives that amount a peak. **The premise held: an internal contradiction in one lesson, in all five languages** (`Ilimitado` / `무제한` / `无限量` / `無制限`, list and prompt).
+- **Surface scan (Node, not grep, per the ugrep note), with a control:** `unlimited|ilimitad|무제한|无限|無制限|COVID QE` over `src/` + `public/`. The en hits fired (control). Ten hits, all L37 list/prompt, plus zh `quizText` "无限持续" ("can't continue forever"), which is unrelated. The kids guide does not mention 2020.
+
+#### What shipped
+- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js`, L37 only, two strings each:
+  - list: `COVID QE (2020): No preset limit — about $4.6 trillion by 2022` (es *Sin límite fijado — unos $4.6 billones hasta 2022*, ko *한도를 정하지 않음 — 2022년까지 약 $4.6조*, zh *未设上限——到2022年约4.6万亿美元*, ja *上限を定めず——2022年までに約4兆6000億ドル*)
+  - THINK: *"The Fed printed $1.75 trillion in QE1 starting in 2008, and in 2020 it pledged to buy in whatever amounts were needed — about $4.6 trillion over the next two years."* The rest of the prompt is unchanged. "Printed" stays; it is L34's own term for tool 4, and the two runs before this one kept it.
+- The Node patcher asserted exactly 1 old and 0 new per string, before and after writing. Originals are in the scratchpad. One ko follow-up edit ("약속한 뒤 이후" → "약속했고, 그 후") was also count-asserted.
+- `translation-review-ledger.json`: L37 es/ko/zh/ja re-marked `ai`, after I read each against the en. `LAUNCH_READINESS.md` / `LAUNCH_PLAN.md` via `npm run readiness -- --write` (en 154,907 → **155,030** chars; minutes unchanged at **164**; word count 26,900 → 27,000).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` (before edit) | exit 0, 3 WARN / 0 FAIL |
+| `npm test` (after edit, before ledger/readiness) | **exit 1**: the expected §10.4 ledger mismatch (4 stale L37 entries) |
+| `npm test` (final) | **exit 0, 3 WARN / 0 FAIL**: the standing three, option-length cue unchanged at 56.5/54.3/54.3/52.2/52.2% |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | 6 old phrases → **no file**. 7 new phrases → exactly their own `lessonContent.economy.<lang>-*` chunk. Control (unchanged `QE2 (2010): $600 billion`) → en chunk. Negative probe → no file |
+| `numerals.mjs amountsIn` on the new list clauses | en/es 4.6, ko/ja 4.6e12. The probe string ja `4兆5000億` reads 4.5e12, so the instrument can tell the figures apart |
+| Live walk | **not done**; only text changed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new en clause (count 1) made `check-blindspot` **exit 1** (`§10.1 … reintroduced`). I restored from the scratchpad copy of the edited file (`cmp`-equal), and it went back to **exit 0**. The edit adds a historical figure with no date-relative wording, no advice, no attribution and no kids surface.
+- **DECISIONS.md / neighbors:** `markets.js`'s balance-sheet bars (4.5 → 3.8 → 9.0) are consistent: 9.0 minus the March 2020 4.3 is ~4.7 total assets, and 4.6 is securities. `CLAIMS.md` / `DECISIONS.md` carry no L37 figure. **Already-done:** no. Backlog (a) (10x) and (d) (`$1.75 trillion`) are both preserved verbatim in the edited sentence.
+- **Could the new text be wrong?** "Pledged to buy in whatever amounts were needed" paraphrases the 2020-03-23 statement. "Over the next two years" matches net purchases ending March 2022. Gross purchases were larger than net growth, because MBS paydowns were reinvested. "Printed … about $4.6 trillion" is a claim about money created, which is net growth. **Limits:** no fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L37 list `QE3 (2012): $85B/month`.** QE3 began at $40B/month of MBS in September 2012 and reached $85B/month once Treasury purchases were added (December 2012, effective January 2013). The figure is QE3's full pace and the list is a one-line summary, so this is arguable, not a contradiction.
+- **L37 takeaway "QT drains money (deflationary …)".** L32 reserves "deflation" for a falling price level. "Deflationary" as pressure-direction shorthand is standard, and L37 pairs it with "inflationary" for QE the same way. Read, not a defect by this run's bar.
+- **L39 THINK "tariffs are pushing costs to a multi-generational high".** The multi-generational high is the effective tariff *rate*, not costs. It is posed as a hypothetical ("Imagine an economy…"), so it is left alone.
+
+**Owner-facing, one line:** the QE lesson said the Fed printed an "unlimited" amount in 2020, beside its own $9 trillion peak. It now says the 2020 pledge had no preset limit and the purchases came to about $4.6 trillion, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
