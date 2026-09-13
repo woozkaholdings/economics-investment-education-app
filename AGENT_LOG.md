@@ -6256,3 +6256,41 @@ The glossary note was called arguable because "signal" is not "certainty". Befor
 **Owner-facing, one line:** the yield-curve lesson, its quiz and the glossary taught that an inversion means recession "within 12-18 months". Past recessions arrived anywhere from about six months to two years after one, and most fell outside that window. All three now teach the real range, in all five languages. This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog net −1 line (item (b) paragraph replaced).
+
+### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1: residual pick #2 in the chain was **measured and came back clean**, so nothing shipped from it. The shipped pick is a census pick from reading L38 against FRED, which leaves the next run free) — lesson 38 attached **stock-market-cycle statistics to economic phases**. It said the Contraction phase "coincided with S&P 500 average declines of roughly -22-35%", and over the ten NBER contractions since 1957 US share prices fell **8% on average (median −4.6%), rising in 4 of 10**. −22–35% is the **bear-market** average (−33.5%), and bear markets usually start before a contraction and end before it does. The Trough's "+38-50% in the first year after a bottom" is the figure after **market** lows, not after the economy's trough (+16.5% on average). Expansion's "+14-28%" had no unit and matched no measurement. All three are fixed, in all five languages
+
+#### The residual, measured first (no edit)
+The previous entry named L36 §2's *"stayed inverted for roughly two years, the longest stretch on record"* as unmeasured. **Instrument:** FRED `T10Y2Y` daily (1976-06 → 2026-09-11), runs of negative closes. **Control:** the 2022 run starts on **2022-07-06**, which matches the widely reported July 2022 inversion. **Measured:** 2022-07-06 → 2024-08-26 is **25.7 months, strictly continuous**. The next longest are 1978-08 → 1980-05 at 20.4 months and 1980-09 → 1981-10 at 13.3 months. Merging gaps of ≤90 days does not change the rank (22.1 months for 1980-82). **The claim holds** in en/es/ko/zh/ja (all five read). No edit.
+
+#### Step 3.5: the L38 premise measured, with controls
+- **Why L38:** its three phase figures date from the v5 content. Archive l.18391 and l.21506 only checked that translations **preserved** them; no run ever measured them (grep over both logs).
+- **Instrument:** FRED `SPASTT01USM661N` (OECD US share prices, monthly average, 1957→) plus `USREC`. FRED's `SP500` covers only ten years, so a long S&P series is not available keyless. **Control 1:** the derived NBER peaks and troughs are the published dates (1957-08 > 1958-04 … 2020-02 > 2020-04). **Control 2, and it partly FAILED:** against daily `SP500` monthly means, 2020-02→04 reads −20.9% vs −15.7%, and 2021-12→2022-10 reads −16.1% vs −20.3%, which is close. But 2017-01→2026-06 reads **+110% vs +227%**, so this is **not an S&P 500 proxy over long horizons**. That is why the fix states no new S&P-specific percentage. The contraction-window conclusion (−8% avg vs a claimed −22–35%) is far outside a ±5-point short-window error, and it matches the S&P monthly averages I know for 2007-09 (≈−38%) and 1990-91 (≈+2%).
+- **Measured:** contraction peak→trough: −8.6, +4.8, −9.9, −18.8, +7.3, +6.4, +3.5, −4.6, −39.0, −20.9 (**avg −8.0, median −4.6**). 12 months after the NBER trough: **avg +16.5**. Bear markets (≥20% monthly-average drawdown): 7 episodes, **avg −33.5%**, and **+35%** in the 12 months after the low, against an unconditional 12-month average of **+7.8%** (n=822). The market low came **before** the NBER trough in 9 of 10 contractions (the exception is 2001 → low 2002-10). Every closed expansion ended with prices higher (the smallest was +9%, 1980-81); annualized returns averaged 9.6%. **The premise broke**: two figures describe the market's cycle rather than the phase they sit under, and the third has no definable unit.
+- **Surface scan** (Node, `(14|22|38) [-–~〜a to] (28|35|50)` over `src`, `public`, CLAIMS/DECISIONS/README/LAUNCH_*): **15 hits, all 3 × 5 languages in L38**. **Control:** the pattern found all fifteen, including the CJK strings. Quiz "Trough" q already says *"a market bottom"* and is qualitative, so it is left alone.
+
+#### What shipped (L38, en/es/ko/zh/ja)
+- **Expansion:** "…coincided with S&P 500 average returns of roughly +14-28%," → *"Historically, stock prices have tended to rise over this phase as a whole,"*.
+- **Contraction:** → *"Stocks often fall hard around this phase — US bear markets have averaged a drop of about a third — but the market's slide has usually started before the contraction began, and its recovery before the contraction ended, so from a contraction's first month to its last, prices have usually fallen far less than that. Assets like Treasury bonds…"*
+- **Trough:** → *"The stock market's own low has usually come before the economy's, while the headlines were still getting worse — and the year after a bear-market low has historically brought some of the market's strongest gains."* This now agrees with the lesson's own closing paragraph ("the strongest rebounds have historically started exactly when the headlines felt worst").
+- Node patcher: old=1/new=0 before and old=0/new=1 after, all 15 strings, and nothing is written if any check fails. Originals are in the scratchpad. Ledger: L38 es/ko/zh/ja re-marked `ai`. `npm run readiness -- --write`: en 155,174 → **155,502** chars, minutes 164 unchanged. LAUNCH_PLAN's rounded "~155,000" became "~156,000" (generated). `translation-completeness --write` was **not** run (memory note).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L38 ×4 stale) |
+| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three; option-length cue unchanged) |
+| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
+| Built bundle | `+14-28%`, `-22-35%`, `+38-50%` → **no file**. New phrase in each language → its own `lessonContent.economy.<lang>-*` chunk. Control (unchanged "Historically favored in this phase: value stocks") → en chunk. Negative probe → no file |
+| Live walk | not done: text-only, three sentences in cards that already wrap |
+
+#### Step 5: adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new Trough sentence (count 1) → `check-blindspot` **exit 1**. Restored from the scratchpad (`cmp`-equal) → **exit 0**. The edit adds no date, live figure, attribution or kids surface. "Strongest gains" is a historical description beside the lesson's existing "not a rule about what to hold" takeaway, and it is not advice.
+- **DECISIONS.md / already-done:** nothing covers phase returns. The translation-preservation passes (archive l.18391, l.21506) checked fidelity, not truth, so this does not undo them.
+- **Could the new text be wrong?** "Averaged about a third": proxy −33.5% on monthly averages, and daily-close S&P bear averages run deeper, so "about" covers it. "Usually started before … began": the market peak came clearly before the NBER peak in 7 of 10 and was roughly coincident in 1980, 1990 and 2020, so "usually" holds but not "always". "Recovery before the contraction ended": 9 of 10. **Limits:** the instrument is not the S&P 500 (control 2), so no S&P number was written. No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L35 THINK "policy takes 12-24 months to show up fully"** (5 langs). This is the conventional "long and variable lags" range and is not measurable from FRED without a model. Arguable.
+
+**Owner-facing, one line:** the four-phases lesson said stocks fall 22–35% on average during a recession. That is the average stock-market crash, which usually starts before the recession and ends before it does; across the recessions themselves, prices fell about 8% on average. The lesson now teaches that timing gap instead of the misplaced numbers, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.

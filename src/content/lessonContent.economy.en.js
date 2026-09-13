@@ -181,7 +181,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "Expansion",
-        "body": "Picture the same factory town from “The Short-Term Debt Cycle”, a few years into its boom. Credit flows freely, GDP rises, new jobs keep appearing, and confidence builds. People borrow more, spend more, and feel wealthier — the town adds a second restaurant, then a third. Historically, this phase has coincided with S&P 500 average returns of roughly +14-28%, and assets like growth stocks, cyclical stocks, and real estate have historically been favored in it."
+        "body": "Picture the same factory town from “The Short-Term Debt Cycle”, a few years into its boom. Credit flows freely, GDP rises, new jobs keep appearing, and confidence builds. People borrow more, spend more, and feel wealthier — the town adds a second restaurant, then a third. Historically, stock prices have tended to rise over this phase as a whole, and assets like growth stocks, cyclical stocks, and real estate have historically been favored in it."
       },
       {
         "heading": "Peak",
@@ -189,11 +189,11 @@ export const lessonContent = {
       },
       {
         "heading": "Contraction",
-        "body": "Back in the town, credit contracts, spending falls, and the third restaurant lays off staff, then closes. Unemployment rises across the whole town, and the Fed starts cutting rates to try to stop the slide. Historically, this phase has coincided with S&P 500 average declines of roughly -22-35%, and assets like Treasury bonds, gold, defensive stocks (utilities, healthcare), and plain cash have historically held up better in it."
+        "body": "Back in the town, credit contracts, spending falls, and the third restaurant lays off staff, then closes. Unemployment rises across the whole town, and the Fed starts cutting rates to try to stop the slide. Stocks often fall hard around this phase — US bear markets have averaged a drop of about a third — but the market's slide has usually started before the contraction began, and its recovery before the contraction ended, so from a contraction's first month to its last, prices have usually fallen far less than that. Assets like Treasury bonds, gold, defensive stocks (utilities, healthcare), and plain cash have historically held up better in it."
       },
       {
         "heading": "Trough",
-        "body": "This is the point of maximum pessimism — boarded-up storefronts, gloomy headlines, nobody wanting to be the one to buy. But historically, this is also where the strongest rebounds have started, precisely because prices have already fallen so far that even modest good news looks meaningful. S&P 500 average return in the first year after a bottom has historically been around +38-50%.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices."
+        "body": "This is the point of maximum pessimism — boarded-up storefronts, gloomy headlines, nobody wanting to be the one to buy. But historically, this is also where the strongest rebounds have started, precisely because prices have already fallen so far that even modest good news looks meaningful. The stock market's own low has usually come before the economy's, while the headlines were still getting worse — and the year after a bear-market low has historically brought some of the market's strongest gains.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices."
       },
       {
         "heading": "Why These Assets, in This Phase",

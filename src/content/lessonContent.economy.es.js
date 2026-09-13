@@ -181,7 +181,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "Expansión",
-        "body": "Imagina el mismo pueblo fabril de “El Ciclo de Deuda a Corto Plazo”, ya con varios años de auge encima. El crédito fluye con soltura, el PIB sube, siguen apareciendo empleos nuevos y la confianza se afianza. La gente pide más prestado, gasta más y se siente más rica; el pueblo suma un segundo restaurante, y luego un tercero. Históricamente, esta fase ha coincidido con retornos promedio del S&P 500 de aproximadamente +14-28%, y activos como las acciones de crecimiento, las acciones cíclicas y los inmuebles han sido históricamente los favorecidos en ella."
+        "body": "Imagina el mismo pueblo fabril de “El Ciclo de Deuda a Corto Plazo”, ya con varios años de auge encima. El crédito fluye con soltura, el PIB sube, siguen apareciendo empleos nuevos y la confianza se afianza. La gente pide más prestado, gasta más y se siente más rica; el pueblo suma un segundo restaurante, y luego un tercero. Históricamente, los precios de las acciones han tendido a subir a lo largo de esta fase en su conjunto, y activos como las acciones de crecimiento, las acciones cíclicas y los inmuebles han sido históricamente los favorecidos en ella."
       },
       {
         "heading": "Pico",
@@ -189,11 +189,11 @@ export const lessonContent = {
       },
       {
         "heading": "Contracción",
-        "body": "De vuelta en el pueblo, el crédito se contrae, el gasto cae y el tercer restaurante despide personal y luego cierra. El desempleo sube en todo el pueblo y el Fed empieza a recortar tasas para intentar frenar la caída. Históricamente, esta fase ha coincidido con caídas promedio del S&P 500 de aproximadamente -22-35%, y activos como los bonos del Tesoro, el oro, las acciones defensivas (servicios públicos, salud) y el simple efectivo han aguantado históricamente mejor en ella."
+        "body": "De vuelta en el pueblo, el crédito se contrae, el gasto cae y el tercer restaurante despide personal y luego cierra. El desempleo sube en todo el pueblo y el Fed empieza a recortar tasas para intentar frenar la caída. Las acciones suelen caer con fuerza en torno a esta fase —los mercados bajistas de EE. UU. han restado en promedio cerca de un tercio de los precios—, pero la caída del mercado normalmente empezó antes de la contracción, y su recuperación antes de que la contracción terminara, así que, del primer mes de una contracción al último, los precios por lo general han caído mucho menos que eso. Activos como los bonos del Tesoro, el oro, las acciones defensivas (servicios públicos, salud) y el simple efectivo han aguantado históricamente mejor en ella."
       },
       {
         "heading": "Valle",
-        "body": "Este es el punto de máximo pesimismo: escaparates tapiados, titulares sombríos, nadie que quiera ser quien compre. Pero históricamente aquí también han comenzado los rebotes más fuertes, precisamente porque los precios ya han caído tanto que hasta una noticia buena modesta parece significativa. El retorno promedio del S&P 500 en el primer año después de un fondo ha rondado históricamente el +38-50%.\n\nHistóricamente favorecidos en esta fase: las acciones de calidad castigadas, los bonos de alto rendimiento y los inmuebles a precios de remate."
+        "body": "Este es el punto de máximo pesimismo: escaparates tapiados, titulares sombríos, nadie que quiera ser quien compre. Pero históricamente aquí también han comenzado los rebotes más fuertes, precisamente porque los precios ya han caído tanto que hasta una noticia buena modesta parece significativa. El mínimo del propio mercado bursátil normalmente ha llegado antes que el de la economía, mientras los titulares seguían empeorando, y el año posterior al mínimo de un mercado bajista ha traído históricamente algunas de las mayores subidas del mercado.\n\nHistóricamente favorecidos en esta fase: las acciones de calidad castigadas, los bonos de alto rendimiento y los inmuebles a precios de remate."
       },
       {
         "heading": "Por Qué Estos Activos, en Esta Fase",
