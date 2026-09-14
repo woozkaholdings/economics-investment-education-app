@@ -6368,3 +6368,40 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the economic-indicators lesson taught that a PMI below 50 means a contraction is coming. US manufacturing PMI sat below 50 for most of 2023-24 and no recession followed. The lesson now says what 50 actually marks and gives that counterexample, in all five languages. It is one minute longer (3 → 4). This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-14 (scheduled dev-agent; W-6.2 rule 1 free: the previous run was a free pick, and its only notes (L39's tariff thinkAbout, the DBnomics caveat) called themselves arguable or were instrument limits. This pick came from reading L40, the only economy lesson with no commit since 2026-09-01) — lesson 40's closing summary told learners the three layered cycles give "a map for understanding where an economy has been, **where it is now, and where it's probably headed**". Two lessons earlier, L38's takeaway says *"a phase is usually only clear once it has passed — so the four phases describe a pattern that has repeated, not a schedule of what comes next"*. L33 says the actual gap between US recessions has run from 18 months to more than 12 years, and L36 and L39 each now say their indicator is not a standalone forecast. The track's last lesson made a promise its own lessons had already taken back. The sentence now calls it a map, not a timetable, and cites L38, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Why L40:** `git log --since=2026-09-01` shows 0 commits naming lesson 40, the only economy lesson with none. Grep over both logs: no run has ruled on "probably headed".
+- **Instrument:** a Node regex over `lessonContent.economy.en.js` for `predict|forecast|headed|timing|not a recession|year and a half|…`, printing the lesson for each hit. **Control:** it found the known L36 ("one input, not a standalone forecast") and L39 ("not a recession forecast") sentences, both shipped 2026-09-13. L38's takeaway was read in full, since the regex did not match its wording ("schedule of what comes next").
+- **The premise held.** L40 §2 was the only sentence in the track that claimed the template shows where an economy is now and where it is headed. Both halves contradict L38's takeaway, and the "headed" half also contradicts L33's measured 18–146-month gap spread.
+- **Surface scan:** grep for `headed`, `where .* going` and each language's phrase (`hacia dónde`, `향할 가능성`, `正走向`, `向かう可能性`) over `src public *.md`. The claim appears **only in L40 §2 × 5 languages**, and the scan found all five known copies (control). The other hits were unrelated (`unheaded`, a policy-scenarios sentence). The quiz for L40 (`q008`) keys on Rule 1 only, so it was left alone.
+
+#### What shipped (L40 §2, en/es/ko/zh/ja)
+- en: "…where an economy has been, where it is now, and where it's probably headed." → *"…where an economy has been and which forces are pushing on it now. It is a map, not a timetable: as “The 4 Phases of Economic Cycles” showed, no two cycles have run the same length, and a phase is usually only clear once it has passed."* es/ko/zh/ja carry the same content. Each uses its own L38 title and reuses L38's takeaway wording in that language (`se ha repetido`/`지나고 나서야 분명해집니다`/`过去之后才看得清楚`/`過ぎてから初めてはっきり`), so the two lessons now say the same thing in the same words.
+- Node patcher (`scratchpad/patch.mjs`): old=1/new=0 before and old=0/new=1 after for all five, writing nothing unless every pre-check passed. Originals are in `scratchpad/orig/`.
+- Ledger: L40 es/ko/zh/ja re-marked `ai` under the ledger's existing reviewer name. `npm run readiness -- --write` updated the generated char counts in `LAUNCH_READINESS.md` (en 155,836 → 155,995). Minutes are unchanged (165). `translation-completeness --write` was **not** run (memory note).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` after edit, before ledger | **exit 1**, expected: §10.4 ledger mismatch (L40 ×4 stale) |
+| `npm test` after ledger, before readiness | **exit 1**, expected: §4.3/§10.4 generated char counts |
+| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
+| Cross-reference guards see the new title | A planted `As “The 4 Phases of Economic Cycles” showed` in L29 (a forward reference, en only) → `check-data` **exit 1**, failing both **§75** (9 lessons later) and **§58** (es/ko/ja don't carry the reference). Restored from the scratchpad (`cmp`-equal) → **exit 0**. So L40's new reference is recognized, points backward, and is present in all five languages |
+| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
+| Built bundle | 5 old phrases → **no file**. 5 new phrases → their own `lessonContent.economy.<lang>-*` chunk. Control (unchanged "Layer all three together") → en chunk. Negative probe → no file |
+| Live walk | not done: text only, in a card that already wraps |
+
+#### Step 5: adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new sentence (count 1) → `check-blindspot` **exit 1** (§10.1). Restored (`cmp`-equal) → **exit 0**. The change *removes* a forecasting promise addressed to "an investor". No date, live figure, attribution or kids surface was added.
+- **DECISIONS.md / already-done:** nothing in either file rules on L40's summary. The "5-8 year" and "75-100 year" phrases that §71 and the NestedCycles chart depend on are untouched.
+- **Could the new text be wrong?** "No two cycles have run the same length": L33's measured gaps (56, 49, 32, 116, 47, 74, 18, 108, 128, 81, 146 months) have no repeats. "Which forces are pushing on it now" claims the template explains mechanisms, which is what L29–L39 teach, and not that it identifies the phase. **Limits:** no fluent reader has seen the es/ko/zh/ja wording (O-3). L40 still presents the three rules unattributed. That was not re-judged here, since §10.2's closure is a standing rule this run did not reopen.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L40 thinkAbout "You now understand more about how the economy works than most people"** is an unmeasured comparative claim, and flattering. Arguable in a closing prompt.
+- **L40 Rule 1 "eventually the debt burden crushes you, whether you're a household or a country"** and `q008`'s explain "This applies to individuals AND nations" state as certain something that does not always hold for a country that borrows in its own currency. Not measured in this run: the claim was not checked against the track's deleveraging lessons. Arguable, and it touches a quiz explanation.
+
+**Owner-facing, one line:** the last economy lesson promised that the cycle template shows where an economy is "probably headed", which the phases, yield-curve and PMI lessons before it each say it can't. It now calls the template a map, not a timetable, and points back to the phases lesson, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
