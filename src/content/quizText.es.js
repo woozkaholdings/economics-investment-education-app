@@ -45,7 +45,7 @@ export const quizText = [
       "75-100 años",
       "5-8 años"
     ],
-    "explain": "El ciclo corto dura 5-8 años. Es el ciclo económico que el banco central controla principalmente a través de las tasas de interés."
+    "explain": "El ciclo corto dura 5-8 años. Es el ciclo económico que el banco central intenta dirigir a través de las tasas de interés, sin llegar a controlarlo del todo."
   },
   {
     "q": "¿Qué causa la inflación?",

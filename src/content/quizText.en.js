@@ -45,7 +45,7 @@ export const quizText = [
       "75-100 years",
       "5-8 years"
     ],
-    "explain": "The short-term debt cycle lasts 5-8 years. It's the business cycle controlled primarily by the central bank through interest rates."
+    "explain": "The short-term debt cycle lasts 5-8 years. It's the business cycle, which the central bank tries to steer through interest rates without fully controlling it."
   },
   {
     "q": "What causes inflation?",

@@ -6445,3 +6445,40 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 33 said long debt crises differ from ordinary recessions because rates are "already close to 0%", and at 2008, 1929 and Japan's 1990 bust, the three examples it names, rates were 5-6%. They were cut to about zero afterwards and it didn't end the slump. The lesson now says that, in all five languages. It reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-14 (scheduled dev-agent; W-6.2 rule 1: residual pick #1 in a new chain, which the rule allows. The previous run was a free pick, and its second note named this sentence as "not measured this run") — lesson 32's **takeaway** told learners "The central bank **controls** the cycle by raising and lowering rates", and quiz `q003`'s explanation called the short-term cycle "the business cycle **controlled primarily** by the central bank through interest rates". **FRED: each of the last four US recessions (starting 1990, 2001, 2007, 2020) began after the Fed had already been cutting rates for months**, and L33 (since `ce678aa`) says cuts to about zero did not end the 2008 slump. Both surfaces now say the central bank tries to steer the cycle without controlling it, and the takeaway gives the four years. All five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** `scratchpad/m.mjs` over FRED CSVs `FEDFUNDS` and `USREC` (keyless). For each recession start, it prints fed funds at the start, 12 months before, and the 24-month peak. **Control:** `FEDFUNDS` 1981-01 = **19.08** and 2008-12 = **0.16**, both known values.
+- **Measured:** the six recessions from 1957 to 1981 each began with rates **higher** than a year earlier (for example 1973-12: 9.95 vs 5.33; 1981-08: 17.82 vs 9.61), so rate hikes did precede them. The last four each began **after cuts had started**: 1990 (peak 9.85 in 1989-03 → 8.15 in 1990-07), 2001 (6.51 in 2000-11 → 5.31 in 2001-03), 2007 (5.26 in 2007-07 → 4.24 in 2007-12), 2020 (2.40 in 2019-07 → 1.58 in 2020-02). **The premise held.** Rates are a real lever, as the six older episodes show. "Controls" fails four times in a row, and L32 §3 and L33 already say the tool runs out.
+- **Surface scan, two passes.** (1) An exact-phrase grep in all five languages over `src public *.md` found only the five L32 takeaways (control: all five known copies). **It missed `q003`**, whose wording is different. (2) A Node regex over the en content, glossary, economicSignals, markets and quiz text for control/steer near central bank/Fed/rate found the takeaway (control) **and `q003`**, plus four lines left alone: L29's "controls money and credit" (true), the glossary's "the only one the central bank controls directly" (the monetary base, true), and two "sets a target range and steers" lines (true). Also found: L32 §2's "steered mostly by the central bank's interest-rate decisions" (see notes). **Pass 2 widened the fix from 5 edits to 10.**
+
+#### What shipped (en/es/ko/zh/ja)
+- L32 takeaway, en: *"The central bank tries to steer the cycle by raising and lowering rates, but it doesn't control it: the US recessions that began in 1990, 2001, 2007 and 2020 each started after the Fed had already begun cutting rates."* The years are named, not "the last four", so the sentence cannot go stale when a new recession arrives. es uses `el Fed` (26:0 vs `la Fed`) and `EE.UU.`; ko uses `연준`/`경기침체`; zh `美联储`; ja `FRB`/`米国` (18:3 vs アメリカ).
+- `q003` explain, en: *"It's the business cycle, which the central bank tries to steer through interest rates without fully controlling it."* The "5-8 years" key is untouched (ruled arguable earlier; L33 carries the spread). Options are unchanged, so the option-length cue is unchanged.
+- The Node patcher (`scratchpad/patch.mjs`) asserted old=1/new=0 before and old=0/new=1 after for all ten, in a dry run and then a write. Originals are in `scratchpad/orig/`.
+- Ledger: L32 es/ko/zh/ja re-marked `ai` under the ledger's existing reviewer name. `npm run readiness -- --write`: en 156,408 → 156,559 chars, LAUNCH_PLAN §4.0 ~156,000 → ~157,000 chars and 27,200 → 27,300 words, minutes unchanged at 165. `translation-completeness --write` was **not** run (memory note).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` after edit | **exit 1**, expected: §10.4 ledger (L32 ×4 stale) |
+| `npm test` after ledger | **exit 1**, expected: four generated readiness/plan figures |
+| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
+| Translated numerals | The years in the L32 takeaway field are `1990 2001 2007 2020` in all five. Control: the old takeaway had no digits, so these can only come from the new text |
+| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
+| Built bundle | 6 old phrases → **no file**. 10 new phrases → their own language's `lessonContent.economy.<lang>-*` / `quizText.<lang>-*` chunk. Control (unchanged "Layer all three together") → en chunk. Negative probe → no file |
+| Live walk | not done: text only, in a card that already wraps |
+
+#### Step 5: adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** A planted *"You should buy index funds now."* after the new takeaway (count 1) made `check-blindspot` exit 1. Restored (`cmp`-equal) → exit 0. The years are closed history, not a live figure. No attribution or kids surface was added. The takeaway's "works like a machine" metaphor was left as it was; a grep of both logs, `DECISIONS.md` and `CLAIMS.md` finds no ruling on it, and it carries no name.
+- **DECISIONS.md / already-done:** nothing rules on L32's takeaway or `q003`'s explanation. This does not undo the earlier L35 §2 "History is more mixed" fix; it brings L32 into line with it.
+- **Could the new text be wrong?** The start months are NBER peaks: 1990-07, 2001-03, 2007-12, 2020-02. The first cuts came in 1989-06, 2001-01, 2007-09 and 2019-07, so each came before its peak. The 2020 recession was set off by the pandemic, and the sentence says only that it started after the cuts, which is true. "The US recessions that began in" those years: each year had exactly one. **Limits:** "doesn't control it" is a judgment from four counterexamples, not a proof. It is the same claim L35 §2 already makes. No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L32 §2's "This up-and-down cycle repeats roughly every 5-8 years, steered mostly by the central bank's interest-rate decisions"** is now in mild tension with the takeaway below it. "Mostly" is a hedge, and the older six episodes support it. Arguable. Any fix should also look at "roughly every 5-8 years" against L33's measured spread.
+- **Instrument lesson:** an exact-phrase surface scan misses a paraphrase of the same claim (`q003`). A concept regex over en, with the known sentence as the control, caught it. Future content fixes should run both.
+
+**Owner-facing, one line:** lesson 32's takeaway and a quiz explanation said the central bank "controls" the business cycle with rates. The last four US recessions each started after the Fed was already cutting. Both now say it tries to steer the cycle without controlling it, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
