@@ -1,4 +1,4 @@
-# Agent Log — Archived Run Log (2026-08-01 → 2026-09-11)
+# Agent Log — Archived Run Log (2026-08-01 → 2026-09-12)
 
 Archived 2026-08-16 by the weekly review (backlog item W-3). `AGENT_LOG.md` had grown to
 909 KB / 9,814 lines, of which the run log was ~93% — a cost paid by every dev-agent run, since
@@ -50251,4 +50251,1177 @@ learners on the next push (O-5).
 
 **Log size.** Before this entry: `MEASURED log-size: file 630533 b, run log 195518 b, floor 435015 b (backlog
 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+## Archived 2026-09-12
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — see the ruling below, which is the first thing this entry settles because the previous run's heading names it) — lesson 30 told learners the gap between US credit outstanding and the monetary base "has only widened over time as the economy has grown", and FRED puts that ratio at **70.6x in 2008 and 21.7x today** — it has *narrowed by roughly two-thirds*, and both reversals are the QE this same track teaches seven lessons later
+
+#### W-6.2 rule 1 — the ruling, stated before the work because it is the only contestable thing in this run
+The previous entry's heading says *"residual pick #2 in this chain, which the rule allows; **the next run may not
+take a third**."* This run's item **appears in that entry's "Seen, deliberately NOT fixed" list**, so a strict
+reader can call this a third consecutive residual pick. **Both readings are recorded here rather than the
+convenient one.**
+- **The reading taken: this is a census pick, not a residual of the previous run.** The chain the previous entry
+  warned about is **L35 → L39**, two defects *that run and its predecessor found themselves*. L30 was found by the
+  **lesson-body census**, a documented and repeatedly-used pick source — **four prior entries open with
+  "W-6.2 rule 1 free … this pick came from the census, not from any note"** (`6175`, `6338`, `6745`, and `5919`
+  by its converse). L30 has been **re-listed, never re-derived**, in three entries.
+- **The rule's own stated defect is "the filed residual then becomes the next pick *by default*."** The previous
+  run did the opposite of filing-and-defaulting: it **declined** the item and wrote, in that same list, *"the next
+  run that wants a content pick should take one rather than re-listing it."* Being told to take it is not taking
+  it by default.
+- ⚠️ **The counter-argument, not smoothed away:** the item was still, literally, on the previous entry's residual
+  list, and a future run is free to rule the other way. **If it does, the remedy is the rule's own — the next run
+  picks from `LAUNCH_PLAN.md`, the owner-facing block, or refills the backlog.** This entry does not get to decide
+  that for it.
+
+#### The pick, and its premise re-measured with controls (step 3.5) — the premise HELD, and it is worse than the note claimed
+The note carried forward three entries said only that the clause was "still open". **Nothing in it was a measured
+figure, so there was nothing to reproduce — the claim had to be derived from scratch**, which is the step-3.5 case
+where the item's characterization is the thing under test.
+- **Instrument:** FRED CSV (`fredgraph.csv?id=`, no key), `TCMDO` (all-sectors debt securities and loans,
+  quarterly, $M) over `BOGMBASE` (monetary base, monthly, $B), 270 matched quarters, 1959-01 → 2026-04.
+- **Controls, and they are what make the zeros below readable:** a nonexistent series id returns **HTTP 404**
+  against the real ids' **200**; and the monetary base reads **$831B (2008-01)**, **$1,666B (2008-12)**,
+  **$3,728B (2014-01)**, **$5,002B (2020-06)**, **$6,413B (2021-12)** — the published doubling across the 2008
+  crisis and the 2020 expansion, which is what says the series is the one I think it is.
+- **The verdict, and the claim is not marginally wrong but directionally inverted:**
+
+  | | ratio (credit ÷ monetary base) |
+  |---|---|
+  | 2008-01 (peak of the whole series) | **70.6x** |
+  | 2021-10 (post-peak trough) | **14.7x** — **−79%** |
+  | 2026-04 (latest) | **21.7x**, still **69% below** the 2008 peak |
+  | 1986-04 / 2006-04 | 44.6x / 61.5x — **today is LOWER than both** |
+
+  The ratio **fell in 99 of 269 quarters**. "Only widened" is false in **37%** of the series' own history, and the
+  two largest moves in it are both *narrowings*.
+- **Why this one mattered more than an ordinary wrong number: the cause of the narrowing is QE**, which **this same
+  track teaches in L37** ("QE injects money… QT drains money"). The lesson was telling a learner a trend whose
+  reversal the learner is taught seven lessons later as the central monetary fact of the era.
+- ⭐ **Where the sentence came from, which changes what the fix is allowed to do.** `git log -S` reaches
+  **`790cd77` (2026-08-02), which *introduced* it** — as the fix for stale hardcoded figures ("~$50T credit vs ~$3T
+  actual money"), deliberately replaced with "figure-free framing that teaches the same concept without going
+  stale". **That fix was right and is not being undone: the replacement clause carries zero digits (verified per
+  language, below).** Only its incidental directional error is corrected. **This completes `790cd77`; it does not
+  reverse it.**
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js`, one clause replaced in each (`git diff --numstat` **1/1 ×5**). The
+edit script asserted old = 1 / new = 0 per file before writing and 0 / 1 after, and refused the file otherwise;
+pristine copies were kept in the scratchpad and are what the baseline run below was taken against.
+- en: *"— a gap that **has been there for as long as the records go back, though its width swings a lot depending
+  on how much money the Fed is injecting or draining**."*
+- **The magnitude claim is untouched in all five languages** — "many times larger than the monetary base (M0)"
+  still opens the sentence, and it is true (21.7x). **Only the trend clause moved.**
+- **"injecting or draining" is L37's own takeaway vocabulary in each language, not invented phrasing**: es
+  *"inyectando o drenando"*, ko *"공급하느냐 회수하느냐"*, zh *"注入资金还是抽走资金"*, ja *"注入しているか吸収しているか"* —
+  each lifted from that lesson's `takeaway` in that language, so the two lessons now point at each other by
+  construction.
+- **No digits and no dates added in any language** (measured on the clause text itself, per language: **0** digits,
+  **0** `Month YYYY`, against a plant control that scores 4 and 1). §2.3's shape is untouched.
+- **The other two places that carried this phrasing were checked and needed nothing.** `markets.js`'s 2026-08-25
+  comment records that "base money supply" appeared in three places — the glossary `Credit` entry, this lesson, and
+  its quiz explanation. **Both of the others carry only the magnitude claim and no trend claim**, so the three
+  surfaces now agree; had the trend clause lived in the glossary too, fixing the lesson alone would have *created*
+  the contradiction this run set out to remove.
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; base $831B/2008-01, $1,666B/2008-12, $5,002B/2020-06 match published |
+| `npm test` **baseline**, taken by restoring the pristine files *before* comparing | **exit 0, WARN 3 / FAIL 0** — the same 3 (option-length cue, translation completeness, review coverage) |
+| `npm test` after the content edit | **exit 1** — stale ledger (4 pairs) + §10.4/§4.3 generated figures, **both expected and both fixed rather than exempted** |
+| `npm test` final | **exit 0, WARN 3 / FAIL 0 — identical to the baseline** |
+| Ledger / readiness scope | `translation-review mark 30 <lang>` ×4 and `refresh-readiness --write` touched **8 ledger lines + 2 LAUNCH_READINESS lines and nothing else** — checked because a past run's `--write` re-recorded 32 ratios for a one-lesson edit |
+| `npm run check-blindspot` | **exit 0** (own controls: 8 timing patterns each firing, 33 advice patterns clean) |
+| `scripts/build-out-of-tree.sh` | **exit 0**; entry `index-Cro1VqSg.js` |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.economy.<lang>` chunk; all **5** old → **no file**; positive control present, negative control absent |
+| Live, `python3 -m http.server` on `127.0.0.1:8897` | index **200**, nonexistent path **404** (control fired) |
+| Live `#/lesson/30`, real `<select>`, 4 s waits | **en/es/ko/zh/ja: new true, old false, magnitude claim true, no English leak, negative false, not loading**; `html lang` en/es/ko/zh-Hans/ja; header "LESSON 2 OF 12 · HOW THE ECONOMY WORKS" |
+| Rendered paragraph read back from the live DOM | full sentence correct in the built app |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found — after one of my own instruments was caught lying twice.**
+- ⚠️ **Instrument defect 1, caught by a control I nearly did not run.** My first cross-corpus scan used
+  `grep -rnoE ".{80}(only widened).{40}"` and returned **nothing, exit 1** — which reads exactly like a clean
+  sweep. **`grep` here is ugrep: bounded repetition aborts on complexity and prints no matches.** Re-run with
+  `-F` per pattern plus controls: the five old clauses → **0 files**, `monetary base` (known present) → **5
+  files**, `zzz-not-in-corpus` → **0**. **The zeros are only readable because the positive control fired.**
+- ⚠️ **Instrument defect 2: I misread my own diff.** A digit count over the changed *lines* returned **11 digits
+  added** — alarming, and wrong: each "line" here is an entire lesson body as one JSON string, so it carried the
+  pre-existing `$8`, `$15,000`, `$20,000`. Re-measured **on the clause text I actually wrote: 0 digits in all five
+  languages.** The same run also reported "25 added lines" where `--numstat` says **5**. **A positive that is not
+  read is the same mistake as a control that does not fire.**
+- Over the real diff: Dalio/Bridgewater **0**, advice verbs **0** (plant control fires at 1), `Month YYYY` **0**
+  (plant control 1), child-facing kids framing **0**. `check-blindspot` exit 0 independently.
+
+**DECISIONS.md conflict: none.** `credit|monetary base|M0|widen` → 9 hits (control `localStorage` → 13), all
+unrelated: glossary term-sense disambiguation, pre-split track labels, and a ledger-widening note. Nothing there
+rules on this claim.
+
+**Already-done backlog item: this is the one check that changed how the fix was written.** `git log -S` shows the
+clause was **introduced** by `790cd77`, a *completed* fix for stale figures. Redoing that fix in reverse — putting
+numbers back — would have undone finished work. **The clause shipped here is digit-free by measurement**, so
+`790cd77`'s property is preserved and only its error is corrected. The archive carries **1** mention (that fix's
+own entry) and the live log **3**, all notes; **the sentence has never been edited on its merits.**
+
+**My own verification claim.** Every row reproduces from the command named, and **three rows exist because a
+control disagreed with me first**. Limits I own: (1) the ratio is **US-only** and pairs a *quarterly* credit series
+with the *first month* of each quarter's base — a within-quarter mismatch of at most weeks, immaterial at a swing
+of 70.6x → 14.7x but real; (2) `TCMDO` is one of several defensible "total credit" aggregates, and a different one
+would move the levels, **though not the direction — no US credit aggregate grew fast enough between 2008 and 2014
+to outrun a base that went 4.5x**; (3) the four translations are verified by me for **presence, placement and
+vocabulary reuse**, not for fluency.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census residual list is now ONE item, not two.** **L37 §2**'s *"$95 billion a month starting in 2022"*
+  remains — and a first look says it needs a real measurement rather than a reword: the Fed's caps were
+  **$47.5B/month from June 2022** and reached **$95B only in September 2022**, so "starting in 2022" is
+  defensible-but-misleading, and **$95B was a cap the realized runoff rarely hit**. ⚠️ **Whoever takes it should
+  also check whether the sentence's present-tense framing survives at all** — QT ended, and the lesson reads as
+  though it is ongoing. **That is a bigger edit than a clause swap, which is why this run did not bolt it on.**
+- **L30's `thinkAbout` and takeaway were read and are clean** — neither restates the trend claim, so no second
+  clause needed to move.
+
+**Owner-facing, one line:** nothing new for the owner; **O-3 applies** — four machine-written clauses ship here
+unreviewed by a fluent reader, though each reuses vocabulary already shipped in that language. `market.json` is
+**1 day old (asOf 2026-09-11)**, so nothing is stranded and this fix reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 641786 b, run log 206771 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "take the L37 QT item next" — so W-6.2 rule 1 does not arise, and the ruling in the previous entry is neither reinforced nor overturned by this run) — lesson 37 told learners "The Fed ran QT at $95 billion a month starting in 2022", and $95 billion was a **ceiling the runoff never reached** (realized **−$73.7B/mo**) that took effect in **September**, three months after QT started at half that — and the sentence stopped in 2024, leaving out that the balance sheet **stopped shrinking in December 2025**
+
+#### The premise re-measured (step 3.5) — the previous entry's note was RIGHT about the cap and WRONG about the tense, and the tense is my own error to correct
+The note I filed one entry ago said the sentence's "present-tense framing" might not survive. **Measured: it is
+already past tense in all five languages** — "ran" / "ejecutó" / "시행했고" / "实施" / "進め". **There was no tense
+error.** The real omission is that the sentence ends its story in 2024 while the program ended in late 2025.
+- **Instrument:** FRED `WALCL` (total assets, weekly), split by `TREAST` and `WSHOMCB`; **404 control** on a
+  nonexistent series id against **200** on the three real ones.
+- **Control that the series is the one I think it is:** `WALCL` peaks at **$8,965B on 2022-04-13** — the lesson's
+  own "$9 trillion peak in 2022", stated one section earlier, reproduced independently.
+- **Realized pace against the published caps:**
+
+  | window | cap | realized (WALCL) |
+  |---|---|---|
+  | 2022-06 → 2022-09 | $47.5B/mo | **−$29.8B/mo** |
+  | 2022-09 → 2024-06 | **$95B/mo** | **−$73.7B/mo** |
+  | 2024-06 → 2025-04 | $60B/mo | −$55.4B/mo |
+  | 2025-04 → 2025-12 | $40B/mo | −$23.3B/mo |
+  | **2025-12 → 2026-09** | — | **+$22.3B/mo (GROWING)** |
+
+- **Why the $95B cap was never met, measured rather than asserted:** in that window Treasuries ran off at
+  **−$57.6B/mo against a $60B cap** (essentially at the cap) while MBS ran off at **−$16.9B/mo against a $35B
+  cap** — under half. The shortfall is **almost entirely the mortgage leg**, which is why the replacement sentence
+  names mortgage bonds specifically rather than hand-waving at "the pace".
+- ⭐ **The end of QT is not read off a memory of an announcement — it is in the data.** `WALCL`'s post-peak trough
+  is **$6,536B on 2025-12-03**, and the weeks around it turn cleanly (−16, **trough**, +3, +18, +24, +60). The
+  balance sheet has risen **+$205B over the 9 months since**, sustained. **A trough that deep followed by nine
+  months of growth is the program ending, not a wobble.**
+- **Total drawdown: $2,430B ($2.43T) over 3.6 years**, peak to trough.
+- ✅ **Cross-checked against a surface I did not touch.** `markets.js`'s `balanceSheetHistory` chart runs
+  **9.0 → 6.7 ($−2.3T)**; my FRED figure is **8.965 → 6.536 ($−2.43T)**. **Two independent surfaces agree**, which
+  is what let the new sentence say "more than $2 trillion" without inventing a number.
+
+#### What shipped
+`lessonContent.economy.{en,es,ko,zh,ja}.js` (one clause each) **+ `lessons.js` (`minutes` 3 → 4)**. Edit script
+asserted old = 1 / new = 0 before writing and 0 / 1 after, per file, refusing otherwise.
+- en: *"The Fed started QT in mid-2022, and once it was up to full speed the cap was $95 billion a month — though
+  the runoff actually came in below that ceiling, because its mortgage bonds were being paid back more slowly than
+  the cap allowed. It eased off in 2024 and stopped shrinking the balance sheet in late 2025, by which point more
+  than $2 trillion had come off the $9 trillion peak."*
+- **Three defects fixed, and the distinction is the teaching point:** (1) $95B is now a **cap**, not the rate the
+  Fed "ran QT at"; (2) it attaches to "once it was up to full speed" rather than to the start; (3) the story now
+  **ends**. A learner who previously finished this paragraph believed QT was a $95B/month program that was merely
+  "slowing".
+- Punctuation follows each language's repertoire: ASCII `—` in en/es/ko, full-width `——` in zh/ja (both already
+  used that form in this same body).
+- **`$9 trillion peak` and the QE figures above it are untouched** — they were re-measured and are right.
+
+#### The minutes field — a real product consequence, taken rather than dodged
+`npm test` failed with *"lessons[8] (id 37): minutes is 3, but its text computes to 4"*. **This is the check
+working, not an obstacle.** Measured with `check-data.mjs`'s own `lessonWords` rule (title + subtitle + headings +
+bodies + takeaway + thinkAbout + the end-of-lesson check's question, options and explanation, at 200 wpm):
+**690 words → 3.450 → 3** before, **733 → 3.665 → 4** after. **The lesson sat 0.05 under the rounding boundary and
+43 words tipped it.**
+- **I took the 4 rather than trimming back under 699 words.** `DECISIONS.md` § *How a lesson's `minutes` estimate
+  is computed* says `minutes` is **"derived, never authored"**, so the honest display for 3.665 is 4; buying back
+  the old figure would have meant deleting the causal clause that is the substance of this fix.
+- Knock-on, all generated: catalog total **162 → 163 min** in `LAUNCH_READINESS.md` §4.3, `LAUNCH_PLAN.md`'s
+  Phase-0 content gate and `CLAIMS.md` A6 — **the gate still reads "met"** on both clauses.
+- ⚠️ **Disclosed plainly: this run made a lesson longer.** 43 English words for three factual corrections is a
+  trade I think is right, but it is a trade, and the ~2-hour curriculum total moved because of it.
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instruments | 404/200 control fired; `WALCL` peak **$8,965B / 2022-04-13** reproduces the lesson's own "$9T in 2022" |
+| Trough is a turn, not noise | **$6,536B / 2025-12-03**, +$205B over the 9 months since; adjacent weeks printed |
+| Independent corroboration | `markets.js` chart **9.0 → 6.7** vs FRED **8.965 → 6.536** |
+| `npm test` after content edit | **exit 1, 2 FAIL** — the minutes check and the stale ledger/readiness figures, **all three expected and all three fixed rather than exempted** |
+| `npm test` final | **exit 0, WARN 3 / FAIL 0** — identical to the baseline this run started from |
+| Ledger / readiness scope | `mark 37 <lang>` ×4 + `refresh-readiness --write` → **8 ledger lines, 2 + 3 + 1 doc lines, nothing else** |
+| `npm run check-blindspot` | **exit 0**; §2.3's live-date guard clean on the added "late 2025" (a historical event, not a `Month YYYY` freshness shape) |
+| `scripts/build-out-of-tree.sh` | **exit 0** |
+| `dist/assets` grep | all **5** new strings → their own `lessonContent.economy.<lang>` chunk; all **5** old → **no file**; positive control present, negative absent |
+| Live, `python3 -m http.server` on `127.0.0.1:8898` | index **200**, nonexistent **404** (control fired) |
+| Live `#/lesson/37`, real `<select>`, 4 s waits | **en/es/ko/zh/ja: ending clause true, cap clause true, old false, no English leak, negative false**; `html lang` en/es/ko/zh-Hans/ja; header "LESSON 9 OF 12 · HOW THE ECONOMY WORKS" |
+| The minutes change reached the UI | reader renders **"≈4 min"** |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found.** Over the diff: Dalio/Bridgewater **0**, advice verbs **0**, child-facing kids
+framing **0**, `Month YYYY` **0**. `check-blindspot` exit 0 independently, and its §2.3 module passes on the added
+"late 2025" — **correctly, because §2.3 guards *fake freshness*, and a completed 2025 event is history**. The
+distinction matters here more than usual: this run deliberately added a date, and the guard was consulted rather
+than assumed.
+**DECISIONS.md conflict: none — and one clause was actively *followed* rather than merely not-violated.** The
+`minutes` decision ("derived, never authored") is what settled the 3-vs-4 question above. `credit|balance sheet|
+minutes|reading` → hits reviewed, control `localStorage` → 13.
+**Already-done backlog item: none.** `git log -S "ran QT at $95 billion"` reaches **`2afcb42`** ("Rewrite all 17
+lessons with real-life examples", owner-directed) and three mechanical chunk-splits — **the sentence has never been
+edited on its merits**, so nothing completed is being undone.
+**Consistency with surfaces I did not touch: checked, and all three agree.** The `QT` and `QE` glossary entries are
+**mechanism-only, dateless and figure-free**, so they cannot go stale against this; `MarketSignals.jsx` carries no
+QT figures; `markets.js`'s chart corroborates the drawdown. **Had any of them asserted an ongoing QT, fixing the
+lesson alone would have created the contradiction this run set out to remove** — the same trap the L30 run hit.
+**My own verification claim, and one correction to my own previous entry.** Every row reproduces from the command
+named. **The previous entry's residual note told the next run to check whether "the sentence's present-tense
+framing survives at all" — it was past tense all along, in all five languages, and I wrote that note.** A flagged
+suspicion is not a measurement, and it is recorded here because it was mine. Limits I own: (1) the realized paces
+are computed off **weekly** `WALCL` snapshots nearest each cap-change date, so each is ±1 week — immaterial at
+−73.7 vs a 95 cap, real at the margins; (2) `WALCL` is *total assets*, so it includes facilities outside the
+runoff caps — which is why the Treasury/MBS split is reported separately and is where the cap comparison actually
+lands; (3) the four translations are verified by me for presence, placement and terminology, not fluency.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⚠️ **`markets.js`'s `balanceSheetHistory` last bar is about to go stale by rounding, and this is a measurement,
+  not a hunch.** `qt2` is **6.7**; `WALCL` stood at **$6,740.6B** on 2026-09-09 and is rising **+$22.3B/mo**, so it
+  crosses **6.75 — which renders as 6.8 — in roughly two weeks.** ⛔ **Not fixed here because the number is not the
+  question:** the bar is labeled `"Second tightening"` and the file's comment says the series is labeled *"by era
+  rather than by date so it reads unambiguously as history"* — so a future run must first decide **whether the bar
+  denotes that era's trough (6.5) or today's level (6.7, drifting)**. Deciding that is the work; editing the digit
+  is not. **The census residual list is now EMPTY** — both carried-forward items are closed.
+- **L37's `thinkAbout` was read and left alone:** it asks who benefits most from QE and is unaffected by the QT
+  correction.
+
+**Owner-facing, one line:** **O-3 applies** — four machine-written clauses ship unreviewed by a fluent reader; and
+**this run lengthened one lesson**, moving the curriculum total to 163 min (gate still met). `market.json` is
+1 day old, so nothing is stranded and this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 654483 b, run log 219468 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "do the markets.js chart bar next") — the balance-sheet chart's last bar read **6.7**, which was the level on the day it was written rather than the end of the tightening it is labeled for; the other four bars are all their era's endpoint, so the outlier was the value, not the convention — and at +$22.3B/month the bar was **about twelve days** from rendering as 6.8
+
+#### The decision the previous entry said had to come first, and it was settled by the file's own words rather than by taste
+The note I filed said a run must decide **whether `qt2` denotes that era's trough (6.5) or today's level (6.7,
+drifting)** before touching the digit. **It did not need a judgment call: `balanceSheetDescription` already says
+which**, in all five languages — *"3.8 **after** the first tightening, 9.0 **after** the pandemic response, 6.7
+**after** the second tightening"*. **Every bar is the level *after* its era.** The comment above the series says
+the same thing from the other side: labeled *"by era rather than by date so it reads unambiguously as history"*.
+- ⭐ **So the question "trough or today?" was malformed, and saying so is the finding.** The series already had a
+  rule; **one bar was not following it.** I went looking for a decision and found a defect.
+
+#### Premise re-measured with controls (step 3.5) — four bars ARE the control
+Read every bar as "the extreme reached before the next phase began" and check it against FRED `WALCL`:
+
+| bar | stated | measured | → |
+|---|---|---|---|
+| `pre08` (max before QE1) | 0.9 | **0.922T** (2008-01-02) | 0.9 ✅ |
+| `qe123` (max at QE3's end) | 4.5 | **4.516T** (2015-01-14) | 4.5 ✅ |
+| `qt1` (min at QT1's trough) | 3.8 | **3.760T** (2019-08-28) | 3.8 ✅ |
+| `covid` (max, 2022 peak) | 9.0 | **8.965T** (2022-04-13) | 9.0 ✅ |
+| `qt2` (min at QT2's trough) | **6.7** | **6.536T** (2025-12-03) | **6.5 ❌** |
+
+**Four of five reproduce exactly. The fifth is the only one that does not — and it matches *today's* reading
+(6.741T → 6.7) instead**, which is precisely the reading the file's own comment rules out. **A four-bar control
+firing on its own convention is what makes the fifth bar's disagreement a measurement rather than a preference.**
+- ⛔ **Why this was a defect and not a number to top up, which is the whole reason the value moved rather than
+  being refreshed:** a bar that tracks "today" **drifts forever**. `WALCL` stood at **$6,740.6B** rising
+  **+$22.3B/mo**, so it was **+$9B — about twelve days — from crossing 6.75 and rendering as 6.8**. Topping it up
+  to 6.7 would have bought under a fortnight. **An endpoint cannot go stale; that is the point of the convention.**
+- ✅ **The caption's claim was checked because this change could have broken it.** Deepening the second fall takes
+  it 2.3 → 2.5. *"Two large rises, each followed by a smaller fall"* still holds: falls **0.7 < 3.6** and
+  **2.5 < 5.2**. Had it not, the caption would have had to move with the bar.
+
+#### What shipped
+`src/content/markets.js` only — **six values and a comment, no other file.**
+- `balanceSheetHistory.qt2.value` **6.7 → 6.5**, and the same figure in `balanceSheetDescription` for **all five
+  languages** (es carries it as `6,7 → 6,5`, its own decimal comma). Each of the six was asserted present exactly
+  once before the write and replaced exactly once after, refusing otherwise.
+- **A comment recording the convention**, because the next bar added to this series is where it would go wrong
+  again: every bar is its era's endpoint, the four measurements that establish that, and the drift argument for
+  why an endpoint is the right shape. **The rule now lives next to the data instead of in a run-log entry.**
+
+#### Verification — every row reproducible from the command named
+| Check | Result |
+|---|---|
+| FRED instrument | 404 control vs 200; four bars reproduce their stated value to one decimal |
+| `npm test` | **exit 0, WARN 3 / FAIL 0** — identical to the baseline (no ledger churn: this is not lesson content) |
+| `npm run check-blindspot` | **exit 0** |
+| `scripts/build-out-of-tree.sh` | **exit 0** |
+| Live, `python3 -m http.server` on `127.0.0.1:8899` | index **200**, nonexistent **404** (control fired) |
+| **Call site 1** — lesson 37's inline figure (`LessonVisual.jsx`) | rendered bars **0.9 / 4.5 / 3.8 / 9.0 / 6.5**; `6.7` absent |
+| **Call site 2** — Reference › Market Dashboard (`MarketSignals.jsx`) | rendered bars **0.9 / 4.5 / 3.8 / 9.0 / 6.5** |
+| Accessible description, both screens | `role="img"` aria-label reads *"…9.0 after the pandemic response, **6.5** after the second tightening"* |
+| Non-English | `ja` aria-label reads *"…パンデミック対応後は9.0、第2次引き締め後は**6.5**。"*, bars identical |
+| Screenshot | chart renders with the last bar visibly shorter than `covid`; era labels correct in `ja` |
+
+#### Step 5 — adversarial self-check
+**Blindspot register: nothing found, and §2.3 moves the right way.** `check-blindspot` exit 0. This change
+**removes** a figure that silently tracked the present with no as-of date — `DECISIONS.md`'s binding rule is *"the
+UI never presents figures as current without showing when they were taken"*, and a bar labeled as history that
+quietly followed today's balance sheet was the shape that rule exists to prevent. **The fix strengthens §2.3
+compliance rather than merely not offending it.** No Dalio, no advice language, no kids framing in the diff.
+**DECISIONS.md conflict: none** (control `localStorage` → 13).
+**Already-done backlog item: checked specifically, because this file carries one.** Item **163(c)** made this
+series render one decimal (`balanceSheetFormat = n.toFixed(1)`, added because `9.0` rendered as `9`). **I changed a
+value, never the formatter** — it is untouched at `markets.js:443` and both call sites still pass it, and the live
+proof is that **all five bars render one decimal in both screens**, including the one I edited. `git log -S 'value:
+6.7'` reaches only **`79d9507`** ("Rebuild app from scratch"), so the number is original authoring that has never
+been revisited on its merits — nothing completed is being undone.
+**My own verification claim.** Every row reproduces from the command named, and **both call sites were checked
+separately** rather than one being inferred from the other — the file's own comment names two, and a fix verified
+on one screen is not verified on the other. Limits I own: (1) the four control bars are matched to *my* choice of
+era windows, and a different window boundary could in principle pick a different extreme — but each measured value
+lands within 0.05 of the stated one, which is tighter than the rounding the series displays; (2) `WALCL` is total
+assets, so the trough includes facilities outside the runoff — the bar is labeled as the balance sheet, so that is
+the right series for it, but it is not a QT-only number; (3) the four translated descriptions changed a **digit
+only** — no prose was rewritten, so no fluency question arises.
+- ⚠️ **One instrument defect, caught by a control.** My first scan for restatements ran
+  `grep -rnF "6.7" src/ --include=*.js` **unquoted**, and zsh glob-expanded `--include=*.js` so the scan errored
+  and found **nothing** — which reads as "only one place to fix". Re-run quoted, it found **six**. **Five of the
+  six would have shipped unfixed**, leaving the chart at 6.5 and every screen-reader description still saying 6.7.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census residual list stays empty**; this item came off the previous entry's note and closes it.
+- **`balanceSheetHistory` has no guard tying its values to anything**, unlike the lesson figures §28 checks. A
+  check could re-derive the five endpoints from FRED — **but W-6.2 rule 3 asks what learner-visible failure it
+  would catch, and the honest answer is "a bar drifting by one decimal", which is what the endpoint convention now
+  prevents by construction.** Filed as a note, not built, and not numbered.
+
+**Owner-facing, one line:** nothing new; this run touched no lesson prose, so **O-3 does not apply to it**.
+`market.json` is 1 day old, and this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 665735 b, run log 230720 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "build the FRED check for the chart values" — **this run argued the check was not due, the owner overruled, and the argument turned out to be half wrong**) — `scripts/check-balance-sheet.mjs`: the five balance-sheet bars are now re-derived from FRED `WALCL` on demand, and the half that needs no network runs on every `npm test`
+
+#### The argument I lost, and the part of it that was actually wrong
+The previous entry filed this as a note rather than a numbered item, reasoning under **W-6.2 rule 3** that the
+learner-visible failure was only "a bar drifting by one decimal", which the endpoint convention "now prevents by
+construction". **The owner said build it. The reasoning was wrong in a specific way, and the specific way is a
+whole branch of this file:**
+- **The convention prevents drift only for eras that have CLOSED.** Every one of the five has, which is what made
+  the argument look sound. **Nothing whatsoever stopped the next run from adding a bar for an era still in
+  progress** — and a bar over an open era is *precisely* the 6.7 defect, re-created on a fresh key.
+- So the check does not only re-derive values. **`checkErasAreClosed()` WARNs on any era window whose end is not in
+  the past**, which is the rule the 6.7 bug broke, written as a tripwire for the next bar rather than as a comment
+  I wrote and then argued nobody needed to enforce.
+- ⭐ **The general lesson, which is mine and not the owner's:** "prevented by construction" is a claim about the
+  code that exists. **It is not a claim about the code the next run writes.**
+
+#### What shipped
+`scripts/check-balance-sheet.mjs` (290 lines) + `package.json` (2 lines).
+- **`npm run check-balance-sheet`** — the full check, including FRED.
+- **`npm test` gains `check-balance-sheet.mjs --offline`.** ⚠️ **The split follows the repo's existing convention
+  rather than my preference:** measured before writing anything, **`npm test` makes no network calls** and the two
+  checks that do — `check-deployed`, `analytics-check` — are deliberately outside it. A network round trip on
+  every run would make the suite slow and flaky offline.
+- **FRED needs no key on this route** (`fredgraph.csv?id=`), so the check has no credential and no setup step. The
+  repo's own `fetch-market-data.mjs` uses the keyed API and hides that this route exists.
+
+**The four things it tests, and each one is a defect that actually happened or nearly did:**
+1. **Each bar vs FRED.** `WALCL`'s max (expansions) or min (tightenings) over that era's window, rounded through
+   `balanceSheetFormat` — the app's own formatter, imported, not retyped. This is the 6.7 defect.
+2. **Every stated value appears in all five `balanceSheetDescription` strings**, each in its own decimal form (es
+   uses a comma). **This is the near-miss:** the 6.7 fix had to change *six* places, and the scan that found them
+   ran unquoted the first time and reported one. Five would have shipped, leaving the chart disagreeing with its
+   own screen-reader text.
+3. **Spec/data drift, both directions** — a bar with no era window FAILs (nothing would check it), and a window
+   with no bar FAILs. The windows live in the script, not in `markets.js`, because shipping test scaffolding in the
+   app bundle is exactly what `check-payload.mjs` exists to object to; this closes the cost of that split.
+4. **Open eras WARN**, per above.
+
+**FAIL / WARN / NO VERDICT split, by who owns the remedy** — copied from `check-market-freshness.mjs`'s design and
+`check-deployed.mjs`'s refusal: a wrong value, a missing description figure or an unchecked bar **FAIL** (the repo
+owns them); an open era **WARNs**; and FRED being unreachable, the 404 control not firing, or the CSV parsing to
+under 1,000 rows give **⛔ NO VERDICT** — never a silent pass. **An instrument that cannot measure says so.**
+
+#### Verification — five controls, every one of which fired
+| Control | Result |
+|---|---|
+| `--self-test` (perturbs the `covid` bar's stated value by +0.4) | **exactly one MISMATCH, on `covid`; exit 1** — the comparison is not blind |
+| 404 control (nonexistent series id) | **404 against `WALCL`'s 200**, each run |
+| Parse control (>1000 weekly rows) | **1,239 rows, 2002-12-18 .. 2026-09-09** |
+| **Planted description drift** (`ja` set to 6.6 while the bar reads 6.5) | **FAIL naming `ja` specifically**; exit 1 |
+| **Planted new bar with no era window** (`qt3`) | **FAIL on the missing window + 5 FAILs on the absent description figures**; exit 1 |
+| **Planted open era** (`qt2` ending 2099) | **WARN**, with the 6.7 defect named in the message |
+| Restores | each plant restored **from a scratchpad copy, never `git checkout --`**; `git diff` back to **0 changed lines** after each |
+
+**Live result, all five bars:** `pre08` 0.9 = 0.922T (max 2008-01-02) · `qe123` 4.5 = 4.516T (max 2015-01-14) ·
+`qt1` 3.8 = 3.760T (min 2019-08-28) · `covid` 9.0 = 8.965T (max 2022-04-13) · `qt2` 6.5 = 6.536T (min 2025-12-03).
+**PASS, 0 failures.** The table also prints each bar's distance to the next rounding boundary — the quantity that
+went wrong on `qt2` while nothing was watching (tightest is `qt1` at 0.010T).
+
+#### Step 5 — adversarial self-check
+⭐ **The repo's own tooling caught a real bug in my check, within a minute of it being wired in.** `check-data.mjs`
+§23 failed the first `npm test`: I had computed "today" as `new Date().toISOString().slice(0, 10)`, **which is
+tomorrow's date every evening east of UTC** — so `checkErasAreClosed()` would have stopped warning several hours
+early, and the machine this repo runs on is east of UTC. Fixed by importing **`todayStr()` from
+`src/utils/date.js`**, the same function the app compares against, with a comment saying why. **I wrote a check to
+catch drift and shipped a date bug into it; an existing check caught me. That is the argument for this file
+landing, made against its author.**
+**W-6.3, quoted and re-measured as the rule requires** (it asks any run proposing a check to look at the ratio
+first and say which side the proposal falls on): `scripts/` **22,353** lines vs app code **10,196** — **2.19x**,
+**exactly the 2.19x W-7.0 recorded on 2026-09-06**. This file's ~220 lines are **0.022x** of it. **The proposal
+falls on the side that does not move the number**, and the ratio has now held flat for six days rather than
+resuming its climb.
+**Duplication: none.** `grep 'balanceSheet' scripts/*.mjs` returns **nothing** outside the new file (control: 8
+files under `src/` reference it), so no existing check covered these values — this is new coverage, not a second
+opinion on an existing one.
+**DECISIONS.md conflict: none** (control `localStorage` → 13); nothing there rules on network use in checks, and
+the offline default follows observed convention rather than a recorded decision.
+**Blindspot register: nothing found.** The diff is a script and one `package.json` line — no learner-facing copy,
+no dates in content, and `check-blindspot` passes inside `npm test`.
+**My own verification claim.** Every row above reproduces from the command named, and **four of the seven rows are
+deliberately planted failures**, because a check whose only evidence is "it passed" is the thing this repo keeps
+learning not to trust. Limits I own: (1) the era windows are **my** boundaries — each measured value lands within
+0.05T of its stated one, comfortably inside the rounding the chart displays, but a differently-drawn window could
+select a different extreme, which is why each window carries a `why` string naming what it is supposed to catch;
+(2) the check proves the bars match `WALCL`, **not** that `WALCL` is the right series for a bar labeled "the Fed's
+balance sheet" — it is total assets, which is the honest reading of that label but includes facilities outside QE
+and QT; (3) `--offline` in `npm test` means **the FRED half runs only when someone runs it**, so a value that
+disagrees with FRED is caught on demand, not automatically. Making it automatic would put a network call in the
+suite, which is the trade named above and is the owner's to revisit.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Nothing else in `markets.js` is tied to a source this way** — the yield-curve descriptions, sector copy and
+  rate principles are qualitative and have no series behind them, so there is nothing for an analogous check to
+  compare against. **Named here so the next run does not read this file as a template to replicate across the
+  module.**
+
+**Owner-facing, one line:** `npm run check-balance-sheet` is the new command; it needs no key and no setup, and
+`npm test` is unchanged in speed because the FRED half is opt-in. Nothing here touches learner prose, so **O-3
+does not apply**; this reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 674300 b, run log 239285 b, floor 435015 b (backlog
+396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and its single "Seen, deliberately NOT fixed" note says the opposite of a pick ("so the next run does not read this file as a template"); this pick came from the lesson-body census, re-run on the seven economy-track lessons it had never reached) — lesson 29, the **first lesson of the main path**, told every new install that "the biggest buyer and seller of all is the government", and US households buy **about four times** what every level of government buys
+
+#### The pick
+The census had covered 16 of 44 lessons and **none of the economy track's openers**. Economy is the main path — a new install opens on lesson 29 — so the seven unread economy lessons (29, 31, 32, 34, 36, 38, 40) were read in full this run. Lesson 29 carried the sharpest defect and has the largest audience of any text in the app.
+
+**The sentence, as it shipped in all five languages:**
+> "Households, businesses, and banks all take part, **but the biggest buyer and seller of all is the government**, which plays two very different roles:"
+
+#### Step 3.5 — the premise re-measured with controls. It HELD, and the claim is not ambiguous but inverted on the reading the sentence itself sets up
+The sentence names households and businesses and then contrasts them with government, so it reads as a **sector** comparison. On that reading it is false, and not narrowly.
+- **Instrument:** FRED CSV (`fredgraph.csv?id=`, no key) — `PCEC`/`PCE` (personal consumption), `GCE` (government consumption expenditures and gross investment, all levels), `GPDI`, `NETEXP`, `GDP`, `W068RCQ027SBEA` (total government current expenditures).
+- **Control 1 (instrument is live):** a nonexistent series id returns **HTTP 404** against the real ids' **200**.
+- **Control 2 (the series are the ones I think they are):** the NIPA identity. `PCE + GPDI + GCE + NETEXP = 32,486.106` vs `GDP = 32,486.066` for 2026 Q2 — **agreement to 0.04 of 32,486**, which no mismatched series set would produce.
+- **The verdict, 2026 Q2:** households **$22,100B = 68.0% of GDP**; government purchases **$5,544B = 17.1%**; business investment **$5,718B = 17.6%**. **Households buy 3.99x what all government buys.** Even counting *every* government dollar including transfers ($11,468B, 35.3% of GDP — money handed to households, who then do the buying) households are still **1.93x** larger.
+- **Where the original sentence came from and why it is not simply a typo:** it is the "How the Economic Machine Works" framing, where the point is that government is the largest *single entity*. That is defensible. **The app's sentence lost the word that carried it**, and the surrounding clause converts it into a sector claim.
+
+#### The figures I chose, and the one I rejected for rotting
+I first wrote *"roughly four times"* (3.99x today). **Measured across history before committing to it:** `PCE/GCE` ranges **3.19x–4.00x over the last 20 years** (n=82 quarters) and **2.38x–4.24x since 1947** — so "four times" is at the very top of its range and would be wrong within a few years. Shipped **"more than three times"**, which holds for every quarter of the last 20 years. `PCE/GDP` is **66.1%–68.8%** over the same 20 years, so **"about two thirds"** is durable. **A figure that is exactly right today and wrong in three years is the defect this log keeps re-finding; it is cheaper to pick the robust form now.**
+
+#### What shipped
+The paragraph, in all five languages (en/es/ko/zh/ja), now reads (en):
+> "Households, businesses, and banks all take part, **and households do most of the actual buying — US consumer spending is about two thirds of the economy, more than three times what every level of government buys.** The government is still worth pausing on, because the one word covers two institutions that work in completely different ways:"
+
+This **keeps** the lesson's structure — it still hands off to the Central Government / Central Bank bullets, and now names a better reason for the hand-off (one word, two institutions) than a magnitude claim that was wrong.
+- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js` — one paragraph each.
+- `src/content/lessons.js` — lesson 29 `minutes` **2 → 3**. The English body grew 33 words to **503**, and `round(503/200) = 3`. ⚠️ **It is 4 words past the boundary, and I deliberately did not trim to get back under it.** Shaving four words to keep a nicer label is exactly the "softer restatement" `CLAIMS.md` warns about, one document over. §3.0.5's four-minute rule for a track opener is still satisfied.
+- `scripts/translation-review-ledger.json` — the four non-English entries for lesson 29 re-marked (they went stale the moment the English changed). **Confined to lesson 29**: 24 changed lines = 4 languages x 3 fields, verified in the diff.
+- `CLAIMS.md`, `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md` — regenerated by `npm run readiness`, not hand-edited; the catalog total moved 163 → 164 min.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting **exactly 1 match per file**, refusing to write otherwise — 5/5 written |
+| Old claim gone / new text present (source) | **5/5 files**, old-claim hits **0**, new-text hits **1,1** |
+| ⚠️ **First control FAILED and voided its own scan** | my `grep -c -F "a\|b"` made `\|` literal, so it returned 0 for all five — **including the "old claim is gone" zero.** Re-run in node; control then fired **5/5** and the zeros became readable. *A scan whose control returns nothing proves nothing* — this is the second time this repo has caught that shape, and the first where I wrote the broken instrument. |
+| `npm test` | **PASS, 0 failures.** Caught two real follow-ons I had not made: the stale `minutes` and the stale translation ledger |
+| Build | ⚠️ `npm run build` **failed** (iCloud-synced `node_modules` holds the other Mac's CPU binaries — the known 2026-09-10 state). `scripts/build-out-of-tree.sh` built clean in 563 ms, as that script exists to do |
+| Built bundle carries the fix | all **5** `lessonContent.economy.*` chunks: new text present, old claim absent — **control 5/5** |
+| **Live walk of the built app** | `dist/` served statically, Browser pane at `#/lesson/29`: the corrected paragraph renders, flows into both bullets, and the header reads **"≈3 min"**, matching the new `minutes` |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: nothing found.** `npm run check-blindspot` PASSes. §10.2 — the change **removes** a Dalio-derived claim and adds no attribution. §10.1 — no advice language; nothing tells a learner to do anything. §10.3 — untouched. **§2.3 / the Markets-tab stale-data rule is the one that actually bites here, and I checked it rather than waving at it:** the two figures I added are structural NIPA shares, not live market readings, and I measured their stability over 82 quarters precisely so they are not a dated number in disguise.
+- **DECISIONS.md conflict: none** (control: `localStorage` → 13 hits, so the file was really read). Content stayed `.js` modules; no state, build or platform decision is touched.
+- **Already-done backlog item: no.** "Completed and pruned" mentions lesson 29 once — a **rejected figure/visual design** for it, a different artifact from this prose. (Control: the same scan returns 54 hits for "glossary", so it is not returning empty.)
+- ⭐ **A find that argues for the fix, against the old text:** lesson 29's own pre-read check asks *"What drives the economy?"* and scores **"Only government spending" as wrong**. The body was quietly undercutting the lesson's own quiz — and the learner meets the quiz *before* the paragraph.
+- **My own verification claim.** Every row above reproduces from the command named. **Limits I own:** (1) the four non-English paragraphs are **mine, and no fluent reviewer has read any of them** — the ledger records them as `ai`, which is honest and is the O-3 scale problem, not a fix to it; (2) "more than three times" is durable over the last 20 years and **not** over the full postwar record (it dips to 2.38x in the 1960s–70s), which the sentence does not date — I judged that acceptable for a claim written in the present tense about the US economy today, and it is a judgment, not a measurement; (3) I verified the paragraph renders in **English**; the other four were verified in the bundle, not on screen.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ✅ **Lesson 36's takeaway — TAKEN AND FIXED 2026-09-12** (next scheduled run, five languages). The sharpest form turned out to be takeaway-vs-**thinkAbout**, not takeaway-vs-body: the two render as adjacent cards and the thinkAbout already said the 2022 window closed without a recession. Measured with FRED `USREC` — **no recession month since 2022-01, latest obs 2026-08 = 0**. The takeaway keeps the 1955 thesis and scopes only what the signal predicts; the quiz and glossary were left alone per the 2026-09-06 item's standing warning. See that day's run-log entry, including **two instrument defects** it caught (FRED serves a prefix series for an id containing `_`, and marks holidays with an empty field that `Number()` reads as 0).
+- **Lesson 38's phase-return ranges** (+14–28% Expansion, −22–35% Contraction, +38–50% post-trough) carry no source and no phase-dating scheme, so nothing in the repo can check them. Unlike the balance-sheet bars, there is no series to compare against without first fixing a definition of the phases — **naming the obstacle so the next run does not start by assuming a FRED check is available.**
+
+**⚠️ The log-size WARN is now over budget, and this run knew it.** `npm test` warned at **0.18 runs left** *before* this entry was written, and this entry is larger than that headroom. I picked the learner-visible defect over the chore deliberately: the archiving remedy is mechanical with a twelve-times-proven recipe, the FAIL budget (350,000 b) is still ~40% away, and the census has found a real defect on **every** pick it has made. **W-5.3's thirteenth archiving pass is the clean, non-residual pick for the next run.**
+
+**Owner-facing, one line:** lesson 29 — the first thing a new install reads — told every learner that government is the economy's biggest buyer, and households outbuy all government roughly 4:1; fixed in all five languages. Reaches learners on the next push (**O-5**). The four translations are mine and unreviewed by a fluent speaker (**O-3**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 683421 b, run log 248406 b, floor 435015 b (backlog 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #1 in a new chain, which the rule allows: the previous scheduled run's "Seen, deliberately NOT fixed" list named this item and said "a run that wants a content pick should take it rather than re-list it") — lesson 36's **takeaway** told the learner an inversion "means economic weakness ahead" while the lesson's own **thinkAbout**, two blocks below it on the same screen, says the 2022 window closed without a recession
+
+#### The pick
+The previous run left two candidates. This is the one it called "the strongest content candidate I leave on the table". The other (lesson 38's phase-return ranges) it correctly described as uncheckable without first inventing a phase-dating scheme, so it stays on the table.
+
+⚠️ **I did NOT take that run's other suggestion** — its closing line nominated W-5.3's thirteenth archiving pass. The log-size WARN is real but it is **9,089 b over a WARN whose FAIL is 90,911 b away (~10 runs of writing)**, and a learner-visible contradiction on the main path outranks a chore with ten runs of headroom. Measured this run, not read off the log: `MEASURED log-size: file 694104 b, run log 259089 b, floor 435015 b (backlog 396609 b)`.
+
+**The defect, as it shipped in all five languages.** Three body sections hedge the yield-curve signal — the 1966 false positive, the 2022–24 inversion running "well past the 'typical' 12-18 month lead time", "one input, not a standalone forecast", and a whole section on the term premium ending "an inversion can reflect a shift in the term premium instead of … a real change in rate expectations". The takeaway then stated it flat:
+> "When the yield curve inverts, pay attention. It's the bond market screaming that rate cuts are coming — and that means economic weakness ahead."
+
+⭐ **The sharpest form of it is not takeaway-vs-body, which is how the item was filed. It is takeaway-vs-thinkAbout**: the two fields render as adjacent cards, and the thinkAbout already said the 12-18 month window "closed at the end of 2023 without a US recession". **The screen answered its own question two blocks before asking it.**
+
+#### Step 3.5 — the premise re-measured with controls. It HELD, and one control FAILED FIRST and had to be rebuilt
+- **Instrument:** FRED CSV (`fredgraph.csv?id=`, no key) — `T10Y2Y` (10y−2y spread) and `USREC` (NBER recession indicator).
+- ⚠️ **CONTROL 1 FAILED AS FIRST WRITTEN, and its failure mode is worth more than the measurement.** I probed a bogus id `T10Y2Y_NOT_A_SERIES_XYZ` expecting 404 — the documented control in the 2026-09-12 lesson-29 entry. It returned **HTTP 200 carrying the real T10Y2Y series**: FRED treats `_` as a delimiter and serves the prefix. A truly unrelated id (`ZZQQNOTASERIES`, `T10Y2YXX`) does 404, so the endpoint does validate — **a typo that happens to prefix a real id silently returns the wrong series' data.** The working control is not the status code: **it is that the CSV header names the series actually returned** (`observation_date,<id>`), asserted on every fetch. Both readings below carry a matching header.
+- ⚠️ **A SECOND instrument defect, caught by its own output.** My first inversion-run scan reported the 2022 inversion as **43 days** and produced runs with identical month-day boundaries in 2000, 2006 and 2023 — which is calendar, not economics. Cause: FRED marks market holidays with an **empty field**, not `.`, and `Number("")` is **0**, which is `>= 0`, so every inverted run broke at every holiday. With blanks dropped (552 of 13,119): **2022-07-06 → 2024-08-26, 537 observations, ~25.7 months** — which independently confirms the body's "roughly two years, the longest stretch on record" (vs 220 obs in 2000, 147 in 2006).
+- **CONTROL 2, the series are the ones I think they are:** `USREC` flags **18** months for Dec-2007→Jun-2009 and **2** for 2020 (2020-03, 2020-04) — both consistent with FRED's stated convention, 1 from the month *after* the peak through the trough month. A mismatched series would not reproduce two known recessions to the month.
+- **The verdict:** `USREC` has **no month = 1 since 2022-01-01**, latest observation **2026-08-01 = 0**. So **50 months after that inversion began and 24 months after it ended, no NBER recession has been dated.** The takeaway's "that means economic weakness ahead" is contradicted by the most recent episode, by its own lesson's thinkAbout, and by three of its own body sections.
+
+#### The constraint I had to respect, which is why this is a narrow edit
+The **same lesson's thinkAbout was fixed on 2026-09-06**, and that closed item carries an explicit standing warning: `12-18` lives on three surfaces (this prompt, the quiz question, the glossary `Yield Curve` entry), and **"widening the fix to all three would have hedged the lesson's own thesis on the strength of one episode."** So:
+- The takeaway **keeps the thesis**: "An inversion has preceded every US recession since 1955." That is what the quiz `explain` and the glossary both state, and what the 1955 record supports.
+- What changed is only what the signal **predicts**: likelihood, not timing or depth — plus the term-premium caveat, which nothing else on the screen carried.
+- **The quiz and the glossary were deliberately NOT touched** (verified: neither file appears in the diff).
+- Wording deliberately echoes lesson 38's takeaway — *"a pattern that has repeated, not a schedule"* — because 38 is the house precedent for exactly this class. Measured side effect: in `es` and `ja`, lesson 38 **already** contains that phrasing, which is what made my first verification probe non-unique (below).
+
+#### What shipped
+en (490ch, up from 143; the track's takeaways run 119–395ch, so this is the longest — lesson 38's 395 is the precedent):
+> "When the yield curve inverts, pay attention: long rates below short ones mean the bond market expects rate cuts, usually because it expects the economy to weaken first. An inversion has preceded every US recession since 1955 — but that is a pattern that has repeated, not a schedule: it says weakness is more likely, not when it arrives or how deep it goes. And because part of a long yield is the term premium, a curve can invert without the market pricing in a large cutting cycle at all."
+
+- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js` — the `takeaway` field only, one line each.
+- `src/content/lessons.js` — lesson 36 `minutes` **4 → 5** (caught by `npm test`, not by me).
+- `scripts/translation-review-ledger.json` — lesson 36's four non-English entries re-marked (stale the moment the English changed). ⚠️ **Used `translation-review.mjs mark 36 <lang> …` four times, NOT `--write`**: the `--write` path re-records every ratio in the file for a one-lesson edit. Verified **exactly 4 changed (lesson, lang) entries, all `36/*`**, with a differ proven against a planted foreign edit.
+- `CLAIMS.md`, `LAUNCH_PLAN.md`, `LAUNCH_READINESS.md` — regenerated by `refresh-readiness.mjs --write`, not hand-edited; catalog total 164 → **165 min**.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting **exactly 1 match per file**, refusing to write otherwise — 5/5 written |
+| ⚠️ **First verification probe was non-unique** | whole-file probes returned `new-present=2` for `es`/`ja` — the second hit is **lesson 38's takeaway**, which already carries the echoed phrasing. Probe defect, not an edit defect; re-run scoped to the lesson-36 block |
+| Old gone / new present (source) | **5/5**, scoped to lesson 36, with **two-direction controls** (the pre-edit scratchpad copy had the old phrase and lacked the new one) |
+| `npm test` | **0 failures.** Caught both follow-ons I had not made: the `minutes` estimate and the stale ledger. 4 warnings, all pre-existing and documented (O-3 coverage, 47 abridged pairs, quiz option-length cue item 160, log-size) |
+| Build | `npm run build` not used — `scripts/build-out-of-tree.sh` built clean in **607 ms** (iCloud `node_modules` holds the other Mac's binaries, the known 2026-09-10 state) |
+| Built bundles carry the fix | all **5** `lessonContent.economy.*` chunks: new text present, old absent; control probe for a known phrase fired |
+| **Live walk of the built app** | `dist/` served statically, Browser pane at `#/lesson/36`. ⚠️ **The deep link alone lands on lesson 29 — lesson 36 is gated, and a URL does not unlock it.** Reaching it needed `ecycles_completed_lessons` **plus** `ecycles_legacy_lesson_id_migrated`; without the second, `loadCompletedLessons()` runs the old→new id table over ids that are already current and silently discards them (progress read 0/44). Header then read **"≈5 min"**, matching the new `minutes`, and the takeaway and thinkAbout now agree on one screen |
+| **Non-English verified on screen, not only in the bundle** | `zh` walked live: corrected takeaway renders, header **"约5分钟"**. This closes a limit the previous two entries had to own (English-only on-screen verification) |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: nothing found, and §10.1 was re-proved rather than read.** Planted *"With the curve inverted, now is a good time to buy bonds."* into the new takeaway → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**; restored from the scratchpad copy (`cmp` identical) → **exit 0**. §10.2 — the change **removes** the Dalio-flavored "bond market screaming" register and adds no attribution (new text contains no Dalio/Bridgewater/Economic Machine string). §10.3 untouched. **§2.3** is the one that could have bitten: I deliberately put **no dated market reading** in the takeaway — "since 1955" is historical, and the 2022 episode stays in the thinkAbout where it already was, so there is no figure here that rots.
+- **DECISIONS.md conflict: none** (control: 13 `localStorage` hits, so the file was really read). Content stayed `.js` modules; no state, build or platform decision touched.
+- **Already-done backlog item: NO, and this needed reading rather than grepping.** "yield curve" returns **3 hits** in the Completed-and-pruned region (control: 18 `glossary` hits, so the region is not vacuous) — and all three are **the same 2026-09-06 item about lesson 36's thinkAbout**, a different field. This run fixes the sibling that item left alone, and obeys its standing warning about the quiz and glossary.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the four non-English takeaways are **mine, and no fluent reviewer has read any of them** — the ledger records them as `ai`, which is the O-3 scale problem stated honestly, not a fix to it; (2) I verified **en** and **zh** on screen; `es`, `ko`, `ja` were verified in the built bundle only; (3) the en takeaway at 490ch is now the longest in the track — I judged the extra clause worth it because the term-premium caveat exists nowhere else on the screen, and that is a judgment, not a measurement.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Lesson 36's subtitle is "A historically reliable recession predictor since 1955".** It states the thesis the body and quiz also state, so by the 2026-09-06 item's own rule it is **not** a defect to widen into — naming it here so a future run does not "fix" it and hedge the thesis on one episode.
+- **Lesson 38's phase-return ranges** remain uncheckable without first fixing a phase-dating scheme, exactly as the previous run described. Unchanged; still not a FRED-checkable claim.
+
+**Owner-facing, one line:** lesson 36 told learners an inverted yield curve "means economic weakness ahead" as a flat fact, two blocks above the same lesson's own note that the last inversion passed without a recession — the takeaway now says weakness is *more likely*, not when or how deep, in all five languages. Reaches learners on the next push (**O-5**). The four translations are mine and unreviewed by a fluent speaker (**O-3**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 694104 b, run log 259089 b, floor 435015 b (backlog 396609 b)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4). **The archiving pass is still the clean non-residual pick, and is now one run more overdue.**
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #2 in this chain, which the rule allows: the previous TWO scheduled runs each closed by nominating this pass, and rule 1's limit is three) — W-5.3's **thirteenth** firing: the run log had gone **over** its warn budget rather than near it, the oldest live day moved in one piece, and the recipe did not move for the second pass running — which is the condition the twelfth pass set for escalating the automation question to the owner
+
+#### The pick, and why the two runs that deferred it were right to and this one is not deferring again
+The last two scheduled entries both closed on this pass. **Both were right on their own terms** — each traded a chore against a real learner-visible defect on the main path, and each said so with a measurement. What changed is which side of the line the number sits on:
+
+| run | run log | vs 250,000 b warn | their call |
+|---|---|---|---|
+| 2026-09-12 (lesson 29) | 248,406 b | **0.18 runs left**, still under | took the content defect |
+| 2026-09-12 (lesson 36) | 259,089 b | 9,089 b **over** | took the content defect |
+| this run | **271,710 b** | **21,710 b over, 108.7% of warn** | took the pass |
+
+⚠️ **Measured this run, not read off the log:** `MEASURED log-size: file 706725 b, run log 271710 b, floor 435015 b (backlog 396609 b), archive 4002486 b, 3 live day(s)`. The overage has now doubled in two runs while being named in both. **A deferral that is correct twice is a trend the third time**, and the FAIL at 350,000 b is the point at which `npm test` exits 1 and *no run can commit anything*.
+
+#### Step 3.5 — the premise re-measured with controls. It HELD, and my first probe was the thing that failed
+- **The trigger.** `check-log-size.mjs` printed the cut plan itself: *move 2026-09-10 (37,166 b), leaving 234,544 b, under the warn budget*. A plan from the instrument is a pointer, not a premise, so it was re-derived independently.
+- **Independent re-derivation, and it matched byte-exactly.** A scratchpad script split the run log at `^### 2026-\d\d-\d\d` and summed each day: **09-10 = 37,166 b**, 09-11 = 169,594 b, 09-12 = 64,938 b. **The strong control is that the days sum to the run log with ZERO bytes unattributed** — no region is invisible to the splitter, which is the failure mode that would make a clean-looking cut wrong.
+- ⚠️ **CONTROL THAT FAILED FIRST, and it was mine, not the repo's.** My first pass at counting live day-headings reported **4** days including a `2026-08-28` and a `2026-09-07` — dates with no live entries at all. Cause: `sed 's/:.*\(2026-[0-9-]*\).*/ \1/'` is **greedy**, so it captured the *last* date appearing anywhere on the heading line rather than the heading's own date, and several headings quote other dates in their prose. Re-extracted positionally (`substr($0,5,10)`): **5 × 09-10, 21 × 09-11, 6 × 09-12 = 32**, and a file-wide control returns the identical three-day histogram, so no live heading sits outside the run log.
+- **CONTROL, headings against the commits that wrote them (items 142/174).** `git log --format=%ad -- AGENT_LOG.md` gives **09-10: 5, 09-11: 21, 09-12: 6** — matching the heading histogram one-to-one on every day. A day whose entries and commits disagreed would be a split or duplicated region.
+- **Premise HOLDS.** The script's own controls passed too (sections sum byte-exactly; the splitter distinguishes an interleaved day from a contiguous one at identical weight).
+
+#### What shipped
+- **2026-09-10 → `AGENT_LOG.archive.md`** under `## Archived 2026-09-10`: **5 entries, 37,166 b**, appended verbatim in live-file order, which is commit order. Archive title `(2026-08-01 → 2026-09-09)` → `2026-09-10`.
+- Run log **271,710 → 234,544 b** (108.7% → 93.8% of warn); file **706,725 → 669,559 b**; archive grew by exactly **37,190 b** = the 37,166 b block + the 24 b section heading.
+- **W-5.3** records the thirteenth firing. **No clause was reworded, no budget was touched, no script changed** — W-5.3's date-vs-byte defect is still open and is still the owner's to fix (items 115/121).
+- **O-6 filed** in the owner block — see below.
+- The move ran as a scratchpad script that asserts, *before producing anything*: the anchor occurs exactly once; the day has 5 headings; all 5 file-wide headings for that day are inside the run log; the day is the **oldest** live day and its marks are contiguous; **a later day exists** (never archive every day); the block starts at the top of the run log and ends on a blank line; the block is 37,166 b; the archive has no section for that day, ends on a blank line, and its title is in its expected state. It writes only to scratchpad paths.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Pre-cut baseline | `npm test` **exit 0**, 4 WARN / 0 FAIL — the three standing ones (translation review, translation completeness, option-length cue) plus the log-size WARN this pass exists to clear |
+| Proofs, re-derived from `git show HEAD:` copies | **P1** the block read back *out of the new archive*, re-inserted, rebuilds HEAD's live file byte for byte. **P2** new archive == HEAD archive (title advanced) + heading + the block cut **independently** from HEAD's live file. **P3** 5/5 headings once in the archive, **0** live. **P4** everything above the run log byte-identical. **All four true** |
+| Plants (scratchpad copies only) | One-character tamper inside the moved block → P1 **false**, P2 **false**, P3/P4 true. One-line live deletion → P1 **false**, P2/P3/P4 true. **Each failed exactly the proofs it targeted**, so "all true" above is a measurement and not a vacuous pass |
+| Install guard | HEAD re-checked `3d46a6f` (unmoved) and both files `cmp`-equal to their `git show HEAD:` copies *immediately before* the copy; installed outputs then `cmp`-equal to the proven ones — **669,559 b** and **4,039,676 b** |
+| Post-cut `npm test` | **exit 0, 3 WARN / 0 FAIL.** The log-size WARN is **gone**; `MEASURED log-size: file 669559 b, run log 234544 b, floor 435015 b, 2 live day(s)`, and the script's control 3 re-attributes 100% of the smaller run log |
+| Build | `scripts/build-out-of-tree.sh` clean in **569 ms** (iCloud `node_modules` holds the other Mac's binaries — the known 2026-09-10 state). No source file was touched, so this is a regression guard, not a rebuild of the change |
+| Scope | `git diff --name-only` = **exactly the two log files**; **zero** files under `src/`, `public/` or `scripts/`. `Migration/` and `UIUX/` stayed untracked and untouched |
+| Above the run log | HEAD vs now: **27 added lines, 0 deletions** — the 10-line W-5.3 tally and the 17-line O-6, and nothing reworded or removed anywhere in the backlog |
+
+#### Step 5 — adversarial self-check
+- ⚠️ **Blindspot register: the check PASSES and I am explicitly NOT citing that as evidence, because the control proved it cannot see this change.** I planted *"Now is a good time to buy bonds."* into my own O-6 text and `check-blindspot` still exited **0** — it scans `src/`, not `AGENT_LOG.md`. **A passing check outside its own scan scope is not a result.** The load-bearing evidence is the scope row above: this change touches **no file under `src/`**, so §10.1, §10.2, §10.3 and the §2.3 stale-data rule have no surface to regress on. Plant restored, `cmp`-equal.
+- **DECISIONS.md conflict: none** (control: 13 `localStorage` hits, so the file was really read). Nothing there governs archiving mechanics; the 2026-09-08 `FILE_CEILING` raise is recorded there and **no budget was touched by this run**.
+- ⛔ **The conflict that WAS live, and it is W-5.3's own:** that clause says a *rule change* — making the action clause byte-driven — **is the owner's to make, and a run must not pick unilaterally.** This run therefore performed **only the action**, on `check-log-size.mjs`'s budget exactly as the nine passes since 2026-08-29 have. The 27-added/0-deleted diff above is the proof that no clause moved.
+- **Already-done backlog item: no, and this is the distinction that matters.** W-5.3 is a **standing rule that fires on measurement**, not a completed item — thirteen firings are thirteen intended repeats, and the tally in W-5.3 is where that is recorded. Control: the "Completed and pruned" region is not vacuous (18 `glossary` hits), and no archiving pass appears in it.
+- **My own verification claim:** every row reproduces from the command named. **Limits I own:** (1) the four proofs test *this* move against HEAD — they say nothing about whether an earlier pass mis-ordered an older archive section, and the known inverted 09-04 section is still in the archive; (2) the build proves no regression but exercises nothing this change touched, because this change touches no source; (3) the archive is now **4.0 MB** and nothing checks its internal date ordering — named here, deliberately not built (W-6.2 rule 3: no learner-visible failure).
+
+#### The one thing this run escalated rather than decided
+The twelfth pass set an explicit test: *"If the thirteenth pass also needs no recipe change, put the automation question to the owner rather than deciding it in a run."* **It needed none** — same assertions, same four proofs, same two plants, reused verbatim. The condition is met, so the question is filed as **O-6** and left for the owner. Building the mover would be ~200 lines of new `scripts/` mass for a gain **no learner can see**, against a ratio already at 2.19x; leaving it manual is what has kept it correct thirteen times. **That is a real trade and not a run's to settle.**
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **W-7.2 rule 5's test is 2026-09-13 and this run moves the number the wrong way, which is worth stating plainly rather than netting out.** The backlog went **396,609 → 399,026 b** (+2,417 b: the tally and O-6). It is still **26,447 b under** the 425,473 b baseline, but *archiving does not help that test at all* — archiving moves the run log, and rule 5 measures the backlog. **This run shrank the file by 37 KB and grew the region rule 5 watches.** The two are not substitutes.
+- **Lesson 38's phase-return ranges** remain uncheckable without first fixing a phase-dating scheme — unchanged from the previous two entries, still not a FRED-checkable claim.
+
+**Owner-facing, one line:** housekeeping only — no learner-visible change. The agent log's run log had grown past its budget and two runs had deferred the cleanup; one day (37 KB) moved to the archive, clearing the warning with the file's history preserved verbatim. **One decision is waiting for you: O-6** — thirteen archiving passes have each been done by hand, and whether to automate that is a genuine trade this run deliberately did not settle. **O-3** (unreviewed machine translation) and **O-5** (nothing pushes, so the live site's market data is current by coincidence) are unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 669559 b, run log 234544 b, floor 437432 b (backlog 399026 b)` (this run's `npm test`, post-cut). After it: not retyped (W-7.2 rule 4). **Two live days; the next pass is not due until the run log crosses 250,000 b again.**
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 BOUND — the previous two scheduled runs were residual picks #1 and #2, so this run could not take a third; the pick came from the lesson-body census, re-run over all 44 lessons) — lesson 42 pays Alina for her own hours **before** the $1,000 is counted, and then tells the learner two paragraphs later that part of that $1,000 is really payment for her own hours — which is also what lesson 43's body and lesson 43's shipped quiz explanation both depend on
+
+#### The pick
+Rule 1 forbade a third residual, so the census was re-run rather than a note taken. It counted `lesson N` mentions across `AGENT_LOG.md` + the archive, per lesson, in both bodies and run-log headings (controls: a nonexistent `lesson 99` returns **0**; the four lessons known to have been fixed return 3–5 headings each). The floor of the whole corpus is the money track's opener block: **L42 = 13 body mentions and 0 headings ever**, and **`Alina` — the name of its central worked example — appears 0 times in the entire log, live and archived.** Its three neighbours 41, 43 and 44 were each corrected owner-directed on 2026-09-11; 42 is the one between them nobody read. It is **lesson 2 of 17** on the money track, which the App summary calls *the product*.
+
+#### Step 3.5 — the premise re-measured with controls, before any edit
+- **The contradiction, both halves quoted from the shipped English.** §1: *"Alina runs a two-person cleaning company; after she has paid her cleaner, her supplier **and herself for the hours she personally worked**, about $1,000 is left over."* §2: *"Alina's business income looks like a fifth thing, but **part of it is really payment for her own hours** — she is partly an employee of her own company — and only the remainder is genuinely the business earning rather than her earning."* §1 removes her labour from the number; §2 says the number still contains it. Both sections render in one lesson view — verified on screen below, not inferred.
+- **Which sentence is the outlier, decided by what the rest of the track depends on rather than by taste.** Lesson 43's body: *"Alina's business keeps trading … but shrinks in whatever proportion the business depended on her personally — and for a two-person company that proportion is large."* Lesson 43's **shipped quiz explain** (`quizMeta` key 43 → `q045`): *"the parts that were really her own labor stop."* Two downstream surfaces require the labour to be **inside** the $1,000; exactly one clause in one sentence says it was taken out first. §1's own category definition four paragraphs later — *"Business income is what's left of a venture's revenue after its costs"* — sides with them too.
+- **Not previously decided.** `git log -S` on **both** sentences returns the same single commit, `b6c9bc9` ("Open the money track with the income-hierarchy arc (lessons 41-44)") — they were written together and neither has been revisited. `DECISIONS.md` has **0** hits for `lesson 42` and **0** for `Alina` (control: `localStorage` **13**, so the file was really read). `drafts/income-hierarchy.en.md` carries the same two sentences, so the defect is original to the draft, not introduced in transfer; **no check couples `drafts/` to `src/content/`** (`grep -rn "drafts/" scripts/*.mjs` → one comment line), so the draft is left as the record of what was first written.
+- **All five languages carry it**, read field by field, so it is the source claim and not a translation artifact.
+
+#### What shipped
+One clause deleted from one sentence, in **five** languages — `src/content/lessonContent.money.{en,es,ko,zh,ja}.js`. English now reads *"after she has paid her cleaner and her supplier, about $1,000 is left over."* The other four are the same deletion, re-joined so each reads naturally in its own language (ko `직원과 공급업체에 모두 지불하고 나면`; zh `付完清洁工的工资和供应商的货款之后`; ja `清掃員への支払いと仕入先への支払いを済ませた後`; es `después de pagarle a su empleada y a su proveedor`).
+
+**Deliberately NOT done, and it is the larger half of the argument:** §2 is left exactly as written. It is the correct half — an owner-operator's residual genuinely mixes a return to her labour with a return to the business, which is why the national accounts treat unincorporated proprietors' income as a single undecomposable figure — and it is the sentence lesson 43 and its quiz were built on. Nothing was added to explain the point better, because §2 already does; the smallest edit that removes the contradiction is the whole change.
+
+- `scripts/translation-review-ledger.json` — lesson 42's four non-English entries re-marked (they went stale the moment the English changed). **One hunk, 24 lines = 4 languages x 3 fields, all at lesson 42**, verified in `git diff -U8`.
+- `LAUNCH_READINESS.md` — regenerated by `npm run readiness -- --write`, not hand-edited: the §4.3 catalog row and the §10.4 volume sentence, English chars 154,613 → **154,568**. Nothing else in the document moved. Lesson 42's `minutes` (4) is unchanged and `npm test` agrees — the deletion is 8 words.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting **exactly 1** occurrence of the old clause per file and refusing to write anything unless all 5 pass — `WROTE 5/5` |
+| Source: old gone / new present | **5/5** files, old **0**, new **1** — each row carried a **third probe on a sentence I know is present**, which returned **1** in every language, so the zeros are readable. (The control exists because a previous run's `grep -F "a\|b"` silently returned 0 for everything including its own "old claim is gone" row; this scan was written in node for the same reason) |
+| `npm test` | **exit 0**, 4 WARN / 0 FAIL — the three standing WARNs plus log-size, identical to the pre-edit baseline. It caught the two follow-ons on the way: the stale ledger (FAIL → fixed) and the stale readiness figures (FAIL → regenerated) |
+| Build | `npm run build` not used — `scripts/build-out-of-tree.sh` clean in **575 ms** (the iCloud `node_modules` state of 2026-09-10) |
+| Built bundle carries it | all **5** `lessonContent.money.*` chunks: old **0**, new **1**, control **1** |
+| **Live walk of the built app** | `dist/` served statically, Browser pane at `#/lesson/42` (reached by seeding lesson 41 complete — a URL does not unlock a lesson, and the app said so: *"THAT LESSON ISN'T OPEN YET"*). The corrected sentence renders; `personally worked` **absent**; §2's *"partly an employee of her own company"* **present on the same screen**, which is what makes this a contradiction a learner can actually meet; negative control **false**. Header reads **LESSON 2 OF 17 · THINKING ABOUT MONEY** |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, and the control proves the instrument can see this file.** Planted *"You should buy dividend stocks now."* immediately after the edited sentence in `lessonContent.money.en.js` → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**. Restored from a scratchpad copy of the post-edit file, `cmp`-equal, → **exit 0**. §10.2: the change **removes** text, adds no attribution and no Dalio-derived claim. §10.3: untouched. §2.3 stale-data: the edit contains no figure, no date and no market reading — `$1,000` is a scenario amount that predates this run.
+- **DECISIONS.md conflict: none.** Content stayed `.js` modules; no state, build or platform decision is touched. (Control: 13 `localStorage` hits.)
+- **Already-done backlog item: no.** "Completed and pruned" mentions lesson 42 exactly **once**, and it is item 91's British-vs-US spelling guard ("Labour income") — a different property of a different string. `Alina` appears **0** times anywhere in the region. (Control: the same scan returns 24 for `glossary`, so it is not returning empty.)
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the four non-English deletions are **mine, and no fluent reviewer has read any of them** — the ledger records them as `ai`, which is O-3's scale problem and not a fix to it; (2) I verified the paragraph **on screen in English only** — the other four were verified in the built chunks, not rendered; (3) the claim that proprietors' income genuinely mixes labour and capital returns is background knowledge I did **not** measure against a series — the load-bearing evidence for which sentence to change is entirely internal to this repo (lesson 43's body, lesson 43's quiz explain, and §1's own definition), and that part is measured.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census now has a shape worth stating rather than a list.** Rerun over all 44 lessons, the least-examined are **L42 (13/0 — taken this run), L26 (6/1), L24 (10/2), L41 (10/1), L22 (11/2), L2 (15/0)**. **L2 is the other lesson with zero run-log headings ever**; it is on the optional `essentials` track, so it has a smaller audience than L42 but is genuinely unread. A run that wants a content pick should take L2 or L26 rather than re-deriving the census.
+- **Lesson 38's phase-return ranges** remain uncheckable without a phase-dating scheme — unchanged from the previous four entries, and still not a FRED-checkable claim.
+- **The backlog was not touched at all this run**, deliberately: W-7.2 rule 5's test falls on 2026-09-13 and measures the **backlog**, so this entry adds **0 b** to the region that test watches.
+
+**Owner-facing, one line:** lesson 42 — the second lesson of the money track — set up a worked example that paid the owner for her own hours, then told the learner two paragraphs later that those hours were still inside the number, which is also what the next lesson and its quiz answer depend on; one clause removed in all five languages. Reaches learners on the next push (**O-5**). The four translations are mine and unreviewed by a fluent speaker (**O-3**). **O-6** (whether to automate the archiving pass) is still waiting on you, unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 683270 b, run log 245838 b, floor 437432 b (backlog 399026 b), archive 4039676 b, 2 live day(s)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4). ⚠️ **This entry is larger than the 4,162 b of headroom the WARN measured, so the run log crosses its warn budget on this commit and an archiving pass is due again** — the fourteenth. Stated rather than deferred silently.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was BOUND and took a census pick, so a note of its is takeable as residual #1 in a new chain; **I took its notes seriously, read all four lessons it nominated, found nothing shippable, and picked elsewhere on evidence**) — `check-deployed --identify` — the one instrument that can say WHICH commit a learner is actually running — has been **dead on this machine since the CPU mismatch**, failing honestly but naming no cause, and with it fixed the live site turns out to be **19 commits and 16 build-input commits behind**
+
+#### The pick, and the road not taken
+The previous entry's "Seen, deliberately NOT fixed" nominated **L2 or L26** off its census floor. I read **L2, L22, L24 and L26** in full — bodies, takeaways, thinkAbouts — **and each one's quiz question, options and `explain`** (`q016`, `q036`, `q038`, `q040` via `quizMeta` → `quizText.en`). **All four are clean, and their quizzes agree with their bodies.** Arithmetic checked where present: L2's `$50/week → $600` is 12 weeks ("within three months", true) and its sinking-fund `$50/month → $600/year` is exact. The only tensions I could construct are not defects: L2's `$500-1,000` starter range has a bottom that would not have covered its own $600 example, and its "down 15% … forced to sell at a loss" is a loss only against his own entry price. **Both are hedged in the shipped text ("many common surprises", and a drop measured from where the money went in), and editing either would make the lesson worse.** Recording this so the census floor is not re-derived a fourth time: **the four nominated lessons are read and clean.**
+
+So the pick came from asking a different question — *is the app a learner sees actually the app in this repo?* — which W-7.1 says is the one question no other instrument in the repo can answer.
+
+#### Step 3.5 — the premise re-measured with controls, before any edit
+- **The defect reproduces on the first command, and it is not the one I went looking for.** `npm run check-deployed -- --identify` printed `⛔ control FAILED — rebuilding HEAD gave no build`. The probe's own control is well built — it refuses a verdict rather than reporting a run of misses as "the deploy is ancient" — but **`buildAt` swallowed the error in a bare `catch {}`, so the output named no cause** and the mode was simply inert.
+- **The cause, measured by hand rather than inferred.** I re-ran `buildAt`'s exact sequence (`git archive HEAD | tar -x` into a temp dir, symlink `node_modules`, `vite build`) with stderr visible: `Error: Cannot find module @rollup/rollup-darwin-arm64`. That is precisely the iCloud two-CPU state `scripts/build-out-of-tree.sh`'s header documents as measured on **2026-09-10** — the in-tree `node_modules` carries the other Mac's native binaries. `--identify` symlinks **that** `node_modules`, so on this machine it could never build any candidate.
+- **The fix was proven to work BEFORE it was written.** Same temp-tree sequence, symlinking `~/.cache/ecycles-build/node_modules` instead: build OK, entry `assets/index-D8L3pNGr.js`, and **`cmp` byte-identical to `dist/`**. So the probe's control was always satisfiable here — with the other dependency tree.
+- **Not previously decided, and not a known-and-accepted state.** `--identify` appears **once** in the whole 4,463-line backlog region (W-7.1's description of it; control: `check-deployed` appears 7 times there, so the region was really searched). `DECISIONS.md` has **0** hits for `check-deployed` or `identify` (control: 13 `localStorage`). **`IDENTIFIED after` appears 0 times in the live log and exactly once in the archive — 2026-09-06, the day the mode was built.** It has succeeded **once, ever**, and not once since the mismatch appeared.
+
+#### What shipped — `scripts/check-deployed.mjs` only, six hunks
+1. **The dependency root is chosen, not assumed.** `depsRoots()` returns the in-tree `node_modules` first, then `${ECYCLES_BUILD_DIR:-~/.cache/ecycles-build}/node_modules`, keeping only those that actually contain `vite/bin/vite.js`. **The existing HEAD control is what picks between them** — each candidate root gets one attempt, the first that reproduces `dist/` builds every candidate, so an identification never mixes two dependency trees.
+2. **`buildAt(rev, depsRoot)`** takes the root instead of hardcoding `ROOT/node_modules`, and resolves its own `vite.js` from it.
+3. **The error is no longer discarded.** `stdio` is `["ignore","ignore","pipe"]` and the catch keeps the **line that names the cause** — anchored `/^[A-Za-z]*Error: \S/`, falling back to the last line. ⚠️ **This mattered more than it looks:** my first version sliced the last two lines and printed `} / Node.js v24.18.0` — it reported the **Node version** as the reason the build failed. The anchor is at column 0 specifically so the indented `throw new Error(` source echo cannot win.
+4. **The control-failure message now carries the remediation** it cost me twenty minutes to derive: a native `MODULE_NOT_FOUND` means this folder's `node_modules` is built for the other CPU, so run `scripts/build-out-of-tree.sh` once — which is also what *populates the fallback this probe now uses*.
+5. **`shortPath()`** prints deps roots relative to the repo when inside it and with `$HOME` elided when not, because the absolute iCloud path wraps three times in a terminal.
+6. **A dated comment block** explaining why the root is chosen. ⚠️ Written as *"can hold binaries for the other CPU"*, not *"is mismatched"* — **the code measures the machine and the comment must not out-claim it.** A hardcoded sentence about this machine is exactly what went stale for 15 days in the Node bootstrap note.
+
+**Deliberately NOT done:** `--identify` is still **not** wired into `npm test` (network + non-deterministic — the file's own standing reason, unchanged), and nothing was added to make the fallback the *default*. The in-tree root is still tried first, so on a machine where it works, behavior is byte-identical to before.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting **exactly 1** occurrence per anchor, refusing to write otherwise — `APPLIED 5/5` + a sixth for the error extraction |
+| Syntax | `SourceTextModule` parse of the edited file — **SYNTAX OK** |
+| **The mode now works** | `--identify` → **`✓ IDENTIFIED after 19 probe(s), byte-identical: 5490e00 2026-09-11 14:08`**, deps `~/.cache/ecycles-build/node_modules`. The in-tree root is tried first and its real failure prints above it |
+| **Control A — it still fails when it should** | `ECYCLES_BUILD_DIR` pointed at an empty dir, so no usable fallback exists → **`⛔ control FAILED`** with the cause named and the `build-out-of-tree.sh` remediation. **A fix that could no longer fail would be the worse bug** |
+| **Control B — negative control** | same env var at the real cache with `--limit 3`: control passes, then **`✗ not identified in the last 3 commits`**. It does **not** invent a match when the live commit is out of range |
+| Cause is named | the in-tree line now reads `Error: Cannot find module @rollup/rollup-darwin-arm64 …` instead of `no build` |
+| `npm test` | **exit 0**, 4 WARN / 0 FAIL — the three standing WARNs plus log-size, identical to the pre-edit baseline |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Tree | only `scripts/check-deployed.mjs` modified; `Migration/` and `UIUX/` are the **user's** untracked work and were never read, moved or committed |
+
+⭐ **What the working instrument immediately reported, which is the actual value of this run:** the live site is serving **`5490e00` (2026-09-11 14:08)** and **16 build-input commits are not on it** — including **14 lesson-accuracy fixes** (L4's car-loan figure, L7 ×4, L10, L29, L30, L35 ×2, L36, L37, L39, L42) and the balance-sheet chart bar. Every one of those was committed by a run that closed by saying it "reaches learners on the next push". **None has.** That is **O-5**, it is the owner's push to make, and this run did not and will not push.
+
+#### Step 5 — adversarial self-check
+- ⚠️ **Blindspot register: the control did NOT fire, and I am reporting that rather than the green exit.** I planted `"You should buy dividend stocks now. Ray Dalio says so."` into `scripts/check-deployed.mjs` → `check-blindspot` **still exited 0**. Its own output says why: it scans `src/`, `src/content/`, `src/locales/`, `index.html`, `README.md` and `economic-cycles-v5.jsx` — **`scripts/` is out of scope by design.** So a green run here proves nothing, and **the register is instead satisfied by scope**: this file is node-only, `grep -rn "check-deployed" src/ index.html` returns **nothing**, so not one byte of it reaches a learner's bundle. The change adds no content, no attribution, no figure and no date to anything rendered. Plant removed; file restored from the scratchpad copy and **`cmp`-equal**.
+- **DECISIONS.md conflict: none.** No hit for `check-deployed` or `identify`; no state, content-format or platform decision touched (control: 13 `localStorage`).
+- **Already-done backlog item: no.** `--identify` is mentioned once in the backlog, descriptively, inside closed W-7.1. Nothing in "Completed and pruned" touches this script's internals.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) I verified the fallback on **one machine, this one** — the in-tree-root-works path is unchanged code but I could not exercise it here, because on this machine that root is broken; that branch is argued, not measured. (2) `--identify`'s standing limitation is untouched and still real: it rebuilds old trees with **today's** dependencies, so a candidate whose lockfile differs is a silent miss — which is why a failure still says "not identified", never "not deployed". (3) The 16-commit list is the instrument's output, not an independent audit; I did not re-verify each commit's learner-visibility by hand.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The census floor is now READ, not just counted.** L2, L22, L24, L26 — all four nominated lessons, with their quizzes — are clean. A future run should **not** re-derive that census or re-nominate these four; the unread-lesson lane is closer to exhausted than the counts suggest, because a low mention-count now means "read and clean" for these four rather than "never looked at".
+- **`DECISIONS.md` lines 209-210 describe the deploy as "`npm run build` then drag `dist/`"** — stale since 2026-09-07, when GitHub Pages replaced the manual drag and `npm run deploy` was deleted. It sits inside an **analytics-config** decision whose own point is unaffected, so it is a one-line staleness in a document this run had no other reason to touch. Named, not fixed.
+- **W-5.3's fourteenth archiving pass is due and I did not take it.** Measured at the start of this run: run log **256,556 b**, over the 250,000 b warn by **6,556 b — 0.68 runs of writing**, fail at 350,000 b. The thirteenth pass ran yesterday. I judged a dead instrument worth more than 6.5 KB of housekeeping, **and this entry pushes it further over**, so the next run should expect the pass to be the obvious pick. Stated rather than deferred silently — the failure mode this log has already recorded is two runs naming the pass and neither taking it.
+- **The backlog was not touched at all this run**, deliberately: **W-7.2 rule 5's test falls tomorrow, 2026-09-13**, and measures the **backlog** against 425,473 b. It stood at **399,026 b** at the start of this run and this entry adds **0 b** to it.
+
+**Owner-facing, one line:** the check that tells you which version of the app your learners are actually running had been broken since the two-Mac dependency clash and was reporting no reason why; it works again, and the first thing it says is that **the live site is 19 commits behind — 14 of them lesson-accuracy corrections that are sitting in the repo and not on the web.** They reach learners on your next push to `main` (**O-5**); I do not push. **O-6** (whether to automate the archiving pass) is still waiting on you, unchanged. The four translations from recent runs remain mine and unreviewed by a fluent speaker (**O-3**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 693988 b, run log 256556 b, floor 437432 b (backlog 399026 b), archive 4039676 b, 2 live day(s)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "do the archiving pass now" — so W-6.2 rule 1 does not arise; the previous entry had named this pass as due and deliberately not taken it) — W-5.3's **fourteenth** firing: 2026-09-11 moved in one piece, and **the hand recipe produced two real defects on this run**, both caught by assertions rather than by eye
+
+#### The pick
+Not a judgment call this time — the owner asked for it directly, immediately after the previous run named the pass due and declined it. That entry's measurement (6,556 b over warn) was taken **before** its own entry landed; by the start of this run the overage had grown to **19,208 b**.
+
+#### Step 3.5 — the premise re-measured with controls, before any edit
+- **The trigger, measured not read:** `MEASURED log-size: file 706640 b, run log 269208 b, floor 437432 b (backlog 399026 b), archive 4039676 b, 2 live day(s)`. Over the 250,000 b warn by **19,208 b (107.7%)**; FAIL at 350,000 b.
+- **The instrument's cut plan is a pointer, not a premise, so it was re-derived independently.** A scratchpad splitter over the run log: **2026-09-11 = 169,594 b (21 entries), 2026-09-12 = 99,602 b (9 entries)** — matching the plan's 169,594 b byte-exactly.
+- **CONTROL — zero unattributed bytes.** The days sum to **269,196 of 269,197 b**, the 1 b remainder being the section preamble. No region is invisible to the splitter, which is the failure mode that would make a clean-looking cut wrong.
+- **CONTROL — headings against the commits that wrote them (items 142/174).** `git log --format=%ad -- AGENT_LOG.md` gives **09-11: 21, 09-12: 9**, matching the heading histogram one-to-one.
+- ⚠️ **CONTROL — the thirteenth pass's known-bad instrument was re-run deliberately, to prove the good one differs.** Reading each heading's date greedily (last `2026-..-..` appearing anywhere on the line) reports a phantom **`2026-09-07`** and only 20 for 09-11; reading it **positionally** (`substr(4,10)`) gives the correct 21. **The control fires**, so the positional read is load-bearing and not decoration.
+- **Premise HOLDS.** 09-11 is the oldest live day, contiguous, first in the run log, and a later day exists.
+
+#### What shipped
+- **2026-09-11 → `AGENT_LOG.archive.md`** under `## Archived 2026-09-11`: **21 entries, 169,594 b**, appended verbatim in live-file order (which is commit order — nothing reversed, per the 2026-09-08 rewrite of the within-day rule). Archive title `(2026-08-01 → 2026-09-10)` → `2026-09-11`.
+- Run log **269,208 → 99,614 b** (107.7% → **39.8%** of warn); file **706,640 → 537,046 b**; archive grew by exactly **169,618 b** = the 169,594 b block + its 24 b section heading.
+- **W-5.3** records the fourteenth firing. **No clause was reworded, no budget was touched, no script changed.** The date-vs-byte defect is still open and still the owner's (items 115/121); **O-6 is unchanged and still unanswered.**
+
+#### ⛔ The finding: the hand recipe made two real errors this run, and neither was caught by reading
+Thirteen passes have been correct. This one was not, twice, and both were stopped by assertions the mover makes *before producing anything* — which is the whole reason that design exists.
+1. **A UTF-8/UTF-16 index-space mix that would have destroyed 5,089 b of live text.** The mover computed line offsets in **UTF-8 bytes**, then used them to `.slice()` a **JS string**, which indexes UTF-16 code units. With this file's em-dashes, arrows and emoji the two spaces diverge badly: the first run produced a live file of **531,957 b** where `706,640 − 169,594 = 537,046`. Caught by the assertion `live shrank by EXACTLY the block`, added because closing arithmetic is cheap. **Not caught by P1-P4 being written yet, and not visible by reading the output.** The fix was to work in `Buffer` space end to end.
+2. **A 1-byte preamble that a naive splice would have deleted.** The run-log body does not begin with the first entry — there is a one-character preamble between `## Run log` and the first `###`. The first mover asserted `cutFrom === 0` and **refused**, which is the only reason it was noticed; it is now preserved explicitly.
+⚠️ **Both errors are in the mechanical step, and both are the kind the twelfth pass's note says "a script would never get wrong."** That note weighed automation against W-6.3's `scripts/` ratio and a W-6.2 rule 3 "no learner-visible failure". **This run does not overturn that trade and does not build the mover** — but it is now false that the hand recipe has been costlessly correct, and O-6's cost side should be re-read with this entry in hand. The recipe DID move this pass, so the twelfth pass's escalation condition is not re-triggered.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Pre-cut baseline | `npm test` **exit 0**, 4 WARN / 0 FAIL — three standing WARNs plus the log-size WARN this pass exists to clear |
+| Mover assertions | **16/16 ok**, all evaluated before any output is produced; writes only to scratchpad paths |
+| **P1** conservation | the block read back **out of the new archive**, re-inserted, rebuilds `git show HEAD:AGENT_LOG.md` **byte for byte** — **true** |
+| **P2** archive composition | new archive == HEAD archive (title advanced) + heading + the block cut **independently** from HEAD's live file — **true** |
+| **P3** containment | **21/21** headings in the archive, **0** left live — **true** |
+| **P4** floor | everything above the run log **byte-identical** to HEAD — **true** |
+| **Plant 1** (1 byte changed inside the moved block) | P1 **false**, P2 **false**, P3/P4 true |
+| **Plant 2** (one line deleted from the live floor) | P1 **false**, P4 **false**, P2/P3 true |
+| **Plant 3** (a whole 6,683 b entry deleted from the archive) | P1 **false**, P2 **false**, P3 **false** (20/21), P4 true |
+| | **Each plant failed exactly the proofs it targets**, so "all true" above is a measurement and not a vacuous pass |
+| Install guard | HEAD re-checked `432db4d` (unmoved) and both files `cmp`-equal to their `git show HEAD:` copies *immediately before* the copy; installed outputs then `cmp`-equal to the proven ones — **537,046 b** and **4,209,294 b** |
+| Post-cut `npm test` | **exit 0, 3 WARN / 0 FAIL.** The log-size WARN is **gone**; `MEASURED log-size: file 537046 b, run log 99614 b, floor 437432 b, 1 live day(s)`, control 3 re-attributing 100% of the smaller run log |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**. No source file was touched, so this is a regression guard, not a rebuild of the change |
+| Scope | `git diff --name-only` = **exactly the two log files**; `git diff --numstat AGENT_LOG.md` = **0 added, 1,735 deleted** — a pure cut, nothing reworded. `Migration/` and `UIUX/` stayed untracked and untouched |
+
+#### Step 5 — adversarial self-check
+- ⚠️ **Blindspot register: out of scan scope, and I am not citing a green exit as evidence.** The previous entry established by plant that `check-blindspot` does not read `AGENT_LOG.md` or `scripts/`. The load-bearing evidence is the scope row above: **no file under `src/`, `public/` or `scripts/` was touched**, so §10.1, §10.2, §10.3 and the §2.3 stale-data rule have no surface to regress on. No plant was re-run this time because the previous entry's plant already measured the scope and nothing about it changed.
+- **DECISIONS.md conflict: none** (control: 13 `localStorage` hits). Nothing there governs archiving mechanics, and no budget was touched.
+- ⛔ **The conflict that IS live is W-5.3's own**, and it was respected: that clause says making the action clause byte-driven is a **rule change and the owner's to make**. This run performed **only the action**, on `check-log-size.mjs`'s measured budget, exactly as the eleven passes since 2026-08-29 have. The `0 added / 1,735 deleted` diff is the proof that no clause moved.
+- **Already-done backlog item: no.** W-5.3 is a **standing rule that fires on measurement**, not a completed item; fourteen firings are fourteen intended repeats, and the tally in W-5.3 is where that is recorded.
+- **My own verification claim.** Every row reproduces from the command named, and the reference copies are `git show HEAD:` rather than my own buffers, so a reviewer who was not present can re-derive all four proofs from the repo. **Limits I own:** (1) the proofs test *this* move against HEAD — they say nothing about whether an earlier pass mis-ordered an older section, and the known inverted 09-04 section is still in the archive; (2) the archive is now **4.2 MB** and nothing checks its internal date ordering — named, deliberately not built; (3) `npm test` still cannot detect archive loss at all (proven by plant on 2026-09-01), so the proofs above, not the green suite, are the evidence this pass was faithful.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **W-7.2 rule 5's test is tomorrow (2026-09-13) and this run moves that number the wrong way, stated plainly rather than netted out.** The backlog went **399,026 → 400,430 b** (+1,404 b, the W-5.3 tally, kept deliberately short for this reason). Still **25,043 b under** the 425,473 b baseline. **Archiving does not help that test at all** — it moves the run log; rule 5 measures the backlog. This run shrank the file by 170 KB and grew the region rule 5 watches.
+- **The live site is still 19 commits behind** — unchanged by this run, which touched no build input. That is **O-5** and it is the owner's push.
+
+**Owner-facing, one line:** done — housekeeping only, no learner-visible change: the day of 2026-09-11 (21 entries, 170 KB) moved to the archive verbatim, the log-size warning is cleared, and the file is back from 707 KB to 537 KB with history preserved and proven. **Worth knowing:** the by-hand recipe went wrong twice this run in ways that would have silently deleted live text, and only the mover's own arithmetic assertions caught it — which is real evidence for **O-6** (whether to automate this), still your call and still unanswered. **O-5** (the live site is 19 commits behind, 14 of them lesson-accuracy fixes) and **O-3** (unreviewed machine translation) are unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** After the cut and before this entry: `MEASURED log-size: file 538450 b, run log 99614 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After this entry: not retyped (W-7.2 rule 4). **One live day; the next pass is not due until the run log crosses 250,000 b again.**
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed, so no residual chain is running; the pick is a corpus-wide sweep of a class that has never been swept) — **do the four translations state the numbers their English lesson states?** 176 pairs swept, **129 verified clean, one real defect**: lesson 13's worked example for fractional shares — *"$50 worth of a stock trading at $500"* — is **present in `en`, `zh` and `ja` and absent from `es` and `ko`**, in a pair that every existing instrument reports as fully translated
+
+#### The pick, and the two items it is NOT
+Backlog **item 160** (the quiz option-length cue) is the loudest standing WARN and was the first candidate; it was **rejected on its own stop-line**, which says in terms that everything still open in it is class B and class B is O-3's decision. Re-reading that before editing is the whole of step 3.5 for a rejected pick. The archiving pass is **not due** — one live day, run log at 44.1% of warn.
+
+So the pick came from asking which class of learner-visible defect has **never** been looked for. Probed `AGENT_LOG.md` + archive + `DECISIONS.md` for ten phrasings of a numeral-parity sweep: **0 hits in all three**, against controls `numerals.mjs` (2/8/0) and `abridged` (22/132/0) which fire. The one `figure parity` hit in the archive is a 2026-08-24 instruction to a *translator* run about lesson 39, not a sweep. **Never swept.**
+
+#### Step 3.5 — the premise re-measured with controls, and the instrument was wrong three times before it was right
+The premise here is the instrument, so the instrument is what had to be controlled. **The first sweep reported 82 of 176 pairs differing. Every one of the top-ranked findings was a false positive**, and naming the four classes is the useful part of this entry:
+1. **Decades written as words.** `L34 es` and `L36 es` "missing" 1920/1980 — the Spanish says *"los años veinte"* and *"los años ochenta"*. Idiomatic and correct.
+2. **Word-scale units, in two directions.** `L37 es` "missing" $95B/$600B/$1.75T — Spanish states them as *"$85 mil millones"* and *"$1.75 billones"* (long scale), which is right. `L37 zh` the same via `万亿`/`亿`.
+3. ⚠️ **A blind spot in the shipped parser itself.** `L30/L31 ja` read as "missing 15,000" because `amountsIn()` reads **`1万5,000` as 10000 and 5000**: the GROUPED rule that correctly stops the Korean *only*-particle trap (`$4,000만`) also stops a comma-grouped **tail** of a descending group, which is how Japanese normally writes 15,000. The ja text is correct; the parser could not see it.
+4. **Written-out English.** `L26 ko/ja` "invented" 200 — the English says *"Two hundred dollars"* in words, as do `es` and `zh`; only ko/ja use digits. `numerals.mjs` documents written-out English as deliberately out of scope.
+
+Rebuilt with all four classes controlled (word-scale expansion on the English side, decade-word suppression per language, and a corrected grouping rule), behind **7 two-sided parser controls asserted as exact set equality before any finding prints** — including the two refutations a greedy parser fails (`$4,000만 30%` → `[30, 4000]`, not 40,000,000; `5만 4만` → two amounts, not one) and the `1万5,000 → 15000` case that the shipped parser gets wrong. **All 7 fired.** Abridged pairs are excluded by the same `0.7 x` per-language p90 rule `translation-completeness.mjs` uses, not by a threshold of my own.
+
+**Result: 46 abridged (item 93 debt, out of scope), 129 clean, 1 defect.** A second pass in the opposite direction — figures a translation states that the English does not, floored at 100 to drop list markers — returned **3 candidates, all three false positives** (classes 2 and 4 above). **No translation in this corpus states a wrong number, and none invents one.** That is the reassuring half and it is a measurement, not an impression.
+
+#### The defect
+`en`: *"fractional shares — a slice of one share, like **$50 worth of a stock trading at $500** — instead of requiring a purchase in whole-share amounts…"*
+`zh` and `ja` both carry it (`用50美元买入一只每股500美元的股票`, `1株500ドルの株を50ドル分だけ`). `es` reads only *"una parte de una acción"* and `ko` only *"완전한 한 주가 아니라 주식의 일부만 사는 것으로"* — **the concrete example is gone, and it is the thing that makes the concept land.**
+
+⭐ **Why no existing instrument can see this.** `L13 es` is **1.02** against an es reference of 1.16 and `L13 ko` is **0.49** against 0.58 — both comfortably above the abridged line, so §33 reports them **fully translated**, and the review ledger reports them **100% reviewed**. A pair can be full-length, reviewed, and still be missing the one clause that carries the teaching. **Length is not content, and this is the first measurement in this repo that separates them at the level of a single claim.**
+
+⭐ **And it is drift from authored intent, not a condensation choice** — confirmed in the archive rather than assumed: the run that wrote this lesson (then lesson 25) recorded *"used only clearly-labeled illustrative figures ($500 uninvested cash, **$50 of a $500 stock**, a 5% limit-order gap)"* and *"All five languages."* The example was meant to be in all five and reached three.
+
+#### What shipped
+- `lessonContent.essentials.es.js` **+43 b**: `una parte de una acción` → `una parte de una acción, como $50 de una acción que cotiza a $500`.
+- `lessonContent.essentials.ko.js` **+57 b**: `…주식의 일부만 사는 것으로,` → `…주식의 일부만 사는 것으로(예를 들어 한 주에 $500인 주식을 $50어치만),`.
+- `LAUNCH_READINESS.md` §10.4's **generated** volume sentence, via `npm run readiness -- --write`: es 154,445 → **154,487**, ko 74,525 → **74,554**. `npm test` failed until this was regenerated, which is that check working.
+Both edits are **restorations of English already in the corpus**, in the currency form each file already uses (`$` prefix, measured in both) — not new claims. §33's baseline was **not** touched: the ratios moved 1.02→1.03 and 0.49→0.50, inside the 0.03 tolerance. (Regenerating that baseline for a one-lesson edit rewrites every recorded ratio, which is the trap to avoid here.)
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting **exactly 1** occurrence per anchor and refusing otherwise, then re-asserting the replacement landed exactly once — `APPLIED 2/2` |
+| Parser controls | **7/7** exact-set, including 3 refutations — asserted before any finding printed |
+| Defect cleared | sweep re-run: `L13 es` and `L13 ko` **both gone**; clean pairs 124 → **126**; the 4 remaining rows are the verified false-positive classes |
+| Rendered prose | read back through `lessonContent.js` in en/es/ko — the example reads correctly in both languages and the sentence still parses as one sentence |
+| `npm test` | **exit 0** (read directly, not through a pipe), 3 WARN / 0 FAIL — the three standing WARNs, identical to the pre-edit baseline |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-n_yxT7O5.js` 272.00 kB |
+| Scope | `git status --porcelain` = exactly the 3 files. `Migration/` and `UIUX/` are the **user's** untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- ✅ **Blindspot register: the control fired, on the file I actually edited.** Planted *"Con las tasas así de bajas, ahora es buen momento para comprar acciones."* into `lessonContent.essentials.es.js` (plant landed: 46,415 → 46,489 b, presence asserted) → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**. Restored from a scratchpad copy, **`cmp`-identical**, exit 0. So the green result on my real change is evidence and not a scope accident. §10.2 (no Dalio), §10.3 (no kids framing), §2.3 (no date, no live-looking figure — the $50/$500 pair is an illustrative example, which is exactly the distinction the authoring run reasoned through and recorded).
+- **DECISIONS.md conflict: none.** Content-only edit to `.js` content modules, consistent with the `.js`-not-JSON decision; no state, storage or platform change (control: 13 `localStorage`, 20 `lessonContent`, 0 `fractional`).
+- **Already-done backlog item: no.** `AGENT_LOG.md` has **0** hits for `fractional share`; the archive's 3 are all the 2026-08 authoring run, which *adds* this example rather than removing it — so this restores its work rather than undoing it. Not item 93 either: these two pairs are **not abridged**, which is the whole point of the finding.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the sweep reads **digits**; written-out numbers in any of the five languages are invisible to it, which is class 4 above and is why "129 clean" means *no digit disagreement*, not *no numeric disagreement*. (2) It compares **sets per lesson**, not per sentence — a figure that moved to the wrong sentence inside the right lesson passes. (3) The es and ko clauses are **mine and unreviewed by a fluent speaker**, like every other translation in this corpus (**O-3**). (4) The instrument is a scratchpad reading aid and is **deliberately not committed** — it has no threshold that could be a gate, and W-6.2 rule 3's question ("what learner-visible failure would this check catch?") is answered by the *fix*, not by keeping the scanner.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⚠️ **`scripts/numerals.mjs` cannot read `1万5,000`** (class 3 above), and it is used by the shipped §21 and §53. **Live instances today: zero** — those sections read lessons 7 and 17, and the form appears in lessons 30 and 31, which nothing anchors. So this is a latent false-negative of exactly the shape item 127 filed (*"the false negative is indistinguishable from the figures being absent"*), not a live defect, and W-6.2 rule 2 says a zero-instance residual is a note. **The one-line fix is known and measured** — let a comma-grouped chunk join a descending group as its tail while still refusing to *take* a unit, which keeps the `$4,000만` refutation passing; my sweep's parser runs it with both controls green. A run that touches `numerals.mjs` for any reason should take it; a run should not touch that file only for this.
+- **`DECISIONS.md` lines 209-210 still describe the deploy as "`npm run build` then drag `dist/`"** — stale since 2026-09-07 and named by the run before last. Still unfixed, still one line, still inside an analytics decision this run had no reason to touch.
+- **The live site is still 19 commits behind** (**O-5**) and this run adds a twentieth learner-visible commit to that queue. Two more languages of lesson 13 are corrected in the repo and not on the web.
+- **The backlog was not touched this run, deliberately:** W-7.2 rule 5's test falls **tomorrow, 2026-09-13**, and measures the backlog against 425,473 b. It stood at **400,430 b** at the start of this run and this entry adds **0 b** to it.
+
+**Owner-facing, one line:** I checked, for the first time, whether the Spanish, Korean, Chinese and Japanese lessons state the same numbers as the English ones — **129 of 176 pairs are clean, nothing states a wrong number and nothing invents one**, and the single real gap is fixed: lesson 13's example of a fractional share ("$50 of a $500 stock") had quietly gone missing from the Spanish and Korean, even though both pairs read as fully translated on every gauge we have. **O-5** (the live site is now 20 commits behind, including this) is your push; **O-6** (automate the archiving pass?) and **O-3** (unreviewed machine translation, which these two new clauses are also part of) are still waiting on you, unchanged.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 549000 b, run log 110164 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)` (this run's `npm test`). After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "fix numerals.mjs to read 1万5,000 correctly" — so W-6.2 rule 1 does not arise; the previous entry had named this as a note rather than an item precisely because it had **zero live instances**, and the owner took it anyway) — `amountsIn()` read Japanese **`1万5,000` as two amounts, 10,000 and 5,000**, and the real figure as absent; with the comma-grouped tail admitted, lessons 30 and 31's Japanese bodies now state **exactly the numerals their English states**
+
+#### Step 3.5 — the premise re-measured from scratch, not carried over from the entry that filed it
+- **The defect reproduces on the shipped module, first command:** `amountsIn("1万5,000ドル")` → **`[5000, 10000]`**; `"4万5,000円"` → `[5000, 40000]`.
+- **CONTROLS — six forms the shipped parser gets RIGHT, asserted before touching it**, because a "fix" that breaks these is worse than the defect: `11万5千円`→115000, `$4,000만 30%`→[30, 4000] (the Korean *only*-particle refutation), `5만 4만`→two amounts, `3 100`→[3, 100], `5만 달러`→50000, `$50,000`→50000. **All six correct as shipped.**
+- **The corpus, measured rather than recalled:** scanning `src/content` + `src/locales` as text (38 files) for a comma-grouped run following a myriad unit → **3 instances, all `1万5,000`, all in `lessonContent.economy.ja.js`** (lessons 30 and 31). **CONTROL:** the same scan for the unit+unit form the parser already reads → **9 instances**, so the scanner is not simply blind.
+- **The "zero live instances" half of the note re-derived rather than trusted.** All non-specimen call sites of `amountsIn` enumerated: **§21** (lesson 7's `bracketCaption`), **§50** (lesson 23's body + `moneyVisuals`), **§53** (lesson 17's body). The broken form is in the **economy** track, which none of them reads. **So this was latent, and the premise for taking it is the trap, not a live failure** — item 127's *"the false negative is indistinguishable from the figures being absent."*
+
+#### What shipped — `scripts/numerals.mjs` only, +37 / −8
+The join rule gains a second, **narrower** shape. A group's last element may now be a thousands-grouped chunk carrying **no unit of its own**, under two conditions that are both load-bearing:
+- **(a) No separator at all.** `1万5,000` is one written token. `5만 3,000` with a space is two amounts in any reading and joining it would **invent 53,000**. The existing unit+unit case keeps its whitespace tolerance — two descending units are unambiguous on their own; a bare number after a space is not.
+- **(b) Strictly less than the group's last multiplier.** `1万15,000` is not a positional decomposition of anything, so it stays two amounts. **The rule refuses rather than guesses.**
+`group.lastMult` is set to 1 after such a tail, so nothing can follow it. **What did NOT change: a comma-grouped chunk still cannot TAKE a unit**, so the `$4,000만` refutation is untouched — that is a *mantissa* rule and this is a *tail* rule. The comment block says which is which, and dates the measurement rather than asserting a fact about the corpus.
+
+**Three specimens added to `SPECIMENS`** (9 → 12, refutations 3 → 6), which is where §61 already exercises this module — no new section, no new threshold: the fix itself, and the two refutations above.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting **exactly 1** occurrence per anchor and refusing otherwise — `APPLIED 2/2`, then `APPLIED 1/1` for the specimens |
+| Specimen matrix | **12/12 exact set equality**, including the 2 new refutations and the 6 pre-existing forms re-asserted unchanged |
+| ⭐ **Live-input control — the fix moves nothing any check reads** | fingerprinted `amountsIn()` over **220 live inputs** (every string in `moneyVisuals` + all 44 lessons x 5 languages of section bodies) before and after. **Exactly 2 lines differ:** `lesson30.ja` 10000 → **15000**, `lesson31.ja` {5000, 10000} → **{15000}**. The other 218 are byte-identical |
+| ⭐ **And the 2 that moved are now RIGHT** | `L30` en `[0, 8, 5000, 15000, 20000]` vs ja `[0, 1, 8, 5000, 15000, 20000]` (the extra 1 is *"ビール1杯"*, "a beer" in English); `L31` en `[15000]` **=** ja `[15000]`, where ja read `[5000, 10000]` before |
+| **Plant A — the specimen catches an under-read** | disabled the new branch → `check-data` **exit 1, §61: read "今すぐ1万5,000ドルを渡す" as [5000, 10000]; the specimen says [15000]` |
+| **Plant B — and an over-read, the opposite direction** | dropped the no-separator guard → **exit 1, §61: read "5만 3,000" as [53000]; the specimen says [3000, 50000]` |
+| | **Both plants fire, so the three new specimens are load-bearing rather than decorative** |
+| Restore | `cmp`-identical to the fixed file after each plant; `check-data` **exit 0** |
+| `npm test` | **exit 0** (read directly, not through a pipe), 3 WARN / 0 FAIL — the three standing WARNs, identical to the baseline. §21, §50, §53 and §61 all green, §61 now reporting 12 specimens / 6 refutations |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Scope | `git status --porcelain` = **exactly `scripts/numerals.mjs`**. `Migration/` and `UIUX/` are the **user's** untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: satisfied by scope, and the scope was measured rather than assumed.** A previous run established by plant that `check-blindspot` does not scan `scripts/`, so a green exit here would prove nothing. Instead: scanned all **74** `.js`/`.jsx`/`.css`/`.html` files under `src/` plus `index.html` for a reference to this module → **one hit, and it is the word "numerals" inside a prose comment in `charts.jsx`, not an import.** **CONTROL:** the same walk for `localStorage` returns **7** files, so the scanner is not silently returning nothing. **Not one byte of this file reaches a learner's bundle**; no content, attribution, figure or date changed. ⚠️ Worth recording that the first read of this scan showed `HIT src/components/charts.jsx` and **looked exactly like a real import** — the claim only survived because the hit was opened.
+- **DECISIONS.md conflict: none** (0 hits for `numerals` or `amountsIn`; control: 13 `localStorage`). Nothing there governs numeral parsing.
+- **Already-done backlog item: no, and the reverse.** This is the note the **previous entry** filed, which said in terms *"a run that touches `numerals.mjs` for any reason should take it; a run should not touch that file only for this."* The owner directed it, which is the one route that clause left open. Nothing in "Completed and pruned" touches this module.
+- **My own verification claim.** Every row reproduces from the command named. **Limits I own:** (1) the live-input fingerprint covers section **bodies** and `moneyVisuals`; it does not cover `takeaway`/`thinkAbout`, glossary or quiz text — so "218 unchanged" is a statement about the surfaces the four call sites read, which is the claim that matters, not about every string in the app. (2) The new rule is **narrower than the general problem**: `1万5千` and `1万5,000` are both read, `一万五千` (Chinese numerals) is still deliberately out of scope, as the module header has always said. (3) Lessons 30 and 31 were **already correct in Japanese** — this run fixed the instrument, not the content, and no learner sees a different app because of it.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **§21 and §53 could now be pointed at more lessons than they are**, since the parser reads a form it could not before. Not proposed as work: W-6.2 rule 3 asks what learner-visible failure a new anchor would catch, and there is no candidate figure in lessons 30-31 that a *figure* renders. Named so the next run does not read this fix as an invitation.
+- **`DECISIONS.md` lines 209-210 still describe the deploy as "`npm run build` then drag `dist/`"** — stale since 2026-09-07, named by two previous runs, still one line, still unfixed.
+- **The live site is 19 commits behind plus the two from today** (**O-5**); this commit is instrument-only and changes nothing a learner would see, so it does not lengthen the learner-visible half of that queue.
+- **The backlog was not touched this run**, deliberately: **W-7.2 rule 5's test falls tomorrow, 2026-09-13**, and measures the backlog against 425,473 b. It stood at **400,430 b** and this entry adds **0 b** to it.
+
+**Owner-facing, one line:** done — the parser now reads `1万5,000` as 15,000, and the proof that it matters is that lessons 30 and 31's Japanese bodies now state exactly the numerals their English states, where one of them previously read as two wrong figures. **Nothing a learner sees changed**: the Japanese lessons were already correct, it was the checking tool that could not see them, so this closes a trap rather than a bug. The fix is pinned by three new specimens that I proved fail in **both** directions — one if the fix is reverted, one if it is made greedy. **O-5**, **O-6** and **O-3** are unchanged and still yours.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 561158 b, run log 122322 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed, so no residual chain is running; the pick came from sweeping, for the first time, every `npm run <name>` in the repo's live docs against `package.json`) — **`LAUNCH_READINESS.md` told the owner to finish O-2 with `npm run deploy`, a command deleted on 2026-09-07** — the last step of the one owner action on the critical path pointed at nothing
+
+#### The pick
+The previous four entries each named `DECISIONS.md` lines 209-210 ("`npm run build` then drag `dist/`") as stale and left it. Rather than take that one line on its own, I asked what class it belongs to — **docs that name a deploy step that no longer exists** — and swept the class. The sweep found a worse instance nobody had named: an *instruction*, not a rationale.
+
+#### Step 3.5 — the premise measured with controls
+- **Instrument:** a scratchpad scan of all **114** tracked `.md/.mjs/.js/.jsx/.sh/.yml/.html/.json` files (excluding `AGENT_LOG*`, the archive, `reviews/` and `working_files/`, which are dated records) for `npm run <name>`, checked against `package.json`'s `scripts`. **CONTROL:** an injected `npm run definitely-not-a-script` is reported, and `build` resolves. 12 distinct names seen, 116 references.
+- **Result: 6 dead references, all to `deploy`.** Five are already historical — `DECISIONS.md` 994/1009/1039/1041 (the superseded 2026-09-06 decision, under its own ⚠️ banner) and `README.md:109` (says it is deleted). **One is a live instruction:** `LAUNCH_READINESS.md:136`, O-2's step list — "…then `npm run build` and `npm run deploy`."
+- **The replacement was measured, not recalled:** `.github/workflows/deploy-pages.yml` triggers on `push: branches: [main]`; `check-deployed` exists in `package.json`; `README.md` § Deploying is the owner of the procedure (and O-2 in this log already says steps 4-5 are build, then push and `check-deployed`).
+
+#### What shipped
+- `LAUNCH_READINESS.md`: the sentence now ends "…then `npm run build`, commit and push to `main` (the Pages workflow publishes it), and confirm with `npm run check-deployed` — `README.md` § Deploying", plus one dated parenthetical saying what it used to say.
+- `DECISIONS.md` 209-210: "The deploy **is** … drag `dist/`" → "The deploy **was then** … drag `dist/` (since 2026-09-07 it is a push to `main` that a workflow builds, and the reasoning holds unchanged there)". The decision's argument — a build-time variable is silently skippable — is as true in CI, so the record is annotated, not rewritten.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edits applied | node patcher asserting exactly 1 anchor occurrence and the replacement landing exactly once — `APPLIED 2/2` (a first wording was restored from scratchpad copies and redone, to fix a guessed date) |
+| Sweep re-run | 0 live instructions naming `npm run deploy`; the 6 remaining hits are all historical, including the new parenthetical |
+| `npm test` | **exit 0** (read directly), 3 WARN / 0 FAIL — the three standing WARNs |
+| Build | `scripts/build-out-of-tree.sh` exit 0 |
+| Scope | `git status --porcelain` = the 2 docs + this log. `Migration/` and `UIUX/` are the user's untracked work — never read, moved or committed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register:** satisfied by scope — neither doc is bundled (the `src/` hits for `DECISIONS.md` are code comments citing it; no content, figure, date, attribution or advice wording changed). Not re-planted, since the edit adds no prose a learner reads.
+- **DECISIONS.md conflict:** none — the edit agrees with the 2026-09-07 deploy decision (Pages on push) and preserves the analytics decision's reasoning (control: 7 `src/` files still use `localStorage`, untouched).
+- **Already-done item:** no — O-4/O-5 and the 09-07 move changed README and deleted the script, but never touched this sentence; this completes that move rather than redoing it.
+- **My own claim:** reproducible from the scan named. **Limit:** it reads only the literal `npm run <name>` form; `npm test`, `npx`, and prose like "run the deploy script" are invisible to it. No check was committed (W-6.2 rule 3: no learner-visible failure).
+
+**Owner-facing, one line:** the readiness scorecard's instructions for finishing analytics (O-2) ended with `npm run deploy`, which no longer exists; they now say push to `main` and run `npm run check-deployed`, matching the README. **O-5** (live site behind — and Sectors goes stale for visitors today), **O-6** and **O-3** are unchanged and still yours.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 570597 b, run log 131761 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4). Backlog: 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was a scheduled sweep pick whose only notes were limits of its own instrument, not a nomination; the pick came from re-running the lesson-body census past the four lessons 2026-09-12's earlier run read clean) — lesson 25's **takeaway** and its quiz **explanation** told learners that money left invested for fifteen years "has time to recover from **any** bad stretch long before he'd ever withdraw it", while the lesson's own body says *historically*, lesson 44 — ten lessons earlier on the same track — says *"'it usually recovers' is a statement about averages"*, and FRED puts the Nikkei 225 **71% down fifteen years after its 1989 peak and 34 years from regaining it**
+
+#### The pick
+Census re-run (mentions of `lesson N` / `LN` across `AGENT_LOG.md` + archive, and in headings; control: `lesson 45`, which does not exist, returns 0). After L24/L26/L22/L2 — read clean by the 09-12 run that fixed `check-deployed --identify` — and L42/L41 (fixed), the floor is **L8 (23/1), L21 (29/2), L25 (29/3)**. I read all three bodies and their quiz questions (`q022`, `q035`, `q039`). **L8 and L21 are clean enough to leave** (one arguable L8 point below). **L25 carries the defect.**
+
+#### Step 3.5 — the premise measured, with controls
+- **The overclaim, quoted from the shipped English.** Body §2 (hedged): *"time is what turns a bad stretch into something that, **historically**, has had room to recover before it's ever needed."* Takeaway (unhedged): *"Money you won't touch for many years **has time to recover** from a bad stretch."* `q039` explain (unhedged and universal): *"its fifteen-year horizon gives it time to recover from **any** bad stretch long before he'd ever withdraw it."* The explain is what a learner reads the moment they answer.
+- **Internal contradiction, measured rather than argued.** Money track order is `41,42,43,44,16,…,25,…` (read from `lessons.js`), so L44 comes first, and its body says: *"An investment can fall and stay fallen for a decade, and 'it usually recovers' is a statement about averages, not about the particular decade you happen to need the money in."* The economy track also names **Japan in 1989** among "history's most painful downturns". L25's takeaway and explain contradict both.
+- **External, from FRED `NIKKEI225`** (fredgraph.csv, no key; **control:** a nonexistent series id returns an HTML error page, not CSV; the 1989-12-29 close reads **38,915.87**, the widely published record close). **2004-12-29: 11,381.56 (−70.8%)** — fifteen years on, the exact horizon in the question. First close back above the 1989 peak: **2024-02-22**. ⚠️ **Limit I own:** that is a price index and excludes dividends; Japanese dividend yields over the period were low, so total return fifteen years on was still deeply negative, but I did not measure a total-return series.
+- **Not previously decided.** `any bad stretch` → **0** hits in `AGENT_LOG.md`, the archive, `DECISIONS.md`, `CLAIMS.md` and `LAUNCH_PLAN.md` (control: `localStorage` 26/431/13/3/3). `git log -S` puts the takeaway at `8a3377a` (2026-08-08, the lesson's creation) and the explain at the language splits only — neither sentence has been revisited. `q039` appears in item 160 solely as a **length** candidate (class A); nothing there touches its explain.
+- **All five languages carry the unhedged form** (read field by field): es *cualquier mal período*, ko *어떤 나쁜 시기에서도*, zh *从任何一段糟糕行情中*, ja *どんな悪い時期からも*.
+
+#### What shipped
+Two sentences, five languages each — `src/content/lessonContent.money.{en,es,ko,zh,ja}.js` (lesson 25 takeaway) and `src/content/quizText.{en,es,ko,zh,ja}.js` (`q039` explain). English now reads:
+- takeaway: *"Money you won't touch for many years has **more** time to recover from a bad stretch — **historically that has usually been enough, though not always** — which is what makes the trade-off for potential growth worth weighing."*
+- explain: *"…so its fifteen-year horizon gives it **far more room** to recover from a bad stretch before he'd withdraw it — **historically usually enough, though not a guarantee**."*
+
+The translations carry the same hedge in each language's own construction (ko splits the takeaway into two sentences rather than force a polite-form clause inside dashes).
+**Deliberately NOT done:** the **keyed option** (`opts[3]`, *"would give it room to recover from a temporary drop"*) is untouched. It is modal and self-limiting ("temporary"), and it is a length-sensitive item-160 class-A option — editing it moves §65 in five languages, which is O-3's territory. The body is untouched; it was the correct half. **No number was added to the lesson** — the Nikkei figure is evidence for the edit, not content; adding a dated market figure to a money-judgment lesson is a §2.3-shaped risk for no learner gain, since L44 already makes the point.
+- `scripts/translation-review-ledger.json` — lesson 25's four entries re-marked via `translation-review.mjs mark … ai`: **4 hunks, 24 lines, all lesson 25**. ⚠️ The ledger hashes **lesson content only**; the `quizText` edits are covered by no ledger, which is pre-existing and not changed here.
+- `LAUNCH_READINESS.md` — regenerated by `npm run readiness -- --write`: English chars 154,568 → **154,637**, §10.4 volume sentence. Lesson 25's `minutes` unchanged (`npm test` agrees).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher, 10 anchors, each asserted **exactly 1** old and **0** new before writing, all-or-nothing — `WROTE 10/10 into 10 files`; originals copied to scratchpad first |
+| `npm test` | first run **exit 1** (ledger stale ×4, then readiness figures) → fixed as above → **exit 0, 3 WARN / 0 FAIL** — the three standing WARNs (O-3 coverage, 47 abridged pairs, item 160 length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0, `dist/index.html` timestamped this run |
+| Built bundle | old-phrase probes **0** in every language; new en takeaway **1** (`lessonContent.money.en-*`), new en explain **1** (`quizText.en-*`), new zh/ko/es/ja probes present in their `quizText` chunks; **control** (body's *"historically, has had room to recover"*) **1** |
+| Live walk | `dist/` served statically, Browser pane at `#/lesson/25` with lessons 41-44 and 16-24 seeded complete: header **LESSON 14 OF 17 · THINKING ABOUT MONEY**, not locked; new takeaway **true**, old **false**, body hedge **true**, negative control **false**. The `q039` explain was verified in the bundle, **not rendered** |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, and proven able to see the edited file.** Planted *"You should buy stocks now."* right after the new `q039` explain in `quizText.en.js` → `check-blindspot` **exit 1, `FAIL: §10.1 investment-advice-adjacent language reintroduced`**; restored from a scratchpad copy, `cmp`-equal → **exit 0**. The change moves **away** from §10.1: it removes a recovery guarantee from an investing explanation. §10.2: no attribution added. §10.3: untouched. §2.3: no date or market figure added.
+- **DECISIONS.md conflict:** none — content stays `.js`, no state/build/platform decision touched.
+- **Already-done item:** no. Item 160 touched `q039` for option length only; the sixth quiz note (explain-vs-keyed-answer) checked that explains justify the keyed option, which this one still does — it swept alignment, not overclaiming.
+- **My own claim:** every row reproduces from the command named. **Limits:** the four translations are mine and no fluent reader has seen them (ledger says `ai`, O-3); the Nikkei figure is a price series, not total return; the S&P 500 has no 15-year nominal loss in the modern record I know of, so this is a *not-always* correction, not a *usually-not* one — and the new wording says exactly that.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L8 §3** says sorting applicants into risk groups "is what keeps the pool viable **at all**", beside "applications ask about health history". Compulsory enrollment is the other textbook answer to adverse selection, and it is how the health systems of ko/ja readers (and US ACA community rating) work. Arguable rather than wrong — the example is life insurance — so left; a run wanting a content pick could take it.
+- **`q039` `opts[3]` in ko/ja** renders "would give it room" as a counterfactual past (*있었을 것이기 때문이다* / *余地があったはず*), i.e. "would have had room". Meaning-shifting but inside item 160's length-locked option; O-3.
+- **Backlog untouched** (0 b), for W-7.2 rule 5's 2026-09-13 test.
+
+**Owner-facing, one line:** lesson 25's takeaway and its quiz explanation promised learners that fifteen years of invested money would recover from "any" bad stretch before it was needed — which the same track's lesson 44 already says is only an average, and which Japan's market after 1989 disproves — so both now say "historically usually, not always", in all five languages. It reaches learners on the next push (**O-5**); translations unreviewed by a fluent speaker (**O-3**); **O-6** still waiting on you.
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Before this entry: `MEASURED log-size: file 575499 b, run log 136663 b, floor 438836 b (backlog 400430 b), archive 4209294 b, 1 live day(s)`. After it: not retyped (W-7.2 rule 4). Backlog: 0 b added.
+
+### 2026-09-12 (owner-directed, interactive: "do the lesson 8 insurance fix next" — so W-6.2 rule 1 does not arise; the previous entry had listed this as a note under "Seen, deliberately NOT fixed" and called it arguable) — lesson 8 told learners that sorting applicants into risk groups "is what keeps the pool viable **at all**", beside "applications ask about health history", and the health insurance most of this app's readers live under does neither: US plans may not charge more for a pre-existing condition, and Korea's national insurance is compulsory with contributions set by income and property
+
+#### Step 3.5 — the premise re-measured, and it came back stronger than the note said
+- **The claim, quoted from the shipped English (§3):** *"This is why applications ask about health history, driving records, or a home's condition before setting a price — sorting people into accurate risk groups is what keeps the pool viable at all."* §1 of the same lesson lists **health** first among the insurance types the idea applies to, so an unscoped "applications ask about health history" reads as health insurance.
+- **External, two primary sources fetched this run:** healthcare.gov › Coverage for pre-existing conditions: *"No insurance plan can reject you, charge you more, or refuse to pay for essential health benefits for any condition you had before your coverage started"* (exception: grandfathered individual plans bought before 2010-03-23). nhis.or.kr (English): *"All Koreans except those belonging to the lower-income group enroll to the compulsory health insurance"*, with *"Contribution payment according to the level of household's income and property."* Japan's and Germany's statutory systems work the same way; that part is background knowledge and was **not** fetched.
+- **Why the note was too soft.** It called this "arguable, because the example is life insurance". The smoker example is, but the sentence that makes the claim is not scoped to it, and the claim is the universal "at all". Compulsory pooling is the other standard remedy for adverse selection, not an edge case.
+- **Not previously decided:** `adverse selection` appears **once** in `src/content`, in this lesson; `viable at all` has 0 hits in `DECISIONS.md` (control: `localStorage` 13). **Lesson 8 is abridged in all four translations** (`translation-completeness`: 0.66/0.32/0.20/0.27), and each carries the same sentence in shorter form (es *lo que mantiene el fondo viable*, ko *기금을 유지 가능하게 합니다*, zh *才能让资金池维持下去*, ja *基金を成り立たせています*).
+
+#### What shipped
+One sentence rescoped and one added, in five languages (`src/content/lessonContent.essentials.{en,es,ko,zh,ja}.js`). English: *"This is why applications **for life, auto or home insurance** ask about health history, driving records, or a home's condition before setting a price — sorting people into accurate risk groups is **one way** to keep the pool viable. **The other is to keep low-risk people in the pool too, which is why many countries make health insurance compulsory and set its premiums by income rather than by health.**"* The four translations make the same two changes inside their existing abridged paragraph.
+**Deliberately NOT done:** no country or statute is named in the lesson. The ACA is left out on purpose: its individual-mandate penalty has been $0 since 2019, so "the US makes it compulsory" would be a new false claim, and explaining subsidies and enrollment windows would turn an essentials paragraph into a policy digression. The moral-hazard paragraph, the heading ("Why Insurers Ask So Many Questions", still true of the insurance the sentence now scopes to) and `q022` are untouched.
+- `scripts/translation-review-ledger.json`: lesson 8's four entries re-marked via `translation-review.mjs mark … ai`.
+- `LAUNCH_READINESS.md`: regenerated by `npm run readiness -- --write`, English chars 154,637 → **154,837**. Total minutes are unchanged at 165, and `npm test` agrees lesson 8's `minutes` still holds. §33's recorded abridgement ratios did **not** fail, so `translation-completeness --write` was not run (it would rewrite every ratio).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting exactly 1 old and 0 new per file, all-or-nothing: `WROTE 5/5`. Originals copied to the scratchpad first |
+| `npm test` | first run **exit 1**, readiness figures only (the ledger had been re-marked before the run). Regenerated, then **exit 0, 3 WARN / 0 FAIL**: the three standing WARNs |
+| Build | `scripts/build-out-of-tree.sh` exit 0 |
+| Built bundle | old probes **0** in all five `lessonContent.essentials.*` chunks; new probes **1** each in their own language's chunk; control (*"a smoker has more reason to want life insurance"*) **1** |
+| Live walk | `dist/` served statically, `#/lesson/8` with lessons 1-7 seeded complete: **LESSON 8 OF 15 · MONEY BASICS (OPTIONAL)**, not locked; both new clauses **true**, old **false**, control **true**, negative control **false**. English only on screen; the other four were verified in the chunks |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, proven able to see the file.** Planting *"You should buy whole life insurance now."* after the new sentence made `check-blindspot` **exit 1** (`§10.1 investment-advice-adjacent language`). Restored `cmp`-equal: **exit 0**. The new text describes how systems work and recommends nothing. No attribution (§10.2), no kids surface (§10.3), no date or market figure (§2.3).
+- **DECISIONS.md conflict:** none.
+- **Already-done item:** no. The previous entry only *named* this, and "Completed and pruned" does not mention adverse selection.
+- **My own claim:** the two quotes reproduce from the URLs named. **Limits:** "many countries" rests on Korea (fetched) plus Japan and Germany (not fetched). The four translations are mine and unreviewed by a fluent speaker (O-3), and they are abridged pairs, so this adds prose to recorded debt rather than paying it.
+
+**Owner-facing, one line:** lesson 8 said pricing people by risk is the *only* thing that keeps an insurance pool working and implied health insurers ask about your health history. Neither is true of US marketplace plans or of Korea's and Japan's national systems. It now says risk-sorting is one way and compulsory, income-priced health insurance is the other, in all five languages. Reaches learners on the next push (**O-5**). Translations unreviewed (**O-3**).
+
+**Schedule:** the cron is the owner's lever; not read, not compared, not touched.
+
+**Log size.** Backlog: 0 b added. Totals not retyped (W-7.2 rule 4).
+
+### 2026-09-12 (owner-directed, interactive: "do the q039 ko/ja option fix next" — so W-6.2 rule 1 does not arise; named as a note two entries up) — `q039`'s **keyed option** in Korean and Japanese said the fifteen-year horizon **would have had** room to recover (*여유가 있었을 것* / *余地があったはず*), a past counterfactual, while the same option says he **is paying** for stability now and the English says it **would give** it room; one verb ending each
+
+#### Step 3.5 — the premise re-measured
+- **The mistranslation.** en `opts[3]`: *"He's paying for stability … since its long time horizon **would give** it room to recover from a temporary drop before he'd ever withdraw it"* — present conditional, about an arrangement that is ongoing and a withdrawal fifteen years off. ko: *대가를 치르고 **있다** — … 회복할 여유가 **있었을** 것이기 때문이다* (present progressive main clause, past-conjectural reason: "because it would have had room"). ja: *代償を払って**いる**——… 回復する余地が**あった**はずだから* ("because it should have had room"), and *はず* on a past tense reads as an expectation about something already settled. Both put the reason in the past while the claim and the withdrawal are present and future.
+- **es and zh checked and left:** es *le **daría** margen* is the conditional, matching English. zh *本可以让它…有空间* ("could otherwise give it room") is standard for a present counterfactual in zh and does not force a past reading, so it stays.
+- **Length, because this is an item-160 class-A option:** code points en/ko/ja/es/zh = 178/97/81/213/60 against distractor maxima 120/56/53/140/35. The keyed option is the longest in every language before the edit and after it, so no longest/shortest outcome can move. §65 measured before and after: **en 56.5/2.2, es 54.3/2.2, ja 52.2/4.3, ko 54.3/0.0, zh 52.2/2.2, identical**.
+
+#### What shipped
+`src/content/quizText.ko.js`: *있었을 것이기 때문이다* → ***있을*** *것이기 때문이다*. `src/content/quizText.ja.js`: *余地があったはずだから* → *余地が**ある**はずだから*. One code point shorter each. No ledger entry: the translation ledger hashes lesson content only, and `quizText` has none (noted in the lesson-25 entry above).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | patcher asserting exactly 1 old (anchored on the closing quote, so it cannot match inside the explain) and 0 new per file: `WROTE 2` |
+| `npm test` | **exit 0, 3 WARN / 0 FAIL**, the standing three; §65 line byte-identical in figures to the pre-edit run |
+| Build | `scripts/build-out-of-tree.sh` exit 0; old probes **0**, new probes **1** each in `quizText.ko-*` / `quizText.ja-*` |
+| Live walk | `dist/` served statically, language `ko`, `#/lesson/25` seeded unlocked: header **레슨 14 / 17 · 돈에 대해 생각하기**; new option **true**, old **false**, negative control **false**. The first read returned all-false with the page not yet rendered and was **not** taken as a result; the re-read also showed the earlier ko takeaway fix (*대개는 그 시간이 충분했습니다*), confirming it is the lesson-25 reader. ja verified in the chunk only |
+
+#### Step 5 — adversarial self-check
+- **Blindspot:** the edit changes tense only, adds no claim, attribution, figure or date. Not re-planted: the same guard was proven against `quizText.en.js` in the lesson-25 entry today, and `check-blindspot` exits 0 on this tree.
+- **DECISIONS.md / already-done:** no conflict. Item 160 fixes option *length*, and this changes one code point without changing which option is longest.
+- **My own claim:** reproducible from the commands named. **Limit:** the tense reading is my judgment of ko/ja grammar, with no fluent reviewer (O-3). The zh keep is also judgment.
+
+**Owner-facing, one line:** in Korean and Japanese, the correct answer to lesson 25's quiz said a long horizon "would have had" room to recover rather than "would have" room; one verb ending each, quiz scoring unchanged. Reaches learners on the next push (**O-5**).
+
+**Schedule:** not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was owner-directed and named no residual; the pick came from the lesson-body census, re-run) — lesson 11 told learners that "most actively managed funds don't reliably beat a comparable index fund after fees" was **"that lesson's own point"**, meaning “Stocks, Bonds & Diversification”, and that lesson says **nothing about active funds, index funds or fees** in any of its five languages. The misattribution dates from the lesson's creation (`5859239`, 2026-08-06, as "Lesson 12's own point") and survived the 2026-08-20 number-to-title conversion, which renamed it rather than checked it
+
+#### The pick
+Census re-run (mentions of `lesson N` / `LN` across `AGENT_LOG.md` + archive; control `lesson 45`, which does not exist, returns 1, the previous entry's own control mention). Skipping lessons already read clean or fixed this week (L24, L26, L22, L41, L21, L2, L8, L25), the floor is **L9 (33), L11 (34), L28 (34)**. I read all three English bodies. **L9 and L28 are clean enough to leave** (L28's retail-trading claim matches Barber & Odean's online-investor findings as I know them; not fetched). **L11 carries the defect.** Its fee arithmetic was re-derived and holds: $10,000 at 6.95% for 30 years is **$75,070** ("roughly $75,000"), at 5.95% **$56,630** ("around $57,000"), a **24.6%** gap ("roughly a quarter").
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim, from the shipped English (§1 ¶2):** *"…commonly charges 0.5%-1.5% a year — and **that lesson's own point about diversification applies here too**: most actively managed funds don't reliably beat a comparable index fund after fees, over long periods."* "That lesson" is “Stocks, Bonds & Diversification” (L5), named earlier in the same paragraph.
+- **L5 does not say it, measured in all five languages:** en `active` 0, `index` 0; ko `액티브`/`인덱스` 0; zh `主动`/`指数` 0; ja `アクティブ`/`インデックス` 0; es `índice` 0. **Control:** each language's word for diversification fires (en 5, es 5, ko 7, zh 10, ja 10). ⚠️ en `fee` returned 7, and every hit is inside **coffee**, the lesson's running example — a probe that looked like a positive and was not.
+- **Only the English carries it.** L11 is abridged in all four translations, and each states the active-fund fact without the attribution (es *y la mayoría de los fondos gestionados activamente no superan…*, ko/zh/ja likewise). So the fix brings the English into line with what the translations already say.
+- **Origin:** `git log -S"own point about diversification"` → `5859239` (2026-08-06, "Lesson 12's own point"; lesson 12 of that day was the diversification lesson, and `grep -i actively` over that commit's `lessons.js` hits only lesson 23's own text and a tax paragraph). `7046854` (2026-08-20) converted it to "that lesson's". `own point about diversification` → **0** hits in `AGENT_LOG.md`, the archive, `DECISIONS.md` and `CLAIMS.md` (control: `localStorage` 13 in `DECISIONS.md`), so nothing had decided it.
+
+#### What shipped
+- `src/content/lessonContent.essentials.en.js`: the clause now reads *"…commonly charges 0.5%-1.5% a year — **and over long periods,** most actively managed funds don't reliably beat a comparable index fund after fees."* The fact is kept; only the false credit is gone. The L11 `thinkAbout`'s reference to L5 (*diversification, not stock-picking skill, is what an index fund already provides*) was left: L5 does say a many-company fund diversifies "without picking individual stocks themselves".
+- `src/content/lessons.js`: **lesson 11 `minutes` 4 → 3.** This was not optional. The lesson counted **exactly 700 words**, READING_MODEL's 3.500 boundary, which rounds to 4; the edit removed 9 words, leaving **691 → 3.455 → 3**. Measured with a scratch recount against both the edited file and the scratchpad original (original computes 4, matching what was stored, which is the control). Total catalog minutes **165 → 164**, still well over §4.3's 120.
+- Generated: `LAUNCH_READINESS.md`, `LAUNCH_PLAN.md` (§ figure sentence), `CLAIMS.md` A6 cell via `npm run readiness -- --write`; `scripts/translation-review-ledger.json`, lesson 11's four entries re-marked `ai` (the translations were already consistent with the new English, so this re-mark is accurate rather than a formality).
+
+#### Verification
+| Check | Result |
+|---|---|
+| Edit applied | node patcher asserting exactly 1 old / 0 new, both files; original copied to scratchpad first |
+| `npm test` | first run **exit 1**: minutes (4 vs computed 3), and §10.4 ledger figure → fixed as above → **exit 0, 3 WARN / 0 FAIL**, the standing three (O-3 coverage, 47 abridged pairs, item-160 length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0 |
+| Built bundle | old probe (`own point about diversification`) **0** across all chunks; new clause **1** in `lessonContent.essentials.en-*`; control containing a straight apostrophe (*funds don't reliably beat…after fees.*) **1**, so the zero is not an escaping artifact |
+| Live walk | `dist/` served statically, Browser pane at `#/lesson/11` with lessons 1-10 seeded complete: **LESSON 11 OF 15 · MONEY BASICS (OPTIONAL)**, **≈3 min**; new clause **true**, old **false**, control (§1 ¶2 opener) **true**, negative control **false** |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, proven able to see the edited file.** Planted *"You should buy index funds now."* after the new clause → `check-blindspot` **exit 1** (`§10.1 investment-advice-adjacent language`); restored from the scratchpad copy, `cmp`-equal → **exit 0**. The edit removes a claim and adds none. No attribution (§10.2), no kids surface (§10.3), no date or market figure (§2.3).
+- **DECISIONS.md conflict:** none. The minutes change follows READING_MODEL as `DECISIONS.md` defines it rather than overriding it.
+- **Already-done item:** no. The 2026-08-20 title conversion touched this sentence mechanically and did not check the claim; nothing in "Completed and pruned" covers cross-reference *accuracy*.
+- **My own claim:** every row reproduces from the command named. **Limits:** the active-fund underperformance fact itself was not re-measured this run (it is unchanged, and SPIVA's long-horizon scorecards support it as I know them). I checked L11's cross-references only, not the corpus's other titled references. A sweep of "does the lesson named actually say what it is credited with" has never been run and is the obvious generalization; noted, not numbered.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Cross-references are checked for form, not content:** `check-data.mjs` §16b fails on a numeric "Lesson N" and nothing reads whether the named lesson says what it is credited with. This defect is that class. A census of the 237 references converted on 2026-08-20, checking each credited claim against its named lesson, is a real sweep a run could take. It needs reading, not a regex, so no check is proposed (W-6.3: `scripts/` is the heavier side).
+
+**Owner-facing, one line:** the English fee lesson credited "most active funds don't beat index funds after fees" to the diversification lesson, which never says that; the credit is removed (the fact stays), and because the lesson sat exactly on a rounding boundary it now shows ≈3 min instead of ≈4. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #1 in a new chain, which the rule allows: the previous scheduled run's "Seen, deliberately NOT fixed" note named this sweep as "a real sweep a run could take") — lesson 17 told learners that “Taxes” shows **"more earned is always more kept"**, and since `e561b4d` (2026-09-11) “Taxes” says the opposite: near a benefits cliff *"a small raise can leave a household with less money overall"*. The echo was in all five languages; that fix's own surface scan named three other echoes and missed this one
+
+#### The pick — the cross-reference content census, run over the English corpus
+Every `“Title”` reference in `lessonContent.{essentials,economy,money}.en.js` was extracted with 300 chars of context and resolved to its lesson by title prefix: **58 references** (the previous entry's "237" counts the translations too). Each credited claim was read against the named lesson's English body, takeaway and thinkAbout. **56 hold** — including the ones that looked like candidates: L4 → Productivity Growth's "good debt vs. bad debt" (L31 has that section), L18 → Compound Interest's 6% example (L3 uses 6%), L40 → the Long-Term Debt Cycle family's mortgage eating their paycheck (L33, verbatim idea), L43 → Does It Put Money In Your Pocket "later" (`lessonPlacement`: L43 is money position 3, L16 is 5), L38 → Interest Rates' rate transmission (L35 walks it through), L35 → Reading Economic Indicators' 2% target (L39 states it). **One is a real contradiction (this fix); one is a small overstatement (below).**
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim, all five languages (L17 §1 last ¶):** en *"“Taxes” … covers why a raise can never actually reduce your take-home pay — brackets tax layers of income, **so more earned is always more kept**."*; es *ganar más siempre es quedarse con más*; ko *더 벌면 항상 더 남습니다*; zh *挣得越多留下的总是越多*; ja *多く稼げば必ず多く残ります*.
+- **What the named lesson says (L7 §1 ¶3, shipped):** *"near one of those limits (what's called a benefits cliff) a small raise can leave a household with less money overall even while its take-home pay goes up."* Its takeaway carries the same caveat. The first half of L17's sentence (take-home pay cannot fall) matches L7; the second half generalizes past take-home pay to what is "kept", which L7 now explicitly denies.
+- **Why it survived:** `git log -S"more earned is always more kept"` → `bb7f772` (2026-08-07, lesson added). The L7 fix `e561b4d`'s archived entry lists its surface scan (`can never`, `never subtract`, `less money overall`, `shrink your take-home`, `can only ever add`) and names L7's subtitle, `q021`'s explain and L10's thinkAbout as echoes that "speak only of take-home pay and stay true". L17 is not in that list. `more kept` → **0** in `AGENT_LOG.md`, `DECISIONS.md`, `CLAIMS.md` (control: `benefits cliff` → 4 in the archive, the L7 entry), so nothing had decided to keep it.
+
+#### What shipped
+- `src/content/lessonContent.money.{en,es,ko,zh,ja}.js`: the clause now reads en *"so only the new slice is taxed at the higher rate."* (es *así que solo la porción nueva paga la tasa más alta*; ko *새로 늘어난 부분에만 더 높은 세율이 붙습니다*; zh *所以只有新增的那一层按更高税率征税*; ja *高い税率がかかるのは新しく増えた部分だけです*). That is the bracket mechanism exactly as L7 teaches it, and it keeps the sentence's point: Priya's raise did arrive in full. Node patcher asserted 1 old / 0 new per file before writing; originals in the scratchpad.
+- `scripts/translation-review-ledger.json`: L17 es/ko/zh/ja re-marked `ai` via `translation-review.mjs mark`. The translations were edited alongside the English, so this is accurate rather than a formality.
+- `LAUNCH_READINESS.md`: `npm run readiness -- --write` (English 154,773 → 154,788 chars, and the §10.4 volume sentence). Minutes unchanged at **164**; no lesson crossed a rounding boundary (`npm test`'s minutes check passes).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1**, only the expected §10.4 ledger mismatch (4 stale L17 entries) → re-marked + readiness write → **exit 0, 3 WARN / 0 FAIL**, the standing three (O-3 AI-only review share, 47 abridged pairs, option-length cue at unchanged 56.5/54.3/54.3/52.2/52.2%) |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (`scripts/bootstrap-node.sh`: system Node v24.18.0; in-tree `node_modules` cannot build, as it warns) |
+| Built bundle | all 5 old clauses → **no file**; all 5 new → exactly their own `lessonContent.money.<lang>-*` chunk; control *"Priya's raise reached her bank account exactly as expected"* (straight apostrophe) → en chunk; negative probe → no file |
+| Live walk | **not done** this run. The bundle grep shows each string in the chunk `LessonReader` loads for that language; nothing structural changed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planted *"You should buy index funds now."* after the new en clause → `check-blindspot` **exit 1** (`§10.1 investment-advice-adjacent language reintroduced`); restored from the scratchpad copy, `cmp`-equal → **exit 0**. The edit narrows a claim and adds no advice, attribution, kids surface or date.
+- **DECISIONS.md conflict:** none. **Already-done:** this finishes what `e561b4d` started, and does not redo it. The three echoes that run kept were re-read and still only talk about take-home pay.
+- **My own claim:** every row reproduces from the command named. **Limits:** the census covered English only. The translations' references were not read one by one, though the four L17 translations carried the same defect and were fixed. Translation quality is AI-only, as before (O-3). "Holds" means the named lesson says it; the census did not re-check whether the claim is true in the world.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L10 §2** says “Taxes” explained that an employer "withholds **and pays part of**" payroll tax automatically. L7 says only *withholds*. L10's next sentence introduces the employer's half as "what that lesson didn't say", so the learner ends up with the right picture. It is a misquote, but it does no harm.
+
+**Owner-facing, one line:** lesson 17 said a raise always means more money kept, crediting the taxes lesson, which since yesterday says a benefits cliff can make a raise leave a household with less; the sentence now states only the bracket rule, in all five languages. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-12 (scheduled dev-agent; W-6.2 rule 1 — residual pick #2 in this chain, which the rule allows: the previous run's own Limits line named the untaken half of its census, "the translations' references were not read one by one") — lesson 12 and its quiz `q026` told learners that a mortgage's interest-heavy early payments are **"the same compounding math from “Compound Interest”"**, and “Compound Interest” says the opposite: its debt warning is scoped to *"interest you don't pay off"*, and its §3 says interest paid out each period puts you *"back to simple interest"* — which is what every regular mortgage payment does. In all five languages, in both places
+
+#### The pick — two sweeps, and the one that came back clean is reported first
+- **Translated cross-references vs. English (the nominated sweep).** Every title-quote span (`“”` en/es, `“”`/`《》` zh, `「」`/`『』` ko/ja) was resolved to a lesson by normalized title prefix, per lesson and per field, and the per-language sets compared to English. **Control:** English resolves **58**, the previous census's count, independently re-derived. Translations resolve es 55 / ko 55 / zh 55 / ja 56. **Every diff read by hand; none is a defect:** L6→“Compound Interest”, L9→“Compound Interest” and L11→“Stocks, Bonds & Diversification” are missing in all four languages because the whole clause is absent. L6, L9 and L11 are all in the recorded abridged set, per `translation-completeness`: L6 at 0.41/0.20/0.12/0.17. That is item 93's debt, not a new finding. L32/L40's "missing 4,15" is resolver ambiguity: English “Credit” prefix-matches “Credit Scores…” and “Credit Reports…”. L30 ja "extra 42" is 「お金」 prefix-matching lesson 42's title. **Result: no translation adds or drops a lesson credit outside abridged lessons.**
+- **Quiz explanations (never in either census).** `quizText.en.js` carries 6 lesson credits. Four hold. `q026` (lesson 12) credits “Compound Interest” with the mortgage split, and that led to lesson 12's body, which says the same.
+
+#### Step 3.5 — the premise measured, with controls
+- **The claim (L12 §2 ¶2 and `q026` explain, en):** *"This is the same compounding math from “Compound Interest”, running against the borrower … — interest is charged on the full remaining balance, so…"*. es/ko/zh/ja say the same (*misma matemática del interés compuesto* / *복리 수학과 동일* / *复利数学原理相同* / *複利の数学とまったく同じ*).
+- **What the named lesson says (L3, shipped):** debt compounds when it is *"interest you don't pay off"*. The same qualifier appears in all four translations (*que no pagas* / *갚지 않은 이자* / *没还清的利息* / *払っていない利息*). If the interest is withdrawn each period, *"you're back to simple interest"*. A standard mortgage payment pays that month's interest in full, so no interest is charged on interest. The front-loading L12 describes comes from exactly the reason its own dash-clause gives: interest on a large balance. **L12's credit contradicts L3's own qualifier.**
+- **Not re-litigated:** the "roughly two-thirds" crossover. Re-computed this run (3% → 0.23 of term, 6% → 0.62, 7% → 0.67; **control:** 6% crosses at month 223, the textbook ~222). It is already recorded in `moneyVisuals.js:744-764` and the 2026-09-10/11 entries. FRED `MORTGAGE30US` 2026-09-10 = **6.76%**, so the lesson's hedged figure is in range today.
+- **Never examined:** `compounding math` / `simple interest` near mortgage → 0 hits in both logs, `DECISIONS.md` and `CLAIMS.md`. The previous census counted L12's credit as one of its 56 that "hold", because L3 does say debt compounds. It read the credit, not the qualifier.
+
+#### What shipped
+- `src/content/lessonContent.essentials.{en,es,ko,zh,ja}.js` (L12 §2): en now *"This isn't the compounding from “Compound Interest”: that lesson's warning about debt is about interest you don't pay off, and each regular payment on a standard mortgage pays that month's interest in full. The cause is simpler — interest is charged on the full remaining balance, so…"*. The rest of the paragraph is unchanged, and the four translations say the same.
+- `src/content/quizText.{en,es,ko,zh,ja}.js` (`q026` explain): *"…so early payments are mostly interest. This isn't the compounding from “Compound Interest”: each payment covers that month's interest in full, so no interest is charged on interest."* Options untouched.
+- The Node patcher asserted exactly 1 old and 0 new per file before writing; originals are in the scratchpad. `translation-review-ledger.json`: L12 es/ko/zh/ja re-marked `ai`. `LAUNCH_READINESS.md` via `npm run readiness -- --write` (English 154,788 → 154,907 chars; minutes unchanged at **164**).
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1**: the expected §10.4 ledger mismatch (4 stale L12 entries) and the §4.3/§10.4 figures. After re-mark and readiness write: **exit 0, 3 WARN / 0 FAIL**, the standing three. The option-length cue is unchanged at 56.5/54.3/54.3/52.2/52.2% |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | 5 old phrases → **no file**. All 10 new phrases → exactly their own `lessonContent.essentials.<lang>-*` / `quizText.<lang>-*` chunk. Control (unchanged L12 clause) → en chunk; negative probe → no file |
+| Live walk | **not done**; nothing structural changed |
+
+#### Step 5 — adversarial self-check
+- **Blindspot register: PASS, shown to see the edited file.** Planted *"You should buy index funds now."* after the new en clause (count 1) → `check-blindspot` **exit 1** (`§10.1 … reintroduced`). Restored from a scratchpad copy of the edited file, `cmp`-equal → **exit 0**. The edit corrects a mechanism and adds no advice, attribution, kids surface or date.
+- **DECISIONS.md / figures:** `moneyVisuals.js`'s split-band derivation depends only on "two-thirds", not on "compounding"; `compound` near mortgage/split in `charts.jsx`, `moneyVisuals.js`, `DECISIONS.md`, `CLAIMS.md` → 0. **Already-done:** no. The crossover item is untouched.
+- **Could the new text be wrong?** "Each regular payment … pays that month's interest in full" is true of a standard fully amortizing loan paid on schedule, which is the loan L12 describes ("A 30-year loan"). Negative-amortization and deferred-payment loans are the exceptions, and "standard" and "regular" carry that scope. **My own claim:** every row reproduces from the command named. **Limits:** translations are AI-only (O-3); no fluent reader has seen the new ko/zh/ja/es wording.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L11 §2** summarizes L3 as *"unpaid interest compounds too"* and applies it to fees. That is correct: a fee taken from a balance lowers the base every later year's growth compounds on. Checked because it sits next to this defect; it holds.
+
+**Owner-facing, one line:** the mortgage lesson and its quiz said early payments are interest-heavy because of "compounding", while the compound-interest lesson teaches that interest you pay off each month doesn't compound; both now give the real reason (interest on a large balance), in all five languages. Reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
 
