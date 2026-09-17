@@ -183,7 +183,7 @@ export const lessonTerms = {
   // 35's takeaway is where QE is named — "that's where QE comes in", a
   // forward pointer to lesson 37 two lessons before it unlocks. The chip is
   // the item-60 shape: a reader meets the term before the lesson that owns it.
-  35: { 0: ["Savings Account"], 1: ["Stock", "Bond"], 2: ["Inflation"], [TAIL]: ["QE"] },
+  35: { 0: ["Savings Account"], 1: ["Stock", "Bond", "Dividend"], 2: ["Inflation"], [TAIL]: ["QE"] },
   // 36 §1 "weighing it alongside employment, inflation, and credit data" is the
   // macro sense, and was the one unaccounted-for GLOSSARY-TERM use in all 40
   // lessons when item 57 swept them. Not "the only jargon gap": §17b can only
