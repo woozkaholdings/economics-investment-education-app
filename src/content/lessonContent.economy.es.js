@@ -127,7 +127,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "La Tasa de Fondos Federales",
-        "body": "Piensa en la tasa de fondos federales como el dial maestro en la sala de control de la economía. Cuando el Fed lo gira, casi todas las demás tasas de tu vida financiera lo siguen: la tasa de una hipoteca nueva, lo que te paga tu cuenta de ahorros, la tasa anual —la APR— de tu tarjeta de crédito.\n\nSubir el dial → pedir prestado se vuelve más caro → la economía se desacelera.\nBajar el dial → pedir prestado se vuelve más barato → la economía se acelera.\n\nEsta es la herramienta principal del Fed para manejar el ciclo de deuda a corto plazo de “El Ciclo de Deuda a Corto Plazo”. Pero hay una trampa: girar el dial no cambia nada al instante. Un cambio de tasas suele tardar de 12 a 24 meses en abrirse paso del todo por las hipotecas, los préstamos empresariales y las decisiones de contratación, y en parte por eso el Fed a veces gira el dial demasiado en una dirección antes de que el giro anterior haya hecho efecto por completo."
+        "body": "Piensa en la tasa de fondos federales como el dial maestro en la sala de control de la economía. Cuando el Fed lo gira, casi todas las demás tasas de tu vida financiera lo siguen: la tasa de una hipoteca nueva, lo que te paga tu cuenta de ahorros, la tasa anual —la APR— de tu tarjeta de crédito.\n\nSubir el dial → pedir prestado se vuelve más caro → la economía se desacelera.\nBajar el dial → pedir prestado se vuelve más barato → la economía se acelera.\n\nEsta es la herramienta principal del Fed para manejar el ciclo de deuda a corto plazo de “El Ciclo de Deuda a Corto Plazo”. Pero hay una trampa: girar el dial no lo cambia todo a la vez, y las distintas partes de tu vida financiera no se mueven a la misma velocidad. Las tasas que fija el mercado se mueven primero, y pueden moverse antes que el Fed: la tasa media de la hipoteca a 30 años subió de cerca de 3.1% a 4.2% en los tres meses previos a la primera subida del Fed de 2022, porque los prestamistas anticipan el movimiento que esperan. El gasto, la contratación y la inflación llegan después, y cuánto después varía mucho: uno o dos años es la regla general, pero en esa misma subida la inflación tocó techo apenas tres meses después del primer aumento. El rezago es real — en parte por eso el Fed a veces gira el dial demasiado antes de que el giro anterior haya hecho efecto — pero no es un calendario."
       },
       {
         "heading": "Cómo las Tasas Afectan Todo",
@@ -139,7 +139,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "Los cambios de tasas son la herramienta principal del Fed para manejar el ciclo de deuda a corto plazo. Pero cuando las tasas llegan al 0%, el Fed necesita herramientas no convencionales: ahí es donde entra el QE.",
-    "thinkAbout": "El Fed subió las tasas al 5.25-5.50% en 2022-23 para combatir la inflación. Como la política tarda de 12 a 24 meses en manifestarse del todo, busca la tasa de fondos federales de hoy: ¿cuánto de ese movimiento crees que ya se ha propagado por la economía?"
+    "thinkAbout": "El Fed subió las tasas al 5.25-5.50% en 2022-23 para combatir la inflación, y la inflación bajó de cerca del 9% a cerca del 3% antes incluso de la última subida, más rápido de lo que sugeriría la regla general de uno o dos años. Busca la tasa de fondos federales de hoy: ¿qué más querrías saber antes de juzgar cuánto de un cambio de tasas ya ha llegado a la economía?"
   },
   "36": {
     "sections": [

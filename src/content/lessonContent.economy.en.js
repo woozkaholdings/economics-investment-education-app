@@ -127,7 +127,7 @@ export const lessonContent = {
     "sections": [
       {
         "heading": "The Fed Funds Rate",
-        "body": "Think of the Federal Funds Rate as the master dial in the economy's control room. When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the annual rate — the APR — on your credit card.\n\nRaise the dial → borrowing gets more expensive → the economy slows down.\nLower the dial → borrowing gets cheaper → the economy speeds up.\n\nThis is the Fed's primary tool for managing the short-term debt cycle from “The Short-Term Debt Cycle”. But here's the catch: turning the dial doesn't change anything instantly. It typically takes 12-24 months for a rate change to fully work its way through mortgages, business loans, and hiring decisions — which is part of why the Fed sometimes turns the dial too far in one direction before the earlier turn has fully kicked in."
+        "body": "Think of the Federal Funds Rate as the master dial in the economy's control room. When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the annual rate — the APR — on your credit card.\n\nRaise the dial → borrowing gets more expensive → the economy slows down.\nLower the dial → borrowing gets cheaper → the economy speeds up.\n\nThis is the Fed's primary tool for managing the short-term debt cycle from “The Short-Term Debt Cycle”. But here's the catch: turning the dial doesn't change everything at once, and the different parts of your financial life don't move at the same speed. Market-set rates move first, and can move before the Fed does — the average 30-year mortgage rate climbed from about 3.1% to 4.2% in the three months up to the Fed's first hike of 2022, because lenders price in the move they expect. Spending, hiring and inflation move later, and how much later varies a lot: a year or two is the usual rule of thumb, but in that same tightening inflation peaked just three months after the first hike. The lag is real — it is part of why the Fed sometimes turns the dial too far before the earlier turn has landed — but it is not a timetable."
       },
       {
         "heading": "How Rates Affect Everything",
@@ -139,7 +139,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "Rate changes are the Fed's primary tool for managing the short-term debt cycle. But when rates hit 0%, the Fed needs unconventional tools — that's where QE comes in.",
-    "thinkAbout": "The Fed raised rates to 5.25-5.50% in 2022-23 to fight inflation. Since policy takes 12-24 months to fully show up, look up today's Fed funds rate — how much of that move do you think has already rippled through the economy?"
+    "thinkAbout": "The Fed raised rates to 5.25-5.50% in 2022-23 to fight inflation — and inflation fell from about 9% to about 3% before the last hike had even landed, faster than the usual year-or-two rule of thumb would predict. Look up today's Fed funds rate: what else would you want to know before judging how much of a rate change has already reached the economy?"
   },
   "36": {
     "sections": [
