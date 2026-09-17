@@ -25,6 +25,11 @@
 //     dateless by construction. The figures are round teaching numbers chosen
 //     to make one trade-off legible, not readings from any particular period.
 //     This file is in check-blindspot.mjs's §2.3 teaching-copy list.
+//     An OUTCOME may still cite closed history by YEAR (an outcome added
+//     2026-09-17 names 2008 and 2011). The rule the guard enforces is a
+//     "Month YYYY" date, which is the shape that reads as right now; a bare
+//     year in a sentence about what a central bank once did does not. The
+//     SITUATIONS above stay dateless either way — that part is unchanged.
 //
 //   NO SCORING. Picking a lever returns a consequence, never a verdict. A
 //     scored version would have to assert a correct answer, and the lesson's
@@ -156,11 +161,11 @@ export const policyScenarios = [
           ja: "利上げする",
         },
         outcome: {
-          en: "This tightens conditions into a downturn. Borrowing gets more expensive exactly when firms are already canceling projects, so unemployment climbs further and inflation — already at 1%, below the roughly 2% target — falls further away from it. Both halves of the mandate move the wrong way at once, which is what makes this the clearest illustration in the whole exercise of what the dial actually does. Central banks have tightened into weakness before, but for reasons outside the dual mandate: defending a currency that is collapsing, for instance.",
-          es: "Esto endurece las condiciones dentro de una recesión. El crédito se encarece justo cuando las empresas ya están cancelando proyectos, así que el desempleo sube más y la inflación — ya en 1%, por debajo del objetivo de alrededor de 2% — se aleja todavía más. Las dos mitades del mandato se mueven en la dirección equivocada a la vez, y por eso esta es la ilustración más clara de todo el ejercicio sobre lo que hace el dial. Ha habido bancos centrales que endurecieron en plena debilidad, pero por razones ajenas al mandato dual: defender una moneda que se desploma, por ejemplo.",
-          ko: "침체 속에서 여건을 더 조이는 선택입니다. 기업들이 이미 프로젝트를 취소하고 있는 바로 그 시점에 대출이 비싸지므로 실업률은 더 오르고, 이미 목표치인 약 2%를 밑도는 1%의 물가 상승률은 목표에서 더 멀어집니다. 이중책무의 두 축이 동시에 잘못된 방향으로 움직이며, 그래서 이 선택은 다이얼이 실제로 무슨 일을 하는지 이 연습 전체에서 가장 선명하게 보여줍니다. 중앙은행이 약세 국면에서 긴축한 사례가 없지는 않지만, 그것은 무너지는 통화를 방어하는 것처럼 이중책무 바깥의 이유 때문이었습니다.",
-          zh: "这是在衰退中继续收紧。企业已经在砍项目，借钱却更贵了，于是失业率进一步上升，而本就只有 1%、低于约 2% 目标的通胀，离目标更远。使命的两半同时朝错误方向移动——正因如此，这是整个练习中关于旋钮到底在做什么的最清楚示范。央行确实曾在经济疲弱时收紧，但那是出于双重使命之外的理由，比如捍卫一种正在崩塌的货币。",
-          ja: "これは不況のさなかに条件をさらに引き締める選択です。企業がすでに計画を取り消しているまさにその時に借入が高くつくため、失業率はさらに上がり、目標のおよそ2%を下回る1%のインフレ率は目標からいっそう遠ざかります。デュアルマンデートの両輪が同時に誤った方向へ動く——だからこそ、ダイヤルが実際に何をしているのかを、この演習の中で最もはっきり示す選択でもあります。中央銀行が弱さの中で引き締めた例はありますが、それは崩れゆく通貨を守るといった、デュアルマンデートの外側にある理由からでした。",
+          en: "This tightens conditions into a downturn. Borrowing gets more expensive exactly when firms are already canceling projects, so unemployment climbs further and inflation — already at 1%, below the roughly 2% target — falls further away from it. Both halves of the mandate move the wrong way at once, which is what makes this the clearest illustration in the whole exercise of what the dial actually does. Central banks have tightened into weakness before. Sometimes the reason sits outside the dual mandate — defending a currency that is collapsing, for instance — but not always: the European Central Bank raised rates in 2008, and again in 2011, with the euro area already in recession both times, because inflation was above the target its own mandate puts first. It reversed both moves within months.",
+          es: "Esto endurece las condiciones dentro de una recesión. El crédito se encarece justo cuando las empresas ya están cancelando proyectos, así que el desempleo sube más y la inflación — ya en 1%, por debajo del objetivo de alrededor de 2% — se aleja todavía más. Las dos mitades del mandato se mueven en la dirección equivocada a la vez, y por eso esta es la ilustración más clara de todo el ejercicio sobre lo que hace el dial. Ha habido bancos centrales que endurecieron en plena debilidad. A veces el motivo es ajeno al mandato dual — defender una moneda que se desploma, por ejemplo —, pero no siempre: el Banco Central Europeo subió las tasas en 2008, y otra vez en 2011, con la zona euro ya en recesión las dos veces, porque la inflación estaba por encima del objetivo que su propio mandato pone primero. Deshizo ambas subidas en cuestión de meses.",
+          ko: "침체 속에서 여건을 더 조이는 선택입니다. 기업들이 이미 프로젝트를 취소하고 있는 바로 그 시점에 대출이 비싸지므로 실업률은 더 오르고, 이미 목표치인 약 2%를 밑도는 1%의 물가 상승률은 목표에서 더 멀어집니다. 이중책무의 두 축이 동시에 잘못된 방향으로 움직이며, 그래서 이 선택은 다이얼이 실제로 무슨 일을 하는지 이 연습 전체에서 가장 선명하게 보여줍니다. 중앙은행이 약세 국면에서 긴축한 사례는 없지 않습니다. 무너지는 통화를 방어하는 것처럼 이중책무 바깥의 이유일 때도 있지만, 늘 그런 것은 아닙니다. 유럽중앙은행은 2008년과 2011년에 금리를 올렸는데, 두 번 모두 유로존이 이미 침체에 들어간 뒤였고, 이유는 물가가 자신의 책무가 앞세우는 목표치를 웃돌았기 때문이었습니다. 두 번의 인상 모두 몇 달 만에 되돌렸습니다.",
+          zh: "这是在衰退中继续收紧。企业已经在砍项目，借钱却更贵了，于是失业率进一步上升，而本就只有 1%、低于约 2% 目标的通胀，离目标更远。使命的两半同时朝错误方向移动——正因如此，这是整个练习中关于旋钮到底在做什么的最清楚示范。央行确实曾在经济疲弱时收紧。理由有时在双重使命之外，比如捍卫一种正在崩塌的货币，但并非总是如此：欧洲央行在 2008 年和 2011 年两次加息，两次都是在欧元区已经进入衰退之后，原因是通胀高于它自己的使命最优先的那个目标。这两次加息都在几个月内被收回。",
+          ja: "これは不況のさなかに条件をさらに引き締める選択です。企業がすでに計画を取り消しているまさにその時に借入が高くつくため、失業率はさらに上がり、目標のおよそ2%を下回る1%のインフレ率は目標からいっそう遠ざかります。デュアルマンデートの両輪が同時に誤った方向へ動く——だからこそ、ダイヤルが実際に何をしているのかを、この演習の中で最もはっきり示す選択でもあります。中央銀行が弱さの中で引き締めた例はあります。崩れゆく通貨を守るといったデュアルマンデートの外側の理由のこともありますが、いつもそうとは限りません。欧州中央銀行は2008年と2011年に利上げしており、どちらもユーロ圏がすでに景気後退に入ったあとで、理由は物価が自らの責務が最優先する目標を上回っていたことでした。どちらの利上げも数か月で撤回しています。",
         },
       },
       {
