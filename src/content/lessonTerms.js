@@ -192,7 +192,7 @@ export const lessonTerms = {
   // `npm run jargon` to see the candidates it cannot; item 60 used it to find
   // one (Brokerage Account, chipped on lesson 6 above).
   36: { 0: ["Recession", "Bond", "Interest Rate"], 1: ["GDP", "Inflation", "Credit"] },
-  37: { 0: ["Stock", "Bond", "Interest Rate"] },
+  37: { 0: ["Stock", "Bond", "Interest Rate"], [TAIL]: ["Inflation"] },
   // 38's body names interest rates only inside the cross-reference
   // “Interest Rates” (stripped by item 84's rule); the takeaway uses the term
   // plainly — "how interest rates move through the economy".
