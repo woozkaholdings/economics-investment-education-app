@@ -5690,3 +5690,41 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 31 said the only way an economy grows without borrowing is by becoming more productive. Since 1948, about a third of US business output growth came from more hours worked, and more than half in 1973-1995. The sentence now names both sources and says productivity is the one that raises living standards, in all five languages. This reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-17 (owner-directed: "measure the lesson 34 'roughly a decade' recovery claim next". This is the first note the previous run left, taken up by instruction, so W-6.2 rule 1 does not arise) — lesson 34 said **"Either way, recovery from a long-term debt peak tends to take roughly a decade — often called the 'lost decade.'"** Recovery was measured as the years until GDP per person regained its pre-crisis peak. The median across **23 well-known debt crises is 8 years, with a range from 1 to 24**, and two of those crises had still not recovered in the last year of data. But **the lesson's own examples do not fit "either way"**: the US after 2007 took **6** years, and Germany after 1923 (the lesson's "ugly" inflationary case) took about **3**. **"Lost decade" names Japan's slow growth, not a long recovery**: GDP per person fell at most 2.6% in the 1990s, while growth fell from 3.4-4.0% a year to about 1%. The sentence now gives the spread, the lesson's own cases and what "lost decade" means, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** Maddison Project GDP per person (via the OWID grapher CSV, keyless, ends 2022). Recovery = years from the peak (the highest year within ±1 of the crisis year) to the first later year at or above it. **The first two versions of the rule were wrong, and the output showed it.** (i) Taking the peak only before the crisis gave Spain, Greece and Portugal a 1-year "recovery", because 2008 was higher than 2007. (ii) Walking forward while GDP rose latched onto a 0.7% dip in the US in 1928. The ±1 window fixes both.
+- **Controls:** a synthetic series with a known 4-year recovery returns **4**. **An independent source agrees within a year:** BEA via FRED (`GDPCA` / `B230RC0A052NBEA`) puts the US back in **1939** (Maddison 1940) and **2013** (the same). FRED quarterly `A939RX0Q048SBEA` has the 2007Q4 peak regained in **2013Q1**. For Japan, World Bank data via FRED `NYGDPPCAPKDJPN` shows growth of 3.95% a year in 1980-90 and 0.95% in 1990-2000; Maddison has 3.42% and 1.04%.
+- **Results (years):** US 1929 **11** (BEA 10) · US 2007 **6** · Japan 1990 **1** (no real fall) · Germany 1923 **3** · Mexico 13 · Brazil 4 · Argentina 11 · Chile 8 · Peru 24 · Sweden 5 · Finland 7 · Norway 3 · Korea 2 · Thailand 7 · Indonesia 7 · Malaysia 3 · Spain 8 · Ireland 8 · Greece >14 · Iceland 9 · UK 8 · Italy >15 · Portugal 9. **Median 8. 12 of 23 fall in 7-13 years, 7 took 5 years or less, and 3 took 14 or more.**
+- **What the premise got right, and what it got wrong:** a decade is fair as a rough typical figure (the median is 8). The wrong parts are "either way", which the lesson's own inflationary example refutes, and pinning "lost decade" to recovery time, which describes Japan backwards. ⚠️ **The sample is hand-picked**: well-known debt and banking crises, including L34 §3's Latin American 1980s. It is not a census and not a set of Dalio's "long-term debt peaks". The lesson now says "well-known" rather than implying a full count.
+- **Surface scan** (Node, `lost decade|years to recover|recover…decade` over `src/content` + `src/locales`): **1** claim, this one. Two hits in the money track are about investments recovering and are a different claim. All four translations of L34 are full, not condensed (`translation-completeness` ratios 1.16/0.54/0.32/0.46).
+
+#### What shipped (L34 sections[1], last paragraph, en/es/ko/zh/ja)
+- en: *"How long recovery takes varies widely. Counting the years until income per person got back to its pre-crisis peak, the US took about 10 after 1929 and 6 after 2007, and Germany about 3 after its 1923 hyperinflation. Across 23 well-known debt crises, the middle case was about 8 years, and the range ran from a year or two to more than 20. 'Lost decade' names something else: in Japan after 1990, income per person barely fell, but growth slowed from more than 3% a year to about 1% for the next ten years."* "About 10" for 1929 covers both sources (BEA 10, Maddison 11). "More than 3%" holds for both Japan sources.
+- The translations follow house forms measured in the corpus: es uses dot decimals (4 vs 0) and `EE.UU.`; ko uses `하이퍼인플레이션` and hyphen ranges (`5-8년`); ja uses `ハイパーインフレ` and `1-2年`; zh uses `恶性通货膨胀`. The patcher asserted old=1/new=0 before and old=0/new=1 after, ×5.
+- **Knock-ons the suite demanded:** L34 `minutes` 4 → **5**. The ledger L34 es/ko/zh/ja were re-marked `ai` after I read each against the English (O-3 unchanged). `refresh-readiness --write`: en chars 158,565 → **158,958**, 168 → **169** min.
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: minutes 4≠5, plus the ledger-driven §10.4 figure. Both expected |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 5 old phrases → **no file**. 5 new phrases → each language's own economy chunk. Control (`Why Tool #4 Isn`) hits the en chunk. The negative probe finds nothing |
+| Live walk | **Not done.** Text substitution only. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** I planted *"Recoveries are slow, so now is a good time to buy stocks."* after the new sentence. `check-blindspot` gave **exit 1**. The file was restored from the scratchpad (**`cmp` identical**), and the clean run gave **exit 0**. No advice, no Dalio attribution (the pre-existing "beautiful/ugly deleveraging" terms are untouched and not added to), no kids surface. "1923"/"2007" are historical years, not live-looking dates.
+- **Consistency with the rest of L34 §2:** "the US recovery from 2008 through roughly 2015" still reads true next to "6 after 2007": the level was regained in 2013, and the lesson's span is about the mix working, not the level. "The recovery started that year [1933]" sits with "about 10 after 1929": the recovery started in 1933, and the level returned in 1939-40. **No contradiction.**
+- **DECISIONS.md:** `recover`/`lost decade` return 0 (control `localStorage` 13). **Already-done:** this was the previous run's unmeasured note. Nothing in the log or archive measured it before.
+- **Could the new text be wrong?** (i) The range "a year or two to more than 20" includes Japan's 1 and Korea's 2 at the low end and Peru's 24 at the high end. (ii) "Income per person" is GDP per person, which is a simplification for learners. (iii) Germany's 1922 level was itself below 1913's, so "about 3" measures recovery from the hyperinflation, not to the pre-war level. That is what the sentence claims. (iv) No fluent reader has seen es/ko/zh/ja (O-3).
+- **Re-runnable:** `scratchpad/l34/rec2.cjs` recomputes every figure from the downloaded CSVs, and `scratchpad/patch34.mjs` recomputes the edit. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L34 §2: "debts decline relative to income" for the US 2008-2015** is still unmeasured. It is the remaining note from the previous run.
+
+**Owner-facing, one line:** lesson 34 said recovery from a debt crisis "tends to take roughly a decade, either way". Across 23 well-known crises the median is 8 years with a range of 1 to 24, but the lesson's own examples took 6 (US after 2007) and 3 (Germany after 1923), and "lost decade" describes Japan's slow growth rather than a long recovery. The sentence now says all three, in five languages. It reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
