@@ -175,7 +175,7 @@ export const lessons = [
     subtitle: {"en":"Credit is the biggest and most volatile part of the economy","es":"El crédito es la parte más grande y volátil de la economía","ko":"신용은 경제에서 가장 크고 변동성이 큰 부분입니다","zh":"信贷是经济中最大且最不稳定的部分","ja":"信用は経済で最大かつ最も変動が大きい部分"},
   },
   {
-    id: 31, track: "economy", icon: "📈", color: "#059669", minutes: 2,
+    id: 31, track: "economy", icon: "📈", color: "#059669", minutes: 3,
     title: {"en":"Productivity Growth: The Long-Run Driver","es":"Crecimiento de Productividad","ko":"생산성 성장: 장기 동력","zh":"生产力增长：长期驱动力","ja":"生産性成長：長期的な推進力"},
     subtitle: {"en":"What really matters in the long run","es":"Lo que realmente importa a largo plazo","ko":"장기적으로 정말 중요한 것","zh":"长期来看真正重要的是什么","ja":"長期的に本当に重要なこと"},
   },

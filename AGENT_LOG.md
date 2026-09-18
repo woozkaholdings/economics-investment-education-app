@@ -5650,3 +5650,43 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** four separate corrections yesterday each made a claim in lesson 35 more accurate, and each one made the same paragraph longer — it ended the day at 1,949 characters, 44 unbroken lines on a phone, a screen and a half with nowhere to rest, and the longest paragraph in the app by 62%. It is now six paragraphs with **not one word changed**, in all five languages, and a new check stops any paragraph from growing past about one screen again — proven by planting the old one back and watching it fail.
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-17 (scheduled dev-agent; W-6.2 rule 1 free: the previous run was residual pick #1, and this pick is not its residual. It came from counting commits per economy lesson since 2026-09-05. L31 and L34 had **zero**. L31's sentence was noted on 2026-09-11 as "not measured this run … not picked by default" (archive l.48607). That note is six days old, so it is not a residual chain) — lesson 31 told learners **"Without credit, the only way an economy grows is by becoming more productive."** The lesson defines productivity as more value "with the same time and effort". **FRED: since 1948, 36% of the growth in US business-sector output came from more hours worked, not more output per hour** (`OUTNFB` = `HOANBS` x `OPHNFB`). In 1973-1995 it was **55%**, more than productivity's share. The sentence now names both sources and gives the split, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FRED `fredgraph.csv` (no key), quarterly 1948Q1 → 2026Q2, for nonfarm business output `OUTNFB`, hours `HOANBS` and output per hour `OPHNFB`, plus `GDPC1` and `A939RX0Q048SBEA` (real GDP per capita).
+- **Control, both directions:** these are index series, so `log OUTNFB = log HOANBS + log OPHNFB − log 100` should hold exactly. Aligned, the max error is **0.0000**. When hours are misaligned by one quarter, the error is **0.147**. The parser reads the right columns on the right dates.
+- **Measured, output growth per year = hours + productivity:** 1948-2026 **3.32% = 1.17 + 2.13 (hours share 36%)**. 1948-73: 32%. **1973-95: 55%**. 1995-2007: 28%. 2007-19: 28%. 2019-26: 17%. Real GDP grew 3.09% a year and GDP per person 1.97%: roughly a third of total growth is more people, not more per person. **The premise held.** Hours are a large share of growth in every period, and in one they were the larger share.
+- **The paragraph's other claim was measured and holds:** "productivity grows in a fairly straight, gentle line … borrowing swings wildly". Year-over-year standard deviation: productivity **1.82pp**, total debt `TCMDO` **3.74pp**. It is not edited.
+- **Surface scan (Node regex over `src/content` + `src/locales`; control: a known L31 phrase was found):** **1 hit**, this sentence. The quiz `explain` ("Productivity growth is what raises living standards over the long run") and the glossary entry ("true long-run driver of higher living standards") are about living standards. They are correct and are not edited.
+
+#### What shipped (L31 sections[0] paragraph 3, en/es/ko/zh/ja)
+- en: *"Without credit, an economy grows only by producing more: more people working, or each hour of work producing more. Since 1948, about a third of the growth in US business output came from more hours worked and about two-thirds from productivity — and productivity is the part that raises living standards."* The next sentence ("Add credit to the mix…") is unchanged. "Slow and steady" is dropped because hours are not steady: their YoY swings run from −14.9% to +13.7%.
+- es/ko/zh/ja follow the house forms already in the corpus: `EE.UU.` (13 vs 2), `米国`, `un tercio`/`3분의 1`/`三分之一`/`3分の1`. The Node patcher asserted old=1/new=0 before and old=0/new=1 after for all five. Originals are in the scratchpad.
+- **Knock-ons the suite demanded, not ones I guessed:** `lessons.js` L31 `minutes` 2 → **3** (§2's reading model). Ledger: L31 es/ko/zh/ja re-marked `ai` after I read each translation against the new English (O-3 unchanged: 0% human). `refresh-readiness --write`: en chars 158,356 → **158,565**, total minutes 167 → **168**, in LAUNCH_READINESS.md, LAUNCH_PLAN.md and CLAIMS.md A6.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Baseline | `npm test` **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| After the content edit | **exit 1**: minutes 2≠3, then the ledger-driven readiness figure. Both real, and both caught by the suite |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN, the same three |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | 5 old phrases → **no file**. 5 new phrases → each language's own `lessonContent.economy.<lang>-*.js`. The unchanged-phrase control hits the en chunk. The negative probe finds nothing |
+| Live walk | **Not done.** This is a text substitution in a module the reader already renders. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot register, proven on the edited file:** I planted *"With productivity this strong, now is a good time to buy stocks."* into the new en sentence (count 1). `check-blindspot` gave **exit 1, §10.1**. The file was restored from the scratchpad copy (**`cmp` identical**), and the clean run gave **exit 0**. The edit has no advice, no Dalio attribution, no kids surface, and no live-looking date or market figure ("since 1948" is a historical span).
+- **DECISIONS.md:** `productivity`/`hours worked` return **0** (control: `localStorage` returns 13). No conflict.
+- **Already-done:** `only way an economy grows` / `hours worked` return 0 in `AGENT_LOG.md` and 1 in the archive: the 2026-09-11 note that named this sentence unmeasured. This run measures and fixes it. It is not a redo.
+- **Could the new text be wrong?** (i) "About a third / two-thirds" is 36/64 over the full span. The per-period share ranges from 17% to 55%, so the full-span number is the fair single figure, and "since 1948" says which span it is. (ii) The 09-11 note also said "more capital". Capital per hour is inside output per hour, so the new sentence's "each hour of work producing more" includes it rather than leaving it out. (iii) "More people working" simplifies hours growth. Longer workweeks are also hours, but the average workweek fell over the span, so hours growth is more workers. (iv) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **My verification claim:** re-runnable. `scratchpad/decomp.mjs` reproduces every figure from the FRED CSVs, and `scratchpad/patch.mjs` reproduces the edit. **W-6.3:** this run adds **0** lines to `scripts/`. My count, `scripts/` 22,572 vs app code 10,659 (2.11x), uses a different file set from the last run's 22,445/10,196, so the two are not compared.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L34 §2: "recovery from a long-term debt peak tends to take roughly a decade".** The lesson's own examples do not obviously fit it: the US 1933 recovery "started that year", 4 years after 1929; the 2008 example runs "through roughly 2015"; Japan's slump is usually called two decades. The claim is measurable (real GDP per person back to its pre-peak level) but was not measured this run.
+- **L34 §2: "debts decline relative to income" for the US 2008-2015.** Household debt fell relative to income. Whether *total* debt did, with federal debt rising, was not measured. L34 is the other economy lesson with no commits since 09-05.
+
+**Owner-facing, one line:** lesson 31 said the only way an economy grows without borrowing is by becoming more productive. Since 1948, about a third of US business output growth came from more hours worked, and more than half in 1973-1995. The sentence now names both sources and says productivity is the one that raises living standards, in all five languages. This reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
