@@ -63,9 +63,9 @@ export const quizText = [
       "Stock market goes up",
       "Government stops spending",
       "Banks have too much money",
-      "Interest rates are already at 0% — can't cut more"
+      "Rate cuts aren't enough"
     ],
-    "explain": "In a deleveraging, rates are already at 0%, so the Fed's normal tool (cutting rates) doesn't work. That's why QE and the other tools are needed."
+    "explain": "In an ordinary recession, cutting interest rates usually helps borrowing and spending recover. In a deleveraging it isn't enough, because debts are already too large for incomes to carry. Rates weren't at 0% when the 1929, 1990 and 2007 peaks hit — they were above 5%. In the US, the Fed cut close to 0% by the end of 2008, and the slump went on anyway. That's why QE and the other tools are needed."
   },
   {
     "q": "An inverted yield curve predicts:",
@@ -115,7 +115,7 @@ export const quizText = [
       "Raising interest rates further",
       "Printing money (QE)"
     ],
-    "explain": "The 4 tools are austerity, debt restructuring/default, wealth redistribution (taxes), and printing money. Raising rates further isn't one of them — in a deleveraging, rates are usually already near 0%."
+    "explain": "The 4 tools are austerity, debt restructuring/default, wealth redistribution (taxes), and printing money. Raising rates further isn't one of them — higher rates make debts harder to carry, not easier. In a deleveraging, central banks cut rates instead, often close to 0%, and even that isn't enough on its own."
   },
   {
     "q": "What is the Fed Funds Rate?",

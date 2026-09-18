@@ -63,9 +63,9 @@ export const quizText = [
       "La bolsa sube",
       "El gobierno deja de gastar",
       "Bancos tienen demasiado",
-      "Tasas ya en 0% — no se pueden bajar más"
+      "Bajar tasas no basta"
     ],
-    "explain": "En un desapalancamiento, las tasas ya están en 0%, así que la herramienta habitual del Fed (bajar las tasas) no funciona. Por eso hacen falta la QE y las demás herramientas."
+    "explain": "En una recesión normal, bajar las tasas de interés suele ayudar a que el crédito y el gasto se recuperen. En un desapalancamiento no basta, porque las deudas ya son demasiado grandes para los ingresos. Las tasas no estaban en 0% cuando llegaron los picos de 1929, 1990 y 2007: estaban por encima del 5%. En EE.UU., el Fed las bajó cerca del 0% a finales de 2008, y la crisis siguió de todos modos. Por eso hacen falta la QE y las demás herramientas."
   },
   {
     "q": "Una curva invertida predice:",
@@ -115,7 +115,7 @@ export const quizText = [
       "Subir aún más las tasas de interés",
       "Imprimir dinero (QE)"
     ],
-    "explain": "Las 4 herramientas son austeridad, reestructuración/impago de deuda, redistribución de riqueza (impuestos) e impresión de dinero. Subir más las tasas no es una de ellas: en un desapalancamiento, las tasas suelen estar ya cerca del 0%."
+    "explain": "Las 4 herramientas son austeridad, reestructuración/impago de deuda, redistribución de riqueza (impuestos) e impresión de dinero. Subir más las tasas no es una de ellas: con tasas más altas, las deudas son más difíciles de pagar, no más fáciles. En un desapalancamiento, los bancos centrales las bajan, a menudo cerca del 0%, y ni siquiera eso basta por sí solo."
   },
   {
     "q": "¿Qué es la Tasa de Fondos Federales?",

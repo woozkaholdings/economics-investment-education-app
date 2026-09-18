@@ -2565,6 +2565,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         re-cutting two unreviewed translations to six and seven characters to move §65 by two points.
         That is precisely the "moving the instrument without moving the defect" failure this item's own
         2026-09-03 corollary named. **If a future run wants it, it is a deliberate O-3-shaped choice.**
+        ✏️ **Overtaken 2026-09-18 (owner-directed) on accuracy, not on length:** the correct option
+        itself was false ("rates are already at 0%"; see that date's run log), so it was rewritten in
+        all five languages. The new option is **not the strictly longest in any language** (en 23 of
+        max 25, es 20/26, ko 11/12, zh 5/6, ja 7, tied with two others at 7), and §65 moved en 56.5 → **54.3%**, es/ko → 52.2%,
+        ja → 50.0%. Not a trim done to move the instrument: the text had to change either way.
       - **Live §65 at this stop line, reproduced independently with five scorer controls:** longest-option
         **en 56.5%, es/ko 54.3%, zh/ja 52.2%**; shortest-option 2.2/2.2/0.0/2.2/4.3; **19 beatable in all
         five, 28 in at least one, 124 instances.** ⚠️ **`npm test` will warn at 56.5% every run from here
@@ -5770,3 +5775,39 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 34 used the US in 2008-2015 as its example of a "beautiful deleveraging", in which debts decline relative to income. What actually fell was private debt, from about 170% of GDP to 150%. Government debt rose from about 60% to 100%, so total debt went up, from about 230% to 250%. The lesson now says so, in five languages. It reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-18 (owner-directed: "fix the quiz 'already at 0%' explanations next". This is the previous run's first note, taken up on instruction, so W-6.2 rule 1 does not arise) — quiz `q005` (lesson 34) asked what makes a deleveraging different from a recession and keyed **"Interest rates are already at 0% — can't cut more"** as the correct answer. Its explanation said *"In a deleveraging, rates are already at 0%"*, and `q010`'s said *"rates are usually already near 0%"*. **At the three peaks lesson 33 names, the policy rate was 5.26% (US, July 2007) and 6% (US, October 1929; Japan, August 1990).** Rates were cut close to 0% only afterward (US: 0.16% in December 2008), and the slump went on. Since `ce678aa`, L33 has taught exactly this, so the quiz marked a learner **wrong for having read the lesson** unless they chose a false option. Both questions are fixed, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Re-fetched, not quoted from L33's run:** FRED `FEDFUNDS` 2007-07 **5.26**, 2008-12 **0.16**. NY Fed discount rate `M13009USM156NNBR` 1929-10 **6.00**, and 1932 was **2.50-3.50**, so the 1932 policy rate was not near zero. L33's "close to 0% … by late 1932" refers to short-term market rates, so the new quiz text names only the 2008 cut. Bank of Japan discount rate `INTDSRJPM193N` 1990-08 **6.00**, 1995-09 **0.50**. Control: the same parser read the three series' headers and printed dated rows for each window, so none came back empty.
+- **Surface scan** (Node regex `already (at|near|close to) (0|zero)|near 0%|at 0%|…` over every non-translation `.js`/`.jsx` in `src/`, 12 hits; control: the known `q005` string was found). The **deleveraging-peak** claim appears only in `q005` (option + explain) and `q010` (explain). ⚠️ **Deliberately NOT edited:** the QE surfaces (glossary QE `f`/`ex`, `q007`'s option and explanation, `lessons.js`'s "When rates at 0% aren't enough", L34 tool 4's "When rates are already near 0%"). Each is **conditional**: QE is what a central bank uses *when* rates are at the floor. That is a different claim, and it is broadly right.
+
+#### What shipped (`quizText.{en,es,ko,zh,ja}.js`, 3 strings each)
+- `q005` correct option → en **"Rate cuts aren't enough"** (es `Bajar tasas no basta`, ko `금리 인하로는 부족함`, zh `光降息不够`, ja `利下げが不十分`). This matches L33's own takeaway, *"When it peaks, normal rate cuts can't fix it."* The answer index is unchanged (3).
+- `q005` explain: in an ordinary recession, rate cuts usually help. In a deleveraging they are not enough because debts are too large for incomes. Rates were above 5% at the 1929, 1990 and 2007 peaks, and the Fed cut close to 0% by the end of 2008 while the slump went on. The closing QE sentence is kept.
+- `q010` explain: the four-tools sentence is kept. "Raising rates further isn't one of them" now gives the reason, *"higher rates make debts harder to carry, not easier"*, followed by *"central banks cut rates instead, often close to 0%, and even that isn't enough on its own."*
+- House forms were measured, not guessed: es `el Fed` (31 in the economy lessons vs 0 `la Fed`), ko `연준`, zh `美联储`, ja `FRB`. No numeric range was used because the corpus has no `5-6%` form, so "above 5%" is used instead. The patcher located each old string by its JSON literal (count 1 required), refused if the new one was already present, and re-imported to assert all three fields and the array length, ×5.
+- ⭐ **Side effect on item 160, recorded there:** the new option is not the strictly longest in any language. §65's longest-option score moved en 56.5 → **54.3%**, es/ko 54.3 → **52.2%**, and ja → **50.0%**, where it no longer warns. zh is unchanged at 47.8%. The shortest-option score cannot rise, because no new option is strictly shortest.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN, the standing three. The option-length WARN now lists en/es/ko only |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | each new phrase → its own `quizText.<lang>-*.js`; old `q005`/`q010` phrases in en/ko/zh/ja → **no file**; old es phrase → `markets-*.js` only, which is the **glossary QE example** (a conditional QE claim, scoped out above), not the quiz. Control (`What is QE (Quantitative Easing)?`) → the en quiz chunk |
+| Live walk | **Not done.** This is a string substitution in a module the quiz already renders. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** I planted *"So now is a good time to buy stocks."* into the new `q005` explain (count 1). `check-blindspot` gave **exit 1, §10.1**, naming `quizText.en.js`. The file was restored from the scratchpad copy (**`cmp` identical**), and the clean run gave **exit 0**. No Dalio, no kids surface. 1929/1990/2007/2008 are historical years.
+- **DECISIONS.md:** `already at 0%` has 1 hit (l.716). It records a 2026-08 translation-fidelity fix in **lesson 5** and is about review method, not rates, so it does not conflict. `q005`/`q010` return 0 (control `localStorage` 13).
+- **Already-done:** every earlier `q005`/`q010` hit in the log and archive is about **option length** (item 160), the NOT-question structure, or `q010`'s 2026-09 translation repair. None measured the rate claim, so this is not a redo. Item 160 had **declined** re-cutting `q005` for length alone. This change is driven by accuracy, and the note under 160 says so, so that it does not read as a reversal of that decision.
+- **Could the new text be wrong?** (i) "Usually helps borrowing and spending recover" is hedged on purpose: L32 (since `95d0399`) says the central bank steers the cycle without controlling it. (ii) "Often close to 0%" in `q010` is supported by the US in 2008 and Japan in 1995. It does not say "always". (iii) "Higher rates make debts harder to carry" holds for new and variable-rate debt, not for fixed-rate debt already taken on. That is a simplification, and I judge it fair for a one-line explanation. (iv) The ja option `利下げが不十分` is terse to match its telegraphic distractors (`政府が支出停止`). **No fluent reader has seen any of the four translations (O-3).**
+- **Re-runnable:** `scratchpad/q005/patch.mjs` reproduces the edit, and the three FRED CSVs are in `scratchpad/q005/`. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **The glossary's es QE example says `la Fed`** while the corpus says `el Fed` (31:0 in the economy lessons). This is a consistency nit in one string, not an error.
+
+**Owner-facing, one line:** the lesson 34 quiz marked "rates are already at 0%" as the right answer, which is what lesson 33 teaches is *not* true (rates were 5-6% when the 1929, 1990 and 2007 peaks hit). The answer is now "rate cuts aren't enough", and both explanations give the real figures, in five languages. This also removes one of the quiz's "longest option is right" giveaways. It reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog +~500 b (the item-160 note).
