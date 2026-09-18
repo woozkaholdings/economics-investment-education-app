@@ -375,7 +375,7 @@ increasingly check this and it widens the audience at near-zero cost.
 ### 4.0 What is actually for sale
 
 Measure before pricing. The lesson content today is
-**44 lessons, ~159,000 characters of English body text, ~170 minutes of reading end to end**.
+**44 lessons, ~160,000 characters of English body text, ~170 minutes of reading end to end**.
 That is roughly **27,800 words** — a short book, not the long magazine article this line described
 when the catalog held twelve lessons.
 

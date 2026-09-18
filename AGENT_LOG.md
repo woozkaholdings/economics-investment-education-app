@@ -5852,3 +5852,40 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 34 said growth "stays positive" in a beautiful deleveraging and used the US from 2008 as the example, but 2008-09 was the recession: output fell about 4% and unemployment hit 10%. Growth was positive every year only from 2010. The example now starts in 2009 and says the good part came after the fall, on the page and on its diagram, in five languages. **Committed, not pushed.**
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was owner-directed, and its only note (the L34 §2 paragraph seam) is whitespace-only, so this was a free pick. It came from scanning `lessonContent.essentials.en.js` (last touched 09-12) for numeric claims) — lesson 12 ("Renting vs. Buying") said **"A down payment plus closing costs … commonly run 2%-5% of the purchase price"**. es (*suelen sumar*), ko (*더하면*) and zh (*合计*) said the same thing even more plainly: the two **together**. The lesson's own thinkAbout says the opposite, *"a down payment plus 2%-5% in closing costs"*, and it is right. **FHFA's National Mortgage Database shows that in 2024, 44.6% of US home-purchase mortgages had a down payment of 20% or more, and only 25.8% had one under 5%.** The average combined loan-to-value was 80.8%. The sentence now separates the two figures and gives the real down-payment spread, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FHFA NMDB aggregate statistics, `nmdb-new-mortgage-statistics-national-census-areas-annual.zip` (keyless). National, `All Mortgages (Home Purchase)`, series `AVE_CLTV` and the `PCT_CLTV_*` buckets. Down payment ≈ 100% − CLTV, which includes piggyback second liens.
+- **Controls:** (i) The buckets sum to **99.9-100.1%** every year. (ii) `Government / Non-Conventional (Home Purchase)` comes out at CLTV **94.8-97.0** (2014-2024), with 72-81% of loans in the top two buckets (above 95%). That is the FHA 3.5%-down rule, plus financed upfront MIP, showing up where it should. (iii) `AVE_LOANAMT/AVE_PROPVAL` (78.2) sits just under `AVE_LTV` (80.6), as a value-weighted ratio should.
+- **Results, 2024:** CLTV above 97 **16.1%** · 95-97 **9.7%** · 90-95 **16.8%** · 80-90 **12.7%** · 80 or below **44.6%**. That shape holds from 2014 to 2024: 20%-or-more down ranged 38.6-44.7%, and under-5% ranged 25-31%. The median buyer with a mortgage puts down 10-20%. **A total of 2-5% is only possible when the down payment is close to zero**, which applies to at most the 16% top bucket. Cash buyers are outside the data, and the new sentence says "mortgages" to match.
+- **Not measured:** the 2%-5% closing-cost range itself (the standard lender and GSE guidance figure; there is no keyless source) and the 5%-6% commission. Neither is edited.
+
+#### What shipped (L12 §1 paragraph 2, en/es/ko/zh/ja)
+- en: *"The down payment comes first: on US home-purchase mortgages in 2024, it was 20% or more of the price on almost half, and under 5% on about a quarter. Closing costs — fees for the loan, title search, inspection, and more — commonly add 2%-5% of the purchase price on top of it, and selling later usually costs another 5%-6% in agent commissions — a rate that is negotiable rather than fixed."* The translations follow the same structure. House forms were measured: es `EE. UU.` (3 in essentials), ja `米国` (5:0 in essentials), and each language's existing down-payment term (`pago inicial`/`계약금`/`首付款`/`頭金`) is kept.
+- The patcher required each old string to appear exactly once and the new one zero times, then asserted old 0 / new 1 after writing (×5). Originals are in `scratchpad/l12dp/orig.*`, and `dp.cjs` recomputes every figure from the CSV.
+- **Knock-ons the suite demanded:** the ledger marked L12 es/ko/zh/ja stale, so each was re-read against the English and re-marked `ai` (O-3 unchanged). `refresh-readiness --write` moved en chars 159,493 → **159,636**; minutes stay at 170 (LAUNCH_READINESS §4.3/§10.4, LAUNCH_PLAN §4.0).
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: ledger §10.4, then the three char-count sentences. All expected |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three). §83: no paragraph near the ceiling; the worst is still L18 es |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | each of the 5 new phrases → only its own `lessonContent.essentials.<lang>-*.js`; all **5 old phrases → no file**. Control: the unchanged thinkAbout phrase → the en chunk |
+| Live walk | **Not done.** This is a string substitution in a lesson body the reader already renders. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** I planted *"So now is a good time to buy stocks."* after the new sentence (count 1). `check-blindspot` gave **exit 1, §10.1**. The file was restored from the scratchpad (**`cmp` identical**), and the clean run gave **exit 0**. The new text describes what buyers did and recommends no down payment size. 2024 is a dated historical figure, not a live-looking one.
+- **DECISIONS.md:** both the old and new phrases return 0 (control `localStorage` 13). **Already-done:** the archive's only hits are L12's creation entry, which meant *"2%-5% closing costs going in"*, so the error was in the wording from day one, plus two glossary-inline tallies. No run measured it.
+- **Could the new text be wrong?** (i) "Almost half" = 44.6%, and "about a quarter" = 25.8%. (ii) CLTV is measured against the lesser of price and appraisal, so "of the price" is very slightly generous to the down payment. (iii) Financed FHA MIP puts some 3.5%-down loans above 97. They are still under 5%, so the claim holds. (iv) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L12 §2's "roughly two-thirds of the way through its term" crossover** holds at about 7% (the 09-10 note computed 42% at 4%), and `moneyVisuals.js` derives its curve from the phrase. Already recorded, and still not picked by default.
+- **"5%-6% in agent commissions"** predates the 2024 NAR settlement. It was not measured this run and has no keyless source.
+
+**Owner-facing, one line:** lesson 12 told learners a down payment *plus* closing costs usually comes to 2-5% of a home's price. That is the closing costs alone: in 2024, almost half of US purchase mortgages had 20%+ down. The sentence now separates the two and gives the real figures, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** run log 179,334 b before this entry (`check-log-size`, 2026-09-18); backlog 0 b added.
