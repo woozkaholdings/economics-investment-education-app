@@ -1463,7 +1463,7 @@ export function BalanceBand({ title, zones, endLabels, description, caption }) {
       {/*
         HTML rather than SVG, for `OutcomeGrid`'s and `SpendingLoop`'s reason:
         these labels are five-language and long ("desapalancamiento hermoso",
-        "2008년부터 대략 2015년까지"), SVG does not wrap, and a clipped label fails
+        "2009년부터 대략 2015년까지"), SVG does not wrap, and a clipped label fails
         silently in exactly the languages nobody on this project re-reads.
       */}
       <div role="img" data-figure="balanceBand" aria-label={description}>

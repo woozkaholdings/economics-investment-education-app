@@ -5811,3 +5811,44 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the lesson 34 quiz marked "rates are already at 0%" as the right answer, which is what lesson 33 teaches is *not* true (rates were 5-6% when the 1929, 1990 and 2007 peaks hit). The answer is now "rate cuts aren't enough", and both explanations give the real figures, in five languages. This also removes one of the quiz's "longest option is right" giveaways. It reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog +~500 b (the item-160 note).
+
+### 2026-09-18 (owner-directed: "measure the L34 §2 'growth stays positive' claim next". This is a clause the 09-18 debt-ratio run named as not re-measured, taken up on instruction, so W-6.2 rule 1 does not arise) — lesson 34 defined a beautiful deleveraging as one where **"growth stays positive"** and gave **"the US recovery from 2008 through roughly 2015"** as its example. **Growth was not positive in 2008-09:** US real GDP shrank in **5 straight quarters** from 2008Q3 (plus 2008Q1), fell **3.8%** from peak (2007Q4) to trough (2009Q2) and **2.6% over 2009**, and unemployment reached **10%**. **From mid-2009 the claim holds:** growth was positive in every year 2010-2015 (**1.6-2.9%**, about **2.3% a year** on average from the trough). The example now starts in **2009** and says the balance came *after* the fall, on the lesson page and on its dial, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FRED `GDPC1` (quarterly real GDP), `GDPCA` (annual), `USREC`, `UNRATE`, `CPIAUCSL`.
+- **Controls:** (i) `GDPCA` gives 2009 **−2.6%**, matching BEA's published figure. (ii) `USREC` is 1 from **2008-01 to 2009-06**, 18 months: the NBER recession that began after the December 2007 peak, which is FRED's convention. (iii) Peak-to-trough is cross-checked against the level series: 2007Q4 16,915 → 2009Q2 16,269, and 2007Q4's level was regained in **2010Q4**.
+- **Results, 2008Q1-2015Q4, annualized quarterly growth:** **8 negative quarters**. Five are 2008-09 (2008Q1 −1.7, Q3 −2.1, Q4 **−8.5**, 2009Q1 −4.5, Q2 −0.7). **Three fall after the trough**, and all are small: 2011Q1 −0.9, 2011Q3 −0.1, 2014Q1 −1.4. Annual growth 2008 **+0.1**, 2009 **−2.6**, 2010-2015 **2.7/1.6/2.3/2.1/2.5/2.9**. Unemployment 5.0 → **10.0 (2009-10)** → 5.1.
+- **Premise verdict:** the definition is fine. The **date** is the defect: "2008" puts the recession inside the example of growth staying positive. Dalio's own dating of the US beautiful deleveraging starts in **March 2009**, and the NBER trough is **June 2009**, so 2009 is where both put it. From 2009 the claim holds on an annual basis. Three small negative quarters fall inside it, and "every year" is the honest scale for the claim.
+- **The inflation clause was checked in passing and is not edited:** CPI year-over-year from 2009-07 ran from **−2.0%** (July 2009, the oil-price base effect) to **3.8%** (September 2011). That is "manageable".
+- **Surface scan** (Node over `src/` and `scripts/`, for the old anchor in all five languages): the lesson sentence ×5, the dial's `deleveragingAnchors` ×5, its `deleveragingDescription` ×5, and one code comment in `charts.jsx` quoting the ko anchor as an example of a long label. ⚠️ **`check-data.mjs` §69 requires every dial anchor to appear verbatim in lesson 34**, so the lesson and the dial had to change together. The guard would have failed a lesson-only edit.
+
+#### What shipped (en/es/ko/zh/ja)
+- **Lesson 34 sections[1], paragraph 2:** "2008" → **"2009"**, then two sentences appended after "…working reasonably well.": *"It came after the fall, not instead of it: US output shrank about 4% from late 2007 to mid-2009, and unemployment reached 10%. From then on, growth was positive in every year through 2015, averaging a little over 2% a year."* The 09-18 debt sentences ("But the debt that declined there was private…") follow unchanged.
+- **`markets.js`:** the middle anchor and the text alternative, "2008" → "2009", ×5 languages (10 lines). **The label is the same length in code points in every language**, and `charts.jsx` notes that SVG does not wrap, so the dial's layout cannot shift. `charts.jsx`'s comment example was updated to match (1 line).
+- The patcher asserted exact old counts (1 per lesson, 2 per anchor in `markets.js`) before writing and new counts after. The originals are in `scratchpad/l34g/orig.*`.
+- **Knock-ons the suite demanded:** L34 `minutes` 5 → **6**; ledger L34 es/ko/zh/ja re-marked `ai` after reading each against the English (O-3 unchanged); `refresh-readiness --write`: en chars 159,269 → **159,493**, **169 → 170 min** (LAUNCH_READINESS, LAUNCH_PLAN, CLAIMS A6).
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: minutes 5≠6, plus the ledger §10.4 figure. Both expected |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| §69 (dial ↔ lesson) | passes: **45 containments** across 5 languages, including the three new anchors |
+| §83 | passes. This paragraph is now **809** chars in en and **983** in es, under the ceiling. The worst paragraph is still L18 (es) at 31.6 lines |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 5 new phrases → each language's own economy chunk; the new anchor is in both the lesson chunk and `markets-*.js`; **all 5 old anchors → no file**; control hits the en chunk |
+| Live walk | **Not done.** The dial labels changed one digit at equal length. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** I planted *"Recoveries like this are a good time to buy stocks."* after the new sentence (count 1). `check-blindspot` gave **exit 1, §10.1**. The file was restored from the scratchpad (**`cmp` identical**), and the clean run gave **exit 0**. No Dalio name added, and "beautiful deleveraging" is pre-existing and not added to. 2007/2009/2015 are historical.
+- **DECISIONS.md:** `growth stays positive`/`2009 through` return 0 (control `localStorage` 13). **Already-done:** the one log hit for the clause is the earlier 09-18 entry, which named it as not re-measured. Nothing measured it before.
+- **Could the new text be wrong?** (i) "About 4%" is the peak-to-trough fall of 3.8%. (ii) "Unemployment reached 10%": 10.0 in October 2009. (iii) "Positive in every year through 2015" is **annual**; three quarters were negative, and the sentence does not claim every quarter. (iv) "A little over 2% a year" is 2.33% from the 2009Q2 trough to 2015Q4, and annual growth was 1.6-2.9%. (v) Does "2009" move the example off what "many economists" cite? The usual dating (Dalio: March 2009) starts in 2009, so the old "2008" was the outlier. (vi) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **Re-runnable:** `scratchpad/l34g/g.cjs` recomputes every figure from the downloaded CSVs, and `patch.cjs` reproduces the edit. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L34 §2 paragraph 2 has grown twice today** (definition + example + growth caveat + debt caveat): en **809** chars, above the corpus p95 of ~753. It is well under §83's ceiling and not a wall, but it now holds three ideas. A whitespace-only split before "But the debt that declined there was private" is the natural seam if a later run wants it.
+
+**Owner-facing, one line:** lesson 34 said growth "stays positive" in a beautiful deleveraging and used the US from 2008 as the example, but 2008-09 was the recession: output fell about 4% and unemployment hit 10%. Growth was positive every year only from 2010. The example now starts in 2009 and says the good part came after the fall, on the page and on its diagram, in five languages. **Committed, not pushed.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
