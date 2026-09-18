@@ -12864,5 +12864,132 @@ function trendDirection(src) {
 }
 
 
+// §83. NO PARAGRAPH MAY GROW INTO A WALL OF TEXT ON A PHONE.
+//
+// THE LEARNER-VISIBLE FAILURE THIS WOULD CATCH (W-6.2 rule 3): a learner
+// reading on a 375px phone meets 44 unbroken lines — a screen and a half of
+// prose with nothing to rest the eye on, no blank line, no sub-heading — and
+// the only way through is to keep scrolling one undifferentiated block.
+//
+// WHAT WAS SHIPPING when this was written. On 2026-09-17 lesson 35's second
+// section, "How Rates Affect Everything", opened with a single paragraph of
+// 1,949 characters: measured live on the built app at 375x812, **44 rendered
+// lines, 1,154px, 1.42 screens**. It was the longest paragraph in the English
+// corpus by 62% (next: 1,201) and 5.2x the median (377).
+//
+// WHY IT HAPPENS, and why a guard rather than one more careful edit. Nobody
+// wrote a 1,949-character paragraph. FOUR separate runs on 2026-09-17 each
+// corrected a claim in it against FRED/Tiingo and each replaced a short
+// confident sentence with a longer, properly-hedged one — all four were
+// right, all four left the section at three paragraphs, and the section went
+// 1,402 -> 2,669 characters in a single day with every check green. The
+// failure mode is accretion by correct edits, which is exactly the kind no
+// reviewer catches by reading the diff: each diff is two sentences.
+//
+// THE MEASURE. A paragraph is a run between blank lines — LessonReader.jsx
+// renders `section.body` as ONE text node with `white-space: pre-line`, so
+// "\n\n" is the only thing that puts a visible gap in it. Characters are
+// converted to rendered lines with a per-language chars-per-line constant
+// MEASURED on the built app (375x812, 16px/26.4px, the shipped body style)
+// rather than assumed — CJK sets ~2x more characters per line than English,
+// so a single character threshold would be three different thresholds:
+//
+//   en 43.3 (n=10, range 39.1-46.1)   es 41.7 (n=12, 31.2-44.4)
+//   ko 29.1 (n=8,  27.3-30.3)         ja 22.2 (n=8,  21.4-23.0)
+//   zh 21.1 (n=6,  20.3-22.9)
+//
+// The estimator is validated against the live DOM, which is the control that
+// makes the threshold mean anything: it predicts 45.0 lines for the 1,949
+// character paragraph above, which rendered as 44 — 2% error.
+//
+// THE THRESHOLD IS A CEILING AGAINST WALLS, NOT A STYLE TARGET. 36 lines is
+// about 1.17 phone screens. The corpus's own worst paragraph after this run
+// is 31.6 lines (es, 1,316 chars, in two places), so this fails nothing that
+// ships today and leaves ~14% headroom; it would have caught the 45-line wall
+// with room to spare. A paragraph anywhere near 36 is already long — the
+// number is set where it is so that this section flags walls rather than
+// litigating prose, and deliberately NOT at "one screen", which would fail
+// two paragraphs that are long but readable and open work this run is not
+// doing.
+{
+  const before83 = failures;
+
+  // Measured on the built app at 375x812; see the table above.
+  const CHARS_PER_LINE = { en: 43.3, es: 41.7, ko: 29.1, ja: 22.2, zh: 21.1 };
+  const MAX_LINES = 36;
+
+  const paragraphsOf = (body) => String(body).split("\n\n");
+  const estLines = (text, lang) => text.length / CHARS_PER_LINE[lang];
+
+  // CONTROLS. All three must fire, because every failure mode of this section
+  // is silent: a splitter that never splits, an estimator with the wrong
+  // scale, and a scan that reaches no content all report "no walls found".
+  //
+  // (a) the splitter sees a BLANK line and is not fooled by a single newline
+  //     (LessonReader renders the latter as a line break, not a gap).
+  if (paragraphsOf("a\n\nb").length !== 2 || paragraphsOf("a\nb").length !== 1) {
+    fail(
+      "§83 control (a): the paragraph splitter does not distinguish a blank line from a single " +
+        "newline, so it is not measuring paragraphs — every figure below is meaningless.",
+    );
+  }
+  // (b) the estimator reproduces the one paragraph whose rendered height was
+  //     measured in a browser: 1,949 en chars came back as 44 lines.
+  const modeled = estLines("x".repeat(1949), "en");
+  if (Math.abs(modeled - 44) > 3) {
+    fail(
+      `§83 control (b): the chars-to-lines estimator puts the 1,949-character English paragraph of ` +
+        `2026-09-17 at ${modeled.toFixed(1)} lines, but it rendered as 44 on the built app at 375x812. ` +
+        `The constants no longer describe the shipped body style — re-measure them before trusting ` +
+        `the threshold.`,
+    );
+  }
+  // (c) the scan actually reached the corpus. An empty scan is the failure
+  //     mode that looks most like a pass.
+  let scanned = 0;
+  let worst = null;
+  for (const [id, content] of Object.entries(lessonContent)) {
+    (content.sections || []).forEach((section, si) => {
+      for (const lang of Object.keys(CHARS_PER_LINE)) {
+        const body = section.body?.[lang];
+        if (typeof body !== "string" || body.length === 0) continue;
+        paragraphsOf(body).forEach((para, pi) => {
+          scanned += 1;
+          const lines = estLines(para, lang);
+          if (!worst || lines > worst.lines) worst = { id, si, pi, lang, lines, chars: para.length };
+          if (lines > MAX_LINES) {
+            fail(
+              `§83: lesson ${id} section[${si}] paragraph[${pi}] (${lang}) is ${para.length} characters ` +
+                `— about ${lines.toFixed(0)} rendered lines on a 375px phone, over the ${MAX_LINES}-line ` +
+                `ceiling. A learner gets more than a screen of unbroken prose with nowhere to rest. Split ` +
+                `it at a seam the paragraph already has (it usually has one: this ceiling was added after ` +
+                `four correct edits in one day grew one paragraph to 44 lines), in ALL FIVE languages — ` +
+                `inserting "\\n\\n" changes no words, so the translation stays exactly as reviewed. ` +
+                `First sentence: "${para.slice(0, 70)}…"`,
+            );
+          }
+        });
+      }
+    });
+  }
+  if (scanned < 1000) {
+    fail(
+      `§83 control (c): the scan reached only ${scanned} paragraph(s) across 44 lessons x 5 languages, ` +
+        `which is too few to be the real corpus — a "no walls found" result here would be an empty ` +
+        `scan, not a clean one.`,
+    );
+  }
+
+  if (failures === before83) {
+    console.log(
+      `  §83 paragraph walls: ${scanned} paragraph(s) across 44 lesson(s) x 5 language(s), none over the ` +
+        `${MAX_LINES}-rendered-line ceiling; worst is lesson ${worst.id} section[${worst.si}] ` +
+        `paragraph[${worst.pi}] (${worst.lang}) at ${worst.lines.toFixed(1)} lines / ${worst.chars} chars. ` +
+        `All three controls fire (blank-line vs newline, the estimator against a browser-measured ` +
+        `paragraph, and a non-empty corpus).`,
+    );
+  }
+}
+
 console.log(`\n${failures === 0 ? "PASS" : "FAIL"}: ${failures} failure(s), ${warnings} warning(s).`);
 process.exit(failures === 0 ? 0 : 1);
