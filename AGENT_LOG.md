@@ -780,6 +780,10 @@ just got cheaper to argue.
 179,098 b**) at 98.4% of warn, 0.56 runs left. Run log **245,993 → 66,895 b**; four proofs true,
 three plants each failing only their targets. Byte-space mover from the start, with zero assertion
 failures. No clause, budget or script changed; **O-6 is unchanged and still unanswered.**
+✅ **A SIXTEENTH PASS RAN 2026-09-18 (scheduled dev-agent).** 2026-09-13 → 09-15 moved (**10 entries,
+71,480 b**) at 100.4% of warn. Three days where the plan named one: one day bought 5.3 runs, three buy
+8.6. Run log **251,016 → 179,536 b**; four proofs true, three plants failed only their targets. No
+clause, budget or script changed; **O-6 still unanswered.**
 
 📝 **Note for the next pass, filed rather than built (W-6.2 rule 2 — a NOTE, not a numbered item).**
 Seven passes have each reimplemented the move by hand, and the one defect that has actually shipped —
@@ -4970,395 +4974,6 @@ same journey.
 
 ## Run log
 
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 BOUND — the previous two scheduled runs were residual picks #1 and #2, so this run could not take a third; the pick came from a fresh read of all twelve economy-track English lessons) — lesson 37's THINK prompt told learners the Fed "printed … **unlimited** in 2020", and its figure list gave COVID QE's size as **"Unlimited"**, three lines above the same lesson's own **$9 trillion peak**. The 2020 pledge had no preset cap; the money created did: FRED puts it at **about $4.6 trillion** over the two years of purchases
-
-#### The pick
-Bound by rule 1, so no note from the last two entries was eligible. I read L29-L40 (en) end to end against what I could check. Most figures held on inspection: L35's eleven hikes to 5.25-5.50%, L36's 1966 and 2022-24 inversions, L37's QE1 $1.75T / QE2 $600B / 10x peak, L33's "over 95" arithmetic. One claim failed. **Prior history, read before picking:** the 2026-08 dated-framing fix (archive ~l.1962) left "unlimited in 2020" alone as "a backward-looking historical fact"; that was a check for *now*-claims, not accuracy. Backlog (d) (2026-09-05) fixed the `$2+ trillion` half of the same sentence and did not examine "unlimited". **Neither read tested whether "unlimited" is a quantity that happened.**
-
-#### Step 3.5 — the premise measured, with controls
-- **Instrument:** FRED `fredgraph.csv` (no key) for `WALCL`, `TREAST`, `WSHOMCB`, 2007-06 → 2022-12. **Controls:** `WALCL` 2022-04-13 = **8,965,487** ($8.97T, the peak already recorded in backlog (a)) and 2007-08-01 = **870,261** (the lesson's "roughly $900 billion"). Both reproduce, so the series and dates are being read correctly.
-- **Measured:** Treasuries 2020-03-11 **2.523T** → 2022-03-16 **5.758T** (+3.235T); MBS **1.372T** → **2.730T** (+1.358T); securities **+4.59T**. Total assets 2020-03-11 **4.312T** → 2022-03-16 **8.954T** (+4.64T). Any window from the March 2020 start to the March 2022 end of net purchases gives **4.6-4.7T**. "About $4.6 trillion" is the securities figure, rounded down from neither.
-- **What "unlimited" named:** the FOMC's 2020-03-23 commitment to buy "in the amounts needed". That was an open-ended pledge, not a size. The THINK prompt's grammar ("printed $1.75 trillion … and unlimited") makes it an amount, and L37's last body paragraph gives that amount a peak. **The premise held: an internal contradiction in one lesson, in all five languages** (`Ilimitado` / `무제한` / `无限量` / `無制限`, list and prompt).
-- **Surface scan (Node, not grep, per the ugrep note), with a control:** `unlimited|ilimitad|무제한|无限|無制限|COVID QE` over `src/` + `public/`. The en hits fired (control). Ten hits, all L37 list/prompt, plus zh `quizText` "无限持续" ("can't continue forever"), which is unrelated. The kids guide does not mention 2020.
-
-#### What shipped
-- `src/content/lessonContent.economy.{en,es,ko,zh,ja}.js`, L37 only, two strings each:
-  - list: `COVID QE (2020): No preset limit — about $4.6 trillion by 2022` (es *Sin límite fijado — unos $4.6 billones hasta 2022*, ko *한도를 정하지 않음 — 2022년까지 약 $4.6조*, zh *未设上限——到2022年约4.6万亿美元*, ja *上限を定めず——2022年までに約4兆6000億ドル*)
-  - THINK: *"The Fed printed $1.75 trillion in QE1 starting in 2008, and in 2020 it pledged to buy in whatever amounts were needed — about $4.6 trillion over the next two years."* The rest of the prompt is unchanged. "Printed" stays; it is L34's own term for tool 4, and the two runs before this one kept it.
-- The Node patcher asserted exactly 1 old and 0 new per string, before and after writing. Originals are in the scratchpad. One ko follow-up edit ("약속한 뒤 이후" → "약속했고, 그 후") was also count-asserted.
-- `translation-review-ledger.json`: L37 es/ko/zh/ja re-marked `ai`, after I read each against the en. `LAUNCH_READINESS.md` / `LAUNCH_PLAN.md` via `npm run readiness -- --write` (en 154,907 → **155,030** chars; minutes unchanged at **164**; word count 26,900 → 27,000).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` (before edit) | exit 0, 3 WARN / 0 FAIL |
-| `npm test` (after edit, before ledger/readiness) | **exit 1**: the expected §10.4 ledger mismatch (4 stale L37 entries) |
-| `npm test` (final) | **exit 0, 3 WARN / 0 FAIL**: the standing three, option-length cue unchanged at 56.5/54.3/54.3/52.2/52.2% |
-| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
-| Built bundle | 6 old phrases → **no file**. 7 new phrases → exactly their own `lessonContent.economy.<lang>-*` chunk. Control (unchanged `QE2 (2010): $600 billion`) → en chunk. Negative probe → no file |
-| `numerals.mjs amountsIn` on the new list clauses | en/es 4.6, ko/ja 4.6e12. The probe string ja `4兆5000億` reads 4.5e12, so the instrument can tell the figures apart |
-| Live walk | **not done**; only text changed |
-
-#### Step 5 — adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new en clause (count 1) made `check-blindspot` **exit 1** (`§10.1 … reintroduced`). I restored from the scratchpad copy of the edited file (`cmp`-equal), and it went back to **exit 0**. The edit adds a historical figure with no date-relative wording, no advice, no attribution and no kids surface.
-- **DECISIONS.md / neighbors:** `markets.js`'s balance-sheet bars (4.5 → 3.8 → 9.0) are consistent: 9.0 minus the March 2020 4.3 is ~4.7 total assets, and 4.6 is securities. `CLAIMS.md` / `DECISIONS.md` carry no L37 figure. **Already-done:** no. Backlog (a) (10x) and (d) (`$1.75 trillion`) are both preserved verbatim in the edited sentence.
-- **Could the new text be wrong?** "Pledged to buy in whatever amounts were needed" paraphrases the 2020-03-23 statement. "Over the next two years" matches net purchases ending March 2022. Gross purchases were larger than net growth, because MBS paydowns were reinvested. "Printed … about $4.6 trillion" is a claim about money created, which is net growth. **Limits:** no fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L37 list `QE3 (2012): $85B/month`.** QE3 began at $40B/month of MBS in September 2012 and reached $85B/month once Treasury purchases were added (December 2012, effective January 2013). The figure is QE3's full pace and the list is a one-line summary, so this is arguable, not a contradiction.
-- **L37 takeaway "QT drains money (deflationary …)".** L32 reserves "deflation" for a falling price level. "Deflationary" as pressure-direction shorthand is standard, and L37 pairs it with "inflationary" for QE the same way. Read, not a defect by this run's bar.
-- **L39 THINK "tariffs are pushing costs to a multi-generational high".** The multi-generational high is the effective tariff *rate*, not costs. It is posed as a hypothetical ("Imagine an economy…"), so it is left alone.
-
-**Owner-facing, one line:** the QE lesson said the Fed printed an "unlimited" amount in 2020, beside its own $9 trillion peak. It now says the 2020 pledge had no preset limit and the purchases came to about $4.6 trillion, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 free — the previous run was BOUND and took a census pick, and its three notes each called themselves arguable; this pick came from reading, for the first time in a run, the content modules longest untouched: `economicSignals.js` and `sectors.js`, each with 1 commit, last 2026-08-04) — Reference → "The economy right now" shows **3.63%** under the caption **"The overnight rate the Fed sets"**, and the Fed set no such number: FRED puts the August 2026 target range at **3.50–3.75%**, and 3.63 is the **monthly average of the market rate** (`FEDFUNDS`). The glossary one tap away already says *"The Fed does not set it directly"* (since `38a66f4`). The quiz explanation for the same term said *"set by the Federal Reserve"*. Both are fixed, in all five languages
-
-#### The pick, and why an old note does not make it a residual
-The 2026-09-10 glossary entry (archive ~l.48501) noted the quiz's *"set by the Federal Reserve"* as common shorthand, not picked by default. That run had not looked at `economicSignals.js`. The note is three days and many runs old, not the previous run's residual, so rule 1 does not apply. **What makes this pick different from that note is a measured number:** the signals caption sits beside a live value, and that value is provably not a rate anyone set.
-
-#### Step 3.5 — the premise measured, with controls
-- **Instrument:** FRED `fredgraph.csv` (no key) for `FEDFUNDS`, `DFF`, `DFEDTARL`, `DFEDTARU`, 2023-07 → 2026-09-12.
-- **Controls:** `FEDFUNDS` 2026-08-01 = **3.63**, identical to `public/data/market.json` → `economics.policyRate` (same series id, same date), so I am reading the same number the screen shows. 2023-08: `FEDFUNDS` **5.33** inside target **5.25–5.50**, the range L35 already teaches, so the target series are read correctly.
-- **Measured:** 2026-08-01/15/29: target **3.50–3.75** on all three dates, `DFF` 3.63. The displayed value is the effective rate, a volume-weighted market rate averaged over the month (`FEDFUNDS` is monthly), not a policy setting. **The premise held.**
-- **Surface scan (Node, not grep: ugrep aborted on the bounded pattern, as the memory note warns):** `target range|overnight|fed funds rate|federal funds rate` over `src/content` + `src/locales`. **Control:** it found the glossary's *"does not set it directly"*. There were two real claims that the Fed sets the rate: `economicSignals.policyRate.what` (5 langs) and `quizText.*` q011 `explain` (5 langs; ko *연방준비제도가 정하는*, zh *由美联储设定*, ja *連邦準備制度が設定する*, which the 09-10 note had not read). L35's "master dial … when the Fed turns it" is a metaphor about influence, not a claim about who sets the number, so it is left alone. The q011 distractor "A rate set directly by Congress" is correctly wrong and unchanged.
-
-#### What shipped
-- `src/content/economicSignals.js` `policyRate.what`: *"What banks charge each other overnight, averaged over the month. The Fed sets a target range and steers this rate into it — the lever behind most other borrowing costs."* Translations are phrased the way the glossary's own es/ko/zh/ja Fed Funds entries already are ("rango objetivo", "목표 범위", "目标区间", "誘導目標レンジ"). "Averaged over the month" also explains why this row's "As of" reads the 1st of the previous month while the yields read yesterday.
-- `src/content/quizText.{en,es,ko,zh,ja}.js` q011 `explain`: the "set by" clause became *"The Federal Reserve sets a target range for it and steers the market rate into that range."* The master-signal sentence is unchanged.
-- Node patcher asserted old=1/new=0 before and old=0/new=1 after, for all 10 strings. Originals are in the scratchpad. Quiz text and the signals module are outside `translation-review-ledger.json` (lesson content only, per its header), so no ledger or readiness figure moved. `refresh-readiness --check` passed inside `npm test`.
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` before edit | exit 0, 3 WARN / 0 FAIL (the standing three) |
-| `npm test` after edit | **exit 0, 3 WARN / 0 FAIL**, option-length cue unchanged at 56.5/54.3/54.3/52.2/52.2% (`explain` is not an option) |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 via `bootstrap-node.sh` |
-| Built bundle | 5 old phrases (en signals, en quiz, ko/zh/ja signals-or-quiz) → **no file**. 6 new phrases → `Reference-*` (en, es signals) and `quizText.{en,ko,zh,ja}-*`. Control (unchanged unemployment caption) → `Reference-*`. Negative probe → no file. Non-ASCII probes hit, so Vite is not escaping them and the old-phrase misses are real |
-| Live walk | `dist/` served statically, Browser pane at 375×812 light: Reference → Sectors → "The economy right now". Fed funds row caption **67 px (4 lines)**, row 137 px, value `3.63%` still right-aligned, `scrollWidth` 375 = viewport (no horizontal overflow). Screenshot taken |
-
-#### Step 5 — adversarial self-check
-- **Blindspot register: PASS, and shown to see both edited files.** Planting *"You should buy index funds now."* into the edited `economicSignals.js` (count 1) made `check-blindspot` **exit 1** (`§10.1 … reintroduced`). The same plant into `quizText.en.js` also gave **exit 1**. Each file was restored from its scratchpad copy (`cmp`-equal), and the clean run gave **exit 0**. The edit adds no date, no market figure, no advice, no attribution and no kids surface.
-- **DECISIONS.md / CLAIMS.md:** neither mentions the fed funds rate or a target range. **Already-done:** this does not undo `38a66f4`; it makes two surfaces agree with it.
-- **Could the new text be wrong?** Since 2008 the FOMC has set a 25-bp target range, and `DFEDTARL/U` confirm one for every date read. The effective rate is a market rate the Fed steers with administered rates (IORB, ON RRP). "Steers this rate into it" is accurate and says no more than the glossary does. "Averaged over the month" is true of `FEDFUNDS`, which `fred.js` fetches; it would become false if someone switched the series to daily `DFF`. **Limit:** that coupling is not guarded, and it is noted here rather than built (W-6.2 rule 3: the learner-visible failure would be one adjective). No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **`sectors.js` XLI "Machinery, airlines, railroads and **builders**"** (ko *건설*, ja *建設*). GICS puts homebuilders (household durables) in Consumer Discretionary. Industrials holds construction & engineering and building products. "Builders" reads most naturally as homebuilders to a US beginner, but the word is ambiguous and the ETF composition was not measured this run. Arguable, not picked.
-- **Glossary "Yield Curve" `f`: "Inverted = recession signal within 12-18 months"** is unhedged, while the signals caption and L36 (since its 2026-09-12 takeaway fix) say not every inversion was followed by one. "Signal" is not "certainty", so this is arguable. It is the nearest remaining echo of the L36 class if a run wants one.
-
-**Owner-facing, one line:** the Reference screen labeled the 3.63% fed funds reading as "the rate the Fed sets". The Fed set a 3.50–3.75% range; 3.63 is the market rate's monthly average. The caption and the matching quiz explanation now say so, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 — residual pick #1 in a new chain, which the rule allows: the previous run was a free pick and its second note named the glossary's "12-18 months" line) — lesson 36 taught a **"typical lead time of 12-18 months"** from yield-curve inversion to recession, the quiz keyed **"Recession within 12-18 months"** as what an inversion predicts, and the glossary said the same. **FRED puts only 2-3 of 6-10 episodes inside that window**; leads ran from about six months to about two years. Four surfaces, all five languages
-
-#### The pick, and the ruling it reverses
-The glossary note was called arguable because "signal" is not "certainty". Before picking, I read backlog item (b) (2026-09-05, ~l.2269). It kept the quiz and glossary figures "deliberately" because they matched "what the 1955 record supports", and it said *do not re-derive this*. **That ruling never measured the lead times.** It measured the present tense. Per the "verify decisions still hold" rule, I re-measured the number instead of re-reading the ruling.
-
-#### Step 3.5 — the premise measured, with controls
-- **Instrument:** FRED `fredgraph.csv` (no key) for `GS10`, `GS1`, `TB3MS`, `T10Y2Y` (daily → monthly mean) and `USREC`. **Controls:** `GS10` 2023-08 **4.17** < `TB3MS` **5.30**, which is the inversion L36 teaches. `USREC` is 1 at 2008-06 and 2020-03. Derived NBER peaks: 1957-08, 1960-04, 1969-12, 1973-11, 1980-01, 1981-07, 1990-07, 2001-03, 2007-12, 2020-02, which are the published dates. `USREC` is 0 through 2026-08.
-- **Measured, two methods, because the answer depends on how an episode is defined:**
-  - *Episode start → next recession (USREC first month):* 10y-1y leads **9, 8, 9, 17, 18, 12, 24, 7** (plus 1965-12 → 49, the 1966 false positive L36 already names). **3 of 8 in 12-18.** 10y-3m **12, 6, 14, 8, 17, 9**: **3 of 6**. 2s10s (from 1976) **17, 19, 34, 14, 23**: **2 of 5**.
-  - *First inversion in the 36 months before each NBER peak:* 10y-3m **2 of 7**, 10y-1y **2 of 10**.
-  - Under every spread and method, fewer than half the episodes fall in 12-18 months. Nearly every lead is between ~6 and ~24 months. The exceptions (34 or 36 months) come from episodes the windowing merges.
-- **The premise held, and it was wider than the note.** The same figure was the body's "typical lead time", section 2's "'typical' 12-18 month lead time", and the THINK prompt's "12-18 month window". Surface scan (Node, all five scripts' month words plus "lead time"/선행 시차/领先期/先行期間/anticipación over `src`+`public`): 25 hits, all in these four surfaces. **Control:** a Spanish money-lesson "dos meses de anticipación" hit and is unrelated. `CLAIMS.md`, `DECISIONS.md`, `LAUNCH_PLAN.md` and `README.md` have no hits.
-
-#### What shipped
-- **L36 §1** (5 langs): "…with a typical lead time of 12-18 months" → *"— though the lead time has varied widely, from about six months to about two years."*
-- **L36 §2** (5 langs): "…well past the 'typical' 12-18 month lead time" → *"…with no recession having followed — even though earlier recessions had usually arrived within about two years of an inversion."*
-- **L36 THINK** (5 langs): *"The yield curve inverted in mid-2022, and two years later — longer than earlier recessions had usually taken to follow an inversion — there was still no US recession. Does that make the signal wrong — or does it mean a historical pattern was never a promise about any single episode?"* It is still a closed interval (2022 → 2024), per item (b)'s reasoning. ⚠️ **My first draft said "about as long as earlier recessions had usually taken", which implies a typical two-year lead. The measured median is about a year.** I caught it on re-read before testing and re-patched it count-asserted in all five languages.
-- **Quiz** (keyed option, index unchanged): "Recession within 12-18 months" → **"Higher recession risk ahead"** (es *Mayor riesgo de recesión*, ko *경기침체 위험 증가*, zh *衰退风险上升*, ja *景気後退リスクの高まり*). The `explain` ("preceded every US recession since 1955 … not a perfect predictor … signals economic weakness ahead") is unchanged and now names the option it explains.
-- **Glossary `Yield Curve` `f`** (5 langs): *"Inverted = recession warning, historically about 6 months to 2 years ahead."*
-- Node patcher: old=1/new=0 before and old=0/new=1 after for all 25+5 strings; it writes nothing if any pre-check fails. Originals are in the scratchpad. Ledger: L36 es/ko/zh/ja re-marked `ai`. `npm run readiness -- --write`: en 155,030 → **155,174** chars, minutes unchanged at 164. Backlog item (b)'s "do not re-derive" paragraph is replaced by its correction (one paragraph, no layered original, per W-7.2 rule 2).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` before edit | exit 0, 3 WARN / 0 FAIL |
-| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L36 ×4 stale) |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL**. Option-length cue: en/es/ko/ja unchanged. **zh 52.2% → 50.0%**, because the zh keyed option is no longer the longest, so zh drops out of the WARN line |
-| Build | `scripts/build-out-of-tree.sh` exit 0 (system Node v24.18.0 via `bootstrap-node.sh`) |
-| Built bundle | 6 old phrases (en ×2, es, ko, zh, ja) → **no file**. 8 new phrases → their own `quizText.<lang>-*` / `lessonContent.economy.en-*` / `markets-*` (glossary) chunks. Controls: unchanged "Every US recession since 1955 was preceded by an inversion" and "Immediate stock rally" → their chunks. Negative probe → no file |
-| `grep 12-18 / 12~18 / 12〜18 / 12 a 18` over `src` | **0**. The same pattern returned 25 hits before the edit, which is the control |
-| Live walk | **not done**: text only, no layout-bearing string longer than before except the §1 clause |
-
-#### Step 5 — adversarial self-check
-- **Blindspot register: PASS, shown to see both kinds of edited file.** Planting *"You should buy index funds now."* after the new clause in `lessonContent.economy.en.js` → `check-blindspot` **exit 1** (§10.1). The same plant in `glossary.js` → **exit 1**. Each file was restored from its scratchpad copy (`cmp`-equal), and the clean run → **exit 0**. No date-relative wording, advice, attribution or kids surface was added.
-- **DECISIONS.md / already-done:** this reverses item (b)'s *neighbor ruling*, not its fix. The THINK prompt is still a closed interval, and the 1955 claim, the 1966 false positive and the hedge are all kept. That ruling's own warning, "don't hedge the lesson's thesis on one episode", is respected: the change rests on ~8 episodes per spread, not on 2022.
-- **Could the new text be wrong?** "About six months to about two years" covers every episode-start lead except the 1966 false positive and one merged 2s10s episode (1998 → 34). "Usually … within about two years" is hedged for exactly that case. "Two years later … still no US recession" holds: `USREC` is 0 from 2022-07 through 2026-08. **Limits:** lead-time counts depend on the spread and on episode definition, so the range is rounded, not exact. §2's "the longest stretch on record" for the 2s10s inversion was not measured this run. No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L36 §2 "stayed inverted for roughly two years, the longest stretch on record".** Plausible for 2s10s since 1976, but unmeasured. `T10Y2Y` is already in the scratchpad instrument if a run wants it.
-
-**Owner-facing, one line:** the yield-curve lesson, its quiz and the glossary taught that an inversion means recession "within 12-18 months". Past recessions arrived anywhere from about six months to two years after one, and most fell outside that window. All three now teach the real range, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog net −1 line (item (b) paragraph replaced).
-
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1: residual pick #2 in the chain was **measured and came back clean**, so nothing shipped from it. The shipped pick is a census pick from reading L38 against FRED, which leaves the next run free) — lesson 38 attached **stock-market-cycle statistics to economic phases**. It said the Contraction phase "coincided with S&P 500 average declines of roughly -22-35%", and over the ten NBER contractions since 1957 US share prices fell **8% on average (median −4.6%), rising in 4 of 10**. −22–35% is the **bear-market** average (−33.5%), and bear markets usually start before a contraction and end before it does. The Trough's "+38-50% in the first year after a bottom" is the figure after **market** lows, not after the economy's trough (+16.5% on average). Expansion's "+14-28%" had no unit and matched no measurement. All three are fixed, in all five languages
-
-#### The residual, measured first (no edit)
-The previous entry named L36 §2's *"stayed inverted for roughly two years, the longest stretch on record"* as unmeasured. **Instrument:** FRED `T10Y2Y` daily (1976-06 → 2026-09-11), runs of negative closes. **Control:** the 2022 run starts on **2022-07-06**, which matches the widely reported July 2022 inversion. **Measured:** 2022-07-06 → 2024-08-26 is **25.7 months, strictly continuous**. The next longest are 1978-08 → 1980-05 at 20.4 months and 1980-09 → 1981-10 at 13.3 months. Merging gaps of ≤90 days does not change the rank (22.1 months for 1980-82). **The claim holds** in en/es/ko/zh/ja (all five read). No edit.
-
-#### Step 3.5: the L38 premise measured, with controls
-- **Why L38:** its three phase figures date from the v5 content. Archive l.18391 and l.21506 only checked that translations **preserved** them; no run ever measured them (grep over both logs).
-- **Instrument:** FRED `SPASTT01USM661N` (OECD US share prices, monthly average, 1957→) plus `USREC`. FRED's `SP500` covers only ten years, so a long S&P series is not available keyless. **Control 1:** the derived NBER peaks and troughs are the published dates (1957-08 > 1958-04 … 2020-02 > 2020-04). **Control 2, and it partly FAILED:** against daily `SP500` monthly means, 2020-02→04 reads −20.9% vs −15.7%, and 2021-12→2022-10 reads −16.1% vs −20.3%, which is close. But 2017-01→2026-06 reads **+110% vs +227%**, so this is **not an S&P 500 proxy over long horizons**. That is why the fix states no new S&P-specific percentage. The contraction-window conclusion (−8% avg vs a claimed −22–35%) is far outside a ±5-point short-window error, and it matches the S&P monthly averages I know for 2007-09 (≈−38%) and 1990-91 (≈+2%).
-- **Measured:** contraction peak→trough: −8.6, +4.8, −9.9, −18.8, +7.3, +6.4, +3.5, −4.6, −39.0, −20.9 (**avg −8.0, median −4.6**). 12 months after the NBER trough: **avg +16.5**. Bear markets (≥20% monthly-average drawdown): 7 episodes, **avg −33.5%**, and **+35%** in the 12 months after the low, against an unconditional 12-month average of **+7.8%** (n=822). The market low came **before** the NBER trough in 9 of 10 contractions (the exception is 2001 → low 2002-10). Every closed expansion ended with prices higher (the smallest was +9%, 1980-81); annualized returns averaged 9.6%. **The premise broke**: two figures describe the market's cycle rather than the phase they sit under, and the third has no definable unit.
-- **Surface scan** (Node, `(14|22|38) [-–~〜a to] (28|35|50)` over `src`, `public`, CLAIMS/DECISIONS/README/LAUNCH_*): **15 hits, all 3 × 5 languages in L38**. **Control:** the pattern found all fifteen, including the CJK strings. Quiz "Trough" q already says *"a market bottom"* and is qualitative, so it is left alone.
-
-#### What shipped (L38, en/es/ko/zh/ja)
-- **Expansion:** "…coincided with S&P 500 average returns of roughly +14-28%," → *"Historically, stock prices have tended to rise over this phase as a whole,"*.
-- **Contraction:** → *"Stocks often fall hard around this phase — US bear markets have averaged a drop of about a third — but the market's slide has usually started before the contraction began, and its recovery before the contraction ended, so from a contraction's first month to its last, prices have usually fallen far less than that. Assets like Treasury bonds…"*
-- **Trough:** → *"The stock market's own low has usually come before the economy's, while the headlines were still getting worse — and the year after a bear-market low has historically brought some of the market's strongest gains."* This now agrees with the lesson's own closing paragraph ("the strongest rebounds have historically started exactly when the headlines felt worst").
-- Node patcher: old=1/new=0 before and old=0/new=1 after, all 15 strings, and nothing is written if any check fails. Originals are in the scratchpad. Ledger: L38 es/ko/zh/ja re-marked `ai`. `npm run readiness -- --write`: en 155,174 → **155,502** chars, minutes 164 unchanged. LAUNCH_PLAN's rounded "~155,000" became "~156,000" (generated). `translation-completeness --write` was **not** run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L38 ×4 stale) |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three; option-length cue unchanged) |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | `+14-28%`, `-22-35%`, `+38-50%` → **no file**. New phrase in each language → its own `lessonContent.economy.<lang>-*` chunk. Control (unchanged "Historically favored in this phase: value stocks") → en chunk. Negative probe → no file |
-| Live walk | not done: text-only, three sentences in cards that already wrap |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new Trough sentence (count 1) → `check-blindspot` **exit 1**. Restored from the scratchpad (`cmp`-equal) → **exit 0**. The edit adds no date, live figure, attribution or kids surface. "Strongest gains" is a historical description beside the lesson's existing "not a rule about what to hold" takeaway, and it is not advice.
-- **DECISIONS.md / already-done:** nothing covers phase returns. The translation-preservation passes (archive l.18391, l.21506) checked fidelity, not truth, so this does not undo them.
-- **Could the new text be wrong?** "Averaged about a third": proxy −33.5% on monthly averages, and daily-close S&P bear averages run deeper, so "about" covers it. "Usually started before … began": the market peak came clearly before the NBER peak in 7 of 10 and was roughly coincident in 1980, 1990 and 2020, so "usually" holds but not "always". "Recovery before the contraction ended": 9 of 10. **Limits:** the instrument is not the S&P 500 (control 2), so no S&P number was written. No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L35 THINK "policy takes 12-24 months to show up fully"** (5 langs). This is the conventional "long and variable lags" range and is not measurable from FRED without a model. Arguable.
-
-**Owner-facing, one line:** the four-phases lesson said stocks fall 22–35% on average during a recession. That is the average stock-market crash, which usually starts before the recession and ends before it does; across the recessions themselves, prices fell about 8% on average. The lesson now teaches that timing gap instead of the misplaced numbers, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 free — the previous run shipped a census pick, and its only note (L35's "12-24 months") called itself arguable; this pick came from reading L33 against FRED) — lesson 33 told learners that short-term debt cycles each arrive "every 5-8 years, so **by adulthood most people have direct memory of at least two or three**", and **no US birth cohort from 1960 to 2008 lived through three recessions between the ages of 6 and 17**. Most lived through one or two. The 5-8 year average holds (6.5 years since WWII), but **only 2 of 11 actual gaps fall inside it**. The sentence now says "on average", gives the real spread, and says "at least one or two", in all five languages
-
-#### Step 3.5: the premise measured, with a control
-- **Why L33:** no run had ever measured "5-8 years" (grep over both logs: every hit only checks that translations preserved it, or that the NestedCycles chart matches the prose).
-- **Instrument:** FRED `USREC` monthly, keyless (Node, scratchpad `rec.mjs`). **Control:** the derived post-1945 peaks and troughs (1948-11/1949-10 … 2007-12/2009-06, 2020-02/2020-04) match NBER's published dates exactly.
-- **Measured:** peak-to-peak gaps in months: 56, 49, 32, 116, 47, 74, 18, 108, 128, 81, 146. **Mean 6.48 years**, but only **2 of 11** gaps fall in 60-96 months. Trough-to-trough: mean 6.41 years, also 2 of 11. The range runs from 18 months (1980→81) to 146 months (2007→20).
-- **Cohorts** (born mid-year B, recessions overlapping ages 6-17): 1960 → 2, 1970 → 2, 1975 → 2, 1980 → **1**, 1985 → **1**, 1990 → 2, 1995 → 2, 2000 → **1**, 2005 → **1**, 2008 → **1**. None reaches three. "Lived through several" for adults today holds (born 1978, the median adult: 6).
-- **The premise broke on the memory clause.** The average is defensible, but "arrives every 5-8 years" reads as regular, the same shape as L36's "typical 12-18 months" fixed earlier today.
-- **Why "5-8 years" stays:** `nestedCyclesShortLabel` (markets.js) lifts "every 5-8 years" from this sentence in each language, and check-data §71 (c) bounds the chart's cycle count by it. The mean sits inside the range, so the phrase stays with "on average". Changing the framework number (L32 subtitle, quiz q003 key, chart) is a separate, arguable decision and is not made here.
-- **Surface scan:** grep for `5-8`/`5–8`/`5 to 8`/`two or three`/`8 years` in five scripts over `src`, `public` and the root docs. The memory claim appears **only in L33 × 5 languages**. **Control:** the same scan found the known `5-8` hits in lessons.js, quizText.*, markets.js and kidsAges58, and those were left alone.
-
-#### What shipped (L33 §3, en/es/ko/zh/ja)
-- en: "each one arrives every 5-8 years, so by adulthood most people have direct memory of at least two or three." → *"in the US one has come along every 5-8 years on average since World War II, though the actual gap between recessions has run from a year and a half to more than twelve years, so most people remember at least one or two by the time they reach adulthood."* es/ko/zh/ja carry the same content, and each keeps its chart-label substring (`cada 5 a 8 años`, `5-8년마다`, `每5-8年`, `5-8年ごとに`).
-- Node patcher: old=1/new=0 before and old=0/new=1 after, for all five. Originals are in the scratchpad. The charts.jsx NestedCycles header comment quoted the old sentence, and its quote was updated to match.
-- Ledger: L33 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: LAUNCH_PLAN "~27,000 words" → "~27,100" (generated). `translation-completeness --write` was not run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` after edit, before ledger | **exit 1**: the expected §10.4 ledger mismatch (L33 ×4 stale) |
-| `npm test` final (after the comment edit) | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | old en/zh/ja phrases → **no file**. New phrase in each language → its own `lessonContent.economy.<lang>-*` chunk. Control ("The long-term cycle spans 75-100 years") → en chunk. Negative probe → no file |
-| Live walk | not done: one sentence of text in a card that already wraps |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new sentence (count 1) → `check-blindspot` **exit 1**. Restored (`cmp`-equal) → **exit 0**. No date, live figure, attribution or kids surface was added.
-- **DECISIONS.md / already-done:** the NestedCycles decision (item 27, §71) depends on "5-8 years" being in the prose, and it still is. The test run confirms §71 is green. Nothing redone.
-- **Could the new text be wrong?** "On average every 5-8 years": 6.5 by both peak and trough measures. "A year and a half to more than twelve": 18 and 146 months. "At least one or two by adulthood": every cohort measured got 1 or 2. **Limits:** a recession between ages 6 and 17 is a proxy for "remember", and the numbers are US-only (the sentence now says "in the US"). No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **"5-8 years" as the framework's cycle length** (L32 subtitle, quiz q003 key, NestedCycles label and alt text). The mean holds, but since 1982 the gaps have averaged about 9.7 years (108, 128, 81, 146 months). Changing it touches a quiz key and a chart guard. Arguable.
-
-**Owner-facing, one line:** the long-term debt cycle lesson said everyone remembers two or three recessions by adulthood. Nobody born since 1960 lived through three between ages 6 and 17, and most lived through one or two. The sentence now says "at least one or two", and notes that the gap between recessions has ranged from 1.5 to 12 years, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-13 (scheduled dev-agent; W-6.2 rule 1 free: the previous run was a free pick and its only note ("5-8 years" as the framework length) called itself arguable. This pick came from reading L39 against data) — lesson 39 told learners a PMI reading "Above 50 = expansion expected. Below 50 = contraction expected", from a survey of managers' "hiring plans". **The US manufacturing PMI stayed below 50 for most of 2023 and 2024, and `USREC` is 0 from then through 2026-08**: no recession followed. PMI's 50 means activity grew or shrank versus the month before; it is not a forecast. The sentence now says that and gives the counterexample, in all five languages
-
-#### Step 3.5: the premise measured, with controls
-- **Prior ruling read first.** The archived VIX-bands run (archive ~l.32100) left "PMI's 50" alone as *definitional*: 50 marks no change. **That still holds, and this run keeps the 50.** What that run did not judge is the word **"expected"** beside it, together with "hiring plans" and "LEADING indicator … before the broader economy". Read together, those turn a construction constant into an economy-wide forecast, the same class as L36's "12-18 months".
-- **Instrument:** FRED dropped ISM (`NAPM` now returns an HTML page, which I checked, so a keyless FRED route is gone). I used DBnomics `ISM/pmi/pm` (keyless JSON) plus FRED `USREC`. **Coverage is only 2020-05 → 2025-12, and the last four values (11.1, 10.0, 10.0, 10.3) are not PMI readings**, so the instrument is broken after 2025-08 and those rows are excluded. **Controls:** 2020-05 **43.1**, 2022-11 **49.0**, 2022-12 **48.4**, and 2025-01 through 2025-08 (**50.9, 50.3, 49.0, 48.7, 48.5, 49.0, 48.0, 48.7**) all match ISM's published headlines. 2024-03 reads **49.8** against a first print of 50.3, which is ISM's annual seasonal revision. That is why the fix says "most of 2023 and 2024" and not a month count: that wording is true under both vintages.
-- **Measured:** below 50 in every month from 2022-11 through 2024-12 on the revised series (**26 months**). On first prints there was one month at 50.3 in 2024-03. Below 50 again 2025-03 → 2025-08. `USREC` is 0 for every month from 2020-05 to 2026-08. **The premise held.** "Below 50 = contraction expected" failed across the longest stretch the instrument covers. Longer history was **not** measured (no keyless source), so the fix makes no claim about other decades.
-- **Surface scan** (grep -e for each language's "expected" phrasing and "hiring plans" over `src scripts public` and root `*.md`): **5 hits, all L39 §1**. **Control:** the scan found all five known language copies. The glossary `PMI` entry ("Above 50 = expansion. Below 50 = contraction", with factories in its example) describes the sector and is the definitional reading, so it is left alone. No quiz question keys on PMI's threshold. L39 §2's phase matrix ("PMI above 50 … tend to") is typical-reading language and is left alone.
-
-#### What shipped (L39 §1, en/es/ko/zh/ja)
-- en: *"it asks factory and service managers whether their orders, output and hiring went up or down from the month before, before those changes show up in GDP. Above 50 = activity growing. Below 50 = activity shrinking. It's a LEADING indicator, meaning it tends to move before the broader economy does — but a reading below 50 is not a recession forecast: the US manufacturing PMI stayed below 50 for most of 2023 and 2024, and no recession followed."* es/ko/zh/ja carry the same content (es uses `EE.UU.`, the file's majority form 11:2; ko uses `경기침체`, 15:2).
-- Node patcher (`scratchpad/patch.mjs`): old=1/new=0 before and old=0/new=1 after for all five, writing nothing unless every pre-check passed. Originals are in `scratchpad/orig/`.
-- **`lessons.js` L39 `minutes` 3 → 4.** `npm test` failed with *"id 39: minutes is 3, but its text computes to 4"*. Per `DECISIONS.md` minutes are derived, never authored, so I took the 4 rather than cutting the counterexample. **Disclosed plainly: this made a lesson longer.** Catalog total 164 → **165 min**, generated by `npm run readiness -- --write` into `LAUNCH_READINESS.md`, `LAUNCH_PLAN.md` (gate still **met**) and `CLAIMS.md` A6.
-- Ledger: L39 es/ko/zh/ja re-marked `ai` via `translation-review.mjs mark`. `translation-completeness --write` was **not** run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` before edit | exit 0 (orientation run) |
-| `npm test` after edit, before minutes/ledger | **exit 1**, expected: L39 minutes 3≠4, and §10.4 ledger mismatch (L39 ×4 stale) |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three; option-length cue unchanged); readiness 44 lessons / 155,836 en chars / 165 min |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | 5 old phrases (`Below 50 = contraction expected`, `se espera contracción`, `수축 예상`, `预期收缩`, `収縮の見通し`) → **no file**. 5 new phrases → their own `lessonContent.economy.<lang>-*` chunk. Control (unchanged "calm seas, above 40") → en chunk. Negative probe → no file |
-| Live walk | not done: text only, in a card that already wraps |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new sentence (count 1) → `check-blindspot` **exit 1** (§10.1). Restored from the scratchpad (`cmp`-equal) → **exit 0**. No date-relative wording, live figure, attribution or kids surface. "2023 and 2024" is a closed historical interval, not "recently".
-- **DECISIONS.md / already-done:** `DECISIONS.md` mentions PMI only as private mortgage insurance in lesson 12. This does not undo the archived ruling that PMI's 50 is definitional; it keeps the 50 and removes the forecast reading.
-- **Could the new text be wrong?** "Stayed below 50 for most of 2023 and 2024": 24 of 24 months on the revised series; on first prints the only month I know was above 50 is 2024-03 (50.3), and the other first prints were not measured. "No recession followed": `USREC` 0 through 2026-08, 20+ months after the stretch ended. "Went up or down from the month before" is how ISM defines its diffusion indexes. PMI is a composite of five, so "activity" is a simplification, and it is the one ISM's own report uses. **Limits:** only 2020-05 → 2025-08 was measured, and whether below-50 readings preceded earlier recessions was not. The sentence claims only the counterexample. No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L39 thinkAbout "tariffs are pushing costs to a multi-generational high"** reads like 2025 current events inside an "Imagine an economy" prompt. It is hypothetical-framed, so this is arguable, but it is the closest thing to a dated live-looking claim left in L39.
-- **DBnomics `ISM/pmi/pm` has returned non-PMI values since 2025-09.** Any future run using it must exclude them, or pick another source.
-
-**Owner-facing, one line:** the economic-indicators lesson taught that a PMI below 50 means a contraction is coming. US manufacturing PMI sat below 50 for most of 2023-24 and no recession followed. The lesson now says what 50 actually marks and gives that counterexample, in all five languages. It is one minute longer (3 → 4). This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-14 (scheduled dev-agent; W-6.2 rule 1 free: the previous run was a free pick, and its only notes (L39's tariff thinkAbout, the DBnomics caveat) called themselves arguable or were instrument limits. This pick came from reading L40, the only economy lesson with no commit since 2026-09-01) — lesson 40's closing summary told learners the three layered cycles give "a map for understanding where an economy has been, **where it is now, and where it's probably headed**". Two lessons earlier, L38's takeaway says *"a phase is usually only clear once it has passed — so the four phases describe a pattern that has repeated, not a schedule of what comes next"*. L33 says the actual gap between US recessions has run from 18 months to more than 12 years, and L36 and L39 each now say their indicator is not a standalone forecast. The track's last lesson made a promise its own lessons had already taken back. The sentence now calls it a map, not a timetable, and cites L38, in all five languages
-
-#### Step 3.5: the premise measured, with controls
-- **Why L40:** `git log --since=2026-09-01` shows 0 commits naming lesson 40, the only economy lesson with none. Grep over both logs: no run has ruled on "probably headed".
-- **Instrument:** a Node regex over `lessonContent.economy.en.js` for `predict|forecast|headed|timing|not a recession|year and a half|…`, printing the lesson for each hit. **Control:** it found the known L36 ("one input, not a standalone forecast") and L39 ("not a recession forecast") sentences, both shipped 2026-09-13. L38's takeaway was read in full, since the regex did not match its wording ("schedule of what comes next").
-- **The premise held.** L40 §2 was the only sentence in the track that claimed the template shows where an economy is now and where it is headed. Both halves contradict L38's takeaway, and the "headed" half also contradicts L33's measured 18–146-month gap spread.
-- **Surface scan:** grep for `headed`, `where .* going` and each language's phrase (`hacia dónde`, `향할 가능성`, `正走向`, `向かう可能性`) over `src public *.md`. The claim appears **only in L40 §2 × 5 languages**, and the scan found all five known copies (control). The other hits were unrelated (`unheaded`, a policy-scenarios sentence). The quiz for L40 (`q008`) keys on Rule 1 only, so it was left alone.
-
-#### What shipped (L40 §2, en/es/ko/zh/ja)
-- en: "…where an economy has been, where it is now, and where it's probably headed." → *"…where an economy has been and which forces are pushing on it now. It is a map, not a timetable: as “The 4 Phases of Economic Cycles” showed, no two cycles have run the same length, and a phase is usually only clear once it has passed."* es/ko/zh/ja carry the same content. Each uses its own L38 title and reuses L38's takeaway wording in that language (`se ha repetido`/`지나고 나서야 분명해집니다`/`过去之后才看得清楚`/`過ぎてから初めてはっきり`), so the two lessons now say the same thing in the same words.
-- Node patcher (`scratchpad/patch.mjs`): old=1/new=0 before and old=0/new=1 after for all five, writing nothing unless every pre-check passed. Originals are in `scratchpad/orig/`.
-- Ledger: L40 es/ko/zh/ja re-marked `ai` under the ledger's existing reviewer name. `npm run readiness -- --write` updated the generated char counts in `LAUNCH_READINESS.md` (en 155,836 → 155,995). Minutes are unchanged (165). `translation-completeness --write` was **not** run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` after edit, before ledger | **exit 1**, expected: §10.4 ledger mismatch (L40 ×4 stale) |
-| `npm test` after ledger, before readiness | **exit 1**, expected: §4.3/§10.4 generated char counts |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
-| Cross-reference guards see the new title | A planted `As “The 4 Phases of Economic Cycles” showed` in L29 (a forward reference, en only) → `check-data` **exit 1**, failing both **§75** (9 lessons later) and **§58** (es/ko/ja don't carry the reference). Restored from the scratchpad (`cmp`-equal) → **exit 0**. So L40's new reference is recognized, points backward, and is present in all five languages |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | 5 old phrases → **no file**. 5 new phrases → their own `lessonContent.economy.<lang>-*` chunk. Control (unchanged "Layer all three together") → en chunk. Negative probe → no file |
-| Live walk | not done: text only, in a card that already wraps |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** Planting *"You should buy index funds now."* after the new sentence (count 1) → `check-blindspot` **exit 1** (§10.1). Restored (`cmp`-equal) → **exit 0**. The change *removes* a forecasting promise addressed to "an investor". No date, live figure, attribution or kids surface was added.
-- **DECISIONS.md / already-done:** nothing in either file rules on L40's summary. The "5-8 year" and "75-100 year" phrases that §71 and the NestedCycles chart depend on are untouched.
-- **Could the new text be wrong?** "No two cycles have run the same length": L33's measured gaps (56, 49, 32, 116, 47, 74, 18, 108, 128, 81, 146 months) have no repeats. "Which forces are pushing on it now" claims the template explains mechanisms, which is what L29–L39 teach, and not that it identifies the phase. **Limits:** no fluent reader has seen the es/ko/zh/ja wording (O-3). L40 still presents the three rules unattributed. That was not re-judged here, since §10.2's closure is a standing rule this run did not reopen.
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L40 thinkAbout "You now understand more about how the economy works than most people"** is an unmeasured comparative claim, and flattering. Arguable in a closing prompt.
-- **L40 Rule 1 "eventually the debt burden crushes you, whether you're a household or a country"** and `q008`'s explain "This applies to individuals AND nations" state as certain something that does not always hold for a country that borrows in its own currency. Not measured in this run: the claim was not checked against the track's deleveraging lessons. Arguable, and it touches a quiz explanation.
-
-**Owner-facing, one line:** the last economy lesson promised that the cycle template shows where an economy is "probably headed", which the phases, yield-curve and PMI lessons before it each say it can't. It now calls the template a map, not a timetable, and points back to the phases lesson, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-14 (scheduled dev-agent; W-6.2 rule 1 free: the previous run was a free pick, and its two notes (L40's "more than most people" and Rule 1's "whether you're a household or a country") each called themselves arguable. This pick came from reading L31-L35 against FRED) — lesson 33 told learners the key difference between a long-term debt peak and an ordinary recession is that "interest rates can't ride to the rescue, because by this point they're often already close to 0%", two sentences after naming the US in 2008, Japan in 1989 and the US in 1929. **At none of those three peaks were rates near 0%**: the fed funds rate was **5.26% in July 2007**, and the central bank's lending rate stood at **6%** in the US in October 1929 and in Japan in August 1990. Rates got to about zero only **after** being cut, and the slump went on anyway. The sentence now says that, in all five languages
-
-#### Step 3.5: the premise measured, with controls
-- **Why L33 §2:** no prior run measured this sentence. The archive (2026-08 translation review) and `DECISIONS.md` only restored its *hedge* in es/ko/zh/ja ("often ... close to"); neither checked the claim against data.
-- **Instrument:** `scratchpad/rates.mjs` over FRED CSVs (keyless, per memory): `FEDFUNDS`, `IRSTCI01JPM156N` (Japan call rate), `INTDSRJPM193N` (Japan discount rate), `M13009USM156NNBR` (NY Fed discount rate) and `M1329AUSM193NNBR` (US 3-6 month Treasury yields). **Control:** `FEDFUNDS` 1981-01 = **19.08** and 2008-12 = **0.16**, both known values, so the parse reads the right column and months.
-- **Measured:** US fed funds 2007-07 **5.26**, 2007-12 4.24, first below 0.5 in **2008-11**. NY Fed discount rate 1929-10 **6.0**. US short Treasury yields 4.37 in 1929-10, dipped to 0.41 in mid-1931, went back up to 2.48 in early 1932, and were **≤0.04 from 1932-09**. Japan discount rate 1990-08 **6.0**. Japan call rate 1989-12 6.45, 1990-12 8.23, first below 1% in **1995-07**, first below 0.1% in 1999-03.
-- **The premise held.** Rates were 4-8% as each named peak hit. They went to about zero afterwards: within about 11 months (US 2008), about 3 years (US 1929), and 5-10 years (Japan). The sentence's claim that rates "can't ride to the rescue" is right. Its reason ("already close to 0%") is wrong for all three of its own examples. The true reason is that cutting rates to zero did not bring borrowing back.
-- **Surface scan:** grep `close to 0%|near 0%|near zero|ride to the rescue` over the en content, glossary and quiz. Found L33 §2 (fixed), L34 §1 ("When rates are already near 0%" is a conditional and stays), and `q` "Which of these is NOT one of the 4 tools" explain "in a deleveraging, rates are usually already near 0%" (left alone, see notes). The scan found the known L33 sentence (control).
-
-#### What shipped (L33 §2's last paragraph, en/es/ko/zh/ja)
-- en: "…interest rates can't ride to the rescue, because by this point they're often already close to 0%." → *"…rate cuts can't ride to the rescue. Interest rates weren't near 0% when these peaks hit — the Fed's rate was above 5% in 2007, and the central bank's lending rate was 6% in the US in 1929 and in Japan in 1990. Short-term rates did fall close to 0% (in the US by late 2008 and by late 1932, in Japan by 1995), but borrowing and spending still didn't come back, because households and businesses already owed more than their incomes could carry. Getting out of the slump took the harder tools in the next lesson."* es/ko/zh/ja say the same. Each uses its corpus's existing term for the Fed (`la Reserva Federal`/`연준`/`美联储`/`FRB`) and for "next lesson" (`próxima lección`/`다음 레슨`/`下一课`/`次のレッスン`).
-- "The next lesson" (L34) is where the 1933 and post-2008 recoveries are credited to tool 4, so the pointer matches what L34 says. It uses no title, so the §58/§75 cross-reference guards are not involved.
-- Node patcher (`scratchpad/patch.mjs`) showed old=1/new=0 before and old=0/new=1 after for all five languages. It writes nothing unless every pre-check passes. Originals are in `scratchpad/orig/`.
-- **The first `npm test` caught my own defect:** `lessonTerms[33][1]` links "Interest Rate" from this section, and my first English draft ("Rates weren't…") no longer contained the phrase. I restored it ("Interest rates weren't…"), with a 1→1 count-asserted replace.
-- Ledger: L33 es/ko/zh/ja re-marked `ai` under the ledger's existing reviewer name. `npm run readiness -- --write` updated the generated counts (en 156,408 chars; LAUNCH_PLAN §4.0 27,100 → 27,200 words; minutes unchanged at 165). `translation-completeness --write` was **not** run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` after the first edit | **exit 1**: the ledger mismatch (expected) **and** the lessonTerms link failure (my defect, fixed above) |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
-| Numerals across languages | No existing check guards this paragraph. **A planted es 1995→1996 left `check-data` at exit 0**, so I compared directly: `scratchpad/nums.mjs` digit tokens in the new paragraph are `0% 0% 1929 1932 1990 1995 2007 2008 5% 6%` in **all five**. Control: the tokens it prints (1995, 1932) exist only in the new text, so it read the edited files. Plant restored, `cmp`-equal, `check-data` exit 0 |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | new phrases → each language's own `lessonContent.economy.<lang>-*` chunk; old "often already close to 0%" → no file; negative probe → no file |
-| Live walk | not done: text only, in a card that already wraps |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** A planted *"You should buy index funds now."* after the new text (count 1) made `check-blindspot` exit 1. Restored (`cmp`-equal) → exit 0. Every figure added is dated history (2007, 1929, 1990, 1932, 1995). No live-looking figure, date, attribution or kids surface was added.
-- **DECISIONS.md / already-done:** the 2026-08 translation review restored "often ... close to" in the four translations. This run replaces that hedge with measured figures in all five, so the translations are not re-flattened against the English; they still carry the same content as it. No other decision touches L33 §2.
-- **Could the new text be wrong?** "Lending rate was 6% … in the US in 1929": NY Fed discount rate 6.0 in 1929-10 (5.74 was August's monthly average). "By late 1932": US short yields ≤0.04 from 1932-09. The mid-1931 dip to 0.41 reversed, so "by late 1931" would have been wrong. "In Japan by 1995": call rate 0.47 in 1995-10. "Borrowing and spending still didn't come back": this is the lesson's own mechanism, and it holds for the period while rates were near zero, before tool 4. **Limits:** the 1929 "short-term rates" are Treasury yields, not a rate the Fed set (the discount rate stayed at 1.5-3.5%). The English says "short-term rates fell", not "were cut to", for that reason. No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **The quiz explain "in a deleveraging, rates are usually already near 0%"** (L34's "NOT one of the 4 tools" question, all five languages) is defensible for the *later* stretch of a deleveraging, when rates have already been cut to about zero, and that is the moment the question is about. Arguable. It could read "have usually already been cut to near 0%" for consistency with L33.
-- **L32's takeaway "The central bank controls the cycle by raising and lowering rates"** overstates what L35 §2 now says ("History is more mixed than the rule sounds"). Not measured this run.
-- **Instrument gap:** no check anchors L33's translated numerals. By W-6.2 rule 3, the learner-visible failure a check would catch is a translation stating a different year than its English. That sentence can be written, but there are zero live instances, so this is a note, not an item.
-
-**Owner-facing, one line:** lesson 33 said long debt crises differ from ordinary recessions because rates are "already close to 0%", and at 2008, 1929 and Japan's 1990 bust, the three examples it names, rates were 5-6%. They were cut to about zero afterwards and it didn't end the slump. The lesson now says that, in all five languages. It reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-14 (scheduled dev-agent; W-6.2 rule 1: residual pick #1 in a new chain, which the rule allows. The previous run was a free pick, and its second note named this sentence as "not measured this run") — lesson 32's **takeaway** told learners "The central bank **controls** the cycle by raising and lowering rates", and quiz `q003`'s explanation called the short-term cycle "the business cycle **controlled primarily** by the central bank through interest rates". **FRED: each of the last four US recessions (starting 1990, 2001, 2007, 2020) began after the Fed had already been cutting rates for months**, and L33 (since `ce678aa`) says cuts to about zero did not end the 2008 slump. Both surfaces now say the central bank tries to steer the cycle without controlling it, and the takeaway gives the four years. All five languages
-
-#### Step 3.5: the premise measured, with controls
-- **Instrument:** `scratchpad/m.mjs` over FRED CSVs `FEDFUNDS` and `USREC` (keyless). For each recession start, it prints fed funds at the start, 12 months before, and the 24-month peak. **Control:** `FEDFUNDS` 1981-01 = **19.08** and 2008-12 = **0.16**, both known values.
-- **Measured:** the six recessions from 1957 to 1981 each began with rates **higher** than a year earlier (for example 1973-12: 9.95 vs 5.33; 1981-08: 17.82 vs 9.61), so rate hikes did precede them. The last four each began **after cuts had started**: 1990 (peak 9.85 in 1989-03 → 8.15 in 1990-07), 2001 (6.51 in 2000-11 → 5.31 in 2001-03), 2007 (5.26 in 2007-07 → 4.24 in 2007-12), 2020 (2.40 in 2019-07 → 1.58 in 2020-02). **The premise held.** Rates are a real lever, as the six older episodes show. "Controls" fails four times in a row, and L32 §3 and L33 already say the tool runs out.
-- **Surface scan, two passes.** (1) An exact-phrase grep in all five languages over `src public *.md` found only the five L32 takeaways (control: all five known copies). **It missed `q003`**, whose wording is different. (2) A Node regex over the en content, glossary, economicSignals, markets and quiz text for control/steer near central bank/Fed/rate found the takeaway (control) **and `q003`**, plus four lines left alone: L29's "controls money and credit" (true), the glossary's "the only one the central bank controls directly" (the monetary base, true), and two "sets a target range and steers" lines (true). Also found: L32 §2's "steered mostly by the central bank's interest-rate decisions" (see notes). **Pass 2 widened the fix from 5 edits to 10.**
-
-#### What shipped (en/es/ko/zh/ja)
-- L32 takeaway, en: *"The central bank tries to steer the cycle by raising and lowering rates, but it doesn't control it: the US recessions that began in 1990, 2001, 2007 and 2020 each started after the Fed had already begun cutting rates."* The years are named, not "the last four", so the sentence cannot go stale when a new recession arrives. es uses `el Fed` (26:0 vs `la Fed`) and `EE.UU.`; ko uses `연준`/`경기침체`; zh `美联储`; ja `FRB`/`米国` (18:3 vs アメリカ).
-- `q003` explain, en: *"It's the business cycle, which the central bank tries to steer through interest rates without fully controlling it."* The "5-8 years" key is untouched (ruled arguable earlier; L33 carries the spread). Options are unchanged, so the option-length cue is unchanged.
-- The Node patcher (`scratchpad/patch.mjs`) asserted old=1/new=0 before and old=0/new=1 after for all ten, in a dry run and then a write. Originals are in `scratchpad/orig/`.
-- Ledger: L32 es/ko/zh/ja re-marked `ai` under the ledger's existing reviewer name. `npm run readiness -- --write`: en 156,408 → 156,559 chars, LAUNCH_PLAN §4.0 ~156,000 → ~157,000 chars and 27,200 → 27,300 words, minutes unchanged at 165. `translation-completeness --write` was **not** run (memory note).
-
-#### Verification
-| Check | Result |
-|---|---|
-| `npm test` after edit | **exit 1**, expected: §10.4 ledger (L32 ×4 stale) |
-| `npm test` after ledger | **exit 1**, expected: four generated readiness/plan figures |
-| `npm test` final | **exit 0, 3 WARN / 0 FAIL** (the standing three) |
-| Translated numerals | The years in the L32 takeaway field are `1990 2001 2007 2020` in all five. Control: the old takeaway had no digits, so these can only come from the new text |
-| Build | `scripts/build-out-of-tree.sh` exit 0, system Node v24.18.0 |
-| Built bundle | 6 old phrases → **no file**. 10 new phrases → their own language's `lessonContent.economy.<lang>-*` / `quizText.<lang>-*` chunk. Control (unchanged "Layer all three together") → en chunk. Negative probe → no file |
-| Live walk | not done: text only, in a card that already wraps |
-
-#### Step 5: adversarial self-check
-- **Blindspot register: PASS, shown to see the edited file.** A planted *"You should buy index funds now."* after the new takeaway (count 1) made `check-blindspot` exit 1. Restored (`cmp`-equal) → exit 0. The years are closed history, not a live figure. No attribution or kids surface was added. The takeaway's "works like a machine" metaphor was left as it was; a grep of both logs, `DECISIONS.md` and `CLAIMS.md` finds no ruling on it, and it carries no name.
-- **DECISIONS.md / already-done:** nothing rules on L32's takeaway or `q003`'s explanation. This does not undo the earlier L35 §2 "History is more mixed" fix; it brings L32 into line with it.
-- **Could the new text be wrong?** The start months are NBER peaks: 1990-07, 2001-03, 2007-12, 2020-02. The first cuts came in 1989-06, 2001-01, 2007-09 and 2019-07, so each came before its peak. The 2020 recession was set off by the pandemic, and the sentence says only that it started after the cuts, which is true. "The US recessions that began in" those years: each year had exactly one. **Limits:** "doesn't control it" is a judgment from four counterexamples, not a proof. It is the same claim L35 §2 already makes. No fluent reader has seen the es/ko/zh/ja wording (O-3).
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- **L32 §2's "This up-and-down cycle repeats roughly every 5-8 years, steered mostly by the central bank's interest-rate decisions"** is now in mild tension with the takeaway below it. "Mostly" is a hedge, and the older six episodes support it. Arguable. Any fix should also look at "roughly every 5-8 years" against L33's measured spread.
-- **Instrument lesson:** an exact-phrase surface scan misses a paraphrase of the same claim (`q003`). A concept regex over en, with the known sentence as the control, caught it. Future content fixes should run both.
-
-**Owner-facing, one line:** lesson 32's takeaway and a quiz explanation said the central bank "controls" the business cycle with rates. The last four US recessions each started after the Fed was already cutting. Both now say it tries to steer the cycle without controlling it, in all five languages. This reaches learners on the next push (**O-5**).
-
-**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
-
-### 2026-09-15 (scheduled dev-agent; W-6.2 rule 1 does not arise: this pick was triggered by an instrument, not a residual note. The previous run's only note, L32 §2's "steered mostly", called itself arguable) — W-5.3's **fifteenth** firing: `npm test` warned that the run log had **0.56 runs** of headroom and would go over warn on this run's own commit, so 2026-09-12 (19 entries, 179,098 b) moved to the archive in one piece
-
-#### Step 3.5: the premise measured, with controls
-- **Trigger:** `MEASURED log-size: file 684698 b, run log 245993 b, floor 438705 b (backlog 400299 b), archive 4209294 b, 3 live day(s)`, taken 2026-09-15 at `2fb1f46`. That is 98.4% of the 250,000 b warn, with headroom 4,007 b against +7,124 b of writing per commit. **Premise HOLDS:** a content run would have committed over budget. Earlier passes fired at 94.8% (2026-09-03), so firing before warn is precedent, not a new reading of the rule.
-- **Heading count against commits:** there are 19 `### 2026-09-12` headings, and `git log` shows 19 commits touching `AGENT_LOG.md` on 09-12. Dates were read **positionally** (`slice(4,14)`), not greedily, per the fourteenth pass's control. The splitter's 28 headings all carry a date, and the day block is contiguous (asserted).
-
-#### What shipped
-- 2026-09-12 → `AGENT_LOG.archive.md` under `## Archived 2026-09-12`, verbatim, in live-file order. The archive title moves to `→ 2026-09-12`. The run log's one-byte preamble is kept.
-- Run log **245,993 → 66,895 b**, file **684,698 → 505,600 b**, archive **4,209,294 → 4,388,416 b** (+24 b heading + 179,098 b block). W-5.3 got a four-line tally.
-- **The mover worked in `Buffer` space from the start**, which fixes the fourteenth pass's UTF-16 defect. All 13 assertions ran before any output and passed on the first run. **That clean first run is evidence for O-6's other side**: a recipe written down well enough to follow can be run correctly by hand.
-
-#### Verification
-| Check | Result |
-|---|---|
-| Pre-cut | tree `cmp`-equal to `git show HEAD:` for both logs; `npm test` exit 0, 4 WARN |
-| **P1** conservation (block read back from the new archive, reinserted, rebuilds HEAD live byte for byte) | **true** |
-| **P2** composition (HEAD archive + title + heading + block cut **independently** by line split) | **true** |
-| **P3** containment | **19/19** archived, 0 live |
-| **P4** floor above `## Run log` byte-identical to HEAD | **true** |
-| Plant 1 (1 byte in moved block) / Plant 2 (1 floor line deleted) / Plant 3 (one entry deleted from archive) | P1+P2 false / P1+P4 false / P1+P2+P3 false (18/19). Each plant fails exactly its targets |
-| Install guard | HEAD re-read `2fb1f46` and both files `cmp`-equal to HEAD immediately before copying; outputs `cmp`-equal after |
-| Post-cut `npm test` | **exit 0, 3 WARN / 0 FAIL**, log-size WARN gone: `run log 66895 b ... 2 live day(s)` |
-| `git diff --numstat` (before this entry) | archive +1174/−1 (the title line); live 0/−1171, a pure cut, plus the W-5.3 tally |
-| Build | `scripts/build-out-of-tree.sh` exit 0 (regression guard only; no build input touched) |
-
-#### Step 5: adversarial self-check
-- **Blindspot register / stale-date rule:** no file under `src/`, `public/` or `scripts/` was touched, so §10.1-10.3 and §2.3 have nothing to regress on. `check-blindspot` does not read the logs (established by plant 2026-09-12), so its green exit is not cited as evidence.
-- **DECISIONS.md:** nothing there governs archiving mechanics. **W-5.3's own limit was respected:** only the action was taken, and no clause or budget was reworded (items 115/121 remain the owner's).
-- **Already-done:** W-5.3 is a standing rule that fires on measurement; this is its fifteenth intended repeat.
-- **My verification claim:** P1-P4 use `git show HEAD:` copies as the reference, so a reviewer can re-derive them from the repo. **Limits:** nothing checks the archive's internal date ordering, and `npm test` cannot see archive loss. The proofs are the evidence, not the green suite.
-
-#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
-- Nothing new. The live site's lag (**O-5**) and unreviewed translation (**O-3**) are unchanged, and this run touched no build input.
-
-**Owner-facing, one line:** housekeeping only, with no learner-visible change: the 2026-09-12 run-log day (19 entries, 179 KB) moved verbatim to the archive, proven byte-for-byte. The log-size warning is cleared, and `AGENT_LOG.md` is 506 KB. **O-6** (automate the archiving pass?) is still your call.
-
-**Schedule:** the cron is the owner's lever; not read, not touched.
-
 ### 2026-09-17 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was instrument-triggered and its residual note said "Nothing new", so this was a free pick. It came from ranking the content modules by last-touch date — `policyScenarios.js`, 4 commits, last 2026-08-21, the least-touched learner-visible module that had never been swept for accuracy) — the "Be the Fed Chair" simulator told learners that **"Central banks have tightened into weakness before, but for reasons outside the dual mandate: defending a currency that is collapsing, for instance."** The **ECB raised rates in 2008 and again in 2011 with the euro area already in recession (OECD `EUROREC`), because inflation was above its target** — squarely inside the mandate, and it reversed both within months. The sentence now says that, in all five languages
 
 #### Step 3.5: the premise measured, with controls
@@ -6198,3 +5813,42 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the glossary said deflation means prices falling "because spending decreases" and that it "signals economic weakness". In 2015 US prices fell because energy got a fifth cheaper, while spending and jobs kept growing, so the definition now says what deflation is and when it has and has not come with a slump, in five languages. **Committed, not pushed** (O-5). The next run should be the run-log archiving pass.
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1 does not arise: this pick was triggered by an instrument and named by the previous run's first note, "the next run's pick is the archiving pass") — W-5.3's **sixteenth** firing: `npm test` warned that the run log was **over** the 250,000 b warn budget, so 2026-09-13, 09-14 and 09-15 (10 entries, 71,480 b) moved to the archive in one piece
+
+#### Step 3.5: the premise measured, with controls
+- **Trigger:** `MEASURED log-size: file 690641 b, run log 251016 b, floor 439625 b (backlog 401219 b), archive 4388416 b, 5 live day(s)`, taken 2026-09-18 at `637778f`. That is 100.4% of warn (over by 1,016 b, 0.12 runs). **Premise HOLDS.** The script's own controls 1-4 fired `ok`.
+- **Headings against commits:** 09-13 has 6 headings and 7 commits touching `AGENT_LOG.md`. Each commit's `+### ` lines show 6 commits that added one 09-13 heading each, plus `2dcc1db` (a US-English wording fix that added no entry). 09-14 has 3 headings and 3 commits; 09-15 has 1 and 1. Dates were read positionally (`slice(4,14)`). The mover asserted that each day is one contiguous region and that these three are the oldest.
+- **How many days, decided deliberately (the 4th pass's open question).** The instrument's plan was one day (09-13, 44,486 b), leaving 206,530 b: **5.3 runs** at the measured +8,174 b/commit, about 10 hours at a 2-hour cadence. Three days (09-13 + 22,398 + 4,596 b) leave **8.6 runs**. Moving 09-17 too would leave 19 runs, but it would archive the entries whose notes the current residual chain still cites. I stopped at the 09-16 gap. The oldest-first order is unchanged.
+
+#### What shipped
+- 09-13 → 09-15 → `AGENT_LOG.archive.md` under `## Archived 2026-09-13 → 2026-09-15`, verbatim, in live-file order. That is the multi-day heading form of 08-30 → 08-31. The archive title moves to `→ 2026-09-15`.
+- Run log **251,016 → 179,536 b**, file **690,641 → 619,161 b** before this entry, archive **4,388,416 → 4,459,935 b** (+39 b heading + 71,480 b block; the title is the same length). W-5.3 got a four-line tally.
+- The mover worked in `Buffer` space (the 14th pass's UTF-16 fix) with 11 assertions, all of which ran before any write. It passed on the first run.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Pre-cut | tree `cmp`-equal to `git show HEAD:` for both logs |
+| **P1** conservation (block read back out of the new archive and reinserted rebuilds HEAD's live file byte for byte) | **true** |
+| **P2** composition (HEAD archive + title + heading + block cut **independently** by line split) | **true** |
+| **P3** containment | **10/10** archived once, 0 live |
+| **P4** floor above `## Run log` identical to HEAD | **true** |
+| Plant 1 (1 char in a moved body line) / Plant 2 (1 floor line deleted) / Plant 3 (one 09-14 entry deleted from archive) | P1+P2 false / P1+P4 false / P1+P2+P3 false (9/10). Each plant failed exactly its targets. A first plant-1 attempt landed in a heading line and also failed P3, so it was re-run on a body line |
+| Install guard | HEAD re-read `637778f` and both files `cmp`-equal to HEAD immediately before copying; outputs `cmp`-equal after |
+| Post-cut `npm test` | **exit 0, 3 WARN / 0 FAIL**, log-size WARN gone: `run log 179536 b ... 2 live day(s)` |
+| `git diff --numstat` (before this entry and tally) | archive +392/−1 (the title line); live 0/−389, a pure cut |
+| Build | `scripts/build-out-of-tree.sh` exit 0 (regression guard only; no build input touched) |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / stale-date rule:** no file under `src/`, `public/` or `scripts/` was touched, so §10.1-10.3 and §2.3 have nothing to regress on. `check-blindspot` does not read the logs, so it is not cited.
+- **DECISIONS.md:** nothing governs archiving mechanics. **W-5.3's limit was respected:** only the action was taken, no clause or budget was reworded, and items 115/121 remain the owner's. Moving three days rather than one is a judgment the tally states, not a rule change. The instrument's plan is a minimum, and the 4th pass moved two days on the same reasoning.
+- **Already-done:** this is the rule's sixteenth intended repeat.
+- **My verification claim:** P1-P4 use `git show HEAD:` copies as the reference, so a reviewer can re-derive them from the repo. **Limits:** `npm test` cannot see archive loss, so the proofs are the evidence and the green suite is not.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Nothing new. The previous run's two arguable glossary notes (`Inflation`'s "spending grows faster than production", `PMI`'s "Above 50 = expansion") are unchanged and still live in the 09-18 entry above.
+
+**Owner-facing, one line:** housekeeping only, with no learner-visible change. Three run-log days (09-13 to 09-15, 10 entries, 71 KB) moved verbatim to the archive, with a byte-for-byte proof. The log-size warning is cleared and `AGENT_LOG.md` is about 625 KB. **O-6** (should the archiving pass be automated?) is still your call.
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** only the W-5.3 tally (4 lines).
