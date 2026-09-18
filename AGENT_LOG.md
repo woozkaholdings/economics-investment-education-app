@@ -6047,3 +6047,40 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the Markets table said real estate "responds with a lag" when rates rise. US home prices ended all 5 of the last 5 hiking cycles higher, and in 2022, the one cycle where they dipped mid-way, the turn came 4 months after the first hike, not later. The note now says so, in five languages. Commercial property is where a lag did show up, and the source comment records that. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was owner-directed, and both of its notes (L35's "real estate recovers", the unmeasured stocks/bonds notes) called themselves arguable or not picked, so this was a free pick. It came from reading `kidsContent.js` for claims no run has measured. The 09-05 ruling on its `$2+ trillion` covers that figure only, not the clause before it) — the parent guide's teen blurb (13-17, `lessons[2]`) called 2008's crisis **"a deleveraging — the first in 75 years"**, with no country named. **Lesson 33 names "Japan in 1989" as the same pattern, and Japan's private debt fell 63.6 points of GDP from 1993 to 2016** (BIS via FRED `QJPPAM770A`: 213.6% → 150.0%), 15 years before 2008. **For the US, the claim holds**: the largest pre-2008 fall in US private debt-to-GDP was **7.3 points (1990-93)**, against **31.7 points** after 2008. The clause now reads "the first in the US since the 1930s", in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FRED CSVs `QUSPAM770A` (US private nonfinancial credit / GDP), `QUSHAM770A` (households), `QUSNAM770A` (nonfinancial business), `QJPPAM770A` (Japan private). Each CSV's header was checked against the requested id (all four matched). Drawdowns of ≥3 pp from the running peak: `scratchpad/d/dd.py`.
+- **Control that fired:** the instrument had to find the 2008 US deleveraging and did: private **172.0% (2008-Q3) → 140.3% (2025-Q4)**, and households **98.4% (2007-Q4) → 68.1%**, and the private peak matches the "about 170% of GDP" that L34 has cited since `ae3d58a`.
+- **US, 1947 to 2007:** private credit fell 4.5 pp (1974-76) and 7.3 pp (1990-93). Households fell 3.9 pp at most (1967-71). Nothing before 2008 is within a factor of four of it. **"First in the US since the 1930s" is supported.** The series starts in 1947, so 1933-47 is not measured here, and "since the 1930s" makes no claim about it.
+- **Unqualified, the claim breaks** on the app's own lesson: L33 §2 says the pattern is "the US in 2008, Japan in 1989, and the US in 1929", and L34 counts "23 well-known debt crises". Japan's private deleveraging ran from 1993 to 2016 (−63.6 pp).
+- **"75 years":** 2008 − 75 = 1933. L33 dates the US peak to 1929, 79 years earlier. "Since the 1930s" says what is known without the spurious precision.
+- **Prior history, read before picking:** the archive's 08-3x Spanish-completeness run restored this clause to es as *"the concept the blurb exists to name"*. That was a translation fix, and the concept (naming the deleveraging) is kept. The 09-05 ruling (log §(d)) says not to re-derive `$2+ trillion`. That figure is untouched.
+
+#### What shipped (`kidsContent.js` 13-17 `lessons[2].text`, 5 strings)
+- en *"the first in the US since the 1930s"* · es *"el primero en EE.UU. desde la década de 1930"* (`EE.UU.` is the majority form in the es content files) · ko *"미국에서는 1930년대 이후 처음으로 디레버리징이 발생했고"* · zh *"美国自1930年代以来的首次去杠杆"* · ja *"米国では1930年代以来のデレバレッジ"* (`米国` is the ja lessons' form).
+- Patcher (node, UTF-8): old ×1 / new ×0 asserted before and 0 / 1 after, **5/5**. All five strings were read back in full afterward (`string-assertions-dont-check-content`). No source comment: `kidsContent.js` carries none, and this entry is the record.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0**. Plant *"You should buy stocks now."* inside this blurb → **exit 1, §10.1**. Restored from `scratchpad/bak/post.js` (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 5 new probes → `Reference-*.js`. **5 old probes → no file.** Control: the untouched neighbors (`$2조 이상을 발행`, `Fed printed $2+ trillion to stop`) → `Reference-*.js` |
+| Live walk | `dist/` served statically. Reference → Kids → Ages 13-17 at **320×700, all five languages**: new text found, no `75 years` form, document width 320, **0 overflowing elements**. Overflow control: a planted 200-char `nowrap` span → 1 overflowing element, then 0 after it was removed. Language reset to en, viewport reset |
+
+#### Step 5: adversarial self-check
+- **Could the new text be wrong?** (i) "Deleveraging" here means private debt falling relative to income. Total US debt did not fall (L34 has said so since `ae3d58a`), and the blurb does not say it did. (ii) 1930s-1947 is outside the series. The Depression deleveraging began 1930-33 by every standard account, and the new text dates nothing more exactly than the decade. (iii) The early-1990s US dip (−7.3 pp, business-led) is sometimes called a "balance-sheet recession". At a quarter of 2008's size it is not what L33 teaches as a long-term debt peak. (iv) No fluent reader has checked the es/ko/zh/ja wording (O-3).
+- **§10.3:** this is the parent guide's blurb text. It was not reframed toward children, and no framing words changed. **§10.1:** the guard's plant covers this string. **§10.2:** the "first deleveraging since the Depression" framing is the app's L33 cycle framing, with no attribution and no quote. The blindspot check's Dalio probe passed.
+- **DECISIONS.md / CLAIMS.md:** no rule covers deleveraging dates or kids-content facts. **Already-done:** this does not undo the es restoration or the `$2+ trillion` ruling, as recorded above.
+- **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **"In 2008, banks lent too much"**, same blurb. The overlending ran through 2004-06, and by 2008 lending was contracting. This is arguable as blurb shorthand for "the 2008 crisis", and it was not measured this run.
+- **`$2+ trillion … to stop the collapse`.** The 09-05 ruling's own rescue ("QE1+QE2 = $2.35T") counts QE2, which began in November 2010, 17 months after the recession ended (`USREC`). That makes "to stop the collapse" a stretch for the QE2 half. The ruling says not to re-derive it, and **it was not re-measured this run**. Arguable.
+
+**Owner-facing, one line:** the parent guide's teen blurb called 2008 "the first [deleveraging] in 75 years", but lesson 33 names Japan's 1990s debt bust as the same pattern. The claim holds only for the US, where no debt decline since 1947 came within a quarter of 2008's. It now says "the first in the US since the 1930s", in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
