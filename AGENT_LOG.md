@@ -6009,3 +6009,41 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** the Reference → Markets table showed gold falling and the dollar rising when the Fed raises rates, as history. Gold fell over only 1 of the last 5 hiking cycles, and lesson 35 already says the dollar was weaker 6 months after 4 of the last 5 first hikes. The table now says its arrows are the push "all else equal" and its notes give the history, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-18 (owner-directed: "measure the real-estate 'responds with a lag' claim next". This is the previous run's first note, taken up on instruction, so W-6.2 rule 1 does not arise) — the Markets rate-effects table's Real Estate card showed **Rates ↑ → Price ↓** with the note **"Responds with a lag"**. **US home prices were higher at the Fed's last hike than at its first in all 5 of the last 5 hiking cycles** (Case-Shiller national SA: **+2.3%** 1994-95, **+8.0%** 1999-2000, **+22.5%** 2004-06, **+16.8%** 2015-18, **+3.5%** 2022-23). FHFA's index agrees in all 5. In 3 of the 5 cycles, home prices had no monthly decline at all within two years of the last hike. The "lag" fit one cycle (2004-06: the first decline came 22 months after the first hike). **2022 contradicts it:** home prices turned **4 months** after the first hike, fell 2.3% and were back above their peak by 2023-06. The note now says what history shows for home prices, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FRED `CSUSHPISA`, `CSUSHPINSA`, `USSTHPI`, `FEDFUNDS`, `MORTGAGE30US`, `COMREPUSQ159N` (BIS commercial property, YoY, from 2005). The reader **refuses any CSV whose header is not the requested id**. Script: `scratchpad/re/m.py`.
+- **Controls that fired:** (i) `CSUSHPISA_NOT_REAL` answered HTTP 200 with the `CSUSHPISA` series (the known fuzzy-match trap), and the header check **REFUSED** it. (ii) NSA national peak **184.607 in 2006-07** and trough **133.987 in 2012-02** reproduce the published record. ⚠️ The **SA** series puts its 2005-08 maximum at 2007-02, a seasonal-adjustment artifact. I used SA for within-cycle paths and checked the headline against NSA dates and FHFA.
+- **Hiking cycles (first → last hike, SA):** +2.3 / +8.0 / +22.5 / +16.8 / +3.5%. **FHFA quarterly (all-transactions):** +1.4 / +6.1 / +21.1 / +16.6 / +12.5%. **Both indices put all 5 above zero.** First monthly SA decline: none (1994), none (1999), 2006-04 (22 mo), none (2015), 2022-07 (4 mo). The 2022 dip: peak 2022-06, low 2023-01, **−2.3%**, above the old peak by 2023-06.
+- **Mortgage rates led, again:** the 30-year rate went from 3.11% to 4.67% in the three months up to the 2022-03 hike, which matches the 09-17 lag run. That is part of why 2022 turned fast.
+- **Cuts (for the Rates ↓ row, which stays):** home prices were higher 12 months after the first cut in 5 of 6 (1995, 1998, 2001, 2019, 2024). The exception is 2007: they kept falling for 53 more months, 23% in all. The arrow holds as a push, and L35's "real estate recovers" is not contradicted except in 2007.
+- **Commercial property is where the lag shows up,** and this is why the note names home prices: BIS commercial prices rose through 2004-06 and 2015-18. They turned negative in 2008 after the first cycle's hikes had ended, and in 2022-10 then **−10.7% YoY by 2024-04**, after the 2022-23 hikes. So a lag fits 2 of the 3 measurable commercial cycles (the series starts in 2005). **"Real Estate" covers both, and the old note was half-right for commercial and wrong for homes.** The card sits one tab from L35's family buying a house, so homes are what a learner reads it as.
+- **Disposition:** replaced, not deleted. The arrows stay as the textbook push (the heading has said "all else equal" since `15a950e`).
+
+#### What shipped (`markets.js`: 5 strings + source comment)
+- en *"Yet home prices ended each of the last 5 hiking cycles higher"*. ko/zh/ja say explicitly "higher than at the start" (시작 때보다 / 高于起点 / 開始時より). es *"Aun así, la vivienda terminó más cara en cada uno de los últimos 5 ciclos de alzas"*.
+- The `rateEffects` source comment now covers three cards, with the figures, and names the commercial-property lag. That explains why the note says homes.
+- Patcher: old ×1 / new ×0 before, 0 / 1 after (**6/6**), with the CJK Latin-run guard. **Its first attempt aborted** because I had guessed the ja original (`時間差で反応`) and the real string is `遅れて反応`. Assert count 0 → nothing was written, and `cmp` against the backup confirmed the file was untouched. The assertion did its job.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0**. Plants: *"You should buy a house now."* → **exit 1 §10.1**; *"as of June 2026"* → **exit 1 §2.3**. Restored from `scratchpad/re/post/` (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 5 new probes → `markets-*.js`; **5 old probes → no file**. Control: the gold note → `markets-*.js` |
+| Live walk | `dist/` served statically, Reference → Markets at **320×700, all five languages**: document width 320, **0 overflowing cards**. Real-estate row height en 154 / es 171 / ja 162 / ko 139 / zh 142 px. Overflow-detector control: a planted `nowrap` span fired and cleared. Screenshot taken (en). Viewport reset |
+
+#### Step 5: adversarial self-check
+- **Could the new text be wrong?** (i) "Ended higher" is first hike → last hike. Measured to 24 months after the last hike instead, 2004-06 turns negative (−24% by 2011), and that cycle's bust is real. The note makes no claim past the cycle, and the source comment says so. (ii) SA vs NSA: 2022-03 → 2023-07 compares March to July, where NSA seasonality would flatter the gain. SA gives +3.5%, and FHFA's quarterly all-transactions index gives +12.5%, so the sign is robust. (iii) National indices hide regions: some metros fell in 2022-23. The note says "home prices", which here means the national index. (iv) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **§10.1:** the note reports past index paths. It does not say housing is a good buy, and the plant proves the guard covers housing language. **DECISIONS.md / CLAIMS.md:** no hits for housing or real estate price rules. **Already-done:** the 09-17 run measured *new-home sales* (`HSN1F`), not prices. This measures a different quantity and does not re-narrow anything it widened.
+- **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L35's "real estate recovers" on cuts** fails only in 2007 (prices fell 53 more months). The sentence already says "tends to", and its paragraph gives 2001-03 and 2007-08 as the cycles where cuts coincided with falling prices. Arguable; not changed.
+- **The table now has three "Yet …" notes out of six.** That shape is honest, since each is a measured exception, but the stocks and bonds notes have never been measured against data. Bonds are mechanical. Stocks are covered by L35's 11-of-14 figure. Not picked.
+
+**Owner-facing, one line:** the Markets table said real estate "responds with a lag" when rates rise. US home prices ended all 5 of the last 5 hiking cycles higher, and in 2022, the one cycle where they dipped mid-way, the turn came 4 months after the first hike, not later. The note now says so, in five languages. Commercial property is where a lag did show up, and the source comment records that. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.

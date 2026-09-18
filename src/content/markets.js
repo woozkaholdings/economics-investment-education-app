@@ -313,9 +313,15 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // classes have historically related to rate moves", and for two cards history
 // says otherwise: gold fell over only 1 of the last 5 hiking cycles (IMF
 // PCPS monthly gold; 1994-95, -1.5%) and the dollar was weaker 6 months after
-// 4 of the last 5 first hikes (lesson 35, since 8723d7a). The arrows stay as
-// the textbook direction and those two notes say where history went the other
-// way. No dates here (§2.3), and never a recommendation (§10.1).
+// 4 of the last 5 first hikes (lesson 35, since 8723d7a). Real estate joined
+// them the same day: US home prices were higher at the last hike than the first
+// in all 5 of those cycles (Case-Shiller national SA +2.3/+8.0/+22.5/+16.8/
+// +3.5%; FHFA agrees in all 5). The old note, "Responds with a lag", fit one
+// cycle for homes (2004-06) and was contradicted by 2022, when they turned 4
+// months after the first hike. COMMERCIAL property is where a lag did show up
+// (it fell after the hikes ended in 2004-06 and 2022), which is why the note
+// names home prices rather than real estate. The arrows stay as the textbook
+// direction and those three notes say where history went the other way. No dates here (§2.3), and never a recommendation (§10.1).
 export const rateEffects = [
   {
     key: "stocks",
@@ -349,11 +355,11 @@ export const rateEffects = [
     name: { en: "Real Estate", es: "Bienes Raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
     rising: "↓", falling: "↑",
     note: {
-      en: "Responds with a lag",
-      es: "Responde con rezago",
-      ko: "시차를 두고 반응",
-      zh: "滞后反应",
-      ja: "遅れて反応",
+      en: "Yet home prices ended each of the last 5 hiking cycles higher",
+      es: "Aun así, la vivienda terminó más cara en cada uno de los últimos 5 ciclos de alzas",
+      ko: "그래도 집값은 최근 다섯 번의 인상 사이클 모두 시작 때보다 높게 끝남",
+      zh: "但最近五轮加息周期结束时，房价每次都高于起点",
+      ja: "それでも直近5回の利上げ局面では、住宅価格は毎回開始時より高く終わった",
     },
   },
   {
