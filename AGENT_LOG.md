@@ -5928,3 +5928,41 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 37's summary and two glossary entries said QE is "inflationary" and QT "deflationary". Inflation stayed mostly below 2% through 2008-14's QE, and prices (and stocks) kept rising through both rounds of QT. The three lines now say what happened, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** run log 185,845 b before this entry (`check-log-size`, 2026-09-18); backlog 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was a free pick, and its first note ("when rates are at 0%" for QE) called itself arguable. Re-read this run: QE did in practice start at or near the floor, so it was not taken. This is a free pick from reading L37 §1 around that note) — lesson 37 told learners that once the Fed's rate dial is "turned all the way down to 0%, **it can't go any lower**". **Central banks have gone lower.** FRED: the **ECB's deposit rate was below zero from 2014-06 to 2022-07, with a low of −0.5%** (`ECBDFR`). **Japan's call-money rate was negative from 2016-03 to 2024-02** (`IRSTCI01JPM156N`; the Bank of Japan's own policy rate was −0.1%). **The Fed never went below zero** (`FEDFUNDS` low 0.05%, `DFF` low 0.04%). For a Japanese-language learner, the old sentence contradicted eight years of their own central bank's policy. The sentence now says there is little room left at about 0%, that the Fed has never gone below zero, and that the ECB and BoJ did but neither went lower than −0.5%. All five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** FRED `fredgraph.csv` (keyless) for `ECBDFR`, `IRSTCI01{JP,CH,SE,DK}M156N`, `FEDFUNDS`, `DFF`. Script: `scratchpad/neg/m.cjs`.
+- **Controls that fired:** (i) a nonexistent series id → **HTTP 404**. (ii) Known values reproduce: `ECBDFR` **4.00** on 2023-09-20 and **−0.10** on 2014-06-11 (the first negative day); `FEDFUNDS` **19.10** (1981-06) and **5.26** (2007-07, the figure L33 already cites).
+- **Results:** `ECBDFR` negative on 2,968 daily observations, 2014-06-11 → 2022-07-26, min −0.50 (2019-09-18). JP call rate negative 96 months, 2016-03 → 2024-02, min −0.071. SE −0.40 (2015-03 → 2019-12); DK −0.64 (2012-07 → 2022-07). The CH series shows −3.65 in 2016 and negative months back to 1978, which looks like a market-rate artifact. **It was not used in the text.** Fed: 0 negative observations in either series.
+- **What the premise is NOT:** "there is little room below zero" is true, and the rest of the app already says it softly (`policyScenarios.js` "The dial stops at **roughly** zero"; L32 "rates approach zero … runs out of room"; L35 "when rates hit 0%"). None of those says "can't". Only L37 §1 stated an impossibility, so it is the only surface touched.
+
+#### What shipped (L37 §1, en/es/ko/zh/ja; 5 strings)
+- **en:** *"But once that dial is already turned down to about 0%, there is little room left to cut. The Fed has never taken it below zero. The European Central Bank (2014-22) and the Bank of Japan (2016-24) did, but neither went lower than -0.5%. So if the economy still needs help, the Fed reaches for a different tool entirely."* "Neither went lower than -0.5%" holds for both banks (−0.5 and −0.1). It deliberately makes no claim about the SNB or Danmarks Nationalbank, which went to −0.75%.
+- House forms were measured before writing: `YYYY-YY` ranges (es bare; ko/zh/ja `…年`), a hyphen for the minus sign (`-5.50%` ×10 in the corpus, `−` ×0), and dot decimals in es (6 dot, 0 comma). The bank names match the only existing precedent (`policyScenarios.js`: Banco Central Europeo / 유럽중앙은행 / 欧洲央行 / 欧州中央銀行).
+- The patcher asserted old ×1 / new ×0 before writing and old 0 / new 1 after (**5/5**). Originals are in `scratchpad/neg/orig/`.
+- **Knock-ons the suite demanded:** the ledger marked L37 es/ko/zh/ja stale. I wrote each translated sentence against the new English, and each was re-marked `ai` (O-3 unchanged: 0% human). `refresh-readiness --write` moved en chars 159,952 → **160,102**; minutes stay at 170.
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: only ledger §10.4 (expected; addressed as above) |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 5 new probes → each in its own `lessonContent.economy.<lang>-*.js`; **5 old probes → no file**. Control: the unchanged "no printing press involved" → the en chunk |
+| Live walk | `dist/` served by `python3 -m http.server`, with `ecycles_completed_lessons` seeded [29..36] (numbers). `#/lesson/37` renders the new sentence verbatim; the old sentence is absent; the control sentence is present. The pane was zero-width (`innerWidth` 0), so this is DOM evidence only, with no screenshot |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** *"So now is a good time to buy stocks."* planted after the new sentence gave `check-blindspot` **exit 1** (§10.1). The file was restored from `scratchpad/neg/post/` (**`cmp` identical**), and the clean run gave **exit 0**. The new text reports dated past policy. It prescribes nothing and adds no live-looking figure.
+- **DECISIONS.md / CLAIMS.md:** "negative"/"below zero" gives CLAIMS 0 hits and DECISIONS 2, both about market-data file ages and unrelated. **Already-done:** "can't go any lower" returns **0** in both `AGENT_LOG.md` and `AGENT_LOG.archive.md`, so no run had measured it.
+- **Could the new text be wrong?** (i) The ECB's negative rate was the deposit rate, not the main refinancing rate, which bottomed at 0.00. The lesson's "dial" is generic, and the deposit rate is the one the ECB steered by in that era. (ii) The BoJ's −0.1% applied to one tier of reserves. That is the headline policy rate everyone cites, and the FRED market rate (min −0.071) agrees it stayed above −0.5%. (iii) "About 0%" covers the Fed's 0-0.25% range and the BoE's 0.1% floor. (iv) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **W-6.3:** 0 lines of code added to `scripts/` (the ledger JSON changed 8 lines of data).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **L37 thinkAbout, "The Fed printed $1.75 trillion in QE1".** L37 §1 says two paragraphs earlier that QE involves "no printing press … just entries in a ledger". The quiz QE `explain` ("it prints money to buy bonds") has the same tension. "Printing" is the common idiom, and L34 uses it as the framework's name for lever 4, so this is a wording choice, not a measured error (arguable).
+- **L37 thinkAbout, "Who benefits most from QE? Those who own financial assets."** This is stated as a fact inside a discussion prompt. The research on QE and inequality is mixed, because the employment channel works the other way. **Not measured this run** (arguable; it is a framing question, not a FRED-checkable figure).
+
+**Owner-facing, one line:** lesson 37 said interest rates "can't go any lower" than 0%. The ECB and the Bank of Japan both ran negative rates for years (the Fed never has). The sentence now says so, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
