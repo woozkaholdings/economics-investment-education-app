@@ -5728,3 +5728,45 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 34 said recovery from a debt crisis "tends to take roughly a decade, either way". Across 23 well-known crises the median is 8 years with a range of 1 to 24, but the lesson's own examples took 6 (US after 2007) and 3 (Germany after 1923), and "lost decade" describes Japan's slow growth rather than a long recovery. The sentence now says all three, in five languages. It reaches learners on the next push (**O-5**).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1: residual pick #1 in a new chain. The previous run was owner-directed, and its only note named this sentence as "still unmeasured") — lesson 34 gave the **US recovery from 2008 through roughly 2015** as its example of a 'beautiful deleveraging', defined in the same sentence as **"debts decline relative to income"**. For the country as a whole, they did not. **From 2007 to 2015, US household and business debt fell from about 170% of GDP to about 150%, but government debt rose from about 60% to about 100%. Total nonfinancial debt rose from about 230% of GDP to about 250%** and ended 2015 about where it stood in 2009. The paragraph now says the debt that declined was private, not the total, and gives the three figures, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Two independent instruments, both FRED `fredgraph.csv` (keyless):** (a) **BIS** credit to the nonfinancial sector as % of GDP: `QUSCAM770A` total, `QUSPAM770A` private, `QUSGAM770A` government, `QUSHAM770A` households. (b) **Fed Z.1** levels divided by `GDP`: `TODNS` total nonfinancial, `CMDEBT` households, `TBSDODNS` business, `FGSDODNS` + `SLGSDODNS` government.
+- **Controls:** (i) Z.1's four parts sum to `TODNS` to 0.1pp in every quarter printed. (ii) The two sources agree on all three ratios within about 3pp. For 2007Q4 → 2015Q4: BIS total 231.1 → 250.1, private 170.6 → 150.5, government 60.5 → 99.6. Z.1 total 229.3 → 249.2, private 167.8 → 149.4, government 61.5 → 99.9. (iii) An invalid series id (`HNODNS`) came back as an HTML page, and the parser does not read that as data.
+- **Robust to the endpoints:** across all **28** start/end pairs (start 2007Q4-2009Q2, end 2015Q1-Q4), private debt fell by **18.5-26.0pp** and government debt rose by **19.0-38.4pp**. Total debt moved from **−6.6 to +19.9pp**. It fell a little only when the start is the 2009 peak. The total peaked in **2009Q3 (252.6%)**, and private debt peaked in **2009Q1 (173.8%)**.
+- ⚠️ **Why `TCMDO` was not used for "total":** it includes the financial sector's own debt (366% of GDP in 2026, against BIS nonfinancial 251%). Its fall from 390 to 361 mostly reflects banks shrinking their balance sheets, not deleveraging by households, businesses or the government. Using it would have "confirmed" the old sentence.
+- **Premise verdict:** the sentence is right about private debt, which is also what the section's household-and-country framing points toward. It is wrong about the total, and the total is what "debts decline relative to income" says without qualification. The "growth stays positive" and "inflation stays manageable" clauses were **not** re-measured; they were not the note's claim.
+- **Surface scan** (Node, `deleverag|2008 through|2015` over `src/`, 67 hits): the only **debt-ratio** claim is this one. The dial in `markets.js` labels 2008-2015 as the balanced mix, which is a claim about the tools rather than debt ratios, so it is not edited. The glossary "Deleveraging" entry lists the four tools and makes no US claim.
+
+#### What shipped (L34 sections[1], paragraph 2, en/es/ko/zh/ja)
+- en, appended after the unchanged "…working reasonably well.": *"But the debt that declined there was private, not the total. From 2007 to 2015, household and business debt fell from about 170% of GDP to about 150%, while government debt rose from about 60% to about 100%. Total debt went from about 230% of GDP to about 250%, and ended 2015 about where it had stood in 2009."*
+- The definition and the example sentence are **kept word for word**: the concept is sound and the example is still the balanced mix the dial shows. The edit only adds what the example actually did to debt. No new Dalio terms, no attribution.
+- The translations use house forms measured in the corpus: es `PIB` (the corpus has `deuda sobre PIB`), ko `GDP 대비`, zh `占GDP的` and `债务/GDP`-style, ja `対GDP比`. The patcher required that the anchor was found once, that the addition was absent, and that the anchor sits at a `\n\n` paragraph end; it confirmed anchor+addition once after the write, ×5. The originals are in `scratchpad/l34d/orig.*.js`.
+- **Knock-ons the suite demanded:** the ledger L34 es/ko/zh/ja were re-marked `ai` after I read each translation against the new English (O-3 unchanged: 0% human). `refresh-readiness --write`: en chars 158,958 → **159,269**, LAUNCH_PLAN words 27,700 → **27,800**. L34 `minutes` stays **5**; the reading-model check passed without a change.
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: one FAIL, the ledger-driven §10.4 translation-coverage sentence. Expected, and caught by the suite |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| §83 paragraph walls | still passes. The worst paragraph is unchanged: L18 (es), 31.6 lines |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** (system Node v24.18.0 via `bootstrap-node.sh`) |
+| Built bundle | Each of the 5 new phrases is found only in its own language's economy chunk. The control (`Why Tool #4 Isn`) hits the en chunk, and the negative probe finds nothing |
+| Live walk | **Not done.** This is an appended text run in a module the reader already renders. The bundle probe proves the text shipped, but no rendering was observed |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** I planted *"With debt this high, now is a good time to buy stocks."* after the new text (count 1). `check-blindspot` gave **exit 1, §10.1**, naming this file. The file was restored from the scratchpad copy (**`cmp` identical**), and the clean run gave **exit 0**. `Dalio`/`Bridgewater` in the en economy file: **0**. There is no kids surface, and 2007/2009/2015 are historical years, not live-looking figures.
+- **DECISIONS.md:** `private debt`/`government debt` return **0** (control `localStorage` 13). The one `deleverag` hit is about track order (l.767). No conflict.
+- **Already-done:** `private debt`, `BIS`, `QUSCAM770A` and `TODNS` return **0** in the log and the archive. The 2 log hits for the sentence are the previous two runs' notes. This measures it for the first time.
+- **Could the new text be wrong?** (i) "Total" means **nonfinancial** debt (households, businesses, government). That is the standard BIS and Fed measure, and the sentence names those three groups. (ii) "From 2007 to 2015" uses Q4 values. Annual averages move each figure by no more than about 3pp, which "about" covers. (iii) "Ended 2015 about where it stood in 2009": Z.1 2009Q4 249.5 vs 2015Q4 249.2, BIS 250.3 vs 250.1. (iv) The new text makes no causal claim that government borrowing *allowed* the private fall, deliberately: it is plausible but was not measured. (v) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **Re-runnable:** `scratchpad/l34d/z.cjs` and `r.cjs` recompute every figure from the downloaded CSVs, and `patch.cjs` reproduces the edit. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⭐ **Quiz text contradicts L33's corrected paragraph.** In `quizText.en.js` (around l.66-68), an option reads *"Interest rates are already at 0% — can't cut more"* and its explanation says *"In a deleveraging, rates are already at 0%, so the Fed's normal tool (cutting rates) doesn't work"*. Around l.118, another says *"rates are usually already near 0%"*. Since `ce678aa`, L33 has said rates were 5-6% at all three of its named peaks and reached about zero only after being cut. This is the same claim, already measured, on a surface that run did not scan. It is not fixed here because it is a quiz key (option/answer shape, all five `quizText.*` files) and is a separate change.
+- L34 §4 (print money) opens "When rates are already near 0%". That is a condition for using the tool, not a claim about the peak, so it is probably fine, but it should be read together with the quiz fix.
+
+**Owner-facing, one line:** lesson 34 used the US in 2008-2015 as its example of a "beautiful deleveraging", in which debts decline relative to income. What actually fell was private debt, from about 170% of GDP to 150%. Government debt rose from about 60% to 100%, so total debt went up, from about 230% to 250%. The lesson now says so, in five languages. It reaches learners on the next push (**O-5**).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** backlog 0 b added.
