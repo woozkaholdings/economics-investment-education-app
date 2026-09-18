@@ -509,9 +509,11 @@ export const balanceSheetCaption = {
   ja: "拡大局面は景気を支えるための債券購入によるもので、縮小局面は償還分を再投資しなかった結果です。正確な水準よりも全体の形が重要です。",
 };
 
-// Durable principles, not calls to action. Item 5 is stated as an observed
-// historical tendency rather than the common imperative phrasing, which would
-// read as a directive (LAUNCH_PLAN §10.1).
+// Durable principles, not calls to action. Item 5 once read "Markets have
+// historically struggled against sustained tightening" (a softened "don't fight
+// the Fed"); it now reports what the S&P 500 did over the hiking cycles, dated
+// as the rate-effects notes above date them (AGENT_LOG 2026-09-18). It states
+// history, never a directive (LAUNCH_PLAN §10.1).
 export const ratePrinciples = [
   {
     en: "Policy changes work with lags — often a year or more.",
@@ -542,11 +544,11 @@ export const ratePrinciples = [
     ja: "インフレを差し引いた実質金利のほうが、名目金利より多くを語ります。",
   },
   {
-    en: "Markets have historically struggled against sustained tightening.",
-    es: "Históricamente los mercados han tenido dificultades ante un endurecimiento sostenido.",
-    ko: "시장은 지속적인 긴축 기조에 역행하기 어려웠던 것이 역사적 경험입니다.",
-    zh: "历史上，市场难以对抗持续的紧缩政策。",
-    ja: "市場は持続的な引き締めに逆らうのが難しい、というのが歴史的な経験です。",
+    en: "Stocks have not usually fallen across a whole hiking cycle: of the last 5, the S&P 500 ended 4 higher and was about flat over 1994-95, despite drops of up to 23% along the way. The clear exception came earlier, in 1973-74, when it fell sharply.",
+    es: "Pocas veces las acciones han caído a lo largo de todo un ciclo de alzas: de los últimos 5, el S&P 500 terminó más alto en 4 y quedó casi sin cambios en 1994-95, pese a caídas de hasta un 23% por el camino. La excepción clara llegó antes, en 1973-74, cuando cayó con fuerza.",
+    ko: "주가가 인상 사이클 전체에 걸쳐 하락한 경우는 드물었습니다. S&P 500은 1994-95년에는 거의 제자리였고, 최근 다섯 번의 인상 사이클 중 나머지 네 번은 도중에 최대 23%까지 떨어지기도 했지만 모두 시작 때보다 높게 끝났습니다. 뚜렷한 예외는 주가가 크게 떨어진 1973-74년이었습니다.",
+    zh: "股市在整轮加息周期中下跌的情况并不常见：在最近五轮加息周期中，标普500指数在1994-95年基本持平，其余四轮结束时都高于起点，尽管途中曾下跌多达23%。明显的例外是1973-74年，当时股市大幅下跌。",
+    ja: "株価が利上げ局面全体を通じて下落することは多くありませんでした。直近5回の利上げ局面では、S&P 500は1994-95年にはほぼ横ばいで、残る4回は途中で最大23%下落しながらも、いずれも開始時より高く終わりました。はっきりした例外は、株価が大きく下落した1973-74年です。",
   },
   {
     en: "Where tightening stops shapes how gentle or harsh the slowdown is.",
