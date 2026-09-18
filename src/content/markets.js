@@ -308,9 +308,14 @@ const PRICE = { en: "Price", es: "Precio", ko: "가격", zh: "价格", ja: "価�
 const YIELD = { en: "Yield", es: "Rendimiento", ko: "수익률", zh: "收益率", ja: "利回り" };
 const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価値" };
 
-// How asset classes have historically related to rate moves. Direction only —
-// no figures, and framed as historical tendency rather than a recommendation
-// (LAUNCH_PLAN §10.1: general and historical, never personal).
+// The direct push a rate move puts on each asset class, ALL ELSE EQUAL — not
+// what history shows happening next. Until 2026-09-18 this read "how asset
+// classes have historically related to rate moves", and for two cards history
+// says otherwise: gold fell over only 1 of the last 5 hiking cycles (IMF
+// PCPS monthly gold; 1994-95, -1.5%) and the dollar was weaker 6 months after
+// 4 of the last 5 first hikes (lesson 35, since 8723d7a). The arrows stay as
+// the textbook direction and those two notes say where history went the other
+// way. No dates here (§2.3), and never a recommendation (§10.1).
 export const rateEffects = [
   {
     key: "stocks",
@@ -357,11 +362,11 @@ export const rateEffects = [
     name: { en: "Gold", es: "Oro", ko: "금", zh: "黄金", ja: "金" },
     rising: "↓", falling: "↑",
     note: {
-      en: "Has also risen in crises",
-      es: "También ha subido en crisis",
-      ko: "위기 때도 상승한 사례",
-      zh: "危机时也曾上涨",
-      ja: "危機時にも上昇した例",
+      en: "Yet fell in only 1 of the last 5 hiking cycles",
+      es: "Aun así, solo bajó en 1 de los últimos 5 ciclos de alzas",
+      ko: "그래도 최근 다섯 번의 인상 사이클 중 하락은 한 번뿐",
+      zh: "但在最近五轮加息周期中，只有一轮下跌",
+      ja: "それでも直近5回の利上げ局面で下落したのは1回だけ",
     },
   },
   {
@@ -383,11 +388,11 @@ export const rateEffects = [
     name: { en: "US Dollar", es: "Dólar", ko: "달러", zh: "美元", ja: "米ドル" },
     rising: "↑", falling: "↓",
     note: {
-      en: "Affects emerging markets",
-      es: "Afecta a mercados emergentes",
-      ko: "신흥국에 영향",
-      zh: "影响新兴市场",
-      ja: "新興国に影響",
+      en: "Yet weaker 6 months after 4 of the last 5 first hikes",
+      es: "Aun así, más débil 6 meses tras la primera subida en 4 de los últimos 5 ciclos",
+      ko: "그래도 최근 다섯 번 중 네 번은 첫 인상 여섯 달 뒤 오히려 약세",
+      zh: "但最近五轮加息周期中有四轮，首次加息六个月后反而更弱",
+      ja: "それでも直近5回の利上げ局面のうち4回は、最初の利上げの6か月後にむしろ下落",
     },
   },
 ];

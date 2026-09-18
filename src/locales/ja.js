@@ -34,7 +34,7 @@ export default {
     marketsTitle: "マーケットダッシュボード", currentState: "例示シナリオ",
     illustrationNote: "教育用の例示数値です — あなたの結果の予測ではありません",
     scenarioNote: "教育目的の例です — リアルタイムの市場データではありません",
-    rateHow: "金利変動が資産に与える影響",
+    rateHow: "他の条件が同じなら、金利変動は資産をどちらに押すか",
     ratesRising: "金利 ↑", ratesFalling: "金利 ↓",
     yieldCurveLabel: "イールドカーブの形状",
     curveNormal: "正常（健全）", curveFlat: "フラット（警告）",

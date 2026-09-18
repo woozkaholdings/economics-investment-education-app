@@ -5966,3 +5966,46 @@ The previous entry named L36 §2's *"stayed inverted for roughly two years, the 
 **Owner-facing, one line:** lesson 37 said interest rates "can't go any lower" than 0%. The ECB and the Bank of Japan both ran negative rates for years (the Fed never has). The sentence now says so, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-18 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was a free pick and both its notes (L37's "printed" idiom, "who benefits from QE") called themselves arguable. This is a free pick: the Reference → Market Signals rate-effects table was last read for accuracy on 2026-09-10, and only for glossary↔lesson agreement ("read clean (directions only, hedged notes)", archive l.48195) — never against data, and never against L35 as corrected on 09-17) — the table, headed **"How Rate Changes Affect Assets"** and commented as *how asset classes have historically related to rate moves*, showed **Rates ↑ → Gold price ↓** and **Rates ↑ → Dollar value ↑**. Measured: **gold fell over only 1 of the last 5 hiking cycles** (1994-95, −1.5%; it rose 5.9%, 51.9% and 16.8% through 1999-2000, 2004-06 and 2015-18, and was flat to +1.8% through 2022-23). And since `8723d7a` lesson 35 itself says the dollar was **weaker six months after the first hike in 4 of the last 5 cycles** — so one tab over, the Reference screen taught the rule the lesson had just retracted. The heading now says the arrows are the push **all else equal** (L35's own closing frame, *"only if everything else holds still"*), and the gold and dollar notes say where history went the other way. All five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instrument:** IMF Primary Commodity Prices, monthly gold (`IMF/PCPS/M.W00.PGOLD.USD` via DBnomics, keyless; 1990-01 → 2025-06), FRED `FEDFUNDS`, and Tiingo `GLD` daily closes (repo key). Script: `scratchpad/gold/`.
+- **Controls that fired:** (i) nonexistent DBnomics id → **HTTP 404** "not found"; bad Tiingo ticker → **404**. (ii) IMF monthly averages reproduce the published LBMA averages exactly: **1,771.85** (2011-09), **1,068.25** (2015-12), **1,968.03** (2020-08). (iii) Cross-source: GLD's own monthly average / IMF = 0.0970 (2011-09) and 0.0957 (2015-12), the ~1/10 oz less accrued fees that GLD should show. (iv) Each first-move month verified against `FEDFUNDS` turning that month (1994-02 3.05→3.25, … 2024-09 5.33→5.13).
+- **Gold, first hike → last hike (monthly avg):** 1994-02→1995-02 **−1.5%**; 1999-06→2000-05 **+5.9%**; 2004-06→2006-06 **+51.9%**; 2015-12→2018-12 **+16.8%**; 2022-03→2023-07 **+0.1%**. The 2022-23 boundary case was re-measured on **daily** GLD closes (hike day 2022-03-16 → 2023-07-26): **+1.8%**, so "did not fall" holds on both bases. 1994-95 is monthly-only (GLD starts 2004-11); it is the one decline, and it is small.
+- **Shorter horizons are mixed, not reversed:** +6 months after the first hike −0.4, +8.3, +12.7, +19.5, −13.6 (up 3 of 5); +12 months −1.5, +9.3, +9.8, +7.8, −1.8 (up 3 of 5). **The arrow's direction is not the usual outcome at any horizon.**
+- **The falling-rate arrow survives:** gold +6 months after the first cut: +3.6 (1995), −1.0 (1998), +0.8 (2001), +35.9 (2007), +10.5 (2019), +16.2 (2024) — up 5 of 6. So L35's "gold often rises" on cuts is consistent, and the Rates ↓ row is left alone.
+- **Dollar:** not re-fetched — the 09-17 run measured it (`TWEXMMTH`/`TWEXBGSMTH`, with controls) and L35 has taught the result since `8723d7a`. The new note quotes that lesson's figure verbatim in each language.
+- **What the premise is NOT:** the arrows are the textbook *direction of pressure* (higher yields raise the cost of holding non-yielding gold; they attract savers to the dollar). That is true and stays. What was wrong was presenting it as what history shows — the heading and the source comment both claimed "historically". **Disposition:** reframe the heading, keep the arrows, correct the two notes that history contradicts.
+
+#### What shipped (en/es/ko/zh/ja; 15 strings, 7 files)
+- **`rateHow` heading:** en *"How Rate Changes Push on Assets, All Else Equal"*; es also regains the word **tasas** — the old es heading, *"Cómo los Cambios Afectan los Activos"*, never said *which* changes. ko/zh/ja use L35's own "if other conditions are unchanged" phrasing (다른 조건 / 其他条件不变 / 他の条件).
+- **Gold note** (was *"Has also risen in crises"*): en *"Yet fell in only 1 of the last 5 hiking cycles"*.
+- **Dollar note** (was *"Affects emerging markets"*): en *"Yet weaker 6 months after 4 of the last 5 first hikes"*; ko/zh/ja/es follow L35's wording in each language ("최근 다섯 번의 인상 사이클", "最近五轮加息周期", "直近5回の利上げ局面", "últimos 5 ciclos").
+- The source comment above `rateEffects` in `markets.js` and the one-line JSX comment in `MarketSignals.jsx` said "historically related"; both now say what the arrows are, with the measurement and the §2.3/§10.1 constraints.
+- **Deliberately not in the notes:** years (§2.3 allows history, but a 120-px card cannot carry a range), and the "crises" and "emerging markets" facts the old notes carried — true, but not what the cards were getting wrong, and a card has room for one line.
+- The patcher asserted old ×1 / new ×0 before and old 0 / new 1 after (**15/15**), and refused any ko/zh/ja string with a Latin run (the 09-17 corruption control; **proven to fire** on a planted `ドracters`). Originals in `scratchpad/gold/orig/`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three). The translation ledger does not cover `markets.js` or `locales/`, so nothing went stale |
+| `check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` **exit 0** |
+| Built bundle | 7 new probes found (notes in `markets-*.js`, heading in `index-*.js`); **6 old probes → no file**. Controls "Growth names most sensitive", "Yield tracks the policy rate" → `markets-*.js` |
+| Live walk | `dist/` served statically; Reference → Markets. **375×812:** heading and all six cards render the new text; `scrollWidth` 375 = viewport; every card `scrollWidth` = `clientWidth`. Screenshot taken (light text on dark theme; gold card 2 lines, dollar card 3). **320×700, all five languages:** 0 overflowing cards, 0 heading overflow, document width 320. Tallest row: es 181 px (dollar/cash). **Detector control:** a planted `nowrap` span in the gold card → fired; removed → cleared. Viewport reset to desktop afterwards |
+
+#### Step 5: adversarial self-check
+- **Blindspot, proven on the edited file:** planting *"So now is a good time to buy gold."* on the gold note → **exit 1, §10.1**; planting *"as of March 2026"* → **exit 1, §2.3**. Restored from `scratchpad/gold/post/` (**`cmp` identical**) → exit 0. The new notes report past cycles; they tell no one what to do and carry no live-looking figure.
+- **Contradiction with other surfaces:** the only other gold claims in the economy track are L35's "gold often rises" on cuts (supported, above) and L38's defensive-assets list in contractions (a different claim, untouched). The dollar note now **agrees** with L35 instead of contradicting it.
+- **DECISIONS.md / CLAIMS.md:** no hits for gold or rate effects. **Already-done:** the only prior work on these cards was layout and a11y (`0d12102`, the 2026-09-07 `minWidth` fix) and the 09-10 agreement sweep; none measured a direction.
+- **Could the new text be wrong?** (i) "Hiking cycle" is measured first hike → last hike; a reader might imagine to the first cut instead — over those longer windows, gold rose even more in 2004-07 and 2015-19, so the claim only gets stronger. (ii) Five cycles is a small sample; the note states a count, not a law. (iii) The stocks and real-estate arrows under "all else equal" are the lesson's own mechanism; their notes were **not** re-measured this run (below). (iv) No fluent reader has seen the es/ko/zh/ja wording (O-3).
+- **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Real-estate card, "Responds with a lag".** The 09-17 home-sales run found mortgage rates moved *before* the Fed's first 2022 hike and new-home sales cooled within a month, while in 2013 they rose through a 1-point rate rise. "A lag" is vague enough to survive, but it is the same shape of claim L35 retracted. **Not measured this run** (arguable).
+- **Stocks card under "all else equal".** L35 says tech beat utilities in 11 of 14 long-rate rises and US stocks rose through several hiking cycles; the arrow is now framed as a push, which is what L35 says too. No change needed unless the heading reframe is reverted.
+
+**Owner-facing, one line:** the Reference → Markets table showed gold falling and the dollar rising when the Fed raises rates, as history. Gold fell over only 1 of the last 5 hiking cycles, and lesson 35 already says the dollar was weaker 6 months after 4 of the last 5 first hikes. The table now says its arrows are the push "all else equal" and its notes give the history, in five languages. **Committed, not pushed** (reaches learners on the next push, O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.

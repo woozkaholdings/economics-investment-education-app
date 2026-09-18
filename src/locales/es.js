@@ -34,7 +34,7 @@ export default {
     marketsTitle: "Panel de Mercados", currentState: "Escenario Ilustrativo",
     illustrationNote: "Cifras de ejemplo, con fines didácticos — no son una proyección de tus resultados",
     scenarioNote: "Con fines educativos — no son datos de mercado en vivo",
-    rateHow: "Cómo los Cambios Afectan los Activos",
+    rateHow: "Cómo los Cambios de Tasas Empujan a los Activos, con Todo lo Demás Igual",
     ratesRising: "Tasas ↑", ratesFalling: "Tasas ↓",
     yieldCurveLabel: "Formas de la Curva",
     curveNormal: "Normal (Saludable)", curveFlat: "Plana (Advertencia)",

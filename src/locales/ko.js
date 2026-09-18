@@ -34,7 +34,7 @@ export default {
     marketsTitle: "시장 대시보드", currentState: "예시 시나리오",
     illustrationNote: "교육용 예시 수치입니다 — 실제 결과에 대한 예측이 아닙니다",
     scenarioNote: "교육 목적입니다 — 실시간 시장 데이터가 아닙니다",
-    rateHow: "금리 변동이 자산에 미치는 영향",
+    rateHow: "다른 조건이 같을 때 금리 변동이 자산을 미는 방향",
     ratesRising: "금리 ↑", ratesFalling: "금리 ↓",
     yieldCurveLabel: "수익률 곡선 형태",
     curveNormal: "정상 (건강)", curveFlat: "평탄 (경고)",

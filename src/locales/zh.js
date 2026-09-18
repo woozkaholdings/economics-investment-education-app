@@ -34,7 +34,7 @@ export default {
     marketsTitle: "市场仪表板", currentState: "示例场景",
     illustrationNote: "用于教学的示例数字——并非对你实际结果的预测",
     scenarioNote: "仅供教学用途——非实时市场数据",
-    rateHow: "利率变化如何影响资产",
+    rateHow: "其他条件不变时，利率变化对资产的推动方向",
     ratesRising: "利率 ↑", ratesFalling: "利率 ↓",
     yieldCurveLabel: "收益率曲线形态",
     curveNormal: "正常（健康）", curveFlat: "平坦（警告）",

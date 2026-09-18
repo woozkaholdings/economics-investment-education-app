@@ -39,7 +39,7 @@ export default function MarketSignals({ t, lang }) {
         {scenario[lang]}
       </Note>
 
-      {/* How rate moves have historically related to asset classes */}
+      {/* The direct push of a rate move on each asset class, all else equal (see markets.js) */}
       <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
         {t.rateHow}
       </Text>

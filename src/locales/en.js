@@ -89,7 +89,7 @@ export default {
     marketsTitle: "Market Dashboard", currentState: "Illustrative Scenario",
     illustrationNote: "Example figures, for teaching — not a projection of your own results",
     scenarioNote: "For teaching purposes — not live market data",
-    rateHow: "How Rate Changes Affect Assets",
+    rateHow: "How Rate Changes Push on Assets, All Else Equal",
     ratesRising: "Rates ↑", ratesFalling: "Rates ↓",
     yieldCurveLabel: "Yield Curve Shapes",
     curveNormal: "Normal (Healthy)", curveFlat: "Flat (Warning)",
