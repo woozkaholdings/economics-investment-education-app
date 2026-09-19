@@ -185,7 +185,7 @@ export const lessonContent = {
       },
       {
         "heading": "Peak",
-        "body": "The town's output is now about as high as it can go — every worker is employed, every restaurant full. Inflation is running at highs, and the Fed is raising rates to cool things down. Growth stalls, even though the mood hasn't caught up yet. This is where the seeds of the next contraction are quietly planted.\n\nHistorically favored in this phase: commodities and short-duration bonds. Value stocks are often listed here too, but in the year before each of the 12 US recessions since 1948 began, they beat growth stocks only 5 times."
+        "body": "The town's output is now about as high as it can go — every worker is employed, every restaurant full. Inflation is running at highs, and the Fed is raising rates to cool things down. Growth stalls, and the mood has usually already begun to sour: in the US, business confidence topped out at least 8 months before each of the 11 recessions since 1953 began, and consumer confidence usually turned down months ahead of them too. This is where the seeds of the next contraction are quietly planted.\n\nHistorically favored in this phase: commodities and short-duration bonds. Value stocks are often listed here too, but in the year before each of the 12 US recessions since 1948 began, they beat growth stocks only 5 times."
       },
       {
         "heading": "Contraction",

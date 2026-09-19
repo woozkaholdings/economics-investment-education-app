@@ -5918,3 +5918,40 @@ same journey.
 **Owner-facing, one line:** lesson 38 and its quiz said the trough of a recession is the point of "maximum pessimism". In US surveys, confidence has usually bottomed a few months before the recession ended, though it was still low at the trough. Both now say the mood is still grim but past its worst, with 2008-09 as the example, in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (owner-directed: "measure the peak mood claim next". This is the previous run's second note, taken up on instruction, so W-6.2 rule 1 does not arise) — lesson 38's Peak section said **"Growth stalls, even though the mood hasn't caught up yet."** **The premise broke, and it broke the other way:** the mood had usually turned down *before* the recession began. **US business confidence peaked at least 8 months before each of the 11 recessions since 1953** (OECD, ISM-based), and by the recession's first month it had already made a median **54%** of its whole fall to the recession low. Consumer confidence turned down 3-24 months before 8 of 9. The sentence now says the mood has usually already begun to sour, with the business-confidence figure, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/q012/c.mjs` (timing and share of the fall), `d.mjs` (placebo). Series: FRED keyless `USREC`, `UMCSENT`, `CSCICP03USM665S`, `BSCICP03USM665S`, already fetched and header-checked by the previous run (bogus id → 404). **Control:** the derived peaks are the 11 published NBER months (1953-07 … 2020-02).
+- **Months from the confidence high (peak−24 → peak) to the NBER peak:** business **9, 24, 12, 9, 10, 18, 8, 24, 16, 24, 18**: 11 of 11 at least 8 months earlier. Three sit at the 24-month window edge, so the true lead is at least that long, which only strengthens the finding. Consumer (OECD, 9 recessions) **3, 11, 16, 24, 0, 23, 13, 11, 23**. Michigan (1978+) **23, 8, 18, 14, 11, 23**.
+- **Share of the peak-to-trough+12 fall already made by the peak month:** business median **54%** (≥25% in 10 of 11; 1973 was 13%). OECD consumer median **57%** (1981 0%, 2020 15%). Michigan median **51%** (2020 **1%**).
+- **Placebo** (so "fallen from a 2-year high" is not simply what confidence usually looks like): business confidence's drop from its trailing high at the peak month was above the median for expansion months not within 24 months of a peak in **11/11** (60th-100th percentile at a 24-month look-back, 58th-99th at 12). OECD consumer: **7/8** (1981-07 was 0, straight after the 1980 recession). Michigan: 4/6 (1981, 2020).
+- **Disposition:** the claim is backwards on average. Exceptions: 2020 (a sudden shock, with consumer mood still near its high) and 1981 (a second recession right after 1980). The replacement cites the business series, which holds in 11/11, and says "usually" for consumers.
+
+#### What shipped (5 strings, 5 files, plus the ledger and readiness figures)
+- en: *"Growth stalls, and the mood has usually already begun to sour: in the US, business confidence topped out at least 8 months before each of the 11 recessions since 1953 began, and consumer confidence usually turned down months ahead of them too."* es/ko/zh/ja carry the same content (re-read against the English before `mark`).
+- Ledger: L38 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: catalog 161,623 → **161,809** English chars, plus the §10.4 volume sentence. LAUNCH_PLAN's rounded figures did not move. `translation-completeness --write` not run.
+- Patcher: old ×1 / new ×0 asserted before any write, 0 / 1 after. Originals are in `scratchpad/peak/orig/`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three). Ledger 44/44, 0 stale |
+| `check-blindspot` | **exit 0**, with §2.3 clean (years only). Planted *"You should buy stocks now."* after the new sentence (en) → **exit 1, §10.1**. Restored from the scratchpad copy (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | Each new sentence → its own `lessonContent.economy.<lang>` chunk. All five old sentences → **no file**. Control: the unchanged `This is where the seeds of the next contraction` → the en chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only, in a section that already renders |
+
+#### Step 5: adversarial self-check
+- **Does it contradict the Trough change an hour earlier?** No. Both now say mood turns before the economy does: it sours before the peak and bottoms before the trough. The two sections now agree with each other and with the stock-timing sentences around them.
+- **"At least 8 months" and the window edge:** the shortest measured lead is 8 (1981-07). Leads capped at 24 are lower bounds, so "at least" stays true.
+- **"Consumer confidence usually turned down months ahead":** 8 of 9 (OECD) and 6 of 6 (Michigan) highs came before the peak, the shortest by 3 months, and 2020's fall was 1-15% done. "Usually" covers that, and the sentence does not claim a share for consumers.
+- **§10.1:** no advice; the plant proves the guard sees the file. **§10.2:** no Dalio text. **§2.3:** years only. **DECISIONS.md / CLAIMS.md:** 0 hits for `pessimis`/`sentiment` (checked in the previous run; this run adds no new term those files govern). **Already-done:** the 09-13/09-18 L38 runs changed the growth/value sentence in this section, which is untouched. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- L38 Peak's first sentences: *"every worker is employed"* and *"Inflation is running at highs"*. The town narrative states these as facts of the phase. Inflation peaking at or after the business-cycle peak is measurable (FRED `CPIAUCSL`), but I have not measured it. Not picked.
+
+**Owner-facing, one line:** lesson 38 said that at an economic peak "the mood hasn't caught up yet". In US data it is the reverse: business confidence peaked at least 8 months before every recession since 1953 and was about halfway down by the time each one started. The lesson now says the mood has usually already begun to sour, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.

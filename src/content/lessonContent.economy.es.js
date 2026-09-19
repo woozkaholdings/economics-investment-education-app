@@ -185,7 +185,7 @@ export const lessonContent = {
       },
       {
         "heading": "Pico",
-        "body": "La producción del pueblo está ahora más o menos tan alta como puede llegar: todos los trabajadores tienen empleo, todos los restaurantes están llenos. La inflación corre en máximos y el Fed sube las tasas para enfriar las cosas. El crecimiento se estanca, aunque el ánimo todavía no se haya enterado. Aquí es donde se siembran calladamente las semillas de la siguiente contracción.\n\nHistóricamente favorecidos en esta fase: las materias primas y los bonos de corta duración. Las acciones de valor también suelen aparecer aquí, pero en el año previo al inicio de cada una de las 12 recesiones de EE. UU. desde 1948 superaron a las acciones de crecimiento solo 5 veces."
+        "body": "La producción del pueblo está ahora más o menos tan alta como puede llegar: todos los trabajadores tienen empleo, todos los restaurantes están llenos. La inflación corre en máximos y el Fed sube las tasas para enfriar las cosas. El crecimiento se estanca, y el ánimo normalmente ya ha empezado a decaer: en EE. UU., la confianza empresarial tocó techo al menos 8 meses antes del inicio de cada una de las 11 recesiones desde 1953, y la confianza del consumidor normalmente también empezó a bajar meses antes. Aquí es donde se siembran calladamente las semillas de la siguiente contracción.\n\nHistóricamente favorecidos en esta fase: las materias primas y los bonos de corta duración. Las acciones de valor también suelen aparecer aquí, pero en el año previo al inicio de cada una de las 12 recesiones de EE. UU. desde 1948 superaron a las acciones de crecimiento solo 5 veces."
       },
       {
         "heading": "Contracción",
