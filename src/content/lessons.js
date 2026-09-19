@@ -172,7 +172,7 @@ export const lessons = [
   {
     id: 30, track: "economy", icon: "💳", color: "#7c3aed", minutes: 3,
     title: {"en":"Credit: The Most Important Part","es":"Crédito: La Parte Más Importante","ko":"신용: 가장 중요한 부분","zh":"信贷：最重要的部分","ja":"信用：最も重要な部分"},
-    subtitle: {"en":"Credit is the biggest and most volatile part of the economy","es":"El crédito es la parte más grande y volátil de la economía","ko":"신용은 경제에서 가장 크고 변동성이 큰 부분입니다","zh":"信贷是经济中最大且最不稳定的部分","ja":"信用は経済で最大かつ最も変動が大きい部分"},
+    subtitle: {"en":"In the US, credit far outweighs the money the Fed creates, and new borrowing swings more than any kind of spending","es":"En EE.UU., el crédito supera con creces al dinero que crea la Reserva Federal, y los nuevos préstamos oscilan más que cualquier tipo de gasto","ko":"미국에서 신용은 연준이 만드는 돈보다 훨씬 크고, 새로 빌리는 돈은 어떤 지출보다도 크게 출렁입니다","zh":"在美国，信贷远远超过美联储创造的货币，新增借款的波动比任何一类支出都大","ja":"米国では信用はFRBが生み出すお金をはるかに上回り、新たな借入はどの支出よりも大きく振れる"},
   },
   {
     id: 31, track: "economy", icon: "📈", color: "#059669", minutes: 3,
