@@ -193,7 +193,7 @@ export const lessonContent = {
       },
       {
         "heading": "Trough",
-        "body": "This is the point of maximum pessimism — boarded-up storefronts, gloomy headlines, nobody wanting to be the one to buy. But historically, this is also where the strongest rebounds have started, precisely because prices have already fallen so far that even modest good news looks meaningful. The stock market's own low has usually come before the economy's, while the headlines were still getting worse — and the year after a bear-market low has historically brought some of the market's strongest gains.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices."
+        "body": "The mood is still grim here — boarded-up storefronts, gloomy headlines, nobody wanting to be the one to buy. But historically, this is also where the strongest rebounds have started, precisely because prices have already fallen so far that even modest good news looks meaningful. The stock market's own low has usually come before the economy's, while the headlines were still getting worse — and the year after a bear-market low has historically brought some of the market's strongest gains. Surveys tell the same story: in the US, consumer and business confidence have mostly hit bottom a few months before the recession ended, so the gloom has usually passed its worst by the trough itself. Consumer sentiment's low in the 2008-09 recession came in late 2008, about seven months before it ended.\n\nHistorically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices."
       },
       {
         "heading": "Why These Assets, in This Phase",

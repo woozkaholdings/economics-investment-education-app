@@ -135,7 +135,7 @@ export const quizText = [
       "Inflation is usually at its peak",
       "Stocks have historically continued falling for years afterward"
     ],
-    "explain": "At the trough, sentiment is at its most negative. The stock market's own low has usually come a few months before the economy's, while the recession was still under way, and the year after that low has brought some of the market's strongest gains. But the low is clear only in hindsight: after the 2001 recession ended, US stocks did not hit their low until almost a year later. This is a historical pattern, not a guarantee for any specific future trough."
+    "explain": "At the trough the mood is usually still grim, but it has mostly passed its worst: in the US, surveys of consumer and business confidence have usually hit bottom a few months before the recession ended. The stock market's own low has usually come a few months before the economy's, while the recession was still under way, and the year after that low has brought some of the market's strongest gains. But the low is clear only in hindsight: after the 2001 recession ended, US stocks did not hit their low until almost a year later. This is a historical pattern, not a guarantee for any specific future trough."
   },
   {
     "q": "Which economic indicator is often called the 'Fear Gauge'?",

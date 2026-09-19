@@ -5880,3 +5880,41 @@ same journey.
 **Owner-facing, one line:** the Trough quiz's correct answer said the trough "has often been a strong time to find investment opportunities". It now says stocks had usually already risen off their low (true in 9 of 10 recessions since 1957), in five languages, and it no longer gives itself away as the longest option. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (owner-directed: "fix the trough pessimism claim next". This is the previous run's first note, taken up on instruction, so W-6.2 rule 1 does not arise) — lesson 38's Trough section opened **"This is the point of maximum pessimism"**, and quiz `q012`'s explanation opened **"At the trough, sentiment is at its most negative."** The lesson ties its phases to recession months (its Contraction section says *"from a contraction's first month to its last"*), so its trough is the month a recession ends. **By then, US surveys of confidence have mostly already hit bottom:** OECD business confidence bottomed 1-9 months earlier in 8 of 10 recessions since 1957 (in the same month in the other 2), and consumer confidence 1-8 months earlier in 7 of 9. **The mood was still grim:** business confidence was in the bottom 13% of its history at all 10 troughs. Both surfaces now say the mood is still grim but has mostly passed its worst, and the lesson gives 2008-09 as the example, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/q012/b.mjs` (the previous run's `a.mjs` for troughs). FRED keyless `UMCSENT`, `CSCICP03USM665S` (OECD consumer confidence, 1960-01 → 2024-01), `BSCICP03USM665S` (OECD business confidence, 1950-01 → 2024-01), and `USREC`, all HTTP 200. **Controls:** a bogus id → **HTTP 404**, and the derived troughs are the 10 published NBER months. Window: peak−6 → trough+12, the same shape as the stock-low window.
+- **Months from the confidence low to the NBER trough:** business **3, 8, 0, 2, 1, 6, 2, 9, 6, 0** (earlier in 8, same month in 2, never after). Consumer (OECD, 9 recessions) **3, 1, 3, 2, 8, 4, −11, 4, −2** (earlier in 7). Michigan monthly era (1978+) **2, 8, 5, −11, 7, 0**. The OECD consumer series is built from the Michigan survey, so the two are not independent; business confidence is.
+- **Still grim at the trough:** business confidence at the trough month sat at the 1st-13th percentile of its full history in 10 of 10. Michigan: 8th-21st in 4 of 6, and 49th (1991-03) and 43rd (2001-11) in the others.
+- **Disposition:** the premise holds. "Maximum" is wrong on timing in most cases, and "still grim" is right. The 2008-09 example: Michigan's low was **55.3 in 2008-11**, seven months before the 2009-06 trough.
+
+#### What shipped (15 strings, 10 files, plus the ledger and readiness figures)
+- **L38 Trough**, all five languages. The opener changed (en *"The mood is still grim here — boarded-up storefronts…"*), and the first paragraph gained: *"Surveys tell the same story: in the US, consumer and business confidence have mostly hit bottom a few months before the recession ended, so the gloom has usually passed its worst by the trough itself. Consumer sentiment's low in the 2008-09 recession came in late 2008, about seven months before it ended."*
+- **`q012` explain**, all five languages. The opening sentence is now *"At the trough the mood is usually still grim, but it has mostly passed its worst: in the US, surveys of consumer and business confidence have usually hit bottom a few months before the recession ended."* The rest is unchanged.
+- ⚠️ **Step 5 found a defect in the first draft**, and `check-blindspot` caught it: the example read "November 2008", which is §2.3's "Month YYYY" shape (reads as live). It now says "late 2008" in all five languages (es *a finales de 2008*, ko *2008년 말*, zh *2008年底*, ja *2008年末*). A second self-found fix: the ja opener doubled 暗い with the next clause's 暗い見出し, so it became 重苦しい.
+- Ledger: L38 es/ko/zh/ja re-marked `ai` (via `translation-review.mjs mark`, after re-reading each new Trough paragraph against the English), then re-marked again after the date fix. `refresh-readiness --write`: catalog 161,328 → **161,623** English chars, LAUNCH_PLAN §4.0 ~161,000 → ~162,000 chars and 28,100 → 28,200 words, plus the §10.4 volume sentence. `translation-completeness --write` was **not** run (see memory: it rewrites every ratio).
+- Patchers: every old string ×1 / new ×0 asserted before any write, 0 / 1 after. Originals are in `scratchpad/pess/orig/`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` (final text) | **exit 0**, 0 FAIL / 3 WARN (the standing three). Ledger report: es/ko/zh/ja **44/44, 0 stale** |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new L38 example (en) → **exit 1, §10.1**. Restored from the scratchpad copy (`cmp` identical) → exit 0. It had already fired on the first draft's "November 2008" (§2.3) |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | Each new opener → its own `lessonContent.economy.<lang>` / `quizText.<lang>` chunk. All eight old openers (`point of maximum pessimism`, `sentiment is at its most negative`, `punto de máximo pesimismo`, `비관론이 최대치에`, `悲观情绪最重的时刻`, `悲観が最大になる地点`, `底では心理が最も悲観的`) and `November 2008` → **no file**. Control: the unchanged `Historically favored in this phase: beaten-down` → the en lesson chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only, in a section and an explanation that already render |
+
+#### Step 5: adversarial self-check. It found two real defects (the §2.3 date, the ja repetition), both fixed above
+- **Do "still grim" and "passed its worst" contradict each other?** No: the measurement is exactly that. Confidence was low at every trough but had usually turned up from its low.
+- **Does the new paragraph contradict the rest of L38?** It extends the section's own point that the stock market's low came before the economy's. The Peak section's *"the mood hasn't caught up yet"* is untouched (see note).
+- **§10.1:** nothing advice-framed was added; the plant proves the guard sees the lesson file. **§10.2:** no Dalio text. **§2.3:** caught and fixed; the example names a closed episode by year only. **DECISIONS.md / CLAIMS.md:** 0 hits for `pessimis` or `sentiment`. **Already-done:** the 09-13 and 09-18 L38 runs changed the stock and asset sentences, which are untouched here. **W-6.3:** 0 lines added to `scripts/` (the ledger JSON changed 16 lines of data).
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- L38 Trough, second sentence: *"historically, this is also where the strongest rebounds have started"*. On the same measure, the stock rebound started 1-5 months **before** the trough in 9 of 10 recessions, so "here" means the trough phase broadly rather than the month. Arguable; not measured further.
+- L38 Peak: *"Growth stalls, even though the mood hasn't caught up yet"*. It is the mirror claim (sentiment lagging at the peak) and has never been measured. `b.mjs` can answer it by swapping the window to the peak.
+
+**Owner-facing, one line:** lesson 38 and its quiz said the trough of a recession is the point of "maximum pessimism". In US surveys, confidence has usually bottomed a few months before the recession ended, though it was still low at the trough. Both now say the mood is still grim but past its worst, with 2008-09 as the example, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
