@@ -275,7 +275,7 @@ export const quizText = [
       "Sobre todo interés, porque el interés se cobra sobre el saldo restante",
       "Totalmente interés, ya que no se paga capital hasta refinanciar el préstamo"
     ],
-    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés. No es el interés compuesto de la lección “Interés Compuesto”: cada pago cubre por completo el interés de ese mes, así que nunca se cobra interés sobre interés. La parte de capital solo supera a la de interés alrededor de dos tercios del plazo de un préstamo típico a 30 años."
+    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés. No es el interés compuesto de la lección “Interés Compuesto”: cada pago cubre por completo el interés de ese mes, así que nunca se cobra interés sobre interés. El momento en que la parte de capital supera a la de interés depende de la tasa: alrededor de dos tercios del plazo en un préstamo a 30 años al 7%, pero alrededor del año 7 de 30 al 3%."
   },
   {
     "q": "Una cuenta de corretaje tiene $500 en efectivo sin invertir recién depositado. ¿Qué pasa generalmente con ese dinero si el dueño no hace nada más?",

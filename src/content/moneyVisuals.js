@@ -741,7 +741,8 @@ export const outcomeDescription = {
 // for looks would be inventing the rate — item 27's standing rule (does the
 // prose state every quantity the shape needs?) rejected lessons 16, 18 and 21
 // for exactly that. What the lesson DOES state is where the two shares cross:
-// "roughly two-thirds of the way through its term".
+// "roughly two-thirds of the way through the term" — and, since 2026-09-19,
+// the rate that puts it there: "on a 30-year mortgage at about 7%".
 //
 // For any fixed-payment loan the interest share of a payment is
 //
@@ -759,17 +760,22 @@ export const outcomeDescription = {
 //         => k = 2^(1/(1-crossing)) = 2^3 = 8   for crossing = 2/3
 //
 // So the whole curve follows from the lesson's own "two-thirds" and nothing
-// else — no rate is chosen here, and none is rendered. (For the record, and
-// only for it: k = 8 over 360 monthly periods is an annual nominal rate of
-// about 6.9%, which is why the shape looks like a mortgage. Nothing in the
-// figure or its labels says so, and nothing should — see §10.1.)
+// else — no rate is chosen HERE; k = 8 over 360 monthly periods is an annual
+// nominal rate of about 6.9%, and the lesson independently names "about 7%",
+// which is why the shape looks like a mortgage and why the marker label may
+// now say so. ⚠️ THAT AGREEMENT IS A COINCIDENCE THAT MUST BE RE-CHECKED IF
+// EITHER SIDE MOVES: the curve is still pinned by the crossing, not by a rate,
+// so changing the lesson's rate without changing `splitCrossing` would leave
+// the label naming a rate the curve does not draw. The exact crossings are
+// month 242 of 360 at 7% (67.2% of the term) and month 241 at 6.9%.
 //
 // ⚠️ A FUTURE RUN MUST NOT PIN THE ENDS. s(0) = 7/8 falls out of k = 8; it is
 // derived, not stated, and the lesson says only "mostly". That is precisely
 // why the vertical axis carries no scale: the shape is honest about the
 // ordering and the crossing, and silent about the amounts, because the lesson
-// is. Adding a tick, a percentage, or a real payment schedule would make the
-// figure state what the prose declines to.
+// is. Adding a tick or a real payment schedule would still make the figure
+// state what the prose declines to. The rate is the one exception, and only
+// because the prose now states it too.
 export const splitTermYears = 30;
 export const splitCrossing = 2 / 3;
 
@@ -804,15 +810,17 @@ export const splitSegmentLabels = {
   ja: ["利息（融資に対する貸し手の請求）", "元金（借りた金額を減らす部分）"],
 };
 
-// The crossing, in the lesson's own hedged words. The hedge is kept ("roughly",
-// "often") because the figure pins the marker at exactly 2/3 and the label is
-// the only thing that says the lesson did not.
+// The crossing, in the lesson's own hedged words. The hedge is kept ("roughly")
+// because the figure pins the marker at exactly 2/3 and the label is the only
+// thing that says the lesson did not. The rate rides along for the same reason:
+// the lesson's "two-thirds" is now explicitly the ~7% case, so a marker that
+// named the fraction alone would read as universal when the lesson no longer is.
 export const splitMarkerLabel = {
-  en: "roughly two-thirds of the way through its term",
-  es: "aproximadamente dos tercios de su plazo",
-  ko: "대출 기간의 약 3분의 2 지점",
-  zh: "贷款期限约三分之二处",
-  ja: "返済期間のおよそ3分の2",
+  en: "at about 7%, roughly two-thirds of the way through its term",
+  es: "con una tasa cercana al 7%, aproximadamente dos tercios de su plazo",
+  ko: "금리 약 7%일 때, 대출 기간의 약 3분의 2 지점",
+  zh: "利率约7%时，贷款期限约三分之二处",
+  ja: "金利が約7%のとき、返済期間のおよそ3分の2",
 };
 
 // [left, right]. The left end is the moment the lesson names as the one where

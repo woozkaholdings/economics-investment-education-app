@@ -275,7 +275,7 @@ export const quizText = [
       "Mostly interest, since interest is charged on the remaining balance",
       "Entirely interest, since no principal is paid until the loan is refinanced"
     ],
-    "explain": "Interest is charged on the remaining balance, which is largest early in a loan, so early payments are mostly interest. This isn't the compounding from “Compound Interest”: each payment covers that month's interest in full, so no interest is charged on interest. The principal share only overtakes the interest share around two-thirds of the way through a typical 30-year loan."
+    "explain": "Interest is charged on the remaining balance, which is largest early in a loan, so early payments are mostly interest. This isn't the compounding from “Compound Interest”: each payment covers that month's interest in full, so no interest is charged on interest. When the principal share overtakes the interest share depends on the rate: about two-thirds of the way through a 30-year loan at 7%, but around year 7 of 30 at 3%."
   },
   {
     "q": "A brokerage account holds $500 in uninvested cash that was just deposited. What generally happens to it if the owner does nothing else?",
