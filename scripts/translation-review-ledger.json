@@ -991,25 +991,25 @@
     "es": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
       "reviewedDate": "2026-09-19",
-      "sourceHash": "c46b555244ee09bf",
+      "sourceHash": "2093dcbf3bc68632",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
       "reviewedDate": "2026-09-19",
-      "sourceHash": "c46b555244ee09bf",
+      "sourceHash": "2093dcbf3bc68632",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
       "reviewedDate": "2026-09-19",
-      "sourceHash": "c46b555244ee09bf",
+      "sourceHash": "2093dcbf3bc68632",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
       "reviewedDate": "2026-09-19",
-      "sourceHash": "c46b555244ee09bf",
+      "sourceHash": "2093dcbf3bc68632",
       "method": "ai"
     }
   },

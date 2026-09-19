@@ -6102,3 +6102,40 @@ same journey.
 **Owner-facing, one line:** the glossary said a PMI below 50 means "contraction", the name of a recession phase in this app; US manufacturing PMI sat below 50 through 2023-24 while the economy grew about 6%. The glossary now says 50 marks growth or shrinkage in the surveyed sector, matching lesson 39, in five languages. Separately, lesson 39's credit-spread timing claims were measured and **hold**. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1: residual pick #1 in a new chain, which the rule allows. The previous run was a free pick, and its only note was this one: "Quiz explain for the 'Fear Gauge' question ends *'Contrarian investors watch for spikes as potential buying opportunities.'* … Arguable; not picked") — the quiz explanation told learners, **in the app's own voice**, that **"Contrarian investors watch for spikes as potential buying opportunities."** Lesson 39 attributes the idea (*"Some contrarian investors … on the theory that panic is often overdone"*) but never says how that theory has done. Measured: **after most VIX spikes above 40 since 1990, US stocks were higher a year later (7 of 9), but about as often as a year after any ordinary day (81.8%)**. **A spike did not reliably mark the bottom:** after the first close above 40 in the 2008 crisis (2008-09-29), SPY fell **38.4%** further, to 2009-03-09, and the first spikes of 2001 and 2020 were followed by falls of **22.3%** and **24.3%**. The quiz line now attributes the theory, as L39 does, and gives the 2008 counterexample. L39 now gives the record. All five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/vix/a.mjs`. FRED keyless `VIXCLS` (header checked `observation_date,VIXCLS`; 1990-01-02 → 2026-09-17) and Tiingo `SPY` `adjClose` (1993-01-29 → 2026-09-18, 8,467 days). **Controls:** VIX record closes **82.69 on 2020-03-16** and **80.86 on 2008-11-20** are the published figures. SPY close 2020-03-23 is **222.95**, the known low. Bogus Tiingo ticker → **HTTP 404**. The VIX did not close above 40 before SPY's data starts (max 36.47, 1990-08-23), so no episode is lost.
+- **Episode = first close above 40 after ≥126 trading days without one:** 1998-08-31, 2001-09-17, 2002-07-22, 2008-09-29, 2010-05-07, 2011-08-08, 2015-08-24, 2020-02-28, 2025-04-04. 12-month SPY total return: **+39.3, −14.6, +22.7, −2.3, +23.0, +27.6, +18.1, +34.0, +35.3** → **7/9 positive**. Base rate: **81.8%** of all 8,215 days had a positive 12-month forward return (median +14.4).
+- **Sensitivity** (the count depends on the episode definition, so the copy says "most", not "7 of 9"): threshold 40, gap 63 → 8/10; gap 252 → 6/8; threshold 35 → 11/14; 45 → 6/7; 30 → 11/14. It is **75-86% every way**, against 81.8%. The 2008 further fall is **−38.4%** (adjClose) / **−38.8%** (price) at threshold 40 or 45, and **−40.8%** at 35: "almost 40%" holds.
+- ⚠️ **Instrument failure, caught:** my first sensitivity loop printed **nothing** for every variant. zsh passed `"40 63"` as one argument, so the threshold was NaN (the `zsh-does-not-word-split` memory); the ugrep `{4}` filter then hid it again. A silent empty table reads as "no episodes". Re-run with `for t g in …`: numbers above.
+- **Disposition:** the lesson's hedge ("on the theory that") is accurate as far as it goes. The quiz line was not hedged, and neither surface said the theory's record is about the base rate. The residual note called it arguable on §10.1 grounds. The data settles it: the line presented spikes as opportunities, and the record does not support more than the base rate.
+
+#### What shipped (10 strings, 10 files, all five languages)
+- **Quiz `explain`** (Fear Gauge, en): *"Some contrarian investors treat spikes as a sign that panic is overdone, but a spike does not reliably mark the bottom: after the VIX first closed above 40 during the 2008 crisis, US stocks fell almost 40% further."*
+- **L39 §1**, appended to the contrarian sentence (en): *"The record is mixed. After most spikes above 40 since 1990, US stocks were higher a year later — but about as often as a year after any ordinary day. And a spike does not reliably mark the bottom: after the first one of the 2008 crisis, stocks fell almost 40% further."* es/ko/zh/ja carry the same content. es keeps each file's own word (*inversores* in the quiz, *inversionistas* in L39).
+- ⚠️ **First patch said "September 2008"; `check-blindspot` §2.3 failed it** as a "Month YYYY" date in teaching copy. `patch2.mjs` reworded it to "the 2008 crisis" in all ten strings (es/ko/zh/ja too, for consistency, though §2.3 only matched en).
+- Patchers: old ×1 / new ×0 before, 0 / 1 after, or nothing is written. Originals are in `scratchpad/vix/orig/`. Ledger: L39 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: en 161,059 → **161,327** chars.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` after patch 1 | **exit 1**: the expected ledger mismatch, then §2.3 "September 2008" |
+| `npm test` final | **exit 0**, 0 FAIL / 3 WARN (the standing three). §83 paragraph walls: none over the ceiling |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new clause in both en files → **exit 1, §10.1**, both files listed. Restored from the scratchpad copy (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** (`dist/` untouched) |
+| Built bundle | New clauses → `lessonContent.economy.<lang>` and `quizText.<lang>` for all five. Old `as potential buying opportunities`, `잠재적인 매수 기회로 주시합니다`, `潜在的买入机会`, `September 2008` → **no file**. Control: unchanged `on the theory that panic is often overdone` → `lessonContent.economy.en`. Negative probe → no file |
+| Live walk | **not done.** Text-only; the L39 paragraph grows by three sentences and §83 measures it under the ceiling |
+
+#### Step 5: adversarial self-check. It found one real defect (the Month-YYYY date), fixed above
+- **Could "higher a year later … about as often as any ordinary day" read as a buy signal?** It is the opposite: the clause exists to say a spike added nothing to the odds. I left out the median (+23% vs +14.4%) on purpose. With 9 episodes it is not robust, and it would read as a return promise. **Is "does not reliably mark the bottom" true?** 3 of 9 first spikes were followed by falls of more than 20%, and 1998's was the bottom. "Not reliably" is the claim both ways.
+- **§10.2:** no Dalio text. **§10.1:** advice-adjacent wording removed rather than added (plant proves the guard sees both files). **Live-looking figure:** closed historical episodes only, and the date is phrased as "the 2008 crisis". **DECISIONS.md:** 0 hits for `VIX`. **Already-done:** extends the 09-13 L39 VIX cutoffs work and undoes nothing. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Nothing new.
+
+**Owner-facing, one line:** the quiz told learners VIX spikes are "potential buying opportunities". Measured since 1990, stocks rose in the year after a spike about as often as after any day, and in 2008 they fell almost 40% further after the first spike. The quiz and lesson 39 now say that, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
