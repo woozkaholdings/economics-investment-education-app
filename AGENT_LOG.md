@@ -6063,3 +6063,42 @@ same journey.
 **Owner-facing, one line:** the app called credit "the most volatile part of the economy". That is false for credit outstanding, which grows more steadily than investment or housing, and true for new borrowing, which swung from +$2.1T a year (2006) to −$0.7T (2009-10). The lesson subtitle, glossary and quiz now say which, in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was a free pick and its only note (L30's "most important") called itself arguable, so this was a free pick. **The first pick's premise broke and the item was re-decided** — see step 3.5) — the glossary defined **PMI** as **"Monthly survey. Above 50 = expansion. Below 50 = contraction. Leading indicator."** In an app whose cycle phases are named Expansion and Contraction, that reads as "PMI below 50 = the economy is contracting". The 09-13 L39 run corrected exactly that reading in the lesson (*"a reading below 50 is not a recession forecast"*) and left the glossary chip saying the old thing. **From late 2022 through 2024 the US manufacturing PMI was below 50 in 26 of 26 months (revised series), while real GDP grew 5.9% and payrolls added about 4.4 million jobs; `USREC` is 0 through 2026-08.** The definition now says what the survey asks, that 50 marks growth or shrinkage in the surveyed sector versus the month before and not the whole economy, and gives the 2022-24 counterexample, in all five languages
+
+#### Step 3.5: the first premise BROKE, and the pick was re-decided
+- **First pick: L39 §2's credit-spread phase readings** ("At Peak … credit spreads begin to widen even while headlines still sound upbeat"; "At Trough … credit spreads beginning to narrow"). Never measured against data (the 09-19 Credit Spread runs measured level vs direction, not timing against peaks/troughs).
+- **Instrument:** `scratchpad/spread/{a,b,c}.mjs`, FRED keyless CSV `BAA10YM`, `AAA10YM`, `USREC`. **Controls:** `NOSUCHSERIESXYZQ` → **HTTP 404**; derived peaks 1953-07 … 2020-02 and troughs 1954-05 … 2020-04 are NBER's published dates; `BAA10YM` max **6.01** in 2008-12, the known crisis high.
+- **Peak claim HOLDS.** Baa spread widened over the **3 months before 8 of 10 NBER peaks** (1957-2020; one of the eight, 1981, by only +0.01; the two exceptions −0.03 and −0.02, i.e. flat), against a placebo of **37.3%** of expansion months more than 24 months from any peak. Over 6-24 month windows it is 5-7/10, so "begin to" (short horizon) is the right wording. Aaa control: 9/10 at 3 months.
+- **Trough claim HOLDS.** The widest Baa reading of each recession came **at or before the trough in 9 of 11** (window: recession start → the earlier of the next peak or trough+24). Exceptions: 1970 (+4 months) and 2001 (+11 months, 2002-10). In the 3 months after the trough the spread narrowed in 7/11 and was flat (≤+0.08) in the rest.
+- **Disposition:** both are hedged ("tend to", "begin to") and supported. **Nothing to change in L39 §2's spread wording**; recorded here so no run re-derives it.
+- **Second pick: glossary `PMI`**, noted "arguable" three times (l.5811, 5850, 5920) on the grounds that L39 spells out what 50 means. Re-read: that is the argument *for* the fix — the lesson and its own glossary chip disagreed, the same shape as `8f7b684`/`c30e684`.
+- **Instrument:** DBnomics `ISM/pmi/pm` (keyless) + FRED `USREC`, `GDPC1`, `PAYEMS`, `IPMAN`. **Controls:** bogus DBnomics id → **404**; 2020-05 **43.1** and 2022-12 **48.4** match ISM's headlines; the post-2025-08 junk (11.1, 10.0, 10.0, 10.3) reproduces what the 09-13 L39 run found (archive l.57699) and is excluded; `GDPC1` 2020Q2 vs 2019Q4 **−9.1%**, the known collapse.
+- **Measured:** PMI below 50 in **26/26** months 2022-11 → 2024-12 (first prints: 2024-03 was 50.3, hence "almost every month"). Real GDP 2022Q4 → 2024Q4 **+5.9%** (2.9% and 2.8% annual-average growth in 2023 and 2024). Payrolls **+3.97M to +4.38M** depending on the start month. `USREC` 0 from 2022-01 through 2026-08.
+
+#### What shipped (5 strings, 1 file, all five languages)
+- **Glossary `PMI` `f`** (en): *"Monthly survey asking purchasing managers whether orders, output, hiring and other activity went up or down from the month before. Above 50 = growing, below 50 = shrinking, in the sector surveyed rather than the whole economy. A leading indicator, but a reading below 50 is not a recession forecast: the US manufacturing PMI stayed below 50 in almost every month from late 2022 through 2024, yet the economy grew about 6% and added about 4 million jobs."* es/ko/zh/ja carry the same content, using L39's own per-language terms (ko `50 초과`/`경기침체`, ja `50超`/`景気後退`, zh `高于50`/`衰退预报`, es `EE.UU.`). `ex` unchanged. ko/ja/zh previously said "50 이상/以上" (≥50); they now say above, matching L39.
+- ⚠️ **My first patch also said "factory output fell about 2%" and "more than 4 million jobs".** The self-check shifted the window by one month and both broke: `IPMAN` runs **−2.6% to +0.4%** across start/end choices, and payrolls fall to **3.97M** from a 2022-12 base. A second count-asserted patch (`patch2.mjs`) dropped the factory clause and made the jobs figure "about 4 million". After it, `2%` / `factory output` / `공장 생산` / `工厂产出` / `工場の生産` / `más de 4 millones` → **0** in the PMI entry, all five languages.
+- Patchers: old ×1 / new ×0 before, 0 / 1 after, or nothing is written. Original is `scratchpad/spread/orig/glossary.js`. All five strings read back from the imported module.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `refresh-readiness --check` | **exit 0** |
+| `check-blindspot` | **exit 0**. Planted *"You should buy tech stocks now."* after the new en clause (anchor count 1) → **exit 1, §10.1**. Restored from the scratchpad copy (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** (`dist/` untouched) |
+| Built bundle | All five new closing clauses → `markets-*.js`. Old `Below 50 = contraction. Leading` and `50 미만=수축. 선행 지표` → **no file**; the first patch's `factory output fell` → **no file**. Control: unchanged Fed Funds definition → `markets-*`. Negative probe → no file |
+| Live walk | **not done.** Text-only change to a glossary string; the chip already renders longer entries (Credit Spread) |
+
+#### Step 5: adversarial self-check. It found one real defect, fixed above (the window-fragile factory and jobs figures)
+- **Does "in the sector surveyed rather than the whole economy" overstate?** It is ISM's own definition of the index (a diffusion index of the surveyed sector's month-on-month change), and it matches L39's "activity growing / shrinking". **Does it contradict L39's "tends to move before the broader economy"?** No; the glossary keeps "A leading indicator".
+- **§10.2:** no Dalio text; `/dalio/i` in `glossary.js` → 0. **§10.1:** dated history, no advice (the plant covers it). **Live-looking figure:** closed 2022-24 window only. **DECISIONS.md:** 0 hits for `PMI`. **Already-done:** extends the 09-13 L39 fix (archive l.57695) to the glossary; undoes nothing. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Quiz explain for the "Fear Gauge" question ends *"Contrarian investors watch for spikes as potential buying opportunities."* It describes others' behavior, and L39 §1 says the same with "on the theory that". `check-blindspot` passes it. Arguable; not picked.
+
+**Owner-facing, one line:** the glossary said a PMI below 50 means "contraction", the name of a recession phase in this app; US manufacturing PMI sat below 50 through 2023-24 while the economy grew about 6%. The glossary now says 50 marks growth or shrinkage in the surveyed sector, matching lesson 39, in five languages. Separately, lesson 39's credit-spread timing claims were measured and **hold**. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
