@@ -5990,3 +5990,37 @@ same journey.
 **Owner-facing, one line:** the glossary said a wide credit spread means fear or crisis. The direction holds (it widened in all 11 US recessions since 1953), but the number does not: in 1953-69 it never reached 2 points even in recessions, and in the calm 2010s it was 2 or more almost every month. The definition now says to read it against its own recent range, in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1: residual pick #2 in the chain the previous run opened, which the rule allows. The **next** run may not take this run's residual. The previous run's first note was this entry: "L39 §1's own 'Narrow = … Wide = …' sentence makes the same level claim in all five languages … If a later run wants the lesson to say it too, this entry has the figures") — lesson 39, where **Credit Spread** is `defined-here`, still told learners **"Narrow = lenders feel confident. Wide = lenders are demanding extra pay for extra fear."** It came one paragraph after the VIX's numeric cutoffs ("below 15 = calm … above 40 = extreme panic"), which invites reading the spread as a level too. The glossary has carried the era caveat since `c30e684`. The lesson did not, so a learner reading the lesson and one tapping the chip got two different definitions. The paragraph now gives both directions as tendencies, says to watch the direction and compare with the spread's own recent range, and gives the same US figures, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Re-measured, not copied from the previous entry.** Script `scratchpad/l39/a.mjs`, FRED keyless CSV (`BAA10YM`, `USREC`).
+- **Controls that fired:** (i) `NOSUCHSERIESXYZ` → **HTTP 404**. (ii) Series max **6.01 in 2008-12**, the known GFC peak.
+- **Reproduced exactly:** widened in **11 of 11** recessions 1953-2020 (peak minus prior-12-month mean +0.42 … +4.16, the same list as `c30e684`'s entry); the 1953-69 max was **1.82**, and the max in recession months in that span was also **1.82**; 2010-19 had **107 of 120** months ≥2 (min 1.65), with **0** `USREC` months. Latest reading **1.64 (2026-08)**, not used in the text.
+- **Premise:** HOLDS as the previous run stated it. The direction is right, and the level reading is wrong across eras.
+
+#### What shipped (L39 `sections[0]`, last paragraph, en/es/ko/zh/ja; 5 strings)
+- en: the first sentence is unchanged. The two "=" sentences became *"They tend to widen when lenders demand extra pay for fear of defaults, and narrow when lenders feel confident. But watch which way they move and compare them with their own recent range, not a set number: the US gap between medium-grade (Baa) corporate and 10-year Treasury yields widened in all 11 recessions from 1953 to 2020, yet it never reached 2 percentage points in 1953-1969, even in recessions, while in the long 2010s expansion it was 2 or more in nearly 9 months out of 10."* The figure clause reuses the glossary's wording in every language, so the two surfaces agree word for word on the numbers. The old "extra pay … fear" idea is kept.
+- Patcher `scratchpad/l39/patch.mjs`: dry run first, old ×1 / new ×0 before and 0 / 1 after, **5/5**; nothing is written if any check fails. All five read back from the modules. Post-patch copies are in `scratchpad/l39/post/`.
+- **Knock-ons the suite demanded:** the ledger marked L39 es/ko/zh/ja stale. I wrote each translation against the new English, read it back, and re-marked it `ai` (O-3 unchanged: 0% human). **Ledger diff: 16 lines, L39's four entries only.** `readiness --write`: en chars 160,662 → **161,059**, LAUNCH_PLAN §4.0 ~28,000 → **~28,100 words**. Minutes stay at 171, and no minutes check fired.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1**: LAUNCH_READINESS §10.4 coverage disagreed with the ledger (the expected stale knock-on). After the ledger and readiness fixes: **exit 0**, 0 FAIL / 3 WARN (the standing three). §83: worst paragraph is still L18 es at 31.6 lines, so the new es paragraph (737 chars) is not the worst |
+| `check-blindspot` | **exit 0**. Planted *"You should buy tech stocks now."* after the new en paragraph (anchor count 1) → **exit 1, §10.1**. Restored from the scratchpad snapshot (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** (`dist/` untouched) |
+| Built bundle | Each language's new clause → its `lessonContent.economy.<lang>` chunk (en/es also match `markets-BICsSLtR.js`, where the glossary carries the same figure clause). The old "Wide = lenders are demanding extra pay" and "宽 = 放贷者在为多出来的恐惧" → **no file**. Control: the unchanged "VIX, nicknamed the" → the en chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only change to a paragraph the lesson reader already renders |
+
+#### Step 5: adversarial self-check. Nothing found that needed changing
+- **L39 §2 agreement:** §2 says spreads are "narrow" in Expansion and "wide" in Contraction, and that they "begin to widen" at Peak and are "beginning to narrow" at Trough. Read after the new §1, these are relative to the phase before, which is what §1 now says to watch. Not edited.
+- **Other surfaces:** `spread` in `quizText.en.js`, `economicSignals.js` and `markets.js` finds only diversification uses and the yield-curve `curveSpread` key. No quiz question makes a credit-spread claim. `DECISIONS.md` / `CLAIMS.md`: 0 hits for "credit spread".
+- **§10.1:** direction and dated history, not advice. The plant covers this file. **§10.2:** 0 hits for "Dalio" in all five economy modules. **§10.3 / live-looking figure:** none. The windows are closed, and the 2026-08 reading is not in the text. **Already-done:** extends `c30e684` to the lesson and undoes nothing. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Nothing new. **The next run may not take a residual of this chain (W-6.2 rule 1).**
+
+**Owner-facing, one line:** lesson 39 said "Narrow = confident. Wide = fear" as if the credit spread were read like the VIX's fixed cutoffs. It now says to watch which way the spread moves and compare it with its own recent range: in 1953-69 it never reached 2 points even in recessions, and in the 2010s it was 2 or more almost every month. This matches the glossary, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
