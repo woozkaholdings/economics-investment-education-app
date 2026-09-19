@@ -5955,3 +5955,40 @@ same journey.
 **Owner-facing, one line:** lesson 38 said that at an economic peak "the mood hasn't caught up yet". In US data it is the reverse: business confidence peaked at least 8 months before every recession since 1953 and was about halfway down by the time each one started. The lesson now says the mood has usually already begun to sour, in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (owner-directed: "measure the peak inflation claim next". This is the previous run's note, taken up on instruction, so W-6.2 rule 1 does not arise) — lesson 38's Peak section said **"Inflation is running at highs, and the Fed is raising rates to cool things down."** The inflation half **mostly holds**: at 7 of 11 US recession starts since 1953, CPI inflation was at 84-100% of its high for that expansion, and it rose further during the recession in 7 of 11. **The Fed half does not:** the fed funds rate had usually already peaked (0-16 months before the recession began), and **in all four US recessions since 1990 it was lower than a year earlier, because the Fed had already started cutting.** The Peak section and the "Why These Assets" Peak paragraph (*"At the Peak, the Fed is actively raising rates"*) now say the Fed usually raised rates in the run-up and had often stopped by the peak, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/q012/e.mjs`, `f.mjs`, `g.mjs`. FRED keyless `CPIAUCSL` (1947-01 → 2026-08), `FEDFUNDS` (1954-07 → 2026-08), `USREC`. **Controls:** CPI year-on-year **14.6%** at 1980-03 and **9.0%** at 2022-06 (the published NSA figures are 14.8/9.1; this is SA). Fed funds **6.54** at 2000-07, **5.26** at 2007-07, **19.08** at 1981-01. The 11 NBER peaks as published.
+- **Fed funds high (peak−24 → peak, latest max) before the NBER peak:** **0, 5, 4, 2, 0, 1, 16, 8, 5, 10** months (1957 … 2020; no data for 1953). **Change over the 12 months to the peak:** +0.51, +0.96, +2.95, +4.97, +3.75, +10.01, then **−1.09 (1990), −0.54 (2001), −1.00 (2007), −0.82 (2020)**. **Change over 3 months:** above +0.1 only in 1957, 1980 (+0.05, flat) and 1981. Over 2 years the rate rose in 10 of 10, so the run-up claim holds.
+- **Inflation:** CPI y/y at the peak month relative to that expansion's high: 4, 96, 58, 99, 100, 100, 84, 91, 59, 87, 61% (the 2001 high is a 1991 recession tail). Higher than two years earlier in 7 of 11 (the base rate for all months is 49%). **It rose by more than 0.2 pp after the peak, during the recession, in 7 of 11** (1953, 1969, 1973-74 to 12.2%, 1980, 1990, 2001, 2008 to 5.5%).
+- **Disposition:** inflation "at highs" holds loosely, so it became "usually near its high for the expansion". "The Fed is raising rates" at the peak is wrong for the recent record, so it became the run-up and the 1990+ fact. The other surface making the same claim (L38 "Why These Assets") was changed to match. L39's *"CPI has drifted above target"* at Peak: CPI was above 2% at 9 of 11 peaks (0.4% in 1953, 1.9% in 1960). It holds and was left alone.
+
+#### What shipped (10 strings, 5 files, plus `lessons.js`, the ledger and readiness figures)
+- L38 Peak, en: *"Inflation is usually near its high for the expansion, and the Fed has usually spent the run-up raising rates to cool things down. By the time a recession begins it has often stopped: in the four US recessions since 1990, it had already started cutting."*
+- L38 Why These Assets, en: *"In the run-up to the Peak, the Fed has usually been raising rates to cool the boom, and that same mechanism now runs in reverse on…"* (the rest is unchanged). es/ko/zh/ja carry the same content.
+- `check-data` **FAIL** (by design): L38 now computes to 6 reading minutes, so `lessons.js` `minutes: 5 → 6`. `refresh-readiness --write`: catalog **162,000** English chars / **172** min (from 171). LAUNCH_PLAN §4.0, ~28,300 words. CLAIMS.md A6 cell → 172 min. Ledger L38 es/ko/zh/ja re-marked `ai`.
+- Patcher: every old ×1 / new ×0 before any write, 0 / 1 after. Originals are in `scratchpad/peakinf/orig/`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | first run **exit 1** (the minutes check), after the fix **exit 0**, 0 FAIL / 3 WARN (the standing three). Ledger 44/44, 0 stale |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new Peak sentence (en) → **exit 1, §10.1**. Restored (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | All 6 new-string probes → their own language chunks. All 6 old phrasings (`Inflation is running at highs`, `the Fed is actively raising rates`, and the es/ko/zh/ja equivalents) → **no file**. Control: the unchanged `Growth stalls, and the mood has usually already begun to sour` → the en chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only, in sections that already render |
+
+#### Step 5: adversarial self-check
+- **Does "had already started cutting" hold for every one of the four?** Yes. The 12-month change was negative in 1990, 2001, 2007 and 2020, and the known first cuts were June 1989, January 2001, September 2007 and July 2019.
+- **Does the Why section still make sense?** Its mechanism (higher rates weigh on long-duration assets) needs rates to be *high*, not still rising. "The run-up" keeps that, and the "(less exposed … to further hikes)" parenthetical still fits the run-up. **Does the Trough/Contraction text conflict?** Contraction says *"the Fed starts cutting rates"*, and now we say that in recent cycles the cutting started before the contraction. That is compatible ("starts" in the phase is looser than first-cut timing), but see the note.
+- **§10.1:** no advice added. **§10.2:** none. **§2.3:** "since 1990" and years only. **DECISIONS.md:** nothing on phase text. **Already-done:** the previous run's mood sentence is untouched (it is the bundle control). **W-6.3:** 0 lines in `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- L38 Contraction: *"the Fed starts cutting rates to try to stop the slide"*. In all four recessions since 1990 the first cut came before the recession began, 2.5-10 months ahead. Arguable, because the Fed kept cutting through each contraction. Not picked.
+- L38 Peak's *"every worker is employed"* is town-narrative hyperbole and is not measurable as stated.
+
+**Owner-facing, one line:** lesson 38 said the Fed "is raising rates" at an economic peak. In the four US recessions since 1990 it had already started cutting by the time each began, though it did usually raise rates in the run-up. Two lesson passages now say that, in five languages. The inflation half of the claim mostly held and was only softened. Lesson 38 now reads at 6 minutes. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
