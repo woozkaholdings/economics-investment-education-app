@@ -6139,3 +6139,39 @@ same journey.
 **Owner-facing, one line:** the quiz told learners VIX spikes are "potential buying opportunities". Measured since 1990, stocks rose in the year after a spike about as often as after any day, and in 2008 they fell almost 40% further after the first spike. The quiz and lesson 39 now say that, in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was residual pick #1 and its note was "Nothing new", so this was a free pick. It came from reading every English quiz `explain` for a causal claim no run had measured. `expansion begins again from there` returns **0** measurements in `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `CLAIMS.md`, `DECISIONS.md`. The one archive hit (l.37028) *restored* the clause to es/ko/zh/ja for parity and never tested it) — quiz `q012` (L38, the Trough question) explained that **"the year following a market bottom has shown some of the strongest average returns, since expansion begins again from there."** The timing is backwards. **In 9 of the 10 US recessions since 1957, the stock market's low came 1-5 months *before* the recession ended**, while the economy was still shrinking. **L38's own Trough section already says so** (*"The stock market's own low has usually come before the economy's"*), so the quiz contradicted the lesson it tests. **The exception, 2001, is the counterexample:** the recession ended in November 2001, and SPY did not hit its low until **2002-10-09**, 11 months later. The explanation now gives the lead, the gain after the low, and says the low is clear only in hindsight, with 2001 as the example, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/trough/a.mjs`, `b.mjs`. FRED keyless `USREC` (header checked; 1854-12 → 2026-08) and `SPASTT01USM661N` (OECD monthly US share prices, 1957-01 → 2026-08). Tiingo `SPY` daily, 8,467 days. **Controls:** SPY daily lows land on the published dates **2002-10-09, 2009-03-09, 2020-03-23** (222.95). Bogus Tiingo ticker → **HTTP 404**.
+- **Market low = monthly minimum from the peak to trough+12.** Months the low came before the NBER trough: 1957-58 **5**, 1960-61 **4**, 1969-70 **4**, 1973-75 **3**, 1980 **3**, 1981-82 **4**, 1990-91 **5**, 2001 **−11**, 2007-09 **3**, 2020 **1**.
+- ⚠️ **First window (peak−12 → trough+24) was wrong, and the table showed it:** it picked the 1962 crash for 1960-61 and 1979-02 for 1980. It also crashed on 1957, because that window starts before the data does. With the window tightened, every low falls in the month of the published daily low or up to 2 months after it (monthly averages lag daily lows).
+- **12-month return from the low:** median **+32.7%** (81st-100th percentile of all 824 12-month windows; base median **+9.4%**). **From the NBER trough month:** median **+13.1%**, with 1 of 10 negative (2001, **−16.0%**; SPY total return from the end of the trough month **−16.3%**).
+- **Disposition:** "strongest gains after the low" holds, but only in hindsight. "Since expansion begins again from there" is false in 9 of 10 cases on timing, and in 2001 the order ran the other way.
+
+#### What shipped (5 strings, 5 files)
+- en: *"At the trough, sentiment is at its most negative. The stock market's own low has usually come a few months before the economy's, while the recession was still under way, and the year after that low has brought some of the market's strongest gains. But the low is clear only in hindsight: after the 2001 recession ended, US stocks did not hit their low until almost a year later."* The hedge sentence after it is unchanged. es/ko/zh/ja reuse L38 Trough's own wording for the first clause.
+- ⚠️ **Step 5 found a defect in the first draft, which said "kept falling for almost another year".** SPY *rose* 3.1% from 2001-11-30 to 2002-01-04 (114.05 → 117.62), then fell to the October low. `patch2.mjs` changed it to "did not hit their low until" in all five languages.
+- Patchers: old ×1 / new ×0 before, 0 / 1 after, or nothing is written. Originals are in `scratchpad/trough/orig/`. No lesson text changed, so the ledger and readiness figures are unchanged.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` (final text) | **exit 0**, 0 FAIL / 4 WARN: the standing three, plus the run-log budget (see below) |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new clause (en) → **exit 1, §10.1**. Restored from the scratchpad copy (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** (`dist/` untouched) |
+| Built bundle | New 2001 clause → `quizText.<lang>` for all five. Old `since expansion begins again from there`, `そこから拡大が再び始まるからです`, and the first draft's `kept falling for almost another year` / `siguieron cayendo casi un año más` → **no file**. Control: unchanged `not a guarantee for any specific future trough` → `quizText.en`. Negative probe → no file |
+| Live walk | **not done.** Text-only, in an explanation that already renders |
+
+#### Step 5: adversarial self-check. It found one real defect (the "kept falling" wording), fixed above
+- **Does "strongest gains after the low" read as a buy signal?** The same sentence now says the low can be seen only in hindsight and gives a year in which waiting for the recession to end still meant buying before a further fall. That is less advice-adjacent than the old text, which tied the gains to a phase a learner might think they can identify. §10.1: the plant proves the guard sees this file.
+- **§10.2:** no Dalio text. **Live-looking figure:** closed episodes only, with the year and no month (§2.3 green). **DECISIONS.md:** 0 hits for `trough`. **Already-done:** the archive l.37028 run restored the clause for translation parity. This run replaces it in all five languages at once, so parity holds. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- `q012`'s **keyed option** reads *"Pessimism is at its worst, but it has often been a strong time to find investment opportunities"*. It is advice-adjacent in the app's voice, and changing it moves a quiz key and the option-length cue. Arguable; not picked.
+- **Run-log budget:** `npm test` warned *before* this entry that it had 0.37 runs of room left (247,056 of 250,000 b warn). This entry goes over the warn line (fail is 350,000). **The next run's pick is the archiving pass.**
+
+**Owner-facing, one line:** a quiz explanation said stocks rebound after a bottom "since expansion begins again from there". In 9 of 10 recessions since 1957 the market bottomed a few months *before* the recession ended, and in 2001 it bottomed almost a year after. The explanation now says that, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.

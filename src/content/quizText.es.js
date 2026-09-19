@@ -135,7 +135,7 @@ export const quizText = [
       "La inflación suele estar en su punto máximo",
       "Las acciones históricamente han seguido cayendo durante años"
     ],
-    "explain": "En el valle, el sentimiento es el más negativo, pero históricamente el año siguiente a un suelo de mercado ha mostrado algunos de los retornos promedio más fuertes, porque la expansión vuelve a empezar desde ahí. Esto es un patrón histórico, no una garantía para ningún valle futuro concreto."
+    "explain": "En el valle, el sentimiento es el más negativo. El mínimo del propio mercado bursátil normalmente ha llegado unos meses antes que el de la economía, cuando la recesión aún no había terminado, y el año posterior a ese mínimo ha traído algunas de las mayores subidas del mercado. Pero ese mínimo solo se ve con claridad en retrospectiva: tras el fin de la recesión de 2001, las acciones estadounidenses no tocaron su mínimo hasta casi un año después. Esto es un patrón histórico, no una garantía para ningún valle futuro concreto."
   },
   {
     "q": "¿Qué indicador económico se conoce a menudo como el 'Índice del Miedo'?",
