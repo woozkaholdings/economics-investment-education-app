@@ -189,7 +189,7 @@ export const lessonContent = {
       },
       {
         "heading": "Contraction",
-        "body": "Back in the town, credit contracts, spending falls, and the third restaurant lays off staff, then closes. Unemployment rises across the whole town, and the Fed starts cutting rates to try to stop the slide. Stocks often fall hard around this phase — US bear markets have averaged a drop of about a third — but the market's slide has usually started before the contraction began, and its recovery before the contraction ended, so from a contraction's first month to its last, prices have usually fallen far less than that. Assets like Treasury bonds, gold, defensive stocks (utilities, healthcare), and plain cash have historically held up better in it."
+        "body": "Back in the town, credit contracts, spending falls, and the third restaurant lays off staff, then closes. Unemployment rises across the whole town, and the Fed cuts rates to try to stop the slide. In the seven US recessions from 1953 to 1982, it made its first cut only after the recession had begun (in 1973-75 it was still raising rates eight months in); in the four since, it had already started cutting beforehand. Stocks often fall hard around this phase — US bear markets have averaged a drop of about a third — but the market's slide has usually started before the contraction began, and its recovery before the contraction ended, so from a contraction's first month to its last, prices have usually fallen far less than that. Assets like Treasury bonds, gold, defensive stocks (utilities, healthcare), and plain cash have historically held up better in it."
       },
       {
         "heading": "Trough",

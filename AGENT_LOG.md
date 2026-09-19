@@ -5992,3 +5992,40 @@ same journey.
 **Owner-facing, one line:** lesson 38 said the Fed "is raising rates" at an economic peak. In the four US recessions since 1990 it had already started cutting by the time each began, though it did usually raise rates in the run-up. Two lesson passages now say that, in five languages. The inflation half of the claim mostly held and was only softened. Lesson 38 now reads at 6 minutes. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (owner-directed: "measure the contraction rate-cut claim next". This is the previous run's first note, taken up on instruction, so W-6.2 rule 1 does not arise) — lesson 38's Contraction section said **"the Fed starts cutting rates to try to stop the slide"**, placing the first cut inside the recession. **That held for all seven US recessions from 1953 to 1982 and failed for all four since:** the discount rate's first cut came 2-13 months after the recession began in every one of the seven, and in 1973-75 the fed funds rate was still rising eight months in. In 1990, 2001, 2007 and 2020 the target rate's first cut came 13, 2, 3 and 6 months *before*. Lesson 32's takeaway and the 09-19 Peak sentence already say the modern half. The Contraction sentence now gives both halves, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/q012/h.mjs`. FRED keyless `DFEDTAR` (1982-09-27 → 2008-12-15), `DFEDTARU` (2008-12-16 →), `INTDSRUSM193N` (IMF, US discount rate, 1950-01 → 2021-08), `FEDFUNDS`, `USREC`, all HTTP 200. **"First cut"** = the first decrease after the last increase before the trough. **Controls:** the target series returns the known first cuts **1989-06-06, 2001-01-03, 2007-09-18**. The July 31, 2019 FOMC cut appears as **2019-08-01**, its effective date.
+- **First cut, months after the NBER peak:** discount rate **+7 (1953), +3, +2, +11, +13, +4, +4 (1981)**, then +5 (1990), −2, −4, −6. Target rate (1982+): **−13 (1990), −2 (2001), −3 (2007), −6 (2020)**. Cross-check: fed funds 0.5 pp below its cycle high by **+4, +2, +3, +9, +4, +1** (1957-1981), and **−12, −2, −2, −4** (1990-2020). 1990 is the one case where the measures disagree: the discount rate lagged, but the FOMC's target cuts started in June 1989.
+- **1973-75:** discount-rate hike 1974-05 (six months in), fed funds high **12.92 in 1974-07** (eight months in), fed funds half a point below that high by 1974-08, discount cut 1974-12.
+- **Disposition:** the claim is right for 1953-82 and wrong for 1990-2020, so the sentence now carries both.
+- ⚠️ **Correction to my own previous entry:** its note said the post-1990 first cuts came *"2.5-10 months ahead"*. That was **not measured** (it read fed-funds *highs* as cuts). The measured target leads are **2-13 months** (13, 2, 3, 6). The dated entry above is left as written (§31); this line is the correction.
+
+#### What shipped (5 strings, 5 files, plus the ledger and readiness figures)
+- en: *"Unemployment rises across the whole town, and the Fed cuts rates to try to stop the slide. In the seven US recessions from 1953 to 1982, it made its first cut only after the recession had begun (in 1973-75 it was still raising rates eight months in); in the four since, it had already started cutting beforehand."* es/ko/zh/ja carry the same content.
+- Ledger L38 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: catalog **162,212** English chars. The reading time stays at 6 minutes and the catalog at 172 min.
+- Patcher: old ×1 / new ×0 before any write, 0 / 1 after. Originals are in `scratchpad/contr/orig/`.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three). Ledger 44/44, 0 stale |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new sentence (en) → **exit 1**. Restored (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | 5 new-string probes → their own language chunks. 5 old phrasings → **no file**. Control: the unchanged `In Contraction, rates are falling` → the en chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only |
+
+#### Step 5: adversarial self-check
+- **Does "only after the recession had begun" hold on both measures for all seven?** Discount rate +2 to +13 and fed funds +1 to +9 (no fed funds data for 1953). Yes.
+- **Does "in the four since … beforehand" conflict with 1990's discount rate (+5)?** The sentence is about when the Fed started cutting, and its policy rate then was the funds target, first cut 1989-06-06. That matches L32's takeaway and the Peak sentence.
+- **The Why section's "In Contraction, rates are falling":** over each recession as a whole, rates were lower at the trough than at the peak. That holds even for 1973-75 (10.03 → 5.54). Left alone.
+- **§10.1/§10.2/§2.3:** clean (years only). **DECISIONS.md:** nothing on phase text. **Already-done:** the Peak sentence (b45aa0a) is untouched and agrees. **W-6.3:** 0 lines in `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Nothing new in L38. `kidsContent.js`'s thermostat blurb (*"Too cold (recession)? Lower rates"*) is a parent-facing simplification with no timing claim. Clean.
+
+**Owner-facing, one line:** lesson 38 said the Fed "starts cutting rates" during a contraction. That was true in all seven US recessions from 1953 to 1982, but in all four since, the first cut came 2-13 months before the recession began. The lesson now says both, in five languages. It also corrects an unmeasured figure in my previous note. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
