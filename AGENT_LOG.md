@@ -6029,3 +6029,42 @@ same journey.
 **Owner-facing, one line:** lesson 38 said the Fed "starts cutting rates" during a contraction. That was true in all seven US recessions from 1953 to 1982, but in all four since, the first cut came 2-13 months before the recession began. The lesson now says both, in five languages. It also corrects an unmeasured figure in my previous note. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was owner-directed and its only note was "Nothing new in L38", so this was a free pick. It came from a scan of every English economy-lesson and quiz sentence carrying a frequency or history word for 5-word runs that appear nowhere in `AGENT_LOG.md`, `AGENT_LOG.archive.md` or `CLAIMS.md` (`scratchpad/unq.cjs`). `occasionally turned negative` returns **0** in all four files and `DECISIONS.md`, and the archive's two `flights to safety` hits quote the sentence without measuring it) — lesson 36's term-premium section said the term premium **"has occasionally turned negative … often during flights to safety"**. **In the New York Fed's own estimate, the one the section names, it was below zero in 97 of the 120 months from 2015 to 2024, including 48 straight months (2017-03 → 2021-02).** Before 2015 it had dipped below zero in only three single months, all in the 1960s. The Fed Board's model agrees on long stretches but not on dates (58 months, mainly 2012-13, 2016 and 2019-21). And the NY Fed estimate stayed negative from 2021-06 to 2023-08, through a surge in inflation and the fastest hikes in decades, which is not a flight to safety. "Trended lower since the 1980s" **holds** on both models. The sentence now gives the stretches and both models' dates, and offers the causes as explanations rather than as fact, in all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instruments:** NY Fed `ACMTermPremium.xls` (sheet `ACM Monthly`, column `ACMTP10`, 1961-06 → 2026-08, 783 months), read with `xlrd` installed into the scratchpad only. FRED keyless `THREEFYTP10` (Kim-Wright, Fed Board, daily 1990-01-02 → 2026-09-11; negatives counted on monthly means). Scripts: `scratchpad/tp/a.py`, `k.py`.
+- **Controls:** a nonexistent FRED id gives **HTTP 404**. The ACM file's own fitted 10-year yield reproduces known levels: **14.91** (1981-09), **0.54** (2020-07), **4.95** (2023-10). ACM's term-premium peak lands at **5.18 in 1984-05**, the well-known early-1980s high.
+- **"Trended lower since the 1980s": holds.** ACM mean **3.86** (1980-84) → **1.15-1.19** (2005-14) → **−0.30 / −0.49** (2015-19 / 2020-24) → **0.62** (2025-26). KW **2.1-2.3** (1990-92) → **0.5-0.7** (2025-26). The rise since 2021 leaves it far below the 1980s on both.
+- **"Occasionally turned negative": breaks.** ACM negative runs: 1961-12, 1964-11, 1965-05 (single months, min −0.13), then **2015-01→03, 2016-01→10, 2017-03→2021-02 (48 mo, min −1.36 in 2020-07), 2021-06→2023-08 (27 mo), 2023-12→2024-04, 2024-06→09**: **97 of 120 months in 2015-24**. KW: 2012-02, **2012-05→2013-05**, 2016-02, **2016-04→10**, **2019-03→2021-12 (34 mo)**, 2023-04→05. That is **58 months**, and 56 of them fall in the three named periods.
+- **"Often during flights to safety": not measurable as stated, and contradicted in one long stretch.** ACM's 2021-06→2023-08 run spans the 2022 inflation surge and hiking cycle. The two models also disagree on dates, which the section's previous paragraph already warns about ("different models disagree with each other").
+- **Disposition:** keep the trend clause, replace "occasionally" with the measured stretches, turn the model disagreement the section already mentions into numbers, and state the causes as explanations offered (QE, safe-haven demand), not as a pattern.
+
+#### What shipped (5 strings, 5 files, plus the ledger and readiness figures)
+- en: *"…the term premium has trended lower since the 1980s, and in the 2010s it began spending long stretches below zero — meaning investors were willing to accept less for a 10-year bond than pure rate expectations alone would suggest. In the New York Fed's estimate it was below zero in most months from 2015 to 2024, including four unbroken years from 2017 to 2021. A second widely used model, from the Fed's Board of Governors, puts it below zero for fewer months, mainly in 2012-13, 2016 and 2019-21: the disagreement between models described above, in numbers. Explanations offered include the Fed's own bond buying and strong demand for Treasuries as a safe place to hold money in times of stress."* es/ko/zh/ja carry the same content, with house forms reused: `2012-13` ranges (es bare; ko/zh/ja `…年`/`년`), and the NY Fed named as each language's section already names it.
+- Patcher: old ×1 / new ×0 before any write, 0 / 1 after (**5/5**). Originals are in `scratchpad/tp/orig/`. Each rendered paragraph was re-read from the imported module, not just string-matched.
+- Ledger L36 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: English **162,212 → 162,673** chars, LAUNCH_PLAN ~28,400 words. Catalog still **172 min**; `npm test`'s minutes check is green, so L36's `minutes` is unchanged.
+
+#### Verification
+| Check | Result |
+|---|---|
+| After the edit | `npm test` **exit 1**: only LAUNCH_READINESS §10.4 vs ledger (1 stale per language; expected, addressed as above) |
+| Final `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* after the new sentence (en) → **exit 1** (§10.1). Restored (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | 5 new-string probes → their own `lessonContent.economy.<lang>` chunk only. 5 old phrasings → **no file**. Control: the unchanged "The Federal Reserve Bank of New York publishes one widely-cited estimate" → the en chunk. Negative probe → no file |
+| Live walk | **not done.** Text-only |
+
+#### Step 5: adversarial self-check
+- **"Explanations offered include the Fed's own bond buying" while ACM was negative through QT1 (2017-10 → 2019-07)?** The sentence reports explanations economists give, not a measured pattern, and that is why it is worded so. It does not claim QE and negative premia line up month by month, and the two models disagree on 2017-18 anyway (KW positive).
+- **"In the 2010s it began":** the first multi-month negative stretch is 2012-05 on KW and 2015-01 on ACM. Both fall in the 2010s, and the 1960s ACM months are single months within 0.13 of zero. Holds.
+- **"The disagreement between models described above":** the preceding paragraph of the same section says it. Holds.
+- **§10.1 / §10.2 / §2.3:** clean. The text describes past bond pricing and prescribes nothing, it names no persona, and it has years only, no "Month YYYY" (guard green). **DECISIONS.md:** nothing rules on L36 prose. **Already-done:** `occasionally turned negative` is 0 in both logs; the 09-13 L36 runs measured the inversion lead and length, not the term premium. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- The same scan flagged L36 §1's *"STEEP — … often seen after the Fed starts cutting short-term rates"* and L34's *"Japan … owed largely to its own citizens … for decades without a default"* as never quoted in either log. Both are probably true as stated; **not measured**.
+
+**Owner-facing, one line:** lesson 36 said the bond market's "term premium" has "occasionally" been negative. In the New York Fed's own estimate it was negative in most months from 2015 to 2024, including four straight years. The lesson now says so and gives a second model's dates, in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
