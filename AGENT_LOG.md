@@ -5922,3 +5922,36 @@ same journey.
 **Owner-facing, one line:** the glossary defined productivity as output "per worker" from "knowledge and skill", while the lesson that teaches it uses output per hour, and about 42% of US business productivity growth since 1987 came from more equipment and software per hour. The definition now says per hour, names all three sources with their shares, and keeps "swings less than credit" as a measured "about half", in five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-09-19 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run was residual pick #1, and its notes (the `ex` "Steady", `Inflation`, `PMI`) all called themselves arguable, so this was a free pick. It came from checking every macro glossary definition against the log: `When debt is too large` and `Narrow = confidence` return **0** in `AGENT_LOG.md`, `AGENT_LOG.archive.md`, `CLAIMS.md` and `DECISIONS.md`. The control, GDP's `flour`, returns 3) — the glossary defined **Deleveraging** as **"When debt is too large."** That describes a state, while L34, where the term is `defined-here`, teaches a process: "The 4 Ways to Reduce Debt Burden", in which "debts decline relative to income". **By 2003Q1, US household and business debt was 146.1% of GDP, above every earlier reading back to 1947Q4, and it kept rising to 172.0% in 2008Q3 (BIS via FRED `QUSPAM770A`).** Under the old definition, those five years of leveraging up were the deleveraging. The actual deleveraging was the fall that followed, to **150.5% by 2015Q4**. The definition now names the process, says being deeply in debt is not the same thing, and gives the US rise and fall, in all five languages
+
+#### Step 3.5: the premise measured, with controls
+- **Instruments:** FRED keyless CSV (`QUSPAM770A` US private nonfinancial credit % GDP, `QUSHAM770A` households, `QUSNAM770A` nonfinancial corporations, `QJPPAM770A` Japan). The script is `scratchpad/a.mjs`.
+- **Controls that fired:** (i) `NOSUCHSERIESXYZ` → **HTTP 404**. (ii) Japan's private credit peak is **213.6% (1993Q4)** and **150.0% in 2016Q1**. That matches the 09-18 teen-blurb run's figures exactly. (iii) US 2007Q4 private credit is **170.6%**, the "about 170%" L34 has used since the 09-18 debt-ratio run.
+- **US private debt/GDP:** max before 2003 was 145.6 (2002Q4). 2003Q1 was 146.1, a new post-war high, and it rose to 153.3 (2005Q1), 164.9 (2007Q1) and a peak of **172.0 (2008Q3)**. That is +26 points while the debt was already higher than ever measured. After the peak it fell to 154.2 (2012Q1) and **150.5 (2015Q4)**. Households drove both legs: 80.3 → 98.4 (2007Q4) → 76.9. Corporations barely moved (65.8 → 73.0 → 73.6). **Premise BREAKS:** "debt too large" held throughout the run-up, which is the opposite phase to deleveraging. **Scope note:** the series starts in 1947, and private debt/GDP was probably higher in the early 1930s. That is why the text says "since the late 1940s" and not "ever".
+
+#### What shipped (`glossary.js` `Deleveraging.f`, en/es/ko/zh/ja, 5 strings)
+- en: *"The process of bringing debt down relative to income after it has grown too large to carry; being deeply in debt is not the same thing. By 2003, US household and business debt was already higher relative to GDP than at any earlier point since the late 1940s, yet it kept climbing, to about 170% in 2008; the deleveraging was the fall that followed, to about 150% by 2015. 4 tools: (1) Austerity, …"* The four-tool list is unchanged, and so is the `ex`. es/ko/zh/ja say the same. ja keeps the glossary's own term デレバレッジ (the lessons use デレバレッジング; that split predates this run).
+- One node patcher (UTF-8): old ×1 / new ×0 before and 0 / 1 after, **5/5**, and nothing is written if any check fails. All five read back from the module. `git diff --numstat`: 1/1.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three) |
+| `check-blindspot` | **exit 0**. Planted *"You should buy tech stocks now."* inside the new en `f` (anchor count 1) → **exit 1, §10.1**. Restored from `scratchpad/glossary.post.js` (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** (`dist/` untouched) |
+| Built bundle | Each language's new clause → `markets-TL4fBvi1.js`. The old "When debt is too large" and "债务过大时" → **no file**. Control: the unchanged `ex` "A country buried in debt eventually" → the markets chunk. The negative probe → no file |
+| Live walk | **not done.** This is a text-only change to a field the Glossary and term-detail screens already render. The en `f` is 452 chars, about the length of `Productivity Growth`'s, which renders there now |
+
+#### Step 5: adversarial self-check. Nothing found that needed changing
+- **L34 agreement:** L34 §2 says household and business debt fell "from about 170% of GDP to about 150%" from 2007 to 2015. The glossary's "about 170% in 2008 … about 150% by 2015" is the same series and the same rounding (2007Q4 170.6, 2008Q3 172.0). "Relative to income" in the first clause is L34's own wording. The figures are relative to GDP, which is national income.
+- **Could the new text mislead?** (i) "Higher than at any earlier point since the late 1940s" is true for the BIS series (2003Q1 146.1 > every value from 1947Q4 to 2002Q4). It does not claim a record against 1929-33, which this series does not cover. (ii) It names private debt only. Total debt rose over 2007-2015, which L34 now says, and the glossary does not contradict it: "household and business" is stated.
+- **§10.1:** a definition and dated history, and the plant covers this file. **§10.2:** 0 hits for "Dalio" in `glossary.js`. The four-tool list was already there, and nothing is attributed. **§10.3 / live-looking figure:** none. 2003-2015 is a closed window. **DECISIONS.md:** 1 hit for "deleverag" (l.767, curriculum order), unrelated. **CLAIMS.md:** 0. **Already-done:** the 09-02 translation-completeness pass completed this entry's translations and did not touch its content. The 09-18 L34 runs are extended, not undone. **W-6.3:** 0 lines added to `scripts/`.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **`Deleveraging.ex`: "A country buried in debt eventually has to deleverage".** "Eventually has to" is unfalsifiable as written. Japan's government debt has risen for three decades without a deleveraging, while its private sector did deleverage (1993-2016). Arguable.
+- **`Credit Spread`: "Narrow = confidence. Wide = fear/crisis."** Unmeasured (0 log hits). Spreads also widen on liquidity and supply, not only fear. Probably measurable with FRED `BAA10Y`. Not picked.
+
+**Owner-facing, one line:** the glossary defined deleveraging as "when debt is too large", which fits the 2003-2008 run-up, when US household and business debt was already at a post-war high and still rising to about 172% of GDP. The definition now names the process (debt falling relative to income, 172% → 150% by 2015), in five languages. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
