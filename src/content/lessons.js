@@ -280,7 +280,7 @@ export const lessons = [
     subtitle: {"en":"A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you","es":"Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor","ko":"연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다","zh":"年化1%的费用听起来很小，但它会像复利那样不利地累积，正如利息会像复利那样对你有利地累积","ja":"年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります"},
   },
   {
-    id: 12, track: "essentials", icon: "🏠", color: "#334155", minutes: 4,
+    id: 12, track: "essentials", icon: "🏠", color: "#334155", minutes: 5,
     title: {"en":"Renting vs. Buying: The Real Trade-offs of a Home","es":"Alquilar vs. Comprar: Las Verdaderas Disyuntivas de una Vivienda","ko":"임대 vs. 매수: 주택의 진짜 트레이드오프","zh":"租房与购房：住房的真实权衡","ja":"賃貸か購入か：住宅の本当のトレードオフ"},
     subtitle: {"en":"A mortgage payment and a rent payment look similar, but they buy very different things","es":"Un pago de hipoteca y un pago de alquiler parecen similares, pero compran cosas muy distintas","ko":"주택담보대출 상환금과 월세는 비슷해 보이지만, 사는 것은 완전히 다릅니다","zh":"房贷月供和房租看起来相似，但它们买到的东西却大不相同","ja":"住宅ローンの返済と家賃の支払いは似ているようで、買っているものはまったく違います"},
   },
