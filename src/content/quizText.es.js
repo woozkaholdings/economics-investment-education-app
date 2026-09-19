@@ -131,7 +131,7 @@ export const quizText = [
     "q": "Durante la fase de 'Valle' del ciclo económico, históricamente:",
     "opts": [
       "Las tasas de interés suelen estar en su punto más alto",
-      "El pesimismo está en su peor momento, pero a menudo ha sido un buen momento para encontrar oportunidades",
+      "Las acciones normalmente ya han subido desde su mínimo",
       "La inflación suele estar en su punto máximo",
       "Las acciones históricamente han seguido cayendo durante años"
     ],

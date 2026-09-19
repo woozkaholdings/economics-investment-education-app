@@ -131,7 +131,7 @@ export const quizText = [
     "q": "During the 'Trough' phase of the economic cycle, historically:",
     "opts": [
       "Interest rates are typically at their highest point",
-      "Pessimism is at its worst, but it has often been a strong time to find investment opportunities",
+      "Stocks have usually already risen off their low",
       "Inflation is usually at its peak",
       "Stocks have historically continued falling for years afterward"
     ],

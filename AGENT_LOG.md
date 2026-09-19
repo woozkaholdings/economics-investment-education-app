@@ -5842,3 +5842,41 @@ same journey.
 **Owner-facing, one line:** housekeeping only, with no learner-visible change. One run-log day (09-17, 8 entries, 84 KB) moved verbatim to the archive, with a byte-for-byte proof. The log-size warning is cleared and `AGENT_LOG.md` is about 615 KB. **O-6** (should the archiving pass be automated?) is still your call. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** only the W-5.3 tally (4 lines).
+
+### 2026-09-19 (owner-directed: "fix the q012 keyed option next". This is the 09-19 `q012` run's note, taken up on instruction, so W-6.2 rule 1 does not arise) — quiz `q012` (L38, the Trough question) keyed **"Pessimism is at its worst, but it has often been a strong time to find investment opportunities"**: an investing suggestion in the app's own voice, and the longest option by 33 characters in English. **Both halves measured weaker than they read.** The key now says **"Stocks have usually already risen off their low"**, the fact L38's Trough section teaches and the explanation already gives. **In 9 of 10 recessions since 1957, stocks were already 1-27% above their low by the month the recession ended.** In all five languages
+
+#### Step 3.5: the premise, measured with controls
+- **Instrument:** `scratchpad/q012/a.mjs`. FRED keyless `USREC`, `UMCSENT`, `SPASTT01USM661N` (all HTTP 200, headers checked). **Controls:** a bogus series id → **HTTP 404**. The derived troughs are the published NBER months (1958-04 … 2020-04, 10 of 10). The market-low leads (5, 4, 4, 3, 3, 4, 5, −11, 3, 1 months) and the 9.4% base median reproduce the previous `q012` run's figures exactly.
+- **Stocks at the NBER trough month, against their low (peak → trough+12):** 2.2, 11.6, 11.4, 25.3, 17.3, 26.9, 21.1, 26.3, 1.3% above it in the 9 recessions where the low came first. 2001 is the exception: its low came 11 months later.
+- **"Often a strong time":** the 12-month return from the trough month was −16.0 … +47.6%, median **+12.4%**, against a **+9.4%** median and 72.5% positive for all 824 windows. Three of the ten were at or near the base (9.4, 9.4, 10.6%). The return was somewhat better than usual, not reliably strong, and "find investment opportunities" is advice framing whatever the number.
+- **"Pessimism is at its worst":** since 1978, when the survey went monthly, Michigan sentiment's low (peak−6 → trough+12) came **2-8 months before** the NBER trough in 4 of 6 recessions (1980 2, 1982 8, 1990-91 5, 2007-09 7). It came in the same month in 2020 and 11 months after in 2001. At the 2009 trough sentiment read 70.8 against a 55.3 low (2008-11). The pre-1978 data is quarterly and not counted.
+- **Disposition:** the premise holds (the option was advice-adjacent), and the measurement adds that its first half is timed wrong in most monthly-era recessions. The replacement uses only the stock fact, which is the best-supported claim (9/10) and the one the lesson already makes.
+
+#### What shipped (5 strings, 5 files; the answer index is unchanged at 1)
+- en *"Stocks have usually already risen off their low"*, es *"Las acciones normalmente ya han subido desde su mínimo"*, ko *"주식은 보통 이미 저점에서 올라와 있었습니다"*, zh *"股票通常已经从低点回升"*, ja *"株価はたいてい底値から上がっていた"*.
+- **Length cue:** the new key is neither the longest nor the shortest option in any language. The first ja draft (…すでに底値から上がっていた, 21) was the strict longest, so it was cut before patching. Tap-the-longest: en **54.3 → 52.2%**, es 52.2 → 50.0, ja 50.0 → 47.8, ko 52.2 → 50.0, zh 47.8 → 45.7 (one question fewer in each). Tap-the-shortest is unchanged. Item 160 listed `q012` in class B, and this change does not claim to settle that class.
+- Patcher: old ×1 / new ×0 before, 0 / 1 after, or nothing is written. Originals are in `scratchpad/q012/orig/`. Quiz text is not in the lesson ledger, so the readiness figures are unchanged.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL / 3 WARN (the standing three; the length-cue figures above are its §65 line) |
+| `check-blindspot` | **exit 0**. Planted *"You should buy stocks now."* inside the new en option → **exit 1, §10.1**. Restored from the scratchpad copy (`cmp` identical) → exit 0 |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0** |
+| Built bundle | Each new option → its own `quizText.<lang>` chunk only. Old `strong time to find investment` and `寻找投资机会的好时机` → **no file**. Control: the unchanged `Interest rates are typically at their highest point` → `quizText.en`. Negative probe → no file |
+| Live walk | **not done.** Text-only, in an option that already renders |
+
+#### Step 5: adversarial self-check
+- **Does the new key contradict the lesson or the explanation?** No: L38 Trough says *"The stock market's own low has usually come before the economy's"*, and the explanation says the same and names 2001 as the exception, which is why the key says "usually".
+- **Does it make distractor 4 true?** *"Stocks have historically continued falling for years afterward"*: the one exception fell for 11 months, not years. It stays false.
+- **New cue?** The key and distractor 4 are now the two "Stocks …" options and point opposite ways, so a learner can narrow to two without the lesson. That is weaker than the length tell it replaces, and the stem tests the lesson's point directly.
+- **§10.1:** the change removes an advice-framed sentence and adds none; the plant proves the guard sees this file. **§10.2:** no Dalio text. **Live-looking figure:** none shipped. **DECISIONS.md / CLAIMS.md:** 0 hits for `trough` or `keyed option`. **Already-done:** the previous `q012` run changed only `explain`. **W-6.3:** 0 lines added to `scripts/`.
+- No fluent reader has seen the es/ko/zh/ja wording (O-3).
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **"Sentiment is at its most negative" at the trough** is in `q012`'s explanation (all five languages) and L38 Trough's *"This is the point of maximum pessimism"*. Measured above: in 4 of 6 monthly-era recessions sentiment bottomed 2-8 months **before** the trough. A fix changes lesson text in five languages and the ledger, so it was not bundled into this owner-scoped change. It is measured and ready to pick.
+- L38 Trough's *"Historically favored in this phase: beaten-down quality stocks, high-yield bonds, and real estate at distressed prices"* is the same framing as the old key. The 09-18 asset-list run covered those lists, so it is not re-raised here.
+
+**Owner-facing, one line:** the Trough quiz's correct answer said the trough "has often been a strong time to find investment opportunities". It now says stocks had usually already risen off their low (true in 9 of 10 recessions since 1957), in five languages, and it no longer gives itself away as the longest option. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
