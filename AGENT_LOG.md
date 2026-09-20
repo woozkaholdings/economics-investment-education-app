@@ -1329,6 +1329,18 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Four
+      lessons have now been closed one per run: **1, 6, 10 and 9**, in that order. **Remaining: 2, 3,
+      4, 5, 7, 8, 11 and 14** — 31 pairs, ~8 runs at the measured rate of one lesson / four pairs.
+      **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four): lesson 3 at
+      0.511, then lesson 2 at 0.512** — a gap of one thousandth, so treat them as tied and take
+      either. **Neither is in the concrete-first cluster** (`essentials` 1-9 are nine for nine
+      concrete-first), so both cost translation only. **Lessons 11 and 14 still owe both defects.**
+      ⚠️ **The ledger cannot see this work, and that is worth knowing before you trust it.**
+      `translation-review.mjs` keys each entry on a hash of the **English** source, so rewriting a
+      translation from a summary into a full translation leaves `review-status` reading
+      "44/44 reviewed, 0 stale" — the entry now vouches for text that no longer exists. Re-marking is
+      a manual step a run has to remember; it is not enforced and nothing fails if it is skipped.
     - **The abridged set being identical across all four languages is new, and it is an opportunity.**
       Every previous phase of this work was per-language. Here the same 12 lessons are abridged in
       every language, so a single English-side read of a lesson scopes the defect for all four at
@@ -5698,5 +5710,60 @@ Takeaway and thinkAbout were already fully translated in all four languages — 
 - **W-8.1 still stands and no run can move it.** These corrections are committed, not deployed.
 
 **Owner-facing, one line:** the lesson on employee-vs-contractor taxes was missing its worked example and its one actionable number in every non-English language, and opened with a definition instead of a person in all five — all of that is fixed together, and item 94 is down to nine lessons.
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one.
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else and item 94's still stands, so W-8.5 resolves to it alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 9 as next by relative shortfall and I re-derived that ranking rather than inheriting it) — **`essentials` lesson 9 is now fully translated in all four languages.** es 0.54 → **1.06**, ko 0.28 → **0.50**, zh 0.17 → **0.30**, ja 0.25 → **0.44**. Abridged pairs **35 → 31**, abridged lessons **9 → 8**. **The abridgement was not merely short: it had cut the bridge paragraph that the next section's opening pronoun refers back to, and the paragraph the lesson's own `thinkAbout` calls back to in all four languages.**
+
+#### Step 3.5: the premise, re-measured with controls
+The previous run's two claims both reproduce exactly. **Relative shortfall** (each pair's ratio ÷ its own language's p90 reference, averaged over the four) puts lesson 9 worst of the remaining nine at **0.4777**, next 2 and 3 at 0.512 and 0.511 — recomputed from the instrument's own table, not copied. **Lesson 9 is not in the concrete-first cluster**: item 94's note records `essentials` 1-9 as nine for nine concrete-first, and lesson 9 opens *"Ask a grandparent what a movie ticket or a loaf of bread cost when they were young"* — a scene, not a definition. So this lesson costs translation only, and **no English prose was touched** (the review ledger's English `sourceHash` for lesson 9 reads `8c61811e53af7d86` before and after, which is an independent check on that claim).
+
+#### What the abridgement had actually removed
+`thinkAbout` was fully translated in all four; **the entire gap was the two section bodies and the takeaway**, each cut from three paragraphs to two.
+- **§0 ¶3 was absent in all four — and it is the bridge.** English closes §0 with *"This isn't a flaw unique to cash in a drawer — it's what inflation does to purchasing power generally, whether the money is in a drawer, a low-interest savings account, or anywhere else that doesn't grow fast enough to keep up."* §1 then opens *"A savings account that pays interest sounds like it's protecting against **this problem**"*. With ¶3 gone, "este problema" / "이 문제" / "这个问题" / "この問題" pointed at a **drawer** problem, and the section it introduces is about a **savings account**. The referent the pronoun needs was the deleted sentence.
+- **§1 ¶3 was absent in all four — and all four `thinkAbout`s still call back to it.** English ¶3 is the one that links to "Compound Interest": *compounding needs to outpace inflation, not just be positive.* Every translation deleted it while keeping a `thinkAbout` that opens on 「복리」/《复利》/『複利』/"Interés Compuesto". **The closing reflection referred back to a connection its own lesson never drew** — the same cross-section dependency break lesson 1's run found, in a different shape.
+- **§1 ¶2 stated the formula and never used it.** All four jumped from `real return ≈ nominal return − inflation rate` straight to the conclusion, dropping the sentence that shows the subtraction doing work: an account up a modest percentage in a year prices rose as much or more is **bigger in dollars, flat or shrinking in what it buys**.
+- **§0 ¶2 was generic where English is concrete.** English names *groceries, gas, and rent*; all four said only "daily necessities". "A loaf of bread" was gone from ¶1 in all four, and "the number printed on those bills never changes" from ¶2.
+- **The takeaway lost its "because" clause** in all four — *"because that's what determines whether your money's actual purchasing power is rising or falling"*, i.e. the half that says why real return is the thing to watch.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, **2 WARN** (item 93 coverage; item 94 completeness, now reading **31** not 35). Exit code read from the command directly, never through a pipe |
+| Ratios | es **1.06**, ko **0.50**, zh **0.30**, ja **0.44** — all clear their thresholds (0.812 / 0.406 / 0.252 / 0.357) |
+| Not padded to threshold | The four land on the in-track fully-translated band (lessons 1/6/10/12/13/15: es 1.05-1.16, ko 0.50-0.54, zh 0.30-0.34, ja 0.44-0.48), not just over the bar |
+| Paragraph parity | §0 **3/3** and §1 **3/3** in all four, matching English; section count 2/2 |
+| Content read back | All 12 rewritten strings re-imported and compared **character for character** against the intended text; negative control (es §0 === ko §0) correctly false |
+| **Edit safety** | Every replacement asserted **unique before writing**; diff is exactly **3 lines per translation file**; line counts unchanged; the completeness baseline was **hand-patched to lesson 9's four ratios only** — 43 lessons asserted byte-identical afterwards, because `--write` re-records all 176 |
+| Numeral parity | 0 missing in all four. ⚠️ **Stated weakly on purpose: lesson 9 carries exactly one English numeral (`1,000`), so a clean result here is nearly uninformative about this lesson.** The instrument itself does discriminate — control on still-abridged lesson 2 reports 3-4 of 7 missing — but the character-exact read-back, not this check, is what carries the claim |
+| Encoding | zh and ja read back rendered in the live DOM; `U+FFFD` scan clean in all four; terminology matches the untouched `thinkAbout` (`복리`, `复利`, `複利`) |
+| Build | In-tree `npm run build` still fails on this machine (rollup native binary / iCloud CPU mismatch, pre-existing and documented in `scripts/build-out-of-tree.sh`). `scripts/build-out-of-tree.sh` → **✓ built in 622ms**, exit 0 |
+| **Live render** | Served `dist/` statically (**404 control** on a bogus path returned 404, 200 on index), unlocked 1-8 via `localStorage`, opened `#/lesson/9` in the real DOM in **all four languages**: every restored clause present, **3 rendered paragraph blocks** per body in each. Cross-language negative controls (a Spanish string in the ja/zh render, a Japanese string in the zh render, a Chinese string in the ko render, a nonsense string) **all false** |
+| `npm run check-blindspot` | **exit 0**, 9 ok — including §10.1 advice-adjacency across all five languages and §2.3 live-looking dates on the modules edited here |
+| Review ledger | Re-marked lesson 9 `ai` in all four with today's date and the module's dominant reviewer name. **Coverage did not move and could not have** — see the finding below. Human share still **0%** |
+
+#### A real gap found in passing: the review ledger is blind to translation rewrites
+`translation-review.mjs` stores a hash of the **English** source. This run rewrote 12 translated strings and changed no English, so `review-status` read **"44/44, 0 stale"** throughout — the lesson 9 entries went on vouching for text that had been replaced. Re-marking is a manual step a run must remember; nothing fails if it is skipped. **This is adjacent to, but not the same as, the WARN's own caveat** ("it checks that a reviewer saw the text, not that the text is all there"): that one is about coverage vs. completeness, this one is about the entry silently outliving its subject. Written into item 94 rather than numbered (W-6.2 rule 2) — it is one line of the same item's method, and building the check is a separate change.
+
+#### One inherited inconsistency fixed, and a guard that caught my own miscount
+zh lesson 9 wrote the drawer figure as `1000美元`. The rest of that module uses the comma form **13 times — including the same $1,000 figure in the Compound Interest lesson this section now cross-references**. Converted lesson 9's three to `1,000美元`. **My first attempt asserted "3 bare forms in the module" and the guard rejected it at 4**: a `500-1000美元` range in another lesson also matches. The replacement was re-scoped to lesson 9's section string, with a control asserting that range untouched. Nothing was written on the failed attempt.
+
+#### Where a control earned its keep
+The post-write control "the old string must be gone" **fired on `ja.takeaway` and nothing was written to that file.** The cause was not a bad edit: ja's old takeaway is a **strict prefix** of the new one (the new text appends the "because" clause where es/ko/zh restructure their endings), so a plain substring test cannot distinguish "replaced" from "not replaced". Replaced with a control that tests the old string **plus its closing quote** — the JSON value rather than the text — and proved to discriminate both ways against the unedited file before being trusted.
+
+#### Step 5: adversarial self-check
+- **Blindspot register.** §10.1: nothing here instructs. The most advice-adjacent sentence is §1 ¶3's "compounding needs to outpace inflation, not just be positive" — a condition stated about arithmetic, carried faithfully from English, and `check-blindspot` passes it in all five languages. §2.3: the new prose contains durations ("twenty years", "20년", "20年間") and **no dates** — the live-date scan agrees across 26 teaching modules. §10.2 Dalio: nothing. §10.3 kids framing: untouched. **No invented quantities** — English deliberately says "a modest percentage" rather than naming one, and all four translations keep it unnamed.
+- **DECISIONS.md.** No conflict: content stays in `.js` modules, `localStorage`-only state untouched, Vite unchanged, "(Beta)" labeling unchanged.
+- **Already-done backlog item.** Not a redo — lesson 9 has been on the abridged list since the list existed, and no run has previously edited its translations.
+- **My own verification claim.** A reviewer re-running these commands gets these figures, with two caveats stated rather than buried: **`npm run build` does not work in-tree on this machine**, and **every visual claim above rests on DOM text extraction, not on a screenshot** (the pane's screenshots are unreliable here and none was taken).
+- ⛔ **The limit, unchanged: this is machine translation no fluent speaker has read.** This run added four more pairs of it and re-marked the ledger `ai`. Human share is **0% in all four languages** — O-3 is the owner's call and nothing here settles it.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **31 pairs remain: lessons 2, 3, 4, 5, 7, 8, 11 and 14** — ~8 runs at the measured rate. **Next by relative shortfall: lesson 3 (0.5110) and lesson 2 (0.5120), tied within a thousandth**; neither is in the concrete-first cluster. **Lessons 11 and 14 still owe both defects** — check each for a promotable scene first, per lesson 10's correction.
+- **`LAUNCH_READINESS.md` §10.4's hand-written narrative was stale again** (it still read "35 — es 8, ko 9, zh 9, ja 9, across 9 lessons" and listed lessons "2-5, 7-9"). Updated with the per-lesson diff the row's own rule demands. **The generated sentence beside it was correct the whole time, for the fourth recorded occasion.**
+- **W-8.6's Markdown guard is still unfiled** and is still the cheapest open guard.
+- **W-8.1 still stands and no run can move it.** These corrections are committed, not deployed.
+
+**Owner-facing, one line:** the lesson on inflation eating savings was missing, in every non-English language, both the sentence that connects "cash in a drawer" to "your savings account" and the sentence its own closing question refers back to — so the section transition and the closing reflection pointed at text that wasn't there; all of it is restored, and item 94 is down to eight lessons.
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one.
