@@ -403,7 +403,7 @@ export const quizText = [
       "Nada — una cuenta de ahorros siempre es el lugar más seguro para cualquier cantidad de dinero, sin importar cuánto tiempo permanezca ahí",
       "Los $3,000 pierden su seguro de depósito una vez que se mantienen por más de un año",
       "La baja tasa de interés de la cuenta garantiza que los $3,000 se reducirán en términos de dólares sin importar cuánto tiempo permanezcan ahí",
-      "Está pagando por una estabilidad que este dinero en particular no necesita ahora mismo, ya que su largo horizonte de tiempo le daría margen para recuperarse de una caída temporal antes de que él llegue a retirarlo"
+      "Está pagando — en crecimiento perdido — por una estabilidad que este dinero en particular no necesita ahora mismo"
     ],
     "explain": "La estabilidad tiene valor cuando el dinero podría necesitarse con poco aviso y no puedes permitirte que esté bajo ese día — ese es el trabajo que una cuenta de ahorros hace bien. Los $3,000 de Marcus no tienen ninguna necesidad a corto plazo, así que su horizonte de quince años le da mucho más margen para recuperarse de un mal período antes de que él llegue a retirarlo — históricamente eso ha solido bastar, aunque no está garantizado. La protección que ofrece una cuenta de ahorros se está pagando (en crecimiento perdido) aunque este dólar en particular no sea el que necesita esa protección ahora mismo."
   },

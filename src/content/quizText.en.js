@@ -403,7 +403,7 @@ export const quizText = [
       "Nothing — a savings account is always the safest place for any amount of money, regardless of how long it will sit there",
       "The $3,000 loses its deposit insurance once it's held for longer than a year",
       "The account's low interest rate guarantees the $3,000 will shrink in dollar terms no matter how long it sits there",
-      "He's paying for stability this specific money doesn't currently need, since its long time horizon would give it room to recover from a temporary drop before he'd ever withdraw it"
+      "He's paying — in growth given up — for stability that this specific money doesn't currently need"
     ],
     "explain": "Stability has value when money might be needed on short notice and can't afford to be down that day — that's the job a savings account does well. Marcus's $3,000 has no near-term claim on it, so its fifteen-year horizon gives it far more room to recover from a bad stretch before he'd withdraw it — historically usually enough, though not a guarantee. The protection a savings account offers is being paid for (in lost growth) even though this particular dollar isn't the one that currently needs that protection."
   },

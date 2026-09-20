@@ -2676,6 +2676,16 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     questions, including one of the two the clause names as the head of the O-3 queue.**
     - ⛔ **STOP LINE REACHED 2026-09-04 (scheduled dev-agent) — measured, not forecast. Everything
       still open in this item is class B, and class B is O-3's decision. Read this before picking it again.**
+      - ✏️ **CORRECTED 2026-09-20: "everything still open is class B" was FALSE, and the flaw is that the
+        stop line ranked the whole corpus and then examined only the top four.** By relative margin those
+        four were `q008` 57% (B), `q021` 56% (A, unreachable), `q014` 53% (B) and `q005` 50% (A, declined
+        on narrow zh/ja bands) — all four figures reproduce exactly 16 days on. **It generalized from them
+        and never looked at rank 5 onward, where `q039` sat at 48%, class A, with the WIDEST bands in the
+        reachable set** (zh [23,35], ja [30,53] — the opposite of the q005 objection the stop line rested
+        on). Fixed this date in all five languages; §65 dropped one question in every language and the
+        standing WARN cleared. **The remainder is still not all class B: `q023` (46%, L9), `q037` (37%, L23),
+        `q040` (16%), `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q023` is next by
+        margin. **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -6237,3 +6247,73 @@ The learner-visible failure is easy to name — *a reader is taught to read a si
 **Owner-facing, one line:** the Market Dashboard's teaching scenario told readers that its mix of signals *"has historically shown up late in an expansion, before growth clearly turns"* — measured against US data since 1964, **the first half is true and strong** (88% of such months fell in the last third of expansions that ended, against 36% for expansion months generally, and an inverted yield curve scores the same 84% through the identical instrument) **but the second half is not a countdown**: the gap before a downturn has run from **one month to six years**, 39% of those months saw no recession within two years, and three episodes have had none follow at all. The sentence now keeps the measured lateness and gives the spread instead of the implied sequel, in all five languages. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2.
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick, not a free one** — this is the first run under the 2026-09-20 weekly block, and W-8.5 says that while item 94 or item 160 carries a standing `npm test` WARN, that is the pick. Both did. Item 160 was taken because it is one schedulable block; item 94 is 47 lesson/language pairs and is not) — quiz `q039` (lesson 25) keyed a **178-code-point** option against a longest distractor of **120**: *"He's paying for stability this specific money doesn't currently need, **since its long time horizon would give it room to recover from a temporary drop before he'd ever withdraw it**"*. The bolded half is a reasoning tail that was **already in `explain` verbatim, in all five languages**. **Item 160's own STOP LINE said no such question was left. It was wrong, and the reason it was wrong is reusable: it ranked the whole corpus and then examined only the top four.**
+
+#### Step 3.5 — the WARN's figures HOLD; item 160's stop line BREAKS
+
+Re-measured independently (my own scorer, not `check-data.mjs`), before touching anything:
+
+| claim | source | verdict |
+|---|---|---|
+| longest-option tapping scores **en 24/46 = 52.2%** vs 25.0% chance | `npm test` §65 WARN | ✅ reproduces exactly |
+| the cue is **English-only** | implied by the WARN text | ❌ **all five**: en 52.2, es 50.0, ko 50.0, zh 45.7, ja 47.8. Only en crosses §65's `> 0.5` line |
+| *"Everything still open in this item is class B"* | item 160 STOP LINE, 2026-09-04 | ❌ **false** |
+
+**Negative control on the scorer**: the *shortest*-option strategy scores **2.2 / 2.2 / 0.0 / 2.2 / 4.3** — near-zero where longest is ~2x chance. A scorer returning nothing would look identical to a clean corpus; this one discriminates. Margin-function controls: 2x runner-up → 1.000, +1-of-100 → 0.010, exact tie → 0.000, half → −0.500. Class-A screen: `"A — B"` → true, `"Always buy stocks"` → false. Log-grep controls fired both ways: `q012` (fixed 09-19) returns 20 hits, `q099` returns 0.
+
+**How the stop line went wrong.** Its four examined questions all reproduce 16 days on — `q008` **57%** (B), `q021` **56%** (A but unreachable: its tail is 22 code points and leaves 87 against a ceiling of 54), `q014` **53%** (B), `q005` **50%** (A, declined because landing zh meant cutting to 4-6 characters). From those four it concluded the class was exhausted and routed the remainder to O-3. **It never ranked past rank 4.** `q039` sat at **48%** — class A, a genuine detachable tail, and **the widest landing bands in the reachable set**, which is the exact inverse of the `q005` objection the stop line rested on. Item 160's own rule already said to expect this: *"RANK THE QUEUE BY WINDOW WIDTH, NOT BY HOW MUCH MUST COME OUT"* — `q039` had been dismissed by an earlier pass as *"the expensive one (73)"*, i.e. by the deletion-cost ranking the item itself later declared inverted.
+
+This is **not** the "moving the instrument without moving the defect" failure item 160 warns about: that corollary is about margins under 5% (one character in thirty). `q039`'s correct option was **48% longer** than its longest distractor in the tightest language — a gap the eye resolves without reading a word.
+
+#### What shipped (5 files, 5 strings — no `scripts/` mass, W-6.3 ratio unmoved)
+
+The reasoning tail was dropped and the cost named in its place. Nothing was lost to the learner: the tail's content is in `explain`, which is shown the moment they answer (`en` *"its fifteen-year horizon gives it far more room to recover from a bad stretch before he'd withdraw it"*, and the equivalent in es/ko/zh/ja — checked in all five, not assumed).
+
+**Landings, quoted per item 160's own filing rule (`answer` length and `[bandMin, bandMax]`), so the next editor can see which cell is load-bearing:**
+
+| lang | before | after | distractor band | headroom (below max / above min) |
+|---|---|---|---|---|
+| en | 178 | **96** | [76, 120] | 24 / 20 |
+| es | 213 | **113** | [83, 140] | 27 / 30 |
+| ko | 96 | **47** | [33, 56] | **9 / 14** ← tightest cell |
+| zh | 60 | **28** | [23, 35] | 7 / 5 |
+| ja | 80 | **45** | [30, 53] | 8 / 15 |
+
+Every cell lands **strictly inside** the band — neither longest nor shortest in any language. An earlier `ko` draft sat at 51 (5 below the ceiling) and was re-centred to 47 rather than shipped tight.
+
+⚠️ **A band has two walls.** Item 160 records a past fix that created the *inverse* tell while curing the forward one, so the shortest-option strategy was re-scored after the edit: **2.2 / 2.2 / 0.0 / 2.2 / 4.3 — unchanged in every language.** The tell was removed, not flipped.
+
+#### Verification
+
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL.** §65's WARN **cleared** (3 WARN → 2: item 93 coverage and item 94 completeness, both unchanged). ⚠️ **Then back to 3 — but a different third**: appending this entry took the run log to 242,280 b and tripped `check-log-size`'s *less than one run of headroom* warning. **A reviewer at HEAD sees 3 WARN, not 2**, and the third is W-5.3's archiving trigger, not the quiz |
+| §65's own line | `en 50.0%/2.2%, es 47.8%/2.2%, ja 45.7%/4.3%, ko 47.8%/0.0%, zh 43.5%/2.2% … 5 scorer control(s) fired in both directions` — **one question dropped in every language**, not just the one that was warning |
+| `npm run check-blindspot` | **exit 0** |
+| Edit safety | Each replacement asserted its old string occurred **exactly once** and the new string **zero** times before writing; after writing, old **0**, new **1**, all five. The script writes nothing if any count is off |
+| Not a count-only assertion | Values **re-imported from the modules** and re-measured for length and band position, not read off the diff — a garbled string passes a 1/0 count |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built in 544ms**, mirrored to `dist/` |
+| In the bundle | All 5 new strings present, all 5 old reasoning tails **gone**, one `quizText.<lang>` asset each |
+| Ranking re-run | `q039` is **off** the beatable list: beatable-in-≥1 **26 → 25**, beatable-in-all-five **16 → 15** |
+
+⛔ **Three things I did not get, stated rather than skipped.** (1) **No live-DOM or screenshot check.** The bundle grep proves the string ships; it does not prove someone looked at the Practice screen. This change is five plain strings in a field the reader renders as a text child, and I judged the bundle check sufficient — but nobody should read it as a render check. (2) **The translations are unreviewed by a fluent speaker**, as every run in this project says; I shortened ko/zh/ja prose and no native reader has seen it (O-3). (3) **`en` is now exactly 50.0%**, and §65 warns at `> 0.5`. **The WARN cleared by one question and is one question from returning** — if any future edit lengthens a keyed option or trims a distractor, it comes straight back. That is a real property of this landing, not a hedge.
+
+#### Step 5: adversarial self-check — one real thing found and dealt with, the rest clean
+
+- ⚠️ **Found: the fix could have created the inverse tell.** Deleting the tail outright put `en` near its floor. Caught before shipping by scoring *both* directions (see the table above); the option was re-worded to name the cost (*"in growth given up"*) rather than merely cut, landing mid-band in all five. This is the same failure item 160 records against a past `q020`-era fix, and it was avoided by measurement rather than by care.
+- **Blindspot register.** §10.1 — the new option is **less** advice-adjacent than the old one, not more: the tail it removes (*"would give it room to recover … before he'd ever withdraw it"*) edges toward a recommendation about long-horizon money, while the replacement states only a cost. No second person, no security named, no timing directive; `check-blindspot` exit 0. §10.2 — no Dalio, no named person or firm (regex-checked across all five strings). §10.3 — `kidsContent.js` untouched. Markets stale-data — no date and no figure in any of the five strings (`2026`, month names, bare `20\d\d` all return false).
+- **W-8.6's Markdown class.** My `en` and `es` strings contain **em dashes, not asterisks**; 0 Markdown constructs added. (W-8.6's guard is still unfiled — see below.)
+- **DECISIONS.md.** No conflict: `q039` returns **0** there, and there is no ruling on quiz option wording. Content stays in `.js` modules; no state, build or platform decision touched.
+- **Already-done backlog item.** Not a redo, checked two ways: `q039` appears **4** times in `AGENT_LOG.md` and all four are item 160 listing it as an unfixed *candidate*, and `git log --all -S` over `quizText.en.js` returns **no commit** that ever touched its text.
+- **My own verification claim.** A reviewer re-running `npm test` gets my headline figures from §65's own printed line — it recomputes them on every run, so nothing here is retyped. **What they should not take from me:** the per-language band table came from my scratchpad scorer, which is deliberately not committed (W-6.2 rule 3 — it has no threshold that could be a gate, and §65 already prints the aggregate); and "the reasoning is already in `explain`" is my reading of five prose fields, four of them in languages I cannot have reviewed by a native speaker.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+
+- **`q023` (L9, 46%) is next by margin and is class A** — *"It shrank — the real return was roughly -2%, even though the balance grew"*, beatable in all five. Then `q037` (37%, L23), `q040` (16%), `q034` (11%), `q027` (6%). **The queue is not empty and the stop line should not be read as saying it is** — the correction is now written into item 160 itself so this is not re-derived.
+- **W-8.6's Markdown guard is still unfiled.** The weekly review named it the cheapest open guard and the corpus is currently clean in all five languages. I did not add it: this run's pick was mandated by W-8.5 and adding a `check-data.mjs` section is a separate change. **It remains the cheapest item on the list.**
+- **Item 94 is untouched and is now the only W-8.5 WARN left.** With §65 clear, the next run's W-8.5 test resolves to item 94 alone.
+
+**Owner-facing, one line:** the quiz could be half-beaten by tapping the longest option (**en 52.2% against a 25% baseline**), and the backlog item tracking it had declared itself blocked on an owner decision. **That stop line was wrong** — it had ranked all 46 questions and then examined only the top four. Rank five was `q039`, whose keyed answer carried a 58-character reasoning tail already printed verbatim in the explanation the learner sees the instant they answer. Removing it in all five languages dropped the exploit in **every** language (en 52.2 → 50.0, es/ko 50.0 → 47.8, zh 45.7 → 43.5, ja 47.8 → 45.7) **without** creating the mirror-image "the short one is right" tell (shortest-option scores unchanged at 0–4.3%), and cleared a warning `npm test` had printed on every run. **At least five more questions of the same shape remain.** Build and tests green; **committed, not pushed** (O-5, W-8.1).
+
+**Next run: the log-size warning fired on this entry, so W-5.3's nineteenth archiving pass is the pick** (run log 242,280 b of a 250,000 b budget, 2026-09-19 and 09-20 live). **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** +1,086 b — the corrected stop line in item 160, which step 3.5 requires be written into the item rather than left in a run entry.
