@@ -1329,13 +1329,27 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Four
-      lessons have now been closed one per run: **1, 6, 10 and 9**, in that order. **Remaining: 2, 3,
-      4, 5, 7, 8, 11 and 14** — 31 pairs, ~8 runs at the measured rate of one lesson / four pairs.
-      **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four): lesson 3 at
-      0.511, then lesson 2 at 0.512** — a gap of one thousandth, so treat them as tied and take
-      either. **Neither is in the concrete-first cluster** (`essentials` 1-9 are nine for nine
-      concrete-first), so both cost translation only. **Lessons 11 and 14 still owe both defects.**
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Five
+      lessons have now been closed one per run: **1, 6, 10, 9 and 3**, in that order. **Remaining: 2,
+      4, 5, 7, 8, 11 and 14** — 27 pairs, ~7 runs at the measured rate of one lesson / four pairs.
+      **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four), recomputed
+      from the instrument's unrounded ratios after lesson 3 landed: lesson 2 at 0.5102, then lesson 8
+      at 0.5739** — a clear 0.064 gap, so no tie this time. **Lesson 2 is not in the concrete-first
+      cluster; lessons 11 and 14 still owe both defects.**
+      ⚠️ **CORRECTION to this item's concrete-first note, found on lesson 3 (2026-09-20) and worth
+      applying to the rest.** The note below records `essentials` 1-9 as nine for nine concrete-first.
+      **That is a fact about the ENGLISH and can be false of the translations at the same time.**
+      Lesson 3's English opens on a scene ("Imagine you put $1,000 into an account earning 6% a
+      year"); all four of its translations opened with a definition, because **the abridgement had
+      deleted the concrete opener**. So on an abridged lesson the two defects this item tracks
+      separately can be one deletion, and restoring the translation closes both. Check the opener in
+      the translation, not only in the English, before concluding a lesson costs translation only.
+      ⚠️ **A defect shape this item had not recorded, and lesson 3 is the pure case: parity can be
+      perfect while the content is gone.** Lesson 3's translations matched English **2/3/2 on
+      paragraphs before any edit** — nothing had been cut at the paragraph level. What had been cut
+      was every number: the worked $1,000 → $1,060 → $1,123.60 chain, the Rule-of-72 doubling
+      chain, and both named characters. **Paragraph parity is necessary and nowhere near sufficient;
+      on lessons that teach an arithmetic, the numeral-parity check is the one that bites.**
       ⚠️ **The ledger cannot see this work, and that is worth knowing before you trust it.**
       `translation-review.mjs` keys each entry on a hash of the **English** source, so rewriting a
       translation from a summary into a full translation leaves `review-status` reading
@@ -5767,3 +5781,76 @@ The post-write control "the old string must be gone" **fired on `ja.takeaway` an
 **Owner-facing, one line:** the lesson on inflation eating savings was missing, in every non-English language, both the sentence that connects "cash in a drawer" to "your savings account" and the sentence its own closing question refers back to — so the section transition and the closing reflection pointed at text that wasn't there; all of it is restored, and item 94 is down to eight lessons.
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one.
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else and item 94's still stands at 31 pairs, so W-8.5 resolves to it alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 3 and lesson 2 as tied within a thousandth and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it) — **`essentials` lesson 3, "Compound Interest", is now fully translated in all four languages.** es 0.61 → **1.08**, ko 0.29 → **0.53**, zh 0.19 → **0.34**, ja 0.25 → **0.44**. Abridged pairs **31 → 27**, abridged lessons **8 → 7**. **This lesson's abridgement is a different shape from the previous four: paragraph parity was already perfect (2/3/2 in all four, matching English). Nothing had been cut at the paragraph level — the numbers had been cut out of the paragraphs.** A lesson whose entire subject is an arithmetic demonstration shipped, in every non-English language, as a definition with the arithmetic removed.
+
+#### Step 3.5: the premise, re-measured with controls
+- **The ranking reproduces, and the tie is real.** Recomputed from `completeness()`'s unrounded ratios rather than the printed 2-dp table: **lesson 3 at 0.509978, lesson 2 at 0.510172** — a gap of 0.0002, so the previous run's "treat them as tied" holds and its rounded figures (0.511 / 0.512) were right about the order. Took lesson 3 as the worst.
+- **Control fired.** The same scorer run over the three in-track lessons that are already fully translated (`essentials` 12, 13, 15) returns **0.917 / 0.905 / 0.929** — so the instrument separates complete from abridged by roughly 0.4, and a lesson scoring 0.51 is not a compactness artifact.
+- **The concrete-first question re-checked rather than inherited, and the answer is more interesting than the item says.** Item 94 records `essentials` 1-9 as nine for nine concrete-first. **That is true of the English and false of the translations.** English opens *"Imagine you put $1,000 into an account earning 6% a year"* — a scene. All four translations opened with *"Simple interest is earned only on the principal…"* — a definition. **The abridgement had deleted the concrete opener**, so the two defects this item tracks separately were, on this lesson, the same deletion. No English prose was touched; restoring the translation fixed both.
+- **English `sourceHash` for lesson 3 reads `8ce798dba2274973` before and after** — an independent check on the "no English was edited" claim.
+
+#### What the abridgement had actually removed
+**Six of seven paragraphs were condensed; only §1 ¶1 was complete.** The losses are not evenly spread — they are concentrated on every number in the lesson.
+- **§0 ¶1 lost the entire worked example, in all four.** English walks the balance forward: $1,000 at 6% → year one $60 → balance $1,060 → year two's 6% on $1,060 = **$63.60** → year three on **$1,123.60**. All four replaced the whole thing with one abstract sentence. **The lesson is called "Compound Interest: Money That Makes Money" and its demonstration of compounding was gone.**
+- **§0 ¶2 lost the payoff of the Rule of 72.** All four kept "72 ÷ rate" and "12 years at 6%, 8 at 9%" and dropped the sentence that makes it mean anything: *that same $1,000 becomes roughly $2,000 in about 12 years, $4,000 in 24, and $8,000 in 36 — without adding another dollar.*
+- **§2 ¶1 was a cross-section dependency break — the same shape lessons 1 and 9 turned out to have.** English says *"Go back to that first $1,000 earning 6%"*. All four kept the callback — es *"sobre los $1,000 originales"*, ko *"원금 $1,000"*, zh *"最初1,000美元"*, ja *"元本1,000ドル"* — **while §0, which is where that $1,000 was introduced, no longer contained it.** Every translation pointed back at a figure its own lesson had never stated.
+- **The same break reaches the on-screen figure.** Lesson 3's `LessonVisual` caption reads *"the same $1,000, the same 6%"* in all five languages. In English it refers to §0. **In the four translations it referred to nothing** — and now does.
+- **§1 ¶2 lost both named characters and the hedge.** English has **Priya** (start at 25, $200/mo) and **Tom** (start at 35, $400/mo); all four deleted the names and ran it as two anonymous savers. All four also dropped the closing clause — *"and it only just did it — push the return a little higher and Priya ends up ahead, a little lower and Tom does"* — **which is the clause that keeps the example from reading as a law.** Without it, "start early and you beat someone saving twice as much" ships as a promise.
+- **§1 ¶3: es and ko lost the consequence entirely**, ending at "unpaid interest compounds too" and dropping *why that matters* — that years of a credit-card balance can cost more in interest than the original purchase. zh and ja kept a generalized version ("high-interest debt") and lost "credit card".
+- **§2 ¶2 lost, in all four:** the parenthetical that some accounts **default to paying interest out**, the "five-minute task" framing, and the entire closing sentence about re-checking on every account because providers reset the default on renewal or transfer.
+
+#### The arithmetic was verified before being carried into four more languages
+A translation run multiplies whatever the English says by four, so the English figures were checked rather than trusted. **All of them hold.**
+| English claim | Recomputed |
+|---|---|
+| $1,000 @6%: $60 → $1,060 → $63.60 → $1,123.60 | exact |
+| 72 ÷ 6 = 12 yrs, 72 ÷ 9 = 8 yrs | actual doubling **11.9** and **8.0** yrs |
+| "$8,000 in 36 years" | actual **$8,147** — the text calls it an approximation, correctly |
+| Priya/Tom "within about 1% of each other, near $400,000 apiece" | **$398,298** vs **$401,806** — gap **0.88%** |
+| contributions $96,000 / $144,000 | exact (480 × $200, 360 × $400) |
+| **the hedge**: "a little higher and Priya ends up ahead, a little lower and Tom does" | **true, and the crossover is where the text implies**: at 6.0% Tom leads by $3.5k; at 6.5% Priya leads by $14.3k; at 5.5% Tom leads by $17.2k |
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, **2 WARN** (item 93 coverage; item 94 completeness, now reading **27** not 31). Exit code read from the command directly, never through a pipe |
+| Ratios | es **1.08**, ko **0.53**, zh **0.34**, ja **0.44** — all clear their thresholds (0.815 / 0.404 / 0.252 / 0.360) |
+| Not padded to threshold | All four land inside the in-track fully-translated band (lessons 1/6/9/10/12/13/15: es 1.05-1.16, ko 0.50-0.54, zh 0.30-0.34, ja 0.44-0.48) |
+| Paragraph parity | §0 **2/2**, §1 **3/3**, §2 **2/2** in all four, matching English; sections 3/3. **This one was already correct before the edit and is not evidence of anything here** — stated so it is not read as a win |
+| Content read back | All 12 rewritten strings re-imported and compared **character for character** against the intended text — 12/12 exact; negative control (es §0 === ko §0) correctly false |
+| **Numeral parity** | English lesson 3 carries **25 amounts**; **0 missing in all four**. ⚠️ Unlike lesson 9's near-vacuous single-numeral result, this is the check that carries the most here — and the instrument was proved to discriminate on the same run: still-abridged **lesson 2 reports 3 of 7 missing** (`600`, `50`, `15`) in all four |
+| **Reverse numeral control** | Amounts present in a translation but not in English: es 0, zh 0, **ko 2**, **ja 4**. Chased rather than waved off — they are `10년`/`5분` and `2倍`/`3年目`/`10年`/`5分`, i.e. English writing "ten-year", "five-minute", "twice as much", "Year three" in words where CJK uses digits. **Not invented money**, and the control confirms it: untouched lesson 1's `ja` reports the same 4 |
+| **Edit safety** | Every replacement asserted **unique before writing** and **absent after**; new string asserted present exactly once; line counts unchanged in all four files; diff is exactly **3 changed lines per file** (6 diff lines = 3 removed + 3 added) |
+| Baseline | Hand-patched to **lesson 3's four ratios only** — asserted afterwards that exactly 4 of 176 entries moved and all four are lesson 3. `--write` was **not** used: it re-records all 176 |
+| Encoding | `U+FFFD` scan **0** in all four files; zh and ja read back rendered in the live DOM |
+| Build | In-tree `npm run build` still fails on this machine (rollup native binary / iCloud CPU mismatch, pre-existing and documented in `scripts/build-out-of-tree.sh`). `scripts/build-out-of-tree.sh` → **✓ built in 573ms**, exit 0 |
+| **Live render** | Served `dist/` statically and opened `#/lesson/3` in the real DOM in **all four languages**, with lessons 1-8 unlocked via `localStorage`. Every restored clause present: **es 10/10, ko 10/10, zh 11/11, ja 10/10** probes. Rendered paragraph blocks **2/3/2** per section, `white-space: pre-line` confirmed. Cross-language negative controls (each language's distinctive strings searched in the other three renders) **all false**; a nonsense string false in all four |
+| **A control that had to be rebuilt before it meant anything** | The first static server answered **200** to a deliberately bogus asset path, because its SPA fallback served `index.html` for everything — so "the page loaded" would have been unfalsifiable. Rewritten to fall back only for extensionless paths; it then returned **404** on the bogus `.js` and **200** on a real hashed asset. Only after that did any render result get read |
+| `npm run check-blindspot` | **exit 0**, 9 ok — including §10.1 advice-adjacency across all five languages and §2.3 live-looking dates over 26 teaching modules |
+| Review ledger | Re-marked lesson 3 `ai` in all four; asserted exactly 4 of 176 entries changed. Human share still **0%** |
+
+#### One inherited inconsistency fixed, and one deliberately left
+**Fixed.** `$`-form money figures were the outlier in two files and lesson 3 was the *only* place they occurred. Measured before touching anything: `lessonContent.essentials.zh.js` carried **34 `N美元` against 5 `$N`** — and **all five `$N` were in lesson 3 §1**. `ja` was identical in shape: **35 `Nドル` against 5 `$N`, all five in lesson 3 §1**. Since those strings were being rewritten anyway, they were written in each file's dominant form; both files now read **0 `$N`**. **`ko` was left alone on purpose** — it is genuinely mixed (`$N` in lessons 3, 4, 11, 12, 13 against 25 `N달러`), so there is no dominant form to move toward and lesson 3 was already internally consistent.
+**Left, and it is worth the next run knowing.** That fix exposes a **cross-module convention split**: `moneyVisuals.js`, which renders lesson 3's inline figure, is **244 `$N` against 4** — `$` is that module's house style in all five languages. So the zh/ja lesson-3 screen now reads `1,000美元` in the prose and `$1,000` in the figure caption. **This is a pre-existing split, not one this run created** (zh §2 already said `1,000美元` beside the same caption), and closing it means converting one module or the other across five languages — a separate change, not a rider on a translation pass. **Filed here rather than numbered, per W-6.2 rule 2.**
+
+#### Where the names came from
+Priya and Tom are not new to the corpus, so the transliterations were **measured, not invented**: `프리야`/`톰`, `普莉娅`/`汤姆`, `プリヤ`/`トム`. ⚠️ **One discrepancy surfaced and was deliberately not "fixed":** the `money` track renders Priya as **`普里娅`** in zh while `essentials` (lesson 10) renders her **`普莉娅`**. Lesson 3 follows its own file, because that is the file a reader walking the `essentials` track reads. **The cross-track split is real and is left standing** — deciding which spelling wins is a corpus-wide call, not a lesson-3 one.
+
+#### Step 5: adversarial self-check
+- **Blindspot register.** §10.1: nothing here instructs; the most advice-adjacent restored sentence is §2's "it's worth checking on every account you open", which is about an administrative setting, is carried faithfully from shipped English, and passes `check-blindspot` in all five languages. **The restored §1 ¶2 hedge cuts *against* §10.1** — without it the lesson promised that starting early beats saving twice as much, and now it says the result is knife-edge. §2.3: the new prose carries ages and durations and **no dates**; the live-date scan agrees across 26 modules. §10.2 Dalio: nothing. §10.3: untouched. **No invented quantities** — every figure traces to English, verified in both directions above.
+- **DECISIONS.md.** No conflict: content stays in `.js` modules, `localStorage`-only state untouched, Vite unchanged, "(Beta)" labeling unchanged.
+- **Already-done backlog item.** Not a redo — lesson 3 has been on the abridged list since the list existed and no run has previously edited its translations.
+- **My own verification claim.** A reviewer re-running these commands gets these figures, with two caveats stated rather than buried: **`npm run build` does not work in-tree on this machine**, and **every visual claim above rests on DOM text extraction, not on a screenshot** — none was taken.
+- ⛔ **The limit, unchanged: this is machine translation no fluent speaker has read.** This run added four more pairs of it and re-marked the ledger `ai`. Human share is **0% in all four languages** — O-3 is the owner's call and nothing here settles it.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **27 pairs remain: lessons 2, 4, 5, 7, 8, 11 and 14** — ~7 runs at the measured rate of one lesson / four pairs. **Next by relative shortfall, recomputed after this edit: lesson 2 (0.5102), then lesson 8 (0.5739)** — no tie this time, a clear 0.064 gap. **Lesson 2 is not in the concrete-first cluster; lessons 11 and 14 still owe both defects**, so check each for a promotable scene before budgeting it as authored-from-nothing.
+- **`LAUNCH_READINESS.md` §10.4's hand-written p90 reference was stale**: it read `es 1.18` where the live instrument now reads **1.16**. Corrected, with a note telling the reader to run the command rather than quote the sentence. **That is the fifth recorded occasion on which a hand-typed figure in this row was wrong while the generated sentence beside it was right.**
+- **The cross-module `$` vs `美元`/`ドル` split** described above, and the cross-track `普里娅`/`普莉娅` split.
+- **W-8.6's Markdown guard is still unfiled** and is still the cheapest open guard.
+- **W-8.1 still stands and no run can move it.** These corrections are committed, not deployed.
+
+**Owner-facing, one line:** the lesson whose whole job is to show compound interest doing its work shipped to every non-English reader with the arithmetic taken out — no $1,000 growing to $1,060 to $1,123.60, no doubling chain, no Priya and Tom, and a later paragraph plus the on-screen figure both pointing back at a "$1,000" the lesson had never mentioned; all of it is restored in four languages, and item 94 is down to seven lessons.
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** `npm test`’s MEASURED line, read **with this entry in the tree**: run log **147 KB**, file **603 KB**, floor 456,519 b, 1 live day — **~59%** of the run-log warn budget, **8.6 runs** of headroom. ⚠️ **Quoted post-append on purpose, and rounded to the KB the instrument itself prints, not to the byte:** the figure a run measures *before* writing its own entry is not the one a reviewer re-running `npm test` on the commit sees, and a byte-exact quote inside the file it measures cannot be made true — correcting it moves it again. The floor figure is exact because this entry does not touch the floor.
