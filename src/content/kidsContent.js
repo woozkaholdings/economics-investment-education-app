@@ -1,3 +1,35 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// KIDS CONTENT — the parent-facing guide (Reference → Parent guide)
+//
+// §10.3 ships this PARENT-facing, not child-facing. Nothing here addresses a
+// child directly through the app; it gives an adult something to do with one.
+//
+// The 13-17 `activity` is measured, not drafted. Until 2026-09-20 it read
+// "Pick a stock and track it for 3 months. Compare its movement to what the
+// Fed does with rates. Can you see the connection?" — a leading question whose
+// honest answer at that horizon is no, and which the app's own main path
+// already contradicts: markets.js `ratePrinciples` item 1 says policy works
+// "with lags — often a year or more", lesson 35 says a rate move reaches an
+// asset price "only if everything else holds still", and the rate-effects
+// table's arrows were reframed 2026-09-18 as the push ALL ELSE EQUAL.
+//
+// Measured 2026-09-20 over rolling 3-calendar-month windows, daily start
+// dates, Fed target = DFEDTAR spliced to DFEDTARU at 2008-12-15:
+//   • Since 1990 the target did NOT change at all in 54.0% of windows —
+//     more often than not there is nothing on the Fed side to compare.
+//   • Across 10 long-listed large caps (AAPL MSFT KO DIS NKE MCD WMT JNJ XOM
+//     PG, Tiingo adjClose, 42,202 windows in which the Fed DID move), the
+//     stock moved in the textbook direction in 49.4% — a coin flip. Per-ticker
+//     45.4% (MSFT) to 57.2% (WMT), straddling 50%.
+//   • What DOES track: bank prime rate 190/190 = 100%, money-market account
+//     rate 98.9% (2009-), FDIC national savings rate 92.9% (2021-).
+//   • Positive control, same machinery: the 3-month T-bill moved with the
+//     target in 95.2% of the same windows — so the ~49% above is a real
+//     result and not a dead instrument.
+//
+// These figures drift. Re-measure before trusting them; do not retype them.
+// ═══════════════════════════════════════════════════════════════════════════
+
 export const kidsContent = {
   "5-8": {
     title: { en: "Money Adventures!", es: "¡Aventuras con Dinero!", ko: "돈의 모험!", zh: "金钱冒险！", ja: "お金の冒険！" },
@@ -101,7 +133,7 @@ export const kidsContent = {
         why: { en: "The habits that build a good credit score later — paying on time, not overborrowing — are worth understanding before they're actually being tested.", es: "Los hábitos que construyen un buen puntaje de crédito después — pagar a tiempo, no pedir prestado de más — vale la pena entenderlos antes de que realmente se pongan a prueba.", ko: "나중에 좋은 신용 점수를 만드는 습관들 — 제때 갚기, 과도하게 빌리지 않기 — 은 실제로 시험대에 오르기 전에 이해해둘 가치가 있어요.", zh: "以后建立良好信用分数的那些习惯——按时还款、不过度借贷——值得在真正被考验之前就先弄明白。", ja: "後で良いクレジットスコアを築く習慣——期日どおりに払う、借りすぎない——は、実際に試される前に理解しておく価値がある。" },
       },
     ],
-    activity: { en: "Pick a stock and track it for 3 months. Compare its movement to what the Fed does with rates. Can you see the connection?", es: "Elige una acción y síguela durante 3 meses. Compara su movimiento con lo que hace el Fed con las tasas. ¿Puedes ver la conexión?", ko: "주식 하나를 골라 3개월 동안 추적하세요. 연준의 금리 조치와 비교해보세요. 둘 사이의 연결이 보이나요?", zh: "选一只股票追踪3个月。与美联储利率决策对比。能看到联系吗？", ja: "株を1つ選んで3ヶ月追跡。FRBの金利決定と比べてみよう。つながりが見えるかな？" },
+    activity: { en: "For 3 months, track a stock and a savings account's rate next to what the Fed does. One follows the Fed closely; the other mostly doesn't. Which is which?", es: "Durante 3 meses, sigue una acción y la tasa de una cuenta de ahorro junto a lo que hace el Fed. Una sigue de cerca al Fed; la otra casi nunca. ¿Cuál es cuál?", ko: "3개월 동안 주식 하나와 저축 계좌 금리를 연준의 움직임과 나란히 추적해보세요. 하나는 연준을 바짝 따라가고, 다른 하나는 대체로 그렇지 않습니다. 어느 쪽이 어느 쪽일까요?", zh: "用3个月时间，把一只股票和一个储蓄账户的利率，与美联储的动作并排追踪。其中一个紧跟美联储，另一个大多数时候不跟。哪个是哪个？", ja: "3ヶ月間、株を1つと貯蓄口座の金利を、FRBの動きと並べて追跡しよう。片方はFRBにぴったりついていき、もう片方はたいてい違う動きをする。どっちがどっち？" },
     parentTip: { en: "Set up a practice investment account. Real-time experience is the best teacher for understanding market psychology.", es: "Configura una cuenta de inversión de práctica. La experiencia en tiempo real es el mejor maestro para entender la psicología del mercado.", ko: "연습용 투자 계좌를 개설하세요. 실시간 경험이 시장 심리를 이해하는 최고의 교사입니다.", zh: "开设模拟投资账户。实时体验是理解市场心理的最佳老师。", ja: "練習用の投資口座を開設。リアルタイムの経験が市場心理を理解する最良の教師。" },
   },
 };

@@ -5962,3 +5962,75 @@ My first attempt at the header note died in the shell rather than in the file �
 **Owner-facing, one line:** the Sectors screen described Industrials as "machinery, airlines, railroads and builders" — but airlines are **2%** of that sector, the smallest slice in it, while **aerospace and defense are 25%**, the largest, and went unmentioned; three other sector descriptions had the same shape of gap (Consumer Discretionary left out retail, which is nearly half of it). All four now name where the money actually is, in all five languages, measured against the fund sponsor's own published industry breakdown with a 404 control and a second, independent cross-check. The wider finding is that **three earlier runs read this file and recorded it "clean — nothing measurable"**, which is why the file now carries a note saying what to measure and that the numbers drift. **Committed, not pushed** (O-5).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** `check-log-size`'s MEASURED line before this entry read file 631,407 b, run log 191,036 b, floor 440,371 b, 2 live days — quote the next run's own line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2, and the note this run closed was never a numbered item.
+
+### 2026-09-20 (scheduled dev-agent; W-6.2 rule 1 does not arise: the previous run left three notes, and this run took none of them — I read `economicSignals.js`, the surface its third note names, found nothing I could call a defect on the weight-naming question it asks, and did NOT run the sweep it asks for, so no claim is made there. This was a free pick, from reading the one learner-visible screen whose copy the log has never corrected: Reference → Parent guide) — the 13-17 band's activity told a teenager **"Pick a stock and track it for 3 months. Compare its movement to what the Fed does with rates. Can you see the connection?"** **The honest answer at that horizon is no**, and the app's own main path already says so. Corrected in all five languages.
+
+#### The defect, and why it is the app contradicting itself rather than a debatable simplification
+
+Every other activity in this file asks a question whose answer a child will actually see — prices rise when a thing is popular (5-8), grocery prices move over a month (9-12). **The 13-17 one is the only one whose leading question has no discoverable answer**, and three surfaces on the main path already say why:
+
+| surface | what it says | since |
+|---|---|---|
+| `markets.js` `ratePrinciples` item 1 | *"Policy changes work with lags — **often a year or more**."* | unchanged since the 08-04 rebuild |
+| lesson 35 (Interest Rates), closing ¶ | a rate move reaches an asset price *"**only if everything else holds still**, and in a downturn it rarely does"* | `8723d7a` |
+| `markets.js` `rateEffects` header | the arrows are the push **ALL ELSE EQUAL**, *"not what history shows happening next"* | 2026-09-18 |
+
+So the app tells a reader on one screen that rates work over **a year or more** and on another to look for the effect in **three months** — and the three runs of 2026-09-18 reframed the Reference table precisely because the single-asset link does not hold.
+
+#### Measured 2026-09-20, with controls, before editing anything
+
+Rolling 3-calendar-month windows, daily start dates. Fed target = `DFEDTAR` spliced to `DFEDTARU` at 2008-12-15.
+
+- **In 54.0% of windows since 1990 the Fed's target did not change at all.** More often than not there is nothing on the Fed side to compare against. (Since 2008-12: 68.1%.)
+- **Across 10 long-listed large caps** (AAPL MSFT KO DIS NKE MCD WMT JNJ XOM PG; Tiingo `adjClose`), over the **42,202** windows in which the Fed **did** move, the stock moved in the textbook direction (rates ↑ → price ↓) in **49.4%** and against it in 50.6%. **A coin flip.** Per-ticker **45.4%** (MSFT) to **57.2%** (WMT), straddling 50.
+- **What does track the Fed:** bank prime rate **190/190 = 100.0%**, money-market account rate **98.9%** (2009-), FDIC national savings rate **92.9%** (2021-).
+
+**Controls.** FRED bad series id → **404** (not an invented answer); `FEDFUNDS` 1981-06 = **19.10**; the 2007-09-18 cut (5.25→4.75) and the 2022-03-17 first hike (0.25→0.50) both reproduce on the spliced series; Tiingo bogus ticker → **404**; SPY `adjClose` calendar-2008 = **−36.8%** against the published −36.8%, 2020 Q1 = **−19.4%** against ≈−19.6%.
+
+⛔ **A weak control that did NOT license the result, and the instrument I had to build because of it.** My first positive control was bond ETFs — SHY **54.3%**, TLT **50.9%**. **Those barely beat a coin flip, so they validate nothing**, and a negative result under a dead instrument means nothing. Rather than report the 49.4% on the strength of a control that did not fire, I built one that must: the **3-month T-bill (`DTB3`) through the identical windowing and sign machinery moved with the target in 95.2%** of the same windows. That is what makes the 49.4% a finding rather than an artifact. (The bond-ETF result is not a failure of the ETFs — bond prices trade on *expected* future rates, so a realized target change is largely already in the price. It is simply not a control.)
+
+#### What shipped (1 file, 5 strings + a header)
+
+- **en** → *"For 3 months, track a stock and a savings account's rate next to what the Fed does. One follows the Fed closely; the other mostly doesn't. Which is which?"* — keeps the stock (the part a teenager wants to do), adds the thing that **does** respond, and turns a leading question with no answer into a real one with a discoverable answer.
+- es/ko/zh/ja carry the same two-track comparison, each in its own punctuation convention.
+- **A header comment on `kidsContent.js`**, which had none, recording the old wording, the three surfaces it contradicted, every figure above, the positive control, and *"These figures drift. Re-measure before trusting them; do not retype them."* **Zero `scripts/` mass — W-6.3's ratio is unmoved.**
+
+#### Why NO check was added (W-6.2 rule 3, answered rather than skipped)
+
+The learner-visible sentence is easy — *a teenager is told to find a connection that is a coin flip at that horizon.* The check is not. Catching it needs a live fetch of prices and the target; `npm test` is offline by design, and a committed snapshot would be a second copy of the kind of figure that rots. The durable artifact is the header note. **`npm run check-blindspot` already covers the file for the rule that matters here** (§10.1) — proven below rather than assumed.
+
+#### Verification
+
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 3 WARN** — identical to the pre-edit baseline (coverage 100%/0% human, completeness 47 pairs, quiz length-cue 52.2%); readiness unchanged at 44 lessons / 164,172 en chars / 174 min |
+| `npm run check-blindspot` | **exit 0** |
+| Edit safety | Each of the 5 replacements asserted its old string occurred **exactly once** and the new one **zero** times before writing; after writing, re-read from disk: old **0**, new **1**, all five. The script refuses and writes nothing if any count is off |
+| Strings are not garbled | The values were **read back out of the module**, not the diff: 255 fields scanned across all three bands, **0 U+FFFD, 0 lone surrogates, 0 missing** |
+| Build | `npm run build` fails on this host (iCloud-synced `node_modules`); `scripts/build-out-of-tree.sh` → **✓ built in 548ms**, mirrored to `dist/` |
+| In the bundle | All 5 new strings present, all 5 old strings **gone** |
+| Comment does not ship | `2026-09-20`, `DFEDTARU`, `Tiingo adjClose` and `42,202` each return **0 files** in `dist/assets/`, against a control (`savings account's rate`) returning **1** |
+| Live render | Served `dist/` statically and walked Reference → Parent guide → 13-17 in the real DOM. Reads correctly in **all five languages**, **0 U+FFFD**; the old string is absent from the panel |
+| **The DOM control** | Injecting `PROBE_XYZ_CONTROL` into the panel moved the read **false → true → false**, so the "old string absent" zeros are load-bearing |
+| **The guard control** | §10.1's coverage of this file was **proven, not inferred**: planting *"You should buy stocks now."* into my own new `en` string made `check-blindspot` **exit 1 and name `kidsContent.js:136`**. Restored from a scratchpad copy (never `git checkout --`) and re-verified **by SHA-256**, identical; probe count 0; guard back to exit 0 |
+
+⛔ **One verification I did NOT get, stated rather than skipped: there is no screenshot.** The Browser pane was hidden for this run, and a hidden pane does not composite frames — it would have handed back a placeholder, not the screen. The DOM read with the injected probe above is stronger evidence for *this* change (it reads the text, not pixels), but nobody should read "live render: OK" here as "someone looked at it".
+
+#### Step 5: adversarial self-check
+
+- **Blindspot register.** §10.1 — clean, and **proven** by the planted probe above rather than by trusting a PASS line. The new string is observational (*track*, *next to*, *which is which*), names no security to buy, carries no timing and no second-person directive. §10.2 — no Dalio, no named firm. §10.3 — the voice is unchanged from its three sibling activities, `kidsParentIntro` and `refParentsBlurb` are untouched, and the guard still reads both as addressing an adult; **nothing here moves the app toward child-facing**, which is the owner-only call. §2.3 — I put a date and figures into a file §2.3 does **not** scan (the §2.3 list is 26 teaching-copy modules and `kidsContent.js` is not among them), so I checked the bundle directly instead of relying on the guard: none of it ships, with a firing control.
+- **DECISIONS.md.** No conflict. The one relevant entry ("Kids financial-literacy content: format stays parent-facing, structural depth un-scoped") reserves **structural** change — new fields on `kidsContent.js`, a new render shape in `ParentGuide.jsx`. I added neither: one existing string's text inside the existing 3-field format, zero render changes. That decision also warns against runs "backing into" the question by **adding blurbs**; I added **zero** blurbs.
+- **Already-done backlog item.** Not a duplicate: `Pick a stock and track it` and `practice investment account` each return **0** in both `AGENT_LOG.md` and `AGENT_LOG.archive.md` — this copy has never been touched since it shipped.
+- **My own verification claim.** A reviewer re-running my commands gets my numbers; the controls are in the commands. **Two things they should not take from me.** (1) **The ticker set is mine.** Ten large caps I chose is not a random sample of what a teenager would pick; the honest bound is the per-ticker spread, **45.4%-57.2%**, which straddles 50 rather than sitting under it — the claim is "no reliable direction", not "stocks go the other way". (2) **"A savings account's rate follows the Fed" rests on national averages** (FDIC/FRED), not on any particular bank — a sticky legacy savings account at a big bank may barely move, which is itself a thing the activity's reader may discover. The wording says *a savings account's rate*, not *your bank will move it*.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+
+- **The `parentTip` directly under it still reads "Set up a practice investment account. Real-time experience is the best teacher for understanding market psychology."** *"The best teacher"* is an unsupported superlative, and it now sits under an activity teaching that short-run single-stock movement is mostly noise. **I left it** because it is a claim about pedagogy, not a false claim about markets, and I measured nothing that bears on it — changing it would have been an unmeasured edit riding along with a measured one.
+- **The English strings in this file use straight quotes** (`\"Pay yourself first\"`, `'Spend,' 'Save,' 'Give'`) while `glossary.js` uses curly (`“the money supply”`). Corpus-wide typographic convention; not measured here, not filed.
+- **`economicSignals.js` is still unswept** for the previous run's weight-naming question. I read it and did not act; that is not the same as having swept it.
+
+**Owner-facing, one line:** the parent guide told a teenager to pick a stock, track it for three months and look for the connection to what the Fed does with rates — but **in 54% of three-month stretches since 1990 the Fed did not move at all**, and when it did, ten well-known stocks went the textbook way **49.4%** of the time, which is a coin flip; the app's own interest-rate lesson already says rate changes take "a year or more". The activity now has the teenager track **a stock and a savings-account rate side by side** and work out which one follows the Fed — the savings side does, **93-100%** of the time — so the question finally has an answer they can find. All five languages, measured against Fed and market data with controls that fire, including a positive control built after my first one turned out to be worthless. **Committed, not pushed** (O-5).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2.
+
+⚠️ **One side effect of mine, disclosed and committed separately.** While trying to read the Tiingo key I ran `. ./api-keys.txt` — **that file is documentation, not an env file**, so the shell executed its prose, and one of the lines it executed was `npm run market`. That refreshed `public/data/market.json` (`asOf` 2026-09-18 → 2026-09-20; the diff is **that one line**, nothing else). The data is correct and current, so it is committed on its own rather than left stranded in the tree or folded into this change. **The key itself was never printed.** The right way to read it is `grep -m1 '^TIINGO_API_KEY=' api-keys.txt | cut -d= -f2-`, which is what the rest of this run used.
