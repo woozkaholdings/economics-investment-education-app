@@ -221,6 +221,136 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-8 — set by the weekly review 2026-09-20. Supersedes W-7's *active* clauses below. W-7's standing rules (W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED and still binding. ⚠️ **There was no weekly review on 2026-09-13 — `reviews/` goes 09-06 → 09-20, so this block covers two weeks of direction and one week of commits.** Read this first.
+>
+> **The week shipped 66 commits, build and tests green, and the content work in them is the
+> best-evidenced this project has produced — measured against named series, with positive AND
+> negative controls, limits stated rather than buried, landed in all five languages. Nothing in this
+> block disputes that. ⛔ It is about one fact that sits on top of all of it: _not one of those
+> corrections has reached a learner._**
+>
+> ### W-8.0 — W-7.2 rule 5's test, taken first, as rule 5 required.
+> Measured 2026-09-20 off `check-log-size.mjs`'s MEASURED line (not retyped from any prior entry):
+> backlog **401,965 b**, floor **440,371 b** (88.1% of budget), run log **231,099 b** (92.4% of warn,
+> 2 live days). **Rule 5's test PASSES** — 425,473 b was the 2026-09-06 baseline, so the backlog is
+> **23,508 b under it**, the first time a weekly block has been smaller a fortnight on. ⚠️ **But read
+> it against 09-07's 397,785 b, not only against the baseline: it is +4,180 b since. Rule 1 stopped
+> the growth; it has not reversed it.** The log-size WARN cleared this week (`npm test` 4 → 3
+> warnings) via W-5.3's seventeenth and eighteenth firings.
+>
+> ### W-8.1 ⛔ PRIORITY — the single most important fact about this week, and no run can fix it.
+> **`origin/main` is `b900df3`. Local `main` is 28 commits ahead. The last push was 2026-09-18
+> 21:18.** Every learner-visible correction from 09-18 20:11 onward — the whole 09-19/09-20 body of
+> work, 26 content fixes — **is not on the site.** This is O-5 exactly as filed, now with a date
+> attached:
+> - The live `public/data/market.json` is `asOf 2026-09-18`; HEAD's is `asOf 2026-09-20`.
+> - `STALE_AFTER_DAYS` is **4** and the test is `ageDays > 4` (`src/lib/useMarketData.js:20,52`).
+> - **So Reference → Sectors goes to its unavailable state for every visitor on 2026-09-23** unless
+>   a push carrying a fresher `market.json` lands first. The other 44 lessons, the glossary, Review
+>   and the parent guide are unaffected — a stale deployment still teaches.
+> ⛔ **Owner action, and it is O-5's route 1 or route 2, unchanged.** A run is forbidden to push and
+> this block does not ask one to. ⭐ **What this measurement adds to O-5 is the shape of the cost:**
+> the gap is no longer an abstraction about coincidence. It is 28 specific corrections, including
+> five that replaced a false historical claim with a measured one, sitting in a repo nobody reads.
+> **A correction that is not deployed is not a correction; it is a note to ourselves.**
+>
+> ### W-8.2 — cadence: ~8 scheduled runs did not fire, and nothing in the log knows it.
+> Run entries per day, 09-13 → 09-20: **6, 3, 1, 0, 8, 15, 21, 5**. Against a 6-hour schedule (4/day)
+> **09-14, 09-15 and 09-16 are 3, 1 and 0**, and the gap from `0bc1a95` (09-15 00:04) to `f631020`
+> (09-17 16:13) is **~40 hours with no dev-agent commit**. The market-data job kept running at 19:46
+> throughout, so the machine was up; the dev schedule was not. **No run entry mentions the gap,
+> because a run that does not fire cannot write one** — this is structurally invisible from inside
+> the log, which is why it is recorded here. Owner-facing note only; no action for a run.
+>
+> ### W-8.3 — W-7.2's accretion did not stop. It MOVED, from the backlog into `src/`.
+> Measured 2026-09-20 over `ca9ebd7..HEAD` (the week), six teaching-content modules:
+> | file | lines added | of which comment | of which code |
+> |---|---|---|---|
+> | `content/markets.js` | +50 | **+50** | **0** |
+> | `content/kidsContent.js` | +32 | +31 | +1 |
+> | `content/moneyVisuals.js` | +23 | +23 | 0 |
+> | `content/sectors.js` | +14 | +14 | 0 |
+> | `content/policyScenarios.js` | +5 | +5 | 0 |
+> | **total** | **+124** | **+123** | **+1** |
+>
+> `markets.js` is now **37.7% comment by line**, up from 32.9% a week ago, and the block above its
+> `scenario` export runs ~40 lines for one sentence: the old wording, that nothing had tested it, the
+> operationalization, three findings, a stated limit, and a note that no check guards it.
+> ⭐ **This is not a request to delete provenance, and deleting it would be the wrong lesson.** Those
+> blocks are why the corrections can be trusted, and the "re-measure, do not retype" discipline in
+> them is correct. **The rule is W-7.2 rule 1, applied where it now bites:** when a question CLOSES,
+> it is replaced by its conclusion, not annotated with one. **The finding, the limit and the
+> re-measure warning stay. The narration of the search does not — it is already in the run log, which
+> is what the run log is for.** Target: a provenance block for one corrected sentence should be
+> readable in under ten lines.
+>
+> ### W-8.4 — the instruments started outgrowing the app again, and one file is most of it.
+> Re-measured 2026-09-20, same method as W-7.0 (`scripts/` non-JSON lines vs `src/` minus
+> `content/`+`locales/`): **22,752 / 10,196 = 2.23x**, against 2.19x on 09-06. This week's net was
+> `scripts/` **+307** vs `src/` **+126** — instruments grew **2.4x faster than the app**, reversing
+> the near-parity W-7.0 credited. **`check-data.mjs` alone took +308/−1 of it and now stands at
+> 13,175 lines** (11,597 on 09-06, **+13.6% in a fortnight**), in one file. W-6.3 says this is a
+> number to watch rather than a rule to obey, and it is quoted here rather than acted on — **but
+> W-6.2 rule 3 binds before the next check is written: name the learner-visible failure it catches.**
+>
+> ### W-8.5 PRIORITY — the agent has one mode, and two unblocked learner-visible items sat out the week.
+> **61 of 61 dev-agent commits this week were a single-sentence accuracy correction or an archiving
+> pass.** That mode is working and this block is not asking for it to stop. **But it is unbounded** —
+> 44 lessons × every sentence is not a finite queue — and meanwhile **two items that a run CAN close,
+> that need no owner, and that `npm test` warns about every single run, were not picked once:**
+> 1. **Item 94 — the `essentials` track.** `npm test` WARN: **47 of 176 lesson/language pairs carry a
+>    condensed summary rather than a translation**, 12 lessons, and per `LAUNCH_READINESS.md` §10.4
+>    **all of them are on `essentials`** while both main-path tracks are fully translated. This is the
+>    largest single learner-visible gap left in the product that a run can close. It has a measured
+>    scope, a per-lesson list (`npm run translation-completeness`), and it is one schedulable block
+>    because the abridged set is identical in all four languages.
+> 2. **Item 160 — the quiz option-length cue.** `npm test` WARN: **always tapping the longest option
+>    scores en 24/46 = 52.2% against a 25.0% chance baseline.** A learner can pass half the checks off
+>    the option shape without understanding the material — which is a content-accuracy defect in the
+>    assessment, the same class of defect the week spent 61 runs on in the prose.
+> **The rule, and it is the one course-correction this block asks for:** ⛔ **before a run picks a
+> sentence to measure, it must first check whether item 94 or item 160 still carries a standing
+> `npm test` WARN. If either does, that is the pick.** A run may override this, but it must say in
+> its entry why the sentence it chose instead was more valuable to a learner than closing a warning
+> the test prints every time it runs. **When both WARNs clear, this clause expires and the
+> sentence-audit mode resumes as the default.**
+>
+> ### W-8.6 — a class was diagnosed and only its instance was fixed.
+> `f6b24f9` found Lesson 5 shipping the literal characters `*and*` to every English learner and
+> reasoned the class precisely: the reader renders `{section.body}` as a plain text child, there is no
+> Markdown dependency and no `dangerouslySetInnerHTML`, **so any Markdown written into a content
+> string arrives on screen as itself.** It then fixed the one string. Re-measured 2026-09-20: the
+> corpus is **clean in all five languages** (0 matches for `**…**` across `lessonContent.*` and
+> `quizText.*`, 0 for single-asterisk emphasis in English) and **no `check-data.mjs` section guards
+> it** — the section list ends at §84. **This is the cheapest guard on the open list and it satisfies
+> W-6.2 rule 3 outright:** the learner-visible failure is asterisks on the page, and it has already
+> happened once. File it as the next `check-data.mjs` section.
+>
+> ### W-8.7 — content quality and neutrality: no regressions, and the readability worry from 09-17 is measured closed.
+> `npm run check-blindspot` is green inside `npm test`, and this review read the most advice-adjacent
+> surface changed this week directly rather than trusting the check: `markets.js`'s teaching scenario
+> is hypothetical, undated, carries no recommendation, and its closing sentence now states a 2.8x lift
+> **and** the three episodes with no downturn behind it. **No buy/sell language, no personalized
+> advice, no regression found anywhere in the week.**
+> ✅ **`f00b1fd`'s worry is closed by measurement, not by assertion.** That run found four correct
+> corrections had landed in one lesson-35 paragraph and left it at **1,949 characters**. Re-measured
+> 2026-09-20 across all 334 English paragraphs in all three tracks: **longest is 1,201; 1 paragraph
+> over 1,200; 5 over 900.** The split worked and the corpus is not over-long. ⚠️ **Watch, do not act:**
+> reading time went 171 → **174 min** this week and every hedge adds words. **If a future review finds
+> the max back over ~1,500, the cause is this mode and the fix is a break, not a shorter hedge.**
+> ⚠️ **One cosmetic residue, noted and deliberately not "fixed":** the Yield Curve glossary entry now
+> reads "the six US recessions since 1976" in its definition and "every US recession since 1955" in
+> its example. Both are correct and `4cad5d9` explains exactly why the two dates differ (1957 and
+> 1960 predate `DGS10` and are untestable here). **A learner sees two start years two sentences
+> apart.** If a run touches this entry, reconcile the presentation without weakening either claim.
+>
+> ### W-8.8 — the cost of this block, per W-7.2 rule 5, which applies to W-8 first.
+> The backlog stood at **401,965 b** before this block was written and **413,641 b** after — **this
+> block cost 11,676 b**, against W-7's 12,567 b and W-6's 17,717 b. Both figures are read off
+> `check-log-size.mjs`, before and after. **The test of W-8 is not whether the next run agrees with
+> it — it is whether the backlog is BELOW 413,641 b on 2026-09-27.** Next review: open with a fresh
+> MEASURED line before anything else, and do not retype either figure.
+
 > ## PRIORITY BLOCK W-7 — set by the weekly review 2026-09-06. Supersedes W-6's *active* clauses below. W-6's standing rules (W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED, still binding, and W-6.2 WORKED — see W-7.0. Read this first.
 >
 > **The week shipped 113 commits, build and tests green, and the app went LIVE. That is the largest
@@ -1170,6 +1300,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       guard warranted.
 
 94. **[Content — filed 2026-08-24 by the scheduled dev-agent as W-5.1 step 3, when item 93's economy
+⭐ **PROMOTED by the weekly review 2026-09-20 (W-8.5).** This item still carries a standing `npm test` WARN (47 of 176 pairs abridged) and was not picked once in the 61 dev-agent commits of 2026-09-13 → 09-20. **While that WARN stands, this item outranks a sentence-audit pick** — see W-8.5 for the rule and the override clause.
     phase closed. This is the `essentials` remainder, deliberately filed as a SEPARATE item rather
     than rolled into 93, because it is a different body of work with a different priority.] 48 of 160
     lesson/language pairs — the whole of the `essentials` track — ship a condensed *summary* rather
@@ -2538,6 +2669,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     what would catch slow uniform decay; `kidsContent` has no such baseline.
 
 160. **🟡 PARTLY DONE, and its own stop-clause is CORRECTED (2026-09-02, owner-directed: "do item 160
+⭐ **PROMOTED by the weekly review 2026-09-20 (W-8.5).** This item still carries a standing `npm test` WARN (longest-option tapping scores en 52.2% against a 25.0% baseline) and was not picked once in the 61 dev-agent commits of 2026-09-13 → 09-20. **While that WARN stands, this item outranks a sentence-audit pick** — see W-8.5 for the rule and the override clause.
     next"). The clause below says "there is nothing left in it that trimming can honestly reach" and
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
     cutter — and FALSE OF HAND DELETION, which reached the band in all five languages on two
