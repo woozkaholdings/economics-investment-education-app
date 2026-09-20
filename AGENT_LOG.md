@@ -1343,14 +1343,24 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > (W-6.2 rule 2 + W-6.4), because it is the same decision as the one above: is the optional track
     > worth spending runs on before O-1?** §3.0.2 says *"Concrete before abstract. Lead with a thing
     > that happens to a person, then name the concept."* **`essentials` 10, 11, 12, 13, 14 and 15 —
-    > six consecutive lessons — each open by defining their subject** ("A W-2 and a 1099 are both tax
-    > forms…", "Mutual funds and ETFs charge an annual fee called an expense ratio…", "A brokerage
-    > account is just a container…", "A will is a legal document…", "A credit report is a detailed
-    > record…"). **`essentials` 1-9 are nine for nine concrete-first** — Maria, James, Elena, "Picture
-    > a neighborhood of a thousand homes". The habit stops at lesson 10 and never returns.
+    > six consecutive lessons — each open by defining their subject** ("Mutual funds and ETFs charge
+    > an annual fee called an expense ratio…", "A brokerage account is just a container…", "A will is
+    > a legal document…", "A credit report is a detailed record…"). **`essentials` 1-9 are nine for
+    > nine concrete-first** — Maria, James, Elena, "Picture a neighborhood of a thousand homes". The
+    > habit stopped at lesson 10 and did not return.
+    > ✅ **Lesson 10 is CLOSED 2026-09-20** (scheduled dev-agent), in the same pass as its translation,
+    > which is what this note asks for: it now opens on Nadia and Priya, two graphic designers opening
+    > their January mail, and the definition follows in ¶2. **Five remain: 11, 12, 13, 14, 15.**
+    > ⚠️ **One premise of the paragraph below broke on contact and the correction is reusable.** It
+    > says none of the six "contains a concrete scene anywhere in the lesson to promote". **Lesson 10
+    > did** — an unnamed staff-vs-freelance designer contrast sitting in ¶2 of its own first section,
+    > which is why the fix cost one authored paragraph rather than a whole scene: it named the two
+    > designers and promoted them. **Check each remaining lesson for a promotable scene before
+    > budgeting it as authored-from-nothing.**
     > **Cost, and why it is bigger than it looks:** unlike `money` 24 — which was fixed the same day
     > by inverting two paragraphs, because its scene was already written — **none of these six
-    > contains a concrete scene anywhere in the lesson to promote.** Each needs a scene authored from
+    > contains a concrete scene anywhere in the lesson to promote** (refuted for lesson 10 above;
+    > re-check the other five rather than inheriting this). Each needs a scene authored from
     > nothing, then carried into `es`/`ko`/`zh`/`ja`, on lessons that are *also* on this item's
     > abridged list. **So do it in the same pass as the translation work above, not separately** —
     > the "read once, translate four times" opportunity applies to both defects at once, and doing
@@ -1386,7 +1396,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > **So the honest false-positive rate is 6 in 15, not 3 in 13** — the screen is roughly twice as
     > wrong as the note above says, which strengthens rather than weakens its conclusion that it must
     > never become a build gate. **Nothing on the main path is now open under this clause**; the
-    > `essentials` 10-15 cluster below is the whole remainder and its deferral is unchanged.
+    > `essentials` 11-15 cluster is the whole remainder (10 closed 2026-09-20).
 
 
 96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
@@ -5641,3 +5651,52 @@ It is worse than that, and the **live browser is what showed it**: the lesson re
 **Owner-facing, one line:** the worst-translated lesson in the app — retirement accounts, where Chinese carried barely an eighth of the English — now reads in full in Spanish, Korean, Chinese and Japanese, verified in a live browser in all four. **Two things were broken beyond volume:** the lesson's closing takeaway told every reader that an account type "doesn't change what you can invest in", and the sentence establishing that had been cut from all four translations; and English's "this is not a rule that fits everyone, and not something this lesson can answer for you" existed **only in English**. **43 → 39 pairs; 10 lessons left, roughly ten more runs.** ⚠️ **The caveat is unchanged: this is machine translation no fluent speaker has read, and none of my checks can tell idiomatic Korean from awkward Korean** — that is O-3 and it is your call. `npm test` exit 0. **Committed, not pushed** (O-5, W-8.1 — the gap is now 29 commits).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2.
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else: item 94's still stands, item 160's §65 has **cleared**, so W-8.5 resolves to item 94 alone and that is the pick) — **`essentials` lesson 10 is now fully translated in all four languages AND its English opener is concrete-first, in one pass.** es 0.57 → **1.07**, ko 0.27 → **0.51**, zh 0.17 → **0.31**, ja 0.24 → **0.44**. Abridged pairs **39 → 35**, abridged lessons **10 → 9**. **The second half of this entry is the interesting one: the adversarial self-check caught that the pick owed a second, separate defect, and the fix was cheaper than the note budgeting it said it would be — because that note's premise was wrong.**
+
+**Why lesson 10 and not lesson 9, which the previous run named as "the next pick by worst-first".** Ranked by *relative* shortfall — each pair's ratio divided by its own language's p90 reference, averaged over the four — lesson 10 is worst at **0.470** and lesson 9 second at **0.478**. That is a hair, and on the previous run's raw-`zh` ordering lesson 9 leads instead. **The tiebreak was not the metric: lesson 10 is in the `essentials` 10-15 concrete-first cluster and lesson 9 is not**, and item 94's own note says that cluster's two defects must be fixed in the same pass or the five-language cost gets paid twice. Taking 10 pays it once; taking 9 first would have left 10's two defects still coupled.
+
+#### What the abridgement had actually removed
+Takeaway and thinkAbout were already fully translated in all four languages — **the entire gap was the two section bodies**, each collapsing the English to a single paragraph:
+- **§0 lost the worked example entirely.** English contrasts a staff graphic designer (set hours, a manager → W-2) with a freelance one (own hours, own equipment → a 1099 from each client over a threshold). All four translations kept the abstract rule — *the difference is who controls how the work is done* — and dropped the concrete pair that shows it. Also gone: "each January", "not your job title", and the threshold.
+- **§1 lost the number a learner would actually use.** English ¶3 — *set aside roughly a quarter to a third of what you earn before it reaches your checking account, because on a W-2 that already happened automatically* — was **absent in all four languages**. So was the clause that the employer's half of payroll tax "never even appear[s] on the employee's pay stub", which is what makes the lesson's point land.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, **2 WARN** (item 93 coverage; item 94 completeness, now reading **35** not 39). Exit code read directly, not through a pipe |
+| Ratios | es **1.07**, ko **0.51**, zh **0.31**, ja **0.44** — all clear their thresholds (0.812 / 0.406 / 0.252 / 0.357) |
+| Not padded to threshold | The four land on the in-track reference set (lessons 1/6/12/13/15), not just over the bar |
+| Paragraph parity | §0 **3/3** and §1 **3/3** in all four, matching English after the rewrite; section count 2/2 |
+| Numeral parity | **0 missing** in all four. ko/ja carry extras (`1`,`3`,`4`) that are **digit-form renderings of English words** — 1월/1月 for "January", 4분의 1·3분의 1 / 4分の1・3分の1 for "a quarter to a third" — not invented quantities |
+| **Numeral check discriminates** | Control: lesson 2 (still abridged) misses **7 of 12** English numerals in es and ko, 9 of 12 in zh. A clean result on lesson 10 therefore means something |
+| Content read back | All 8 rewritten bodies re-imported and compared **character for character** against the intended text; a negative control (es §0 === ko §0) correctly returned false |
+| Encoding | zh and ja read back rendered, by eye and by clause probe — no mojibake; terminology matches the untouched takeaway/thinkAbout (`留出`, `取り分け`) |
+| Edit safety | Every replacement asserted **unique before writing**; diff is exactly **2 lines per translation file**, and the completeness baseline was hand-patched to **lesson 10's 4 ratios only** — `--write` would have re-recorded all 176 |
+| Build | In-tree `npm run build` **fails** on this machine (rollup native binary / iCloud CPU mismatch, pre-existing and documented in `scripts/build-out-of-tree.sh`). `scripts/build-out-of-tree.sh` → **✓ built in 549ms** |
+| **Live render** | Served `dist/` statically (with a **404 control** on a bogus path), unlocked 1-9 via `localStorage`, opened `#/lesson/10` in the real DOM in **en, es and ja**: all three restored clauses present, paragraph breaks intact. Two negative controls (a Spanish string in the Japanese render; a string in no language) both false |
+| `npm run check-blindspot` | **exit 0**, 9 ok — including §10.1 advice-adjacency across all five languages on the modules edited here |
+| Review ledger | English changed, so the ledger correctly marked lesson 10 **stale in all four**; re-marked `ai` (not human). Coverage back to 44/44, **human share still 0%** |
+
+#### The concrete-first half, and why it is in this entry rather than a future one
+**Step 5 caught this, not step 3.** The translation work was finished and verified before the adversarial self-check read item 94's 2026-08-31 note and found that lesson 10 is one of six consecutive `essentials` lessons that open by *defining* their subject, against §3.0.2's "concrete before abstract" — and that the note's explicit instruction is **do it in the same pass as the translation, not separately.** Committing the translation alone would have satisfied the item's headline and violated its method.
+
+**The note's cost premise broke on contact, in the direction that made the fix cheaper.** It says none of the six "contains a concrete scene anywhere in the lesson to promote", so each needs one authored from nothing. **Lesson 10 had one** — the staff-vs-freelance designer contrast, sitting in ¶2 of its own first section, one paragraph below the definition. The fix was therefore closer to `money` 24 (which the note contrasts as the cheap case) than to the expensive case it was filed as: **name the two designers, promote them to ¶1, and delete the now-duplicated example from ¶3.** Lesson 10 now opens *"Last January, two graphic designers opened their mail"* — Nadia on staff, Priya freelance — and the definition follows in ¶2. That correction is written into item 94 so the next run checks each remaining lesson for a promotable scene instead of inheriting the budget.
+
+**Screened with the item's own three controls, all of which fired** (lessons 29 and 1 must read concrete, a synthetic definition-first opener must read abstract): lesson 10 now reads concrete on **both** signals (name and scene verb). ⚠️ **The screen was used as a reading aid and not as a verdict** — item 94 records its measured false-positive rate at 6 in 15 and says it must never become a build gate; the opener was read directly.
+
+#### Step 5: adversarial self-check
+- **Blindspot register.** §10.1: the most advice-adjacent sentence here is the "quarter to a third" rule, and it is **reported convention, not instruction**, in all five languages — *"se les dice de forma constante"*, *"말이 늘 따라붙는"*, *"总被反复叮嘱"*, *"繰り返し言われる"*. `check-blindspot` passes on all five. §2.3: "Last January" / "去年の1月" is a story frame with no year and is not a live-looking date — the check agrees. §10.2 Dalio: nothing. §10.3 kids framing: untouched.
+- **DECISIONS.md.** No conflict: content stays in `.js` modules, "(Beta)" labeling unchanged, no state/build/platform decision touched.
+- **Already-done backlog item.** Not a redo — lesson 10 has been on the abridged list since the list existed, and its concrete-first defect has been open and explicitly unclaimed since 2026-08-31.
+- **My own verification claim.** A reviewer re-running these commands gets these figures, **with one caveat stated rather than buried: `npm run build` does not work in-tree on this machine** and `scripts/build-out-of-tree.sh` is the route that does. The live-render proof needs `dist/` served statically; the browser pane's screenshot came back blank (a known artifact) so **every visual claim above rests on text extraction and DOM probes, not on a screenshot.**
+- ⛔ **The limit, unchanged: this is machine translation no fluent speaker has read.** This run added four more pairs of it and re-marked the ledger `ai`. Human share is **0% in all four languages** — O-3 is the owner's call and nothing here settles it.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **35 pairs remain: lessons 2, 3, 4, 5, 7, 8, 9, 11 and 14.** Three runs have now closed one lesson each; at ~1 lesson / 4 pairs per run the remainder is **~9 runs**.
+- **Next pick by relative shortfall: lesson 9** (0.478), then lessons 3 and 2 (both 0.510). **None of the three is in the concrete-first cluster**, so they cost translation only. **Lessons 11 and 14 still owe both defects** — but check each for a promotable scene first; lesson 10's did not need authoring from nothing.
+- **W-8.1 still stands and no run can move it.** These corrections are committed, not deployed.
+
+**Owner-facing, one line:** the lesson on employee-vs-contractor taxes was missing its worked example and its one actionable number in every non-English language, and opened with a definition instead of a person in all five — all of that is fixed together, and item 94 is down to nine lessons.
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one.
