@@ -6,7 +6,7 @@
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join, relative } from "node:path";
 
 import { TR } from "../src/locales/index.js";
@@ -12987,6 +12987,186 @@ function trendDirection(src) {
         `paragraph[${worst.pi}] (${worst.lang}) at ${worst.lines.toFixed(1)} lines / ${worst.chars} chars. ` +
         `All three controls fire (blank-line vs newline, the estimator against a browser-measured ` +
         `paragraph, and a non-empty corpus).`,
+    );
+  }
+}
+
+// §84. NO CONTENT STRING MAY CARRY MARKUP THE APP RENDERS AS LITERAL CHARACTERS.
+//
+// THE LEARNER-VISIBLE FAILURE THIS WOULD CATCH (W-6.2 rule 3): a learner
+// reading lesson 5 sees the characters `*and*` printed on the page —
+// asterisks and all — because the author wrote Markdown emphasis into a
+// string that nothing parses as Markdown.
+//
+// WHY IT RENDERS LITERALLY, measured rather than assumed. There is no
+// Markdown dependency in package.json, no `dangerouslySetInnerHTML` anywhere
+// in src/, and LessonReader.jsx renders the body as a plain text child
+// (`{section.body}` inside a <Text> with `white-space: pre-line`). React
+// escapes text children, so every character in these strings reaches the
+// screen as itself. `*and*` is four letters and two asterisks, not an
+// emphasized "and".
+//
+// WHAT WAS SHIPPING when this was written. Exactly one instance, English
+// only: lesson 5 section[2], "holding stocks *and* bonds". It had been
+// learner-visible for months. The same run that found it had ALSO introduced
+// a second one that morning (`*together*`, in the same lesson) and caught it
+// only by serving the built app and reading the real DOM — an expensive step
+// no run is obliged to take. So the failure mode is live, recent, and was
+// caught by luck rather than by any check.
+//
+// WHY A GUARD RATHER THAN ONE MORE CAREFUL EDIT — and the honest cost. This
+// adds to `scripts/`, which stood at 22,572 lines against 10,196 lines of app
+// code (`src/` minus `content/` and `locales/`) when this was written: 2.21x,
+// re-measured here rather than quoted from the log (W-6.3). What buys the
+// line count is that the defect is invisible in a diff — `*and*` looks like
+// emphasis to the person writing it and to every reviewer reading the patch,
+// and only the rendered page disagrees. That is the same shape as §83.
+//
+// WHAT IS FLAGGED, and what deliberately is not. Flagged: the constructs that
+// render as visible noise — *emphasis*, **strong**, _emphasis_, `code`,
+// [text](url), and ## headings. NOT flagged: "- " at the start of a line. A
+// dash-led line renders as a dash-led line, which is a perfectly good bullet
+// under `pre-line`; flagging it would fail prose that is doing nothing wrong.
+//
+// THE SCAN IS DIRECTORY-DRIVEN ON PURPOSE. It imports every module under
+// src/content and src/locales rather than the named imports at the top of
+// this file, so a content module added later is covered without anyone
+// remembering to add it here. Note that lessonContent.js re-assembles the ten
+// per-track files, so a defect in a lesson body is reported twice — once at
+// its source file and once through the merged view. That is the honest count,
+// not a bug: both are real paths to the same string.
+{
+  const before84 = failures;
+
+  const MARKUP = [
+    ["*emphasis*", /(^|[^*\w])\*(?!\s)([^*\n]{1,120}?)(?<!\s)\*(?!\*)/],
+    ["**strong**", /\*\*(?!\s)([^*\n]{1,120}?)(?<!\s)\*\*/],
+    ["_emphasis_", /(^|[^_\w])_(?!\s)([^_\n]{1,120}?)(?<!\s)_(?![_\w])/],
+    ["`code`", /`([^`\n]{1,120})`/],
+    ["[text](url)", /\[[^\]\n]{1,80}\]\([^)\n]{1,120}\)/],
+    ["## heading", /(^|\n)#{1,6} \S/],
+  ];
+
+  const firstMarkupIn = (s) => {
+    for (const [name, re] of MARKUP) {
+      const m = re.exec(s);
+      if (m) return { name, match: m[0].trim(), at: m.index };
+    }
+    return null;
+  };
+
+  // CONTROLS. Both directions must fire. A regex set that matches nothing and
+  // a scan that reaches nothing report the identical "no markup found", and
+  // this section's whole value is that its silence means something.
+  //
+  // (a) POSITIVE: every pattern catches its own construct. A single dead
+  //     regex would silently stop guarding one construct forever.
+  const PROBES = {
+    "*emphasis*": "an *emphasis* pair here",
+    "**strong**": "a **strong** pair here",
+    "_emphasis_": "an _underscore_ pair here",
+    "`code`": "some `inline code` here",
+    "[text](url)": "a [link text](https://example.com) here",
+    "## heading": "line one\n## A heading\nline three",
+  };
+  for (const [name, probe] of Object.entries(PROBES)) {
+    const hit = firstMarkupIn(probe);
+    if (!hit || hit.name !== name) {
+      fail(
+        `§84 control (a): the ${name} pattern did not fire on its own probe ${JSON.stringify(probe)} ` +
+          `(got ${hit ? hit.name : "no match"}). One dead regex here is one construct that can ship ` +
+          `literally forever with this section still green.`,
+      );
+    }
+  }
+  // (b) NEGATIVE: prose that merely CONTAINS these characters is not flagged.
+  //     Without this the section would fail arithmetic and snake_case, and
+  //     would be turned off rather than fixed.
+  const BENIGN = [
+    "a 5 * 3 = 15 multiplication",
+    "a snake_case_identifier in prose",
+    "a footnote marker* with no partner",
+    "- a dash-led line, which renders fine",
+    "a lone # and a lone ` and a lone [",
+  ];
+  for (const s of BENIGN) {
+    const hit = firstMarkupIn(s);
+    if (hit) {
+      fail(
+        `§84 control (b): ${JSON.stringify(s)} was flagged as ${hit.name} (${JSON.stringify(hit.match)}), ` +
+          `but it is ordinary prose. A section that fails clean text gets disabled, not obeyed.`,
+      );
+    }
+  }
+
+  const walkStrings = (node, trail, visit) => {
+    if (typeof node === "string") {
+      visit(node, trail);
+      return;
+    }
+    if (node && typeof node === "object") {
+      for (const k of Object.keys(node)) {
+        // Keys are scanned as well as values. A glossary term and a locale
+        // string are both addressed BY their key, and a key carrying markup
+        // would be reported by neither the value scan nor any other section.
+        // Found the honest way: a tamper plant aimed at glossary.js landed on
+        // the KEY and this section stayed green, which is the exact silence it
+        // exists to break.
+        visit(k, [...trail, `«key»${k}`]);
+        walkStrings(node[k], [...trail, k], visit);
+      }
+    }
+  };
+
+  let modules84 = 0;
+  let strings84 = 0;
+  for (const dir of ["src/content", "src/locales"]) {
+    const abs = join(ROOT, dir);
+    if (!existsSync(abs)) {
+      fail(`§84: ${dir} does not exist — this section is pointed at a tree that moved; repoint it rather than leaving it green.`);
+      continue;
+    }
+    for (const file of readdirSync(abs).filter((f) => f.endsWith(".js")).sort()) {
+      let mod;
+      try {
+        mod = await import(pathToFileURL(join(abs, file)).href);
+      } catch (e) {
+        fail(`§84: could not import ${dir}/${file} to scan it (${e.message}). An unscannable module is not a clean one.`);
+        continue;
+      }
+      modules84 += 1;
+      for (const exported of Object.keys(mod)) {
+        walkStrings(mod[exported], [exported], (s, trail) => {
+          strings84 += 1;
+          const hit = firstMarkupIn(s);
+          if (!hit) return;
+          fail(
+            `§84: ${dir}/${file} :: ${trail.join(".")} contains ${hit.name} markup ${JSON.stringify(hit.match)}, ` +
+              `which nothing in this app parses — the learner sees those characters printed on the page. ` +
+              `Say it in words instead (the 2026-09-20 fix turned "stocks *and* bonds" into "both stocks and ` +
+              `bonds"), or drop the markup. Context: "…${s.slice(Math.max(0, hit.at - 45), hit.at + 60)}…"`,
+          );
+        });
+      }
+    }
+  }
+  // (c) the scan actually reached the corpus. An empty scan is the failure
+  //     mode that looks most like a pass.
+  if (modules84 < 20 || strings84 < 5000) {
+    fail(
+      `§84 control (c): the scan reached ${strings84} string(s) and key(s) across ${modules84} module(s), which is ` +
+        `too ` +
+        `little to be the real content tree — a "no markup found" result here would be an empty scan, not a ` +
+        `clean one.`,
+    );
+  }
+
+  if (failures === before84) {
+    console.log(
+      `  §84 literal markup: ${strings84} string(s) and key(s) across ${modules84} content/locale module(s) carry ` +
+        `none of ` +
+        `the 6 guarded Markdown constructs. All three controls fire (every pattern on its own probe, ` +
+        `${BENIGN.length} benign strings unflagged, and a non-empty corpus).`,
     );
   }
 }
