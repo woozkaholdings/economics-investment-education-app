@@ -1307,18 +1307,16 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     than a translation. `es` 12, `ko` 12, `zh` 12, `ja` 12: lessons 1-11 and 14, identical in all
     four languages.**
 
-    > **⚠️ READ THIS BEFORE PICKING IT UP. This item is NOT a continuation of item 93, and the case
-    > for doing it is materially weaker than the case for the work that just finished.** Item 93 was
-    > P1 because it was on the **main path** — the track the 2026-08-18 product reversal made the
-    > product. `essentials` (1-15) is the **optional** track. At the demonstrated and very consistent
-    > rate of **2 pairs per run**, 48 pairs is **~24 runs ≈ 6 days of scheduled capacity**, in four
-    > **"(Beta)"-labeled** languages, for an app that **no one has yet opened in any language (O-1)**.
-    > **The weekly review's W-5.2 rule still binds** — at most one run in four on translation work —
-    > and on this item that ratio should if anything be more conservative, not less.
-    > **Recommendation from the run that filed it: do not start this until O-1 is resolved.** A
-    > deployed URL would tell us whether anyone reads the optional track at all, which is exactly the
-    > evidence needed to decide whether these 48 pairs are worth six days. Filing it here so the work
-    > is *scoped and schedulable*, not so it is *scheduled*.
+    > **⚠️ THE DEFERRAL THAT USED TO BE HERE IS GONE, NOT ANNOTATED (W-7.2 rule 1), and this is its
+    > conclusion.** It read *"do not start this until O-1 is resolved"* — **O-1 closed 2026-09-05**,
+    > and its second gate, O-3's *"the owner should be asked before this starts"*, was answered by the
+    > owner's 2026-09-20 instruction to do this item. **Both blockers are met; the item is open work.**
+    > It also budgeted **2 pairs per run ≈ 24 runs**, fitted on the per-language work of item 93. The
+    > measured rate on THIS item is **one lesson / four pairs per run** (2026-09-20, twice), because
+    > the abridged set is identical in all four languages and one English read scopes all four.
+    > ⛔ **What is NOT settled is O-3**: every pair this item closes adds unreviewed machine
+    > translation to a "(Beta)"-labeled language. That is the owner's call, not a run's.
+    > **No count lives here on purpose** — `npm run translation-completeness` prints the live list.
 
     - **Why it is cheap to resume when the time comes: everything item 93 learned transfers.** The
       per-language density predictors, the ceiling arithmetic, the paragraph-parity check, the strict
@@ -5588,5 +5586,58 @@ It is worse than that, and the **live browser is what showed it**: the lesson re
 - **Item 94's stale "do not start until O-1" recommendation is now contradicted by this entry but still sits in the item text.** I did not rewrite the item body — the backlog is at 91.5% of the floor and W-8.0's rule 5 is watching its size. **Recorded here instead; a future editor of that item should delete the recommendation rather than annotate it (W-7.2 rule 1).**
 
 **Owner-facing, one line:** the optional `essentials` track shipped a condensed summary instead of a translation in all four non-English languages, and lesson 1 is now the first of those twelve lessons to be fully translated — es, ko, zh and ja, verified rendering in a live browser. **The gap was not only volume:** the lesson draws a figure captioned *$1,500 / $900 / $600* in every language, and in the four translations the prose that derives those numbers from Maria's $3,000 had been cut, so the figure illustrated a calculation the reader was never shown. **47 → 43 pairs; 11 lessons left, roughly eleven more runs at this rate.** ⚠️ **The honest caveat is unchanged and this run made it bigger, not smaller:** this is machine translation that no fluent speaker has read, and none of my checks can tell good Korean from awkward Korean — that is O-3, and it is your decision, not a run's. `npm test` exit 0. **Committed, not pushed** (O-5, W-8.1).
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2.
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick, not a free one** — `npm test`'s two WARNs were re-read before anything else and item 94's still stands, so W-8.5 says that is the pick. The previous run was owner-directed, so W-6.2 rule 1 does not arise; its closing note offered lesson 2 "in order" or lesson 6 "maximum learner-visible gain per run" and **left the choice open. Lesson 6.**) — **`essentials` lesson 6, the worst-abridged lesson in the whole 44-lesson corpus, is now fully translated in all four languages.** es 0.41 → **1.14**, ko 0.20 → **0.54**, zh 0.12 → **0.34**, ja 0.17 → **0.45**. Abridged pairs **43 → 39**, abridged lessons **11 → 10**. **The abridgement had cut the paragraph the lesson's own takeaway is a conclusion of, and the hedge that keeps a Roth-vs-Traditional discussion out of §10.1 territory.**
+
+**Step 3.5 — premise re-measured, and it held on both the figures and the characterization.**
+- The WARN reproduces: **43 pairs, 11 lessons (2-11 and 14)**, es 10 / ko 11 / zh 11 / ja 11. The previous run's claim that **lesson 6 is the worst-abridged** reproduces exactly — `zh 0.12` against a 0.252 threshold, **a third of the bar** and the lowest cell in the table.
+- **"Condensed summary rather than a translation" is true here and I read it line by line rather than inferring it from the ratio.** Section counts are parallel (2/2 in all five) and paragraph counts are parallel (3/3), so the loss is *inside* the paragraphs: each of the four had kept one compressed clause per English paragraph and dropped the rest.
+- **What was missing, enumerated** — §0's entire two-coworker worked example ($200/month, 30 years, same return) **and** its `Compound Interest` cross-reference; §0's expansion of IRA and "through a bank or brokerage, employer or not"; §0's "up to a set limit" and "a detail worth checking rather than assuming"; §1's opening framing sentence ("both come in two versions, and the biggest difference is when the tax bill comes due"); §1's "smaller rules differ too" sentence; and **the whole of §1's closing paragraph**.
+
+#### The two defects underneath the volume gap
+1. **An orphaned conclusion — the same shape as lesson 1's orphaned figure, in prose.** The `takeaway` in **all five languages** says the account type *"doesn't change what you can invest in — it changes when the tax bill comes due"*. **Only English's §0 ever said the first half.** The sentence that establishes it ("the government … changed the tax treatment, not what you're allowed to invest in — a 401(k) or IRA can hold many of the same stocks, bonds, or funds") was cut from es/ko/zh/ja, so the takeaway arrived as an assertion with its premise removed. Measured before the edit and re-measured after, per language, with a string present in no language returning `false` as the control.
+2. **A §10.1-relevant hedge was missing in four languages and present in one.** English §1 ends *"Both are simplifications of a genuinely individual, forward-looking tax question — not a rule that fits everyone, and not something this lesson can answer for any specific person."* **That sentence existed only in English.** It was not dangerous *yet* only because the four translations had also dropped the career-stage guidance it qualifies — so the honest statement is that this run **added advice-adjacent content to four languages and its hedge in the same edit**, never one without the other. The house phrasing for that disclaimer was taken from the corpus's own parallel sentence in `essentials` 8 (insurance) in each language, not invented.
+
+#### What shipped (7 files)
+- **4 content modules** — `lessonContent.essentials.{es,ko,zh,ja}.js`, lesson 6 only: §0 body, §1 body and `thinkAbout` in each. **`takeaway` was read in all four and skipped rather than rewritten** — it was already complete, and the two section `heading`s were already complete too.
+- **`thinkAbout` needed a fix of its own the ratio would not have shown.** All four had dropped its middle sentence ("a tax-advantaged account doesn't add extra return by itself — it just lets more of the growth compound undisturbed"), which is the antecedent of the closing question. In es the question read *"¿Por qué importaría más…?"* with nothing left for *"importaría"* to refer to.
+- **`scripts/translation-completeness-baseline.json`** — ⚠️ **patched by hand, and the guard that made me do it fired for real this time.** §33's failure message says to run `--write`; that regenerates every ratio, and **this run measured what that would have cost: 22 of 44 lessons currently differ from the recorded baseline at 2 decimal places, 19 of them purely as jitter inside §33's own 0.03 tolerance.** `--write` would have silently re-recorded all 22. Instead the patch is driven by **§33's own `drift()` comparator rather than a re-implementation of it**: 4 drifting pairs before (all lesson 6), 1 of 44 lessons written, 0 drifting pairs after, `note` and `tolerance` byte-identical — with a control that forcing `15:zh` to 0.99 makes the comparator report exactly 1 pair.
+- **`scripts/translation-review-ledger.json`** — L6 es/ko/zh/ja re-marked `ai` for today, 1 of 44 lessons changed, `sourceHash` untouched because English did not move.
+- **`LAUNCH_READINESS.md`** — the generated §10.4 volume sentence via `npm run readiness -- --write`, plus the row's hand-written counts. ⚠️ **Per W-7.2 rule 1 the previous run's 2026-09-20 sentence was REWRITTEN to cover both of today's closures rather than annotated with a fourth dated re-measurement** — it now reads 39 / 10 lessons and names lessons 1 and 6; the remaining-pairs clause goes "lessons 2-11 and 14" → "lessons 2-5, 7-11 and 14".
+- **`scripts/` gained 0 lines of logic** (+8/−8, both JSON ledgers); W-6.3's ratio is unmoved and no new `check-data.mjs` section was written, so W-6.2 rule 3 does not arise.
+
+#### Verification
+| Check | Result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, **2 WARN** (item 93 coverage; item 94 completeness, now reading **39** not 43) |
+| Ratios | es **1.14**, ko **0.54**, zh **0.34**, ja **0.45** — all clear their thresholds (0.812 / 0.406 / 0.252 / 0.357) |
+| **Not padded to threshold** | The four land on the in-track reference set — lessons 1/12/13/15 sit at es 1.05-1.16, ko 0.51-0.54, zh 0.33, ja 0.44-0.48. A translation written to clear a bar would sit at the bar; zh cleared 0.252 and landed at 0.34 |
+| No figure dropped | Every English numeral (`200`, `30`, `401`) present in all four; **0 missing, 0 unexplained extras**, across all 4 fields × 4 languages |
+| **Numeral check discriminates** | Control both ways: lesson 2 `zh` (still abridged) misses **4 of 7** English numerals, lesson 15 `zh` (translated) misses **0 of 4** — a checker that reported "all present" everywhere would have been wrong |
+| Paragraph parity | 3/3 per section in all four, matching English; section count 2/2 |
+| Encoding | **0 U+FFFD, 0 lone surrogates** in all 16 fields, read back out of the modules and again out of the live DOM |
+| Quote conventions (§56) | es `“…”` for the title reference + ASCII `'match'`; ko `「복리」`; zh `《复利》` + `“匹配”` (no ASCII quotes); ja `『複利』` + `「マッチング」`. `npm test` §56 green |
+| Edit safety | 12 fields asserted old-unique **and** new-absent across **all four files before any write**, then old-gone-and-new-once after; pre-copies taken to the scratchpad first (never `git checkout --`) |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built in 557ms**; the new prose is in **exactly 1 asset per language**, and a string in no asset returns 0 |
+| **Live render, all four languages** | Served `dist/` statically, unlocked 1-5 via `localStorage` and opened `#/lesson/6` in the real DOM: **12 of 12 restored elements present in es, ko, zh and ja** — worked example, cross-reference, IRA expansion, the takeaway's premise, the match limit, the vesting caveat, the two-versions framing, the smaller-rules sentence, the Roth/Traditional hedge, the not-a-rule disclaimer and the `thinkAbout` bridge — **0 U+FFFD**, plus a screenshot of the `ja` render |
+| **Render controls** | A string present in no language returns **false** in all four; the static server returns a real **404** for a bogus `/assets/` path (it deliberately does not SPA-rewrite `/assets/`, because `serve -s` returns 200 for everything and kills that control) |
+| `npm run check-blindspot` | **exit 0** |
+
+#### Step 5: adversarial self-check
+- **Blindspot register.** §10.1 — the one real risk of this item, stated above: the new §1 ¶3 is the most advice-adjacent prose this run wrote, and it carries English's attributed hedging (`suele decirse que es candidato` / `흔히 … 후보로 설명되고` / `常被描述为…的适用人选` / `候補として説明されることが多く`) **plus** the "not a rule that fits everyone" disclaimer, in all four. `check-blindspot` exit 0 over all five languages, and a direct scan of the new strings for imperative buy/sell forms returns nothing. §10.2 — no Dalio/달리오/达利欧/ダリオ/Bridgewater anywhere in the new prose. §10.3 — `kidsContent.js` untouched. Stale-data — **0 four-digit years in the new prose**, with the same regex returning `2026` on a positive control.
+- **DECISIONS.md.** No conflict: content stays in `.js` modules, no state/build/platform decision touched, "(Beta)" labeling unchanged (that is O-3's subject, not this edit's).
+- **Already-done backlog item.** Not a redo: lesson 6 has been on the abridged list continuously since the list existed (2026-08-24), and `translation-completeness` shows it leaving only now.
+- **My own verification claim.** A reviewer re-running `npm run translation-completeness` gets these four ratios and `npm test` exits 0; the numeral, encoding and DOM checks are scratchpad scripts and browser reads, described above rather than shipped as gates (W-6.2 rule 3).
+- ⛔ **The limit, unchanged and made bigger by this run, not smaller: this is machine translation no fluent speaker has read.** Every instrument above measures length, numerals, encoding, punctuation class and string presence — **all of them pass identically on fluent prose and on awkward prose.** That is O-3, and it is the owner's decision. The one thing I can say beyond volume is that each restored element corresponds to a named English sentence, enumerated in step 3.5.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **39 pairs remain: lessons 2-5, 7-11 and 14.** Two runs have now closed one lesson each, so the rate is **~1 lesson / 4 pairs per run** and the remainder is **~10 runs**, not item 94's original 24.
+- **The next pick by worst-first is lesson 9** (es 0.54, ko 0.28, zh 0.17, ja 0.25), then lesson 3 (zh 0.19) and lesson 2 (zh 0.20). **Lesson 3 is worth naming for a second reason:** it is `Compound Interest`, the lesson **both** lesson 1 and lesson 6 now cross-reference by title in all five languages, and it carries a figure.
+- ⚠️ **Lessons 10, 11 and 14 still owe the `essentials` 10-15 concrete-first defect** (item 94's 2026-08-31 note): a scene must be authored in English first and carried into four languages, in the same pass. **Lesson 6 is not in that cluster, so nothing was owed here.**
+- **The baseline's 19 within-tolerance stale ratios were left alone deliberately.** They are jitter, not debt, and re-recording them would put 19 lessons' worth of noise in a diff about one lesson. Noting it because it is the second run in a row to find §33's prescribed `--write` unusable as written — **if a third run hits it, the fix is §33's failure message, not another hand-patch.**
+
+**Owner-facing, one line:** the worst-translated lesson in the app — retirement accounts, where Chinese carried barely an eighth of the English — now reads in full in Spanish, Korean, Chinese and Japanese, verified in a live browser in all four. **Two things were broken beyond volume:** the lesson's closing takeaway told every reader that an account type "doesn't change what you can invest in", and the sentence establishing that had been cut from all four translations; and English's "this is not a rule that fits everyone, and not something this lesson can answer for you" existed **only in English**. **43 → 39 pairs; 10 lessons left, roughly ten more runs.** ⚠️ **The caveat is unchanged: this is machine translation no fluent speaker has read, and none of my checks can tell idiomatic Korean from awkward Korean** — that is O-3 and it is your call. `npm test` exit 0. **Committed, not pushed** (O-5, W-8.1 — the gap is now 29 commits).
 
 **Schedule:** the cron is the owner's lever; not read, not touched. **Log size:** quote your own `npm test` MEASURED line, not this one. **Backlog:** 0 b added — the notes above are under this entry, per W-6.2 rule 2.
