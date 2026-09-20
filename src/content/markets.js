@@ -288,13 +288,50 @@ export const deleveragingDescription = {
 };
 
 // The teaching scenario. Deliberately hypothetical and undated — it describes a
-// *kind* of moment, not the present one.
+// *kind* of moment, not the present one. ⛔ Keep it that way: check-blindspot
+// §2.3 scans this file for a "Month YYYY" date, and a bare year would read as
+// a claim about now even though §2.3's pattern would not catch it.
+//
+// ── The closing sentence is MEASURED, 2026-09-20 ──────────────────────────
+// Until then it read "…is the kind that has historically shown up late in an
+// expansion, before growth clearly turns" — one clause that holds and one that
+// does not, and nothing in this repo had ever tested either (the phrase
+// returned 0 in AGENT_LOG.md, the archive, CLAIMS.md, DECISIONS.md and
+// LAUNCH_PLAN.md, against a control phrase returning 5).
+//
+// The mix was operationalized on monthly FRED data 1964-07 → 2026-06 as: real
+// GDP (GDPC1) growing year-on-year but slower than the previous quarter, CPI
+// (CPIAUCSL) year-on-year above 2%, and the fed funds rate (FEDFUNDS) at or
+// above its trailing 10-year 75th percentile. Outcome = a USREC 0→1 month.
+//
+//   • "late in an expansion" HOLDS, and strongly. Of mix months inside US
+//     expansions that ended, 87.5% fell in the final third (median position
+//     0.87 of the way through), against 36.1% for expansion months generally.
+//     Positive control: an inverted curve (GS10−TB3MS) through the identical
+//     machinery gives 84.5% and 0.89 — so the instrument is calibrated, not
+//     flattering. Survives re-specification (CPI>2.5/>3, rate top tercile/
+//     decile, two quarters of slowing): 79.6%–89.7% every time.
+//   • "before growth clearly turns" DOES NOT hold as stated. P(recession
+//     starts within 12 months | mix) is 40.4% against a 14.6% base — a real
+//     2.8x lift, but not a turn. Across the 16 contiguous mix episodes the
+//     gap to the next recession ran 1 to 72 months (median 15); 39.4% of mix
+//     months had no recession start within 24 months; and 3 episodes have had
+//     no downturn follow at all.
+//   • LIMIT, stated rather than buried: the 87.5% is computed only over
+//     expansions that ENDED, because an unfinished expansion has no
+//     denominator. Those three no-downturn episodes are precisely the ones
+//     that measure cannot see, which is why the sentence carries them.
+//
+// No check guards this: catching it needs a live fetch of GDP, CPI, the funds
+// rate and NBER dates, and `npm test` is offline by design (W-6.2 rule 3). A
+// committed snapshot would be a second copy of the kind of figure that rots.
+// These figures drift. Re-measure before trusting them; do not retype them.
 export const scenario = {
-  en: "A 'late expansion' scenario: GDP growing but slowing, inflation running above the central bank's target, the policy rate elevated with policymakers divided on the next move, and rising tariffs adding cost pressure. This mix of signals is the kind that has historically shown up late in an expansion, before growth clearly turns.",
-  es: "Un escenario de 'expansión tardía': el PIB crece pero se desacelera, la inflación supera el objetivo del banco central, la tasa de política está elevada con los responsables divididos sobre el próximo paso, y los aranceles en aumento añaden presión de costos. Esta combinación de señales es la que históricamente aparece en la fase tardía de una expansión, antes de que el crecimiento cambie claramente de rumbo.",
-  ko: "'확장 후기' 시나리오: GDP는 성장하지만 둔화되고, 인플레이션은 중앙은행 목표치를 웃돌며, 정책금리는 높은 수준에서 정책 당국자들 사이에 방향성 이견이 있고, 관세 인상이 비용 압박을 더합니다. 이런 혼합 신호는 역사적으로 확장기 후반, 즉 성장이 뚜렷하게 꺾이기 전에 나타나는 패턴입니다.",
-  zh: "一个“扩张后期”情形：GDP增长但放缓，通胀高于央行目标，政策利率处于高位且决策者对下一步方向存在分歧，关税上升带来成本压力。这种信号组合历来出现在扩张后期，即增长明显转向之前。",
-  ja: "「拡大後期」の状況：GDP成長は鈍化しつつあり、インフレは中央銀行の目標を上回り、政策金利は高水準で当局者の間で次の一手について意見が分かれ、関税の上昇がコスト圧力を高めています。こうした混在シグナルは、成長がはっきりと転換する前の拡大期後半に歴史的に見られるパターンです。",
+  en: "A 'late expansion' scenario: GDP growing but slowing, inflation running above the central bank's target, the policy rate elevated with policymakers divided on the next move, and rising tariffs adding cost pressure. This mix of signals has historically clustered near the end of US expansions — but it is not a countdown: the gap before growth actually turned has run from one month to six years, and more than once the mix appeared and the expansion simply carried on.",
+  es: "Un escenario de 'expansión tardía': el PIB crece pero se desacelera, la inflación supera el objetivo del banco central, la tasa de política está elevada con los responsables divididos sobre el próximo paso, y los aranceles en aumento añaden presión de costos. Esta combinación de señales se ha concentrado históricamente cerca del final de las expansiones en EE.UU., pero no es una cuenta atrás: el tiempo que pasó hasta que el crecimiento realmente cambió de rumbo fue de un mes a seis años, y más de una vez la combinación apareció y la expansión siguió su curso.",
+  ko: "'확장 후기' 시나리오: GDP는 성장하지만 둔화되고, 인플레이션은 중앙은행 목표치를 웃돌며, 정책금리는 높은 수준에서 정책 당국자들 사이에 방향성 이견이 있고, 관세 인상이 비용 압박을 더합니다. 이런 신호 조합은 역사적으로 미국 확장기의 후반부에 몰려 나타났습니다. 다만 카운트다운은 아닙니다. 실제로 성장이 꺾일 때까지 걸린 시간은 한 달에서 6년까지 폭이 넓었고, 이 조합이 나타났는데도 확장이 그대로 이어진 경우가 여러 번 있었습니다.",
+  zh: "一个“扩张后期”情形：GDP增长但放缓，通胀高于央行目标，政策利率处于高位且决策者对下一步方向存在分歧，关税上升带来成本压力。这种信号组合历来集中出现在美国扩张期的尾段，但它不是倒计时：从出现到增长真正转向，间隔短则一个月、长则六年，而且不止一次出现后扩张仍在继续。",
+  ja: "「拡大後期」の状況：GDP成長は鈍化しつつあり、インフレは中央銀行の目標を上回り、政策金利は高水準で当局者の間で次の一手について意見が分かれ、関税の上昇がコスト圧力を高めています。こうしたシグナルの組み合わせは、歴史的には米国の拡大期の終盤に集中して現れてきました。ただしカウントダウンではありません。実際に成長が転換するまでの間隔は1か月から6年までばらつき、この組み合わせが現れても拡大が続いたことが何度もあります。",
 };
 
 // What each asset class's arrow is ABOUT. Until 2026-09-02 the cards rendered a
