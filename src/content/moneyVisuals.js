@@ -319,6 +319,21 @@ export const lossDescription = {
 // so close to the right edge that it cannot be drawn). §50 asserts the bound
 // and the two preferences rather than the constant, which is the part the
 // lesson actually claims.
+//
+// ⚠️ WHAT THE LESSON NOW CLAIMS, CHANGED 2026-09-19. The body used to say "most
+// people take the $50 today"; it now says "some people" and declares the dollar
+// figures stretched for legibility. The reason is measured and is in that date's
+// run-log entry: $50-now over $65-in-a-month is a 30% premium for one month's
+// wait, and the median subject in Thaler (1981) was indifferent at 33% for a
+// $15 stake — with larger stakes discounted LESS steeply (his own one-year
+// indifference premiums fall from 300% at $15 to 40% at $250 and 33% at
+// $3,000), so at $50 the median person would most likely have waited. The
+// FIGURE is unaffected and deliberately unchanged: it plots what the two
+// options *feel* worth under one discount function, which is a model, not a
+// population claim. `flipZoneLabels` was reworded the same day for exactly that
+// reason — it said "most people" and now says "feels worth more". The k > 0.3
+// bound below still holds, because the lesson still has a person who prefers
+// the $50 today; it is now that person's preference rather than most people's.
 export const flipRewards = {
   sooner: { amount: 50, month: 12 },
   later: { amount: 65, month: 13 },
@@ -427,11 +442,11 @@ export const flipAxisLabels = {
 };
 
 export const flipZoneLabels = {
-  en: ["Here, most people wait for the $65", "Here, most people take the $50"],
-  es: ["Aquí, la mayoría espera los $65", "Aquí, la mayoría toma los $50"],
-  ko: ["이 구간에서는 대부분 $65을 기다립니다", "이 구간에서는 대부분 $50을 택합니다"],
-  zh: ["在这一段，多数人会等那 $65", "在这一段，多数人会拿走这 $50"],
-  ja: ["この区間では、多くの人が$65を待ちます", "この区間では、多くの人が$50を選びます"],
+  en: ["Here, the $65 feels worth more", "Here, the $50 feels worth more"],
+  es: ["Aquí, los $65 parecen valer más", "Aquí, los $50 parecen valer más"],
+  ko: ["이 구간에서는 $65이 더 가치 있게 느껴집니다", "이 구간에서는 $50이 더 가치 있게 느껴집니다"],
+  zh: ["在这一段，$65 感觉更值", "在这一段，$50 感觉更值"],
+  ja: ["この区間では$65の方が価値が高く感じられます", "この区間では$50の方が価値が高く感じられます"],
 };
 
 export const flipMarkerLabel = {
