@@ -9,6 +9,20 @@
 // this is a financial-literacy product for beginners through adults, and
 // "Technology" is the useful label while "XLK" is an implementation detail.
 // The plain-language `what` line matters more than the symbol.
+//
+// ⚠️ The `what` line must name where the sector's WEIGHT actually is, not the
+// industries that come to mind first. Checked 2026-09-20 against each fund's
+// published Fund Industry Allocation (sectorspdrs.com, as of 17-Sep-2026) and
+// its daily holdings file; 8 of 11 already named their largest industry and were
+// left alone. The four that did not were corrected that day:
+//   XLI  named Airlines (2.01% - the SMALLEST industry in the sector) and not
+//        aerospace and defense (24.98% - the largest). "builders" also went: the
+//        four big US homebuilders (DHI, LEN, PHM, NVR) are all in XLY, not here.
+//   XLY  omitted retail entirely - Broadline 26.06% + Specialty 20.10% is more
+//        of the sector than cars and restaurants put together.
+//   XLF  omitted Capital Markets (25.53%).
+//   XLP  omitted Beverages (20.49%).
+// These weights drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const BENCHMARK = { symbol: "SPY", name: "S&P 500" };
@@ -29,11 +43,11 @@ export const sectors = [
     symbol: "XLF",
     name: { en: "Financials", es: "Finanzas", ko: "금융", zh: "金融", ja: "金融" },
     what: {
-      en: "Banks, insurers and payment companies.",
-      es: "Bancos, aseguradoras y empresas de pagos.",
-      ko: "은행, 보험사, 결제 회사.",
-      zh: "银行、保险和支付公司。",
-      ja: "銀行、保険、決済会社。",
+      en: "Banks, insurers, investment firms and payment companies.",
+      es: "Bancos, aseguradoras, firmas de inversión y empresas de pagos.",
+      ko: "은행, 보험사, 투자회사, 결제 회사.",
+      zh: "银行、保险、投资公司和支付公司。",
+      ja: "銀行、保険、投資会社、決済会社。",
     },
   },
   {
@@ -51,22 +65,22 @@ export const sectors = [
     symbol: "XLY",
     name: { en: "Consumer Discretionary", es: "Consumo Discrecional", ko: "임의소비재", zh: "非必需消费", ja: "一般消費財" },
     what: {
-      en: "Things people buy when they feel well off — cars, travel, restaurants.",
-      es: "Lo que la gente compra cuando le va bien: autos, viajes, restaurantes.",
-      ko: "여유가 있을 때 사는 것들 — 자동차, 여행, 외식.",
-      zh: "手头宽裕时才买的东西——汽车、旅行、餐饮。",
-      ja: "余裕があるときに買うもの — 車、旅行、外食。",
+      en: "Things people buy when they feel well off — shopping, cars, restaurants and travel.",
+      es: "Lo que la gente compra cuando le va bien: compras, autos, restaurantes y viajes.",
+      ko: "여유가 있을 때 사는 것들 — 쇼핑, 자동차, 외식, 여행.",
+      zh: "手头宽裕时才买的东西——购物、汽车、餐饮和旅行。",
+      ja: "余裕があるときに買うもの — 買い物、車、外食、旅行。",
     },
   },
   {
     symbol: "XLP",
     name: { en: "Consumer Staples", es: "Consumo Básico", ko: "필수소비재", zh: "必需消费", ja: "生活必需品" },
     what: {
-      en: "Things people buy no matter what — food, soap, toothpaste.",
-      es: "Lo que la gente compra pase lo que pase: comida, jabón, pasta de dientes.",
-      ko: "형편과 상관없이 사는 것들 — 식품, 비누, 치약.",
-      zh: "无论如何都要买的东西——食品、肥皂、牙膏。",
-      ja: "何があっても買うもの — 食品、石けん、歯みがき。",
+      en: "Things people buy no matter what — food, drinks, soap, toothpaste.",
+      es: "Lo que la gente compra pase lo que pase: comida, bebidas, jabón, pasta de dientes.",
+      ko: "형편과 상관없이 사는 것들 — 식품, 음료, 비누, 치약.",
+      zh: "无论如何都要买的东西——食品、饮料、肥皂、牙膏。",
+      ja: "何があっても買うもの — 食品、飲料、石けん、歯みがき。",
     },
   },
   {
@@ -84,11 +98,11 @@ export const sectors = [
     symbol: "XLI",
     name: { en: "Industrials", es: "Industriales", ko: "산업재", zh: "工业", ja: "資本財" },
     what: {
-      en: "Machinery, airlines, railroads and builders.",
-      es: "Maquinaria, aerolíneas, ferrocarriles y constructoras.",
-      ko: "기계, 항공, 철도, 건설.",
-      zh: "机械、航空、铁路和建筑。",
-      ja: "機械、航空、鉄道、建設。",
+      en: "Aircraft, defense, machinery and railroads.",
+      es: "Aviones, defensa, maquinaria y ferrocarriles.",
+      ko: "항공기, 방위산업, 기계, 철도.",
+      zh: "飞机、国防、机械和铁路。",
+      ja: "航空機、防衛、機械、鉄道。",
     },
   },
   {
