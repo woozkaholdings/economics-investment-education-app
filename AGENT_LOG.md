@@ -1329,13 +1329,28 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Six
-      lessons have now been closed one per run: **1, 6, 10, 9, 3 and 2**, in that order. **Remaining:
-      4, 5, 7, 8, 11 and 14** — 23 pairs, ~6 runs at the measured rate of one lesson / four pairs.
-      **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four), recomputed
-      from the instrument's unrounded ratios after lesson 2 landed: lesson 8 at 0.5803, then lesson 5
-      at 0.6410** — a clear 0.061 gap, so no tie this time. **Lessons 11 and 14 still owe both
-      defects.**
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Eight
+      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8 and 5**, in that order.
+      **Remaining: 4, 7, 11 and 14** — 15 pairs, ~4 runs at the measured rate of one lesson / four
+      pairs. **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four),
+      recomputed from the instrument's unrounded ratios after lesson 5 landed: lesson 7 at 0.6551,
+      then lesson 4 at 0.6603** — a **0.005** gap. The instrument is deterministic, so that is a real
+      difference and not noise; it is also **a quarter of the smallest gap any previous pick rested
+      on (0.021) and a sixth of the 0.03 drift tolerance the same instrument uses on a raw ratio**,
+      so **treat 7 and 4 as tied and choose on some other ground** — say which ground in the entry.
+      **Lessons 11 and 14 still owe both defects.**
+      ⚠️ **A THIRD defect shape, and lesson 5 is its pure case: a cross-section dependency broken by
+      the abridgement, where the surviving section refers back to something the cut sections were
+      carrying.** Lesson 5's English threads one worked example through all three sections — a local
+      coffee shop that becomes a national chain (`coffee` appears **2/3/2** by section). Its four
+      translations read **0/0/1**: §2 said "**that** coffee chain's new product" with a demonstrative,
+      in all four languages, while §0 and §1 — which introduce the coffee shop in English — had
+      replaced it with an abstract definition. **The learner met a definite reference to a thing the
+      lesson had never shown them.** The instrument is cheap and worth reusing: count the lesson's own
+      recurring concrete noun per section, per language, and compare the profile to English's. A
+      profile that differs is a broken thread even when paragraph parity and per-section ratios look
+      fine. (Lesson 5 also had a second dangling back-reference: §2's "the previous section pointed at
+      holding both stocks and bonds" pointed at a paragraph that existed only in English.)
       ⚠️ **The shortfall ranking needs its own control, added 2026-09-20 after lesson 2.** A rank is
       only meaningful if a *translated* lesson scores clearly differently: measured on the same run,
       lessons 2, 3 and 12 score **0.9082 / 0.9245 / 0.9270** against the remaining six's
@@ -5158,6 +5173,53 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else: item 160's is still clear, item 94's still stands at **19 pairs**, so W-8.5 resolves to item 94 alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 5 at 0.6341 and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it — **same winner, same figure to four decimals this time**) — **`essentials` lesson 5, "Stocks, Bonds & Diversification", is now fully translated in all four languages.** es 0.80 → **1.09**, ko 0.36 → **0.50**, zh 0.23 → **0.32**, ja 0.31 → **0.43**. Abridged pairs **19 → 15**, abridged lessons **5 → 4**.
+
+**The abridgement had cut the worked example out of two sections and left the third one pointing at it.** Lesson 5's English threads one scene through the whole lesson: a favorite local coffee shop that expands into a national chain, sells ownership slices (a stock), borrows directly (a bond), gets a competitor next door, and finally has a product flop. §2 — which the 2026-09-20 correlation run rewrote and which is therefore fully translated — refers back to it with a **demonstrative**: es *"la cadena de café"*, zh *"那家咖啡连锁店"*, ja *"あのコーヒーチェーン"*, ko *"커피 체인"*. **§0 and §1, where English introduces the coffee shop, had replaced the whole scene with an abstract definition in all four languages.** A reader in any of the four met a definite reference to a thing the lesson had never shown them.
+
+Measured before any edit, with controls both ways:
+
+| check | before | after |
+|---|---|---|
+| paragraph parity vs English (3/3/4) | **2/2/4 in all four** — §0 and §1 each lost a paragraph | 3/3/4 in all four |
+| `coffee` mentions per section vs English's **2/3/2** | **0/0/1 in all four** — the thread exists only where §2 points back at it | **2/3/2 in all four** |
+| §0 ¶3 (*"neither is inherently better… which is why people combine them"*) | absent in all four | present in all four |
+| §1 ¶3 (the index-fund sentence — *how* an ordinary person diversifies) | absent in all four | present in all four |
+| §2 ¶1's causal clause (*"because a hit to any one holding shrinks into a smaller share of a much bigger whole"*) | absent in all four | present in all four |
+| §2 ¶2's enumeration (*"a thousand coffee chains, retailers and tech firms… don't cancel each other out"*) | absent in all four | present in all four |
+
+⭐ **The reusable finding is the instrument, not the lesson: count the lesson's own recurring concrete noun per section, per language, and compare the profile to English's.** Paragraph parity tells you a paragraph is missing. It does not tell you that what is missing was load-bearing for a section that *is* present. The **2/3/2 → 0/0/1** profile does, in one number, and it is what turned "these two sections are short" into "the third section is broken." Filed under item 94 as a third defect shape, alongside **whole-paragraph deletion** (lessons 1, 2, 6, 8, 9, 10) and **numbers cut out of intact paragraphs** (lesson 3). The control fired both ways: the same counter returns **0/0/0** on lessons 3 and 8 in every language (they have no coffee), and a nonsense probe returns 0 on lesson 5.
+
+**A second dangling back-reference, found by reading §2 rather than by the counter.** §2 opens its third paragraph with *"This is exactly why the previous section pointed at holding both stocks and bonds, not just many different stocks."* In English the sentence being pointed at is §0 ¶3. **That paragraph existed in English only**, so in es/ko/zh/ja the back-reference pointed at nothing. Restoring §0 ¶3 closes it; no §2 text was needed for this one.
+
+**§2 was measured separately rather than assumed done, per lesson 8's standing warning — and it was two-thirds done, not done.** Its fourth paragraph (the 2008/2022 correlation evidence, written 2026-09-20) sits at rel **0.89–1.02**, fully translated. Its first three sat at **0.55–0.81** against a lesson-8 control of **0.73–1.04**. The two clauses restored above are what that gap was. **§2's paragraph 4 is byte-identical before and after, in all four languages**, as are all three headings, `takeaway` and `thinkAbout`.
+
+**Which paragraphs survived, stated exactly, because "restored" is vaguer than the diff.** In §1, **1 of 2** pre-existing paragraphs is carried through verbatim (the rule sentence, now preceded by the scene). In §0, **0 of 2** are — ¶1 had to become the coffee-shop scene and ¶2 gained both the *"instead of buying a slice of the coffee chain"* contrast and the IOU simile. This was additive in meaning and not in bytes, and saying so the other way round would be false.
+
+**The ranking was re-derived from the instrument's unrounded ratios, and it agreed with the inherited figure exactly this time** — lesson 5 at **0.6341**, lesson 7 at **0.6551**, same to four decimals. **The ranking carries its own control**: the four remaining abridged lessons score 0.655–0.675 against already-translated lessons at 0.80–1.02, so it separates done from not-done rather than sorting noise. The p90 reference is **byte-identical before and after** (es 1.1647922882717465, ko 0.5765462339252909, zh 0.36017897091722595, ja 0.5146968769136558), and the abridged list went 4, **5**, 7, 11, 14 → 4, 7, 11, 14: exactly lesson 5's four pairs left, **no other pair was reclassified** — a per-lesson diff, not a threshold move.
+
+**English was recomputed before being carried into four more languages.** No English prose was touched: `englishSourceHash` for lesson 5 is `320360fc6d476eaa` before and after and still matches the ledger, the hash function was shown to discriminate (lessons 8 and 9 hash differently), and `git diff --name-only` returns **0 `.en.js` files**.
+
+**Conventions were measured per file rather than chosen.** The chain term follows each file's own §2: es `cadena de café`, ko `커피 체인`, zh `咖啡连锁店`, ja `コーヒーチェーン` (1 pre-existing use each — the counter above is how I know). "Fund" follows the dominant existing form: es `fondo` (42 uses), ko `펀드` (19), zh `基金` (43), ja `ファンド` (19); "downturn" follows es `recesión` (32), ko `경기 침체` (2), zh `衰退` (44), ja `景気後退` (37). ⚠️ **"IOU" and "coffee shop" have no precedent in any of the four files (0 uses, with the probe shown to return non-zero on terms that do exist)**, so those two are chosen rather than measured — es `pagaré`, ko `차용증`, zh `借据`, ja `借用書`; es `cafetería`, ko `커피숍`, zh `咖啡店`, ja `コーヒー店`. Recorded as chosen so a reviewer knows which is which.
+
+**Verified:** `npm test` exit **0** read from the command and not through a pipe, 0 FAIL, 2 WARN; completeness now reads **15 not 19**. All **16** rewritten strings read back character-for-character against intent, with a mutation control proving the comparison can fail and a cross-language leak control that carries its own positive control (self-detection 8/8, leaks 0). `npm run check-blindspot` green. Build via `build-out-of-tree.sh` ok. **Live DOM render in all four languages** off the built `dist/`: all **36** restored clauses (9 per language) assert present, 0 missing, 0 cross-language leaks, absence-matcher control clean, and no horizontal overflow at 375px.
+
+**The live check's language-switch control is the one from lesson 8's entry and it is why the result can be trusted:** the picker is a `<select>`, so the switch sets `value` through the native setter and dispatches `change`, and each row must show **a character count that differs from English's AND the English clause gone** before its assertions count. All four report `switched: true` with counts 5638/2694/1730/2318 against English's 5191 — four distinct pages, not the English one measured four times.
+
+**The static-server 404 control was built in before any render result was read**, per the standing note: SPA fallback for extensionless paths only, so a bogus asset path returns **404**, a real hashed asset **200**, `/` **200** and `/learn` **200**. ⚠️ **A second gate had to be opened by hand and is worth recording:** `#/lesson/5` alone lands on `#/learn`, because a URL does not unlock a lesson (`DECISIONS.md`) and lesson 5 gates on 1-4. The check seeds `ecycles_completed_lessons` in `localStorage` first. **A run that renders a deep-linked lesson without doing that is measuring the Learn screen.**
+
+**`--write` was not used on the baseline, per the standing note that it re-records every ratio for a one-lesson edit.** The baseline was hand-patched to lesson 5's four values and asserted to have moved **exactly 4 of 176, all `5.*`**. The review ledger was moved with its own `mark` command and asserted to have changed **exactly 4 records, all lesson 5** — dates only, `sourceHash` untouched, which is itself the proof that English did not move.
+
+**`LAUNCH_READINESS.md` §10.4: the generated sentence refreshed via `npm run readiness -- --write` (it changed exactly one line), and five hand-written clauses in the same row updated as that row's own rule demands** — the 19/5 counts, the per-lesson enumeration, "twenty-eight pairs" → thirty-two, the remaining-lessons list, and the track-volume fraction (**82.0% → 83.9%**; es 87.5, ko 83.1, zh 84.1, ja 81.0), computed by the method the row now carries in writing. Both sides of that movement are this one method, which is what the previous entry could not say about 80.5 → 82.0.
+
+**Adversarial self-check found no conflict.** No Dalio in the 16 new strings (0); no advice-adjacent language (`check-blindspot` green across all five languages — and note the restored §0 ¶3 says *neither* asset is inherently better, which moves toward §10.1 rather than away from it); no dates or live-looking market figures (0 date-shaped tokens, 0 bare month-years); kids framing untouched; **no Markdown syntax in any of the 16 new strings — 0 for `**bold**`, 0 for any asterisk at all, 0 for `_em_`, with all three matchers shown to fire on a planted string** (W-8.6's class, checked because I was writing new content strings); no `DECISIONS.md` conflict (content stays `.js`, no state, routing or build changes). **Not a redo:** "lesson 5" appears as translated work in neither `AGENT_LOG.md` nor the archive (0 matches for three phrasings in both, against a control phrasing that finds lesson 8's entry). The archive's single `essentials` lesson 5 hit is item 84's dead-cross-reference audit — a different defect on the same lesson, already fixed, and the named-title references it installed are carried through unchanged here. `HEAD` was re-read at the end and had not moved (`35b1b67`); `Migration/` and `UIUX/` are the owner's untracked directories and were not touched.
+
+**The standing limit is unchanged and is the honest caveat on this entry: this is machine translation that no fluent speaker of any of the four languages has read.** Human review share is **0% in all four**, and **O-3 — whether this volume of unreviewed translation should keep shipping — remains the owner's call, not a run's.**
+
+**Next: lesson 7 at 0.6551 and lesson 4 at 0.6603 are effectively tied** — a 0.005 gap, which is deterministic but is a quarter of the smallest gap any previous pick rested on and a sixth of this instrument's own 0.03 drift tolerance. **Pick on some other ground and say which**; one available ground is that lesson 7 is the longer English body (4,526 chars against 3,134), so it is the larger learner-visible gap. ⚠️ **Whichever is picked, run the recurring-noun profile as well as paragraph parity** — lesson 5's parity check flagged the two sections that were short and said nothing about the third, which was the one that had been broken.
+
+⚠️ **W-8.1 is unchanged by this run and is worth restating in one line, because it is the fact that governs everything above:** this correction, like the 30 before it, **is not on the site**. A run is forbidden to push. Deploying is O-5's route 1 or route 2 and it is the owner's.
 
 ### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else: item 160's is still clear, item 94's still stands at 23 pairs, so W-8.5 resolves to item 94 alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 8 at 0.5803 and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it — **same winner, different third decimal**, see below) — **`essentials` lesson 8, "Insurance", is now fully translated in all four languages.** es 0.68 → **1.08**, ko 0.33 → **0.50**, zh 0.21 → **0.31**, ja 0.28 → **0.43**. Abridged pairs **23 → 19**, abridged lessons **6 → 5**.
 
