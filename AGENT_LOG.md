@@ -1329,13 +1329,18 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Five
-      lessons have now been closed one per run: **1, 6, 10, 9 and 3**, in that order. **Remaining: 2,
-      4, 5, 7, 8, 11 and 14** — 27 pairs, ~7 runs at the measured rate of one lesson / four pairs.
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-20).** Six
+      lessons have now been closed one per run: **1, 6, 10, 9, 3 and 2**, in that order. **Remaining:
+      4, 5, 7, 8, 11 and 14** — 23 pairs, ~6 runs at the measured rate of one lesson / four pairs.
       **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four), recomputed
-      from the instrument's unrounded ratios after lesson 3 landed: lesson 2 at 0.5102, then lesson 8
-      at 0.5739** — a clear 0.064 gap, so no tie this time. **Lesson 2 is not in the concrete-first
-      cluster; lessons 11 and 14 still owe both defects.**
+      from the instrument's unrounded ratios after lesson 2 landed: lesson 8 at 0.5803, then lesson 5
+      at 0.6410** — a clear 0.061 gap, so no tie this time. **Lessons 11 and 14 still owe both
+      defects.**
+      ⚠️ **The shortfall ranking needs its own control, added 2026-09-20 after lesson 2.** A rank is
+      only meaningful if a *translated* lesson scores clearly differently: measured on the same run,
+      lessons 2, 3 and 12 score **0.9082 / 0.9245 / 0.9270** against the remaining six's
+      **0.5803-0.6820**. The bands do not overlap, so the ranking is separating done from not-done
+      rather than sorting noise. Re-derive both halves; do not quote these.
       ⚠️ **CORRECTION to this item's concrete-first note, found on lesson 3 (2026-09-20) and worth
       applying to the rest.** The note below records `essentials` 1-9 as nine for nine concrete-first.
       **That is a fact about the ENGLISH and can be false of the translations at the same time.**
@@ -5153,6 +5158,45 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-20 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else, and **item 160's has CLEARED** (§65 now reports the longest-option strategy at en **50.0%**, no longer warning) while item 94's still stands at 27 pairs. So W-8.5 resolves to item 94 alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 2, and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it) — **`essentials` lesson 2, "Emergency Funds", is now fully translated in all four languages.** es 0.56 → **1.10**, ko 0.29 → **0.51**, zh 0.20 → **0.33**, ja 0.26 → **0.44**. Abridged pairs **27 → 23**, abridged lessons **7 → 6**.
+
+**The abridgement had deleted the entire worked scene and kept only the rule.** English teaches emergency funds through James: a $600 car repair he did not see coming, $50 a week covering it inside three months, and — the sharpest moment in the lesson — what would have happened if that money had been in stocks during a 15% drawdown. **All four translations had no James at all, and neither figure.** What shipped in es/ko/zh/ja was the guideline ("3-6 months of essential expenses") with every concrete instance of it removed, which is the same defect shape lesson 3 turned out to have: *the lesson's subject survived and its evidence did not.*
+
+Measured before any edit, with a control both ways:
+
+| check | before | after |
+|---|---|---|
+| paragraph parity vs English (3/2/3) | **2/2/3 in all four** — section 0 lost a paragraph | 3/2/3 in all four |
+| English amounts present | **5 of 7** in all four (missing `600`, `15`) | 7 of 7 |
+| named character | **absent in all four** | James / 제임스 / 詹姆斯 / ジェームズ |
+| opener | a definition in all four | the scene, in all four |
+
+**The instrument had to be rebuilt once before any of those numbers were read, and the first version would have reported a false defect.** A naive `$600`-style match reported 10 of 27 amounts "missing" from lesson 3 — a lesson closed clean an hour earlier — because **es writes `$3.000` where English writes `$3,000`**, and CJK writes `1,000美元`. Rewritten to compare numeric *values* across every separator style, it reports **0 missing on all five already-translated lessons (1, 3, 6, 9, 10) and flags only lesson 2** — the discrimination the first version did not have. Both controls fire: an absent value (`7777777`) reports missing in 4/4 languages, a known-present one in 0/4.
+
+**English was recomputed before being carried into four more languages, since a translation run multiplies whatever English says by four.** Both figures hold exactly: $50/week reaches $600 in **12 weeks (2.77 months)**, which is what "within three months" claims; $50/month × 12 = **$600**, the annual insurance bill the sinking-fund example names. No English prose was touched — `englishSourceHash` is `315980b66a7d90d3` before and after, and the hash function was shown to discriminate (lesson 3 hashes differently).
+
+**Conventions were measured per file rather than chosen.** es `$N` with comma separators (55 occurrences, 0 local-form); zh `N美元` (53/0); ja `Nドル` (55/0); **ko left alone deliberately** — it is genuinely mixed (30 `$N` vs 26 `달러`) with no dominant form, so lesson 2's own existing `달러` style was followed. Name transliteration follows lesson 3's precedent in the same files (Priya → 프리야 / 普莉娅 / プリヤ), so James → **제임스 / 詹姆斯 / ジェームズ**, kept Latin in es as that file keeps Priya and Tom.
+
+**Verified:** `npm test` exit **0**, 0 FAIL, 2 WARN, exit code read from the command and not through a pipe; completeness now reads **23 not 27**. All **12** rewritten strings read back character-for-character against intent, with a cross-language control (0 of 36 wrong-language matches) and a mutation control proving the comparison can fail. `npm run check-blindspot` green. Build via `build-out-of-tree.sh` ok. **Live DOM render in all four languages** off the built `dist/`, every restored clause asserted present, 0 cross-language leaks, and an absence-matcher control passing. ⚠️ **No screenshot is offered as evidence**: the Browser pane was hidden, so its pixels came back a flat dark rectangle — the `innerText` assertions are the proof, not the image.
+
+**The static-server 404 control was built in before any render result was read**, per the standing note: SPA fallback only for extensionless paths, so a bogus asset path returns **404** while a real hashed asset returns **200**. Without that, "the page loaded" is unfalsifiable.
+
+**`--write` was not used on the baseline, and the reason is now measured rather than inherited.** `npm run translation-completeness -- --write` re-recorded **54 of 176 ratios** when exactly 4 should move. The baseline was restored from a scratchpad copy proven byte-identical to `HEAD` (`cmp`, not `git checkout --`) and hand-patched to lesson 2's four values only, asserted **4 of 176 moved, all `2.*`**. The review ledger was patched the same way: **8 fields, all `2.*`**.
+
+⚠️ **An inherited style outlier was measured and deliberately NOT fixed.** The baseline is **172 of 176 ratios at 2dp**; the 4 full-precision outliers are lesson 3's, written by the previous run's hand-patch. Lesson 2 follows the dominant 2dp form (which is also what `--write` itself emits). The comparison uses a tolerance, so this is cosmetic — recorded, not swept into an unrelated lesson's numbers.
+
+**`LAUNCH_READINESS.md` §10.4: one generated sentence refreshed via `npm run readiness -- --write` (it changed exactly one line), and the hand-written narrative updated as that row's own rule demands — including a clause that had inverted.** It read *"the optional `essentials` track is about four-fifths absent in every language."* Nine of the fifteen `essentials` lessons have been fully translated since that was written, so measured against each language's own p90 the track now carries **80.5% of a full translation's volume (es 83.1%, ko 78.4%, zh 79.9%, ja 77.6%)** — **the mirror image of what the row claimed.** ⭐ **The transferable part: a prose fraction ages in the direction the work moves, and nothing failed while it was wrong.** The generated sentence two inches above it was correct the whole time; `npm test` guards that one and cannot see this one.
+
+**This was a per-lesson diff and not a threshold move, and that was checked rather than assumed** — the row itself insists on the distinction. The p90 reference is **es 1.16, ko 0.58, zh 0.36, ja 0.51 before and after**, so no other pair was reclassified: exactly lesson 2's four pairs left the list because the work was done.
+
+**Adversarial self-check found no conflict.** No Dalio in any changed file (0 across all five); no advice-adjacent language (`check-blindspot` green, and the new prose describes what an emergency fund is *for*, never what the reader should buy); no dates or live-looking figures (0 date-shaped tokens in all four); kids framing untouched; no Markdown syntax in any of the five languages, with the matcher shown to fire on a planted `**bold**` (W-8.6's class, checked because I was writing new content strings); no `DECISIONS.md` conflict; and not a redo — lesson 2 appears in earlier entries only as a *control* for other lessons' instruments, never as translated work. `HEAD` was re-read at the end and had not moved (`c27e1e3`); `Migration/` and `UIUX/` are the owner's untracked directories and were not touched.
+
+**The standing limit is unchanged and is the honest caveat on this entry: this is machine translation that no fluent speaker of any of the four languages has read.** Human review share is **0% in all four**, and **O-3 — whether this volume of unreviewed translation should keep shipping — remains the owner's call, not a run's.**
+
+**Next by relative shortfall, recomputed after this edit: lesson 8 at 0.5803, then lesson 5 at 0.6410** — a clear 0.061 gap, no tie. **The ranking now carries its own control**: translated lessons 2, 3 and 12 score 0.9082 / 0.9245 / 0.9270 against the remaining six's 0.5803-0.6820, so it is separating done from not-done rather than sorting noise.
+
+⚠️ **W-8.1 is unchanged by this run and is worth restating in one line, because it is the fact that governs everything above:** this correction, like the 28 before it, **is not on the site**. A run is forbidden to push. Deploying is O-5's route 1 or route 2 and it is the owner's.
 
 ### 2026-09-20 (scheduled dev-agent; W-6.2 rule 1 does not arise as a block — the previous run was a free pick, so its residual would have been a legal pick #1, but **this run did not take it**: the residual (re-basing lesson 23's $50/$65 on the literature's gentler $100/$110 shape) was re-read against the figure it constrains and left where it is, see "the residual I did not take" below. This was a free pick, from the previous run's own instrument pointed at the one track it had never been pointed at — the `essentials` track. Controls fired both ways: `cross the halfway point between interest and principal` returns 1, `in agent commissions` 7, `the point of maximum pessimism` 4, two nonsense strings 0) — lesson 5, where **Diversification** is `defined-here`, taught on three surfaces that stocks and bonds **"have historically tended to respond to the same conditions differently"** and that this is **"what actually cushions a portfolio during a downturn"**. **That is a description of roughly 1998-2021 presented as the historical record**, and it is the opposite of the three decades before it and of the most recent downturn a learner would remember. **In 2022 US stocks fell about 18% and a broad US bond fund fell about 13% in the same year.**
 
