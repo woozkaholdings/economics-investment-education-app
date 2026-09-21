@@ -1329,16 +1329,17 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Nine
-      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8, 5 and 7**, in that order.
-      **Remaining: 4, 11 and 14** — **11** pairs, ~3 runs at the measured rate of one lesson / four
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Ten
+      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8, 5, 7 and 4**, in that order.
+      **Remaining: 11 and 14** — **7** pairs, ~2 runs at the measured rate of one lesson / four
       pairs. ⚠️ **14 is three pairs, not four: its `es` reads 0.83 and has never been abridged**, so
       the last run of this item closes three. **Next by relative shortfall (ratio ÷ that language's
-      p90, averaged over the four), recomputed from the instrument's unrounded ratios after lesson 7
-      landed: lesson 4 at 0.6603, then 14 at 0.6682, then 11 at 0.6746.** The 4→14 gap is **0.0079** —
-      bigger than the 0.005 tie lesson 7 was picked out of, still **under the 0.021 smallest gap any
-      earlier pick rested on**, so 4 leads but not decisively; it also has four pairs to 14's three,
-      which is the tiebreak if one is wanted.
+      p90, averaged over the four), recomputed from the instrument's unrounded ratios after lesson 4
+      landed: lesson 14 at 0.6682, then 11 at 0.6746.** The gap is **0.0064**, smaller still than the
+      0.0079 lesson 4 was picked out of, so **pick on some other ground and say which**; 11 has four
+      pairs to 14's three, and 14 has the larger English body (3,239 chars against 3,044).
+      ⚠️ **Both remaining lessons still owe the numeral-profile check below as well as paragraph
+      parity** — lesson 4's parity was *perfect* and its arithmetic was still gone.
     - ⭐ **The lesson-5 counter generalizes, and lesson 7 is why (2026-09-21).** That run counted the
       lesson's recurring concrete *noun* per section. The same count run over a **term a later
       section treats as already introduced** finds the same class of break: English lesson 7 names
@@ -1348,6 +1349,23 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       **Read the profile, not the totals: a section that is present can still be broken by what was
       cut from the section before it.**
       **Lessons 11 and 14 still owe both defects.**
+      ⚠️ **A FOURTH defect shape, and lesson 4 is its pure case (2026-09-21): the lesson's named
+      worked example deleted wholesale while the abstract definition it exists to illustrate is
+      kept — with paragraph parity perfect, so parity cannot see it.** Lesson 4 teaches credit
+      scores through two named people, Elena and David, who carry §0 and §1 (English profile
+      **Elena 3/3/0, David 2/3/0**). All four translations read **0/0/0**: both people were gone
+      and what survived was the definition. Paragraph counts were **3/2/3 in all five languages**,
+      matching English exactly, so the lesson-5 parity check and the lesson-3 paragraph check would
+      both have passed it. **The instrument that does see it is the numeral profile per section**:
+      English reads **8/5/3** numerals by section, all four translations read **2/0/3** — §1 had
+      *zero* of English's five, so the entire worked car-loan comparison (`$20,000` at 6% vs 14%,
+      `$4,700` of extra interest over five years) existed in no language but English. **Run the
+      numeral profile per section, with an already-closed lesson as the control** (lesson 7 read
+      0/1/5 in all five, so the instrument separates done from not-done).
+      ⭐ **And the naming convention is MEASURABLE, not a choice**: "Maria" appears 9 times in the
+      English corpus and is transliterated consistently in every language (es María, ko 마리아,
+      zh 玛丽亚, ja マリア — 10 occurrences each, with "Sofia" returning 0 everywhere as the negative
+      control). Elena/David followed that precedent rather than being invented.
       ⚠️ **A THIRD defect shape, and lesson 5 is its pure case: a cross-section dependency broken by
       the abridgement, where the surviving section refers back to something the cut sections were
       carrying.** Lesson 5's English threads one worked example through all three sections — a local
@@ -5182,6 +5200,53 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read first, before anything else: item 160's is still clear, item 94's still stands at **11 pairs**, so W-8.5 resolves to item 94 alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 4 at 0.6603 against lesson 14 at 0.6682 and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it — **same winner, same figures to four decimals**) — **`essentials` lesson 4, "Credit Scores", is now fully translated in all four languages.** es 0.75 → **1.04**, ko 0.37 → **0.49**, zh 0.25 → **0.32**, ja 0.34 → **0.44**. Abridged pairs **11 → 7**, abridged lessons **3 → 2**.
+
+⭐ **This lesson's abridgement is a FOURTH defect shape, and it is the first one that paragraph parity cannot see at all.** Lessons 1, 2, 6, 8, 9 and 10 were whole-paragraph deletions; lesson 3 was numbers cut out of intact paragraphs; lesson 5 was a broken cross-section dependency. **Lesson 4's paragraph parity is perfect — 3/2/3 in all five languages, matching English exactly** — and the lesson was still missing its entire teaching device. English teaches credit scores through **two named people, Elena and David**, who carry §0 and §1 end to end. Measured before any edit:
+
+| | §0 | §1 | §2 |
+|---|---|---|---|
+| paragraphs, **all five languages** | 3 | 2 | 3 |
+| en body chars | 1,007 | 630 | 1,228 |
+| "Elena" mentions, en | 3 | 3 | 0 |
+| "Elena" mentions, **es / ko / zh / ja** | **0** | **0** | 0 |
+| "David" mentions, en | 2 | 3 | 0 |
+| "David" mentions, **es / ko / zh / ja** | **0** | **0** | 0 |
+| numeral tokens, en | **8** | **5** | 3 |
+| numeral tokens, **es / ko / zh / ja** | **2** | **0** | 3 / 3 / 2 / 4 |
+
+**§1 carried zero of English's five numerals in every language.** The whole worked comparison — Elena and David each borrowing **$20,000** for a car, offered **6%** against **14%**, a gap of about **$4,700** in extra interest over **5 years** — existed in no language but English. What survived in all four was the abstract clause "a credit score can affect the interest rate on a car or mortgage loan": the conclusion, with the demonstration deleted.
+
+⭐ **The reusable finding is which instrument sees this, because two of the three we already had would have passed it.** Paragraph parity passes (3/2/3 exactly). Per-section ratio flags §0 and §1 as short but says nothing about *what* is short. **The numeral profile per section is what names it in one line: en 8/5/3 against 2/0/3.** Filed under item 94. **The control fired both ways:** lesson 7 (closed the previous run, fully translated) reads **0/1/5 in all five languages**, so the instrument separates done from not-done rather than flagging every lesson; and a nonsense probe returns 0 everywhere.
+
+⭐ **The naming convention was measured, not chosen — and that is worth keeping.** Before inventing transliterations I checked whether the corpus has any precedent for a personal name crossing languages. It does: **"Maria" appears 9 times in the English corpus and is carried consistently into every language — es María, ko 마리아, zh 玛丽亚, ja マリア, 10 occurrences each.** The probe carries its own negative control ("Sofia" returns 0 in all five). So Elena/David follow an existing corpus convention: es keeps both names as-is (both are ordinary Spanish names), ko 엘레나/데이비드, zh 埃琳娜/大卫, ja エレナ/デビッド. **Currency follows each file's own measured form** — es `$N` (61 uses, 0 of the suffix form), zh `N美元` (0/59), ja `Nドル` (0/62). ⚠️ **`ko` is the one genuinely mixed case (30 `$N` against 33 `N달러`), so it was broken by within-lesson consistency: lesson 4's own untouched §2 writes `$200-$500`, so the new text writes `$`.** Recorded as a tiebreak rather than a measurement, so a reviewer knows which is which.
+
+**What changed, stated exactly.** **8 strings, 8 changed lines, 4 files** — §0 and §1 bodies only. **§2 was not touched in any language** (it was already a full translation: es 1,200 chars against English's 1,228), nor were the three headings, `takeaway` or `thinkAbout`. **§0's third paragraph — the "Productivity Growth" cross-reference — is byte-identical before and after in all four languages**, asserted field-by-field by the edit script itself rather than checked afterwards. After: **Elena reads 3/3/0 and David 2/3/0 in all five languages, and numerals read 8/5 in §0/§1 in all five** — English's profile exactly.
+
+**A dangling-reference check was run and came back clean, which is worth recording as a negative.** §2's closing paragraph points back with "the two factors from the first section — paying on time and keeping utilization low". Unlike lesson 5, that reference already resolved in all four languages: the abridged §0 ¶1 had kept both factor *names* even though it dropped the people illustrating them. So this lesson owed the worked example, not a broken back-reference.
+
+**English was verified before being carried into four languages, not assumed.** The lesson's headline arithmetic is checkable and I checked it: a $20,000 loan over 60 months at 6% costs **$3,199.36** in interest and at 14% costs **$7,921.90**, a gap of **$4,722.54** — "about $4,700" is right. The control: the same function on a 6%→7% gap returns **$562.08**, nowhere near, so the calculation discriminates. **No English prose was changed** — `git diff --name-only` returns **0 `.en.js` files**, and the essentials English character total is **53,575 before and after**.
+
+**Verified.** `npm test` **exit 0** — read from the command itself, not through a pipe — **0 FAIL, 2 WARN**; completeness now reads **7 of 176 / 2 lessons**. `npm run check-blindspot` exit 0. Out-of-tree build exit 0. All **8** rewritten strings read back **character-for-character against intent**, with a mutation control proving the comparison can fail (a one-character tamper does not match). English-leak check: **0 leaks in all four languages**, against a positive control showing each of the 7 probes **is** present in the English source, so the probes are alive. Markdown guard (W-8.6's class, checked because I was writing new content strings): **0 for `**bold**`, 0 for any asterisk, 0 for `_em_`**, with all three matchers shown to fire on a planted string.
+
+**Live DOM off the built `dist/`, served statically.** The **404 control was built in before any render result was read**: SPA fallback for extensionless paths only, so a bogus asset returns **404**, a real hashed asset **200**, `/` **200**, `/learn` **200**. **All 40 restored clauses render — 10 per language, 0 missing** — with **0 cross-language leaks** (es and zh probes both score 0 on the ja page while ja scores 10). At **375 px**, `scrollWidth == clientWidth == 375` and **0** overflowing elements in es (the longest) and ja, with a planted 2000 px probe raising that to 15 — the overflow check is alive.
+
+⚠️ **Two controls fired against me this run and both changed what I did — recording them because a run that reports only clean controls is not reporting honestly.** (1) **The language switch silently did not happen.** Seeding `ecycles_lang` in `localStorage` and reloading left the page in **English** while storage read `"es"`; the check caught it because its gate requires the English clause to be *gone* and the character count to *differ*, not merely that probes were sought. Driving the real `<select>` fixed it. ⚠️ **And the selector `select[aria-label="Language"]` works only in English** — the label is itself translated, so it returned `null` on the Spanish page and the setter threw. Select the picker by its option values. (2) **The redo check's positive control returned 0**, which would have made "lesson 4 is not a redo" meaningless. The probe was missing the backticks the log actually writes (`` `essentials` lesson N ``); with the shape fixed, lessons 5, 6 and 7 each return 1 and **lesson 4 returns 0 in both the live log and the archive** — not a redo.
+
+**Two recorded figures moved with the content and were patched by hand, not regenerated.** `scripts/translation-completeness-baseline.json` — the prescribed `--write` rewrites **every** ratio in the file, so only lesson 4's four values were edited: asserted **exactly 4 changed lines, all inside lesson 4's block, and exactly one lesson's ratios moved**. The review ledger was moved with its own `mark` command and asserted to have changed **exactly 4 records, all lesson 4** — `reviewedBy`/`reviewedDate` only, **`sourceHash` untouched on all four**, which is itself the proof that English did not move.
+
+**`LAUNCH_READINESS.md` §10.4: the generated sentence refreshed via `npm run readiness -- --write` (exactly one line changed), and six hand-written clauses in the same row updated as that row's own rule demands** — the 11/3 counts → 7/2, the per-lesson enumeration (lesson 4 appended), "thirty-six pairs" → forty, the remaining-lesson list (4, 11, 14 → 11, 14), the track-volume fraction, and the non-reproducibility note.
+
+⚠️ **The §10.4 level failed to reproduce for a third consecutive pass, and the gap is now small enough to say something new about it.** That row states its own method (summed translated characters over lessons 1-15 ÷ (summed English characters × that language's p90)). Re-implemented this run, it reads **86.9%** for the state the previous pass published as **87.1%** — a 0.2pp gap, against 1.1pp last pass and 0.9pp the one before. **The gap is shrinking as the corpus fills, which is consistent with the remaining disagreement being in how partially-abridged lessons are counted rather than in the method.** The row records **86.9% → 88.2%** as this run's own measurement by one implementation on both sides. ⚠️ **My first implementation of it returned `NaN` for every language** and would have printed a confident wrong answer: `translatedChars` expects the *merged* per-language shape, not the per-file one. The fix carries a control — my merge reproduces the live instrument's character counts **exactly** on lessons 1, 4 and 15. The p90 reference is **byte-identical before and after** (es 1.1647922882717465, ko 0.5765462339252909, zh 0.36017897091722595, ja 0.5146968769136558), and the abridged list went 4, 11, 14 → 11, 14: **exactly lesson 4's four pairs left, nothing else reclassified** — a per-lesson diff, not a threshold move.
+
+**Step 5, adversarial self-check — run, and beyond the two control failures above it found no conflict.** Blindspot register, checked against the 20 new/changed strings directly and not only via the suite: **0** Dalio/Bridgewater mentions in any script; **0** advice-pattern hits against a matcher shown to fire 9 times on a planted string; **0** date-shaped tokens against a matcher shown to fire on `2026-09-21`, `March 2026` and `2026年9月`; **0** child-facing framing. `check-blindspot` is green across all five languages. `DECISIONS.md`: `localStorage`-only state, `.js`-not-JSON content and Vite are untouched — the only decision this touches is the 2026-08-11 "(Beta)" acceptance, which is O-3 and stated below. **Not a redo** (the corrected probe above). And the verification claim here is re-runnable as written: the two figures a reviewer would check first — `npm test` exit 0 and 7 pairs — come from the commands, not from this entry. `HEAD` was re-read at the end and had not moved (`0befa11`); `Migration/` and `UIUX/` are the owner's untracked directories and were not touched.
+
+**The standing limit is unchanged and is the honest caveat on this entry: this is machine translation that no fluent speaker of Spanish, Korean, Chinese or Japanese has read.** Human review share is **0% in all four**. **O-3 — whether this volume of unreviewed translation should keep shipping — remains the owner's call, not a run's.**
+
+⛔ **W-8.1 still applies and this run cannot move it: nothing committed here reaches a learner until someone pushes `main`.**
+
+**Next: lessons 14 and 11 are the last two, at 0.6682 and 0.6746** — a 0.0064 gap, smaller than the 0.0079 this run's pick rested on, so **pick on some other ground and say which**: 11 is four pairs to 14's three, and 14 has the larger English body (3,239 chars against 3,044). ⚠️ **Run the numeral profile per section alongside paragraph parity on both** — lesson 4's parity was perfect and its arithmetic was still entirely absent. **When these two close, item 94's `npm test` WARN clears, and with item 160's already clear, W-8.5 expires and the sentence-audit mode resumes as the default.** W-8.6's Markdown guard remains the cheapest unfiled guard on the list.
 
 ### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read first, before anything else: item 160's is clear, item 94's still stands, so W-8.5 resolves to item 94 alone. Item 94's own progress bullet declared lessons **7 and 4 tied at 0.6551 / 0.6603** and required the run to name the other ground it chose on; **the ground is stated below and it is not the ratio**) — **`essentials` lesson 7, "Taxes: How Your Paycheck Is Really Taxed", is now fully translated in all four languages.** es 0.79 → **1.08**, ko 0.37 → **0.51**, zh 0.24 → **0.34**, ja 0.32 → **0.45**. Abridged pairs **15 → 11**, abridged lessons **4 → 3**.
 
