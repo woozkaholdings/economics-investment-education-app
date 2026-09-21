@@ -1329,15 +1329,24 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
       fully translated — before budgeting anything here.** Those three are the only in-track
       reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Eight
-      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8 and 5**, in that order.
-      **Remaining: 4, 7, 11 and 14** — 15 pairs, ~4 runs at the measured rate of one lesson / four
-      pairs. **Next by relative shortfall (ratio ÷ that language's p90, averaged over the four),
-      recomputed from the instrument's unrounded ratios after lesson 5 landed: lesson 7 at 0.6551,
-      then lesson 4 at 0.6603** — a **0.005** gap. The instrument is deterministic, so that is a real
-      difference and not noise; it is also **a quarter of the smallest gap any previous pick rested
-      on (0.021) and a sixth of the 0.03 drift tolerance the same instrument uses on a raw ratio**,
-      so **treat 7 and 4 as tied and choose on some other ground** — say which ground in the entry.
+    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Nine
+      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8, 5 and 7**, in that order.
+      **Remaining: 4, 11 and 14** — **11** pairs, ~3 runs at the measured rate of one lesson / four
+      pairs. ⚠️ **14 is three pairs, not four: its `es` reads 0.83 and has never been abridged**, so
+      the last run of this item closes three. **Next by relative shortfall (ratio ÷ that language's
+      p90, averaged over the four), recomputed from the instrument's unrounded ratios after lesson 7
+      landed: lesson 4 at 0.6603, then 14 at 0.6682, then 11 at 0.6746.** The 4→14 gap is **0.0079** —
+      bigger than the 0.005 tie lesson 7 was picked out of, still **under the 0.021 smallest gap any
+      earlier pick rested on**, so 4 leads but not decisively; it also has four pairs to 14's three,
+      which is the tiebreak if one is wanted.
+    - ⭐ **The lesson-5 counter generalizes, and lesson 7 is why (2026-09-21).** That run counted the
+      lesson's recurring concrete *noun* per section. The same count run over a **term a later
+      section treats as already introduced** finds the same class of break: English lesson 7 names
+      withholding **4 times in §1 and 4 in §2**; before this run the four translations read **0–1 in
+      §1 and 4–5 in §2**, so §2 — fully translated — opened on a definite noun phrase (es *"La
+      retención de cada cheque de pago"*) for a mechanism its own lesson had never introduced.
+      **Read the profile, not the totals: a section that is present can still be broken by what was
+      cut from the section before it.**
       **Lessons 11 and 14 still owe both defects.**
       ⚠️ **A THIRD defect shape, and lesson 5 is its pure case: a cross-section dependency broken by
       the abridgement, where the surviving section refers back to something the cut sections were
@@ -5173,6 +5182,36 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read first, before anything else: item 160's is clear, item 94's still stands, so W-8.5 resolves to item 94 alone. Item 94's own progress bullet declared lessons **7 and 4 tied at 0.6551 / 0.6603** and required the run to name the other ground it chose on; **the ground is stated below and it is not the ratio**) — **`essentials` lesson 7, "Taxes: How Your Paycheck Is Really Taxed", is now fully translated in all four languages.** es 0.79 → **1.08**, ko 0.37 → **0.51**, zh 0.24 → **0.34**, ja 0.32 → **0.45**. Abridged pairs **15 → 11**, abridged lessons **4 → 3**.
+
+**The ground for picking 7 over 4, since the ratio could not decide it.** Two reasons, both measured before any edit: lesson 7 has the **largest English body of the four remaining** (4,526 chars against 3,134 / 3,044 / 3,239), so it is the most absent prose per run; and it carried the lesson-5 defect shape — **a fully-translated section resting on a term the abridged section before it had deleted**.
+
+**Step 3.5 corrected the item's premise in one respect, and the correction is what shaped the edit.** The WARN counts *pairs*, so "lesson 7 is abridged in all four" reads as a whole-lesson gap. It is not. Measured per section against a control:
+
+| | §0 | §1 | §2 |
+|---|---|---|---|
+| en body chars | 1,299 | 1,047 | 1,331 |
+| es / ko / zh / ja, as a ratio of en, **before** | 0.55 / 0.26 / 0.16 / 0.22 | 0.50 / 0.22 / 0.16 / 0.20 | **1.14 / 0.54 / 0.34 / 0.48** |
+| lesson 6 (closed 2026-09-20) as the control | 1.16 / 0.54 / 0.35 / 0.45 | 1.14 / 0.49 / 0.33 / 0.43 | — |
+
+§2 sat **on** the control in every language: it was already a full translation and **nothing in it was touched**. Only §0 and §1 were rewritten — **8 strings, 8 changed lines, 4 files**. The `takeaway`, the `thinkAbout`, all three headings and the whole of §2 are **byte-identical before and after in all four languages** (compared field by field against `HEAD`, 15 lessons per file: changed fields = `7.s0.body`, `7.s1.body`, and nothing else).
+
+⭐ **The reusable finding: the lesson-5 counter works on a *term*, not just a concrete noun — and it found a break in a section that was already done.** English introduces withholding in §1 (**4 mentions**) and then uses it throughout §2 (**4 mentions**). Before this run the translations read **§1: es 0, ko 1, zh 1, ja 1** against **§2: es 5, ko 4, zh 4, ja 4**. So a Spanish reader met *"La retención de cada cheque de pago…"* — a definite noun phrase — for a mechanism the lesson had never once named in Spanish. The deleted sentence is exactly the one that introduces it: *"All of it is usually withheld automatically by the employer before the money ever reaches the worker, which is why most people never have to hand over a lump sum at tax time."* **After: ko/zh/ja read 4/4 like English; es reads 2/5** (Spanish carries it with `se retienen` / `retener` / `se siguen reteniendo`, and the matcher's stem list under-counts the finite forms — a limit of the instrument, not of the text). **Controls fired both ways:** lesson 6 returns **0** in every language and every section (no withholding in it), and a nonsense probe returns 0 everywhere.
+
+**What else was missing, stated as clauses rather than as a paragraph count** — 11 per language, 44 in all, each **present after and absent at `HEAD`** (that "absent before" column is the control; a clause present in both would prove nothing): §0's bucket mechanism (*first bucket… once full… only that slice*), the whole worked raise (*only the new, additional slice gets the higher rate; every dollar in the lower buckets is taxed exactly as before*), and the marginal-dollar refutation (*never that already-earned income gets taxed retroactively*); §1's definitions of gross and net, the employer-withholding sentence above, and the Traditional-IRA sentence (*handled on the tax return, not on the pay stub*). The benefits-cliff sentence and the 401(k) sentence already existed and were carried through. One wording change beyond restoration: the four translations said a Traditional 401(k) contribution *"lowers taxable income"*; English says it **lowers the federal income tax taken from that pay stub**, and they now say that. Both statements are true and both appear in the English lesson — the `thinkAbout`, untouched, still says *lowers taxable income*.
+
+**Verified.** `npm test` **exit 0** — read from the command itself, not through a pipe — **0 FAIL, 2 WARN**, completeness now **11 of 176 / 3 lessons**, not 15 / 4. `npm run check-blindspot` exit 0. Out-of-tree build exit 0. All 8 rewritten strings read back **character-for-character against intent**, with a mutation control on the matcher (the exact literal occurs once; a one-character tamper occurs zero times) and a leak control carrying its own positive control (0 English sentences in any translation; each probe **is** found in the English file, so the probe is alive). **Live DOM off the built `dist/`, served statically** (404 control: a missing asset returns 404, so the SPA fallback is not masking anything): **44 of 44 restored clauses render, 11 per language, 0 English leaks**, cross-language control 0 both ways (es probes score 0 on the ja page, the ja probe 0 on the es page), four distinct page titles. At **375 px**: `scrollWidth == clientWidth`, **0** overflowing elements, and a planted 2000 px probe raises that to 5 — the overflow check is alive.
+
+**Two recorded figures moved with the content and were patched by hand, not regenerated.** `scripts/translation-completeness-baseline.json` §33 fails on a rise as well as a fall; the prescribed `--write` rewrites **every** ratio in the file, so only lesson 7's four values were edited (4 lines, occurrence asserted at exactly 1). `LAUNCH_READINESS.md` §10.4's generated sentence was refreshed with `npm run readiness -- --write` (1 line), and three prose facts in the same row — the abridged count, the closed-lesson chain, the remaining-lesson list — were corrected in place.
+
+⚠️ **One §10.4 figure was corrected rather than advanced, and this is the finding, not the number.** That row states its own method (*summed translated characters over lessons 1-15 ÷ (summed English characters × that language's p90)*) and then a level, **83.9%**. Re-implemented from that sentence this run, the method reads **85.0%** for the state the previous pass published as 83.9% — the same order of gap that pass itself found (79.6 / 80.1 / 80.3% against a published 80.5%). **So the level is not a series and two passes have now failed to reproduce it.** The row now says so and records **85.0% → 87.1%** as this run's own measurement by one implementation on both sides. The p90 reference is **byte-identical before and after** (es 1.1647922882717465, ko 0.5765462339252909, zh 0.36017897091722595, ja 0.5146968769136558) and the abridged list went 4, **7**, 11, 14 → 4, 11, 14: exactly lesson 7's four pairs left, **nothing else reclassified** — a per-lesson diff, not a threshold move.
+
+**Step 5, adversarial self-check — run, and it found nothing.** Blindspot register: no Dalio name or quote, no advice-adjacent or timing language (the lesson is descriptive tax mechanics; `check-blindspot` scans all five languages and is green), no hardcoded date, no live-looking market figure, no child-facing framing. `DECISIONS.md`: `localStorage`-only state, `.js`-not-JSON content and Vite are all untouched; the one decision this **does** touch is the 2026-08-11 "(Beta)" acceptance, which is O-3 and stated below. Completed-and-pruned: lesson 7 was on the live abridged list at `HEAD`, so this is not a redo. And the verification claim above is re-runnable as written — the two counts a reviewer would check first (`npm test` exit 0 / 11 pairs) come from the commands, not from this entry.
+
+**O-3, unchanged and stated plainly: this is machine translation that no fluent speaker of Spanish, Korean, Chinese or Japanese has read.** Human review share is **0% in all four**. The corpus grew again today; whether to keep growing it under "(Beta)" is the owner's call.
+
+⛔ **W-8.1 still applies and this run cannot move it: nothing committed here reaches a learner until someone pushes `main`.**
 
 ### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read before anything else: item 160's is still clear, item 94's still stands at **19 pairs**, so W-8.5 resolves to item 94 alone. The previous run was also a W-8.5 pick rather than a free one, so W-6.2 rule 1 does not arise; its closing note named lesson 5 at 0.6341 and I re-derived that ranking from the instrument's own unrounded ratios rather than inheriting it — **same winner, same figure to four decimals this time**) — **`essentials` lesson 5, "Stocks, Bonds & Diversification", is now fully translated in all four languages.** es 0.80 → **1.09**, ko 0.36 → **0.50**, zh 0.23 → **0.32**, ja 0.31 → **0.43**. Abridged pairs **19 → 15**, abridged lessons **5 → 4**.
 
