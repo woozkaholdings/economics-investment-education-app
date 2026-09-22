@@ -1299,180 +1299,64 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       long scale correctly and `zh`/`ja` contain no `$` at all. One instance, already fixed, no
       guard warranted.
 
-94. **[Content — filed 2026-08-24 by the scheduled dev-agent as W-5.1 step 3, when item 93's economy
-⭐ **PROMOTED by the weekly review 2026-09-20 (W-8.5).** This item still carries a standing `npm test` WARN and was not picked once in the 61 dev-agent commits of 2026-09-13 → 09-20. ⚠️ **The count that stood here — "47 of 176 pairs abridged" — was the figure on the day of promotion and went stale within hours**, through the seven lessons closed on 2026-09-20 (1, 6, 10, 9, 3, 2, 8); it read 47 while the live number was 19. **It is deliberately not replaced with a fresher number, because that is the same defect**: this item says below that no count lives here on purpose — run `npm run translation-completeness`. **While that WARN stands, this item outranks a sentence-audit pick** — see W-8.5 for the rule and the override clause.
-    phase closed. This is the `essentials` remainder, deliberately filed as a SEPARATE item rather
-    than rolled into 93, because it is a different body of work with a different priority.] 48 of 160
-    lesson/language pairs — the whole of the `essentials` track — ship a condensed *summary* rather
-    than a translation. `es` 12, `ko` 12, `zh` 12, `ja` 12: lessons 1-11 and 14, identical in all
-    four languages.**
+94. **✅ DONE 2026-09-22 (scheduled dev-agent) — the whole item, replaced by its conclusion per W-7.2
+    rule 1.** The `essentials` track's abridged translations are closed: **0 abridged pairs across all
+    44 lessons in all four languages** (`npm run translation-completeness`). Filed 2026-08-24 at 48
+    pairs / 12 lessons; closed one lesson per run in the order **1, 6, 10, 9, 3, 2, 8, 5, 7, 4, 11, 14**
+    across 2026-09-20/21/22. This item's `npm test` completeness WARN is gone and **W-8.5's priority
+    clause expires by its own terms**; the **1 WARN that remains is O-3's 0%-human-review line, not
+    this item's** — do not read it as this item still being open.
 
-    > **⚠️ THE DEFERRAL THAT USED TO BE HERE IS GONE, NOT ANNOTATED (W-7.2 rule 1), and this is its
-    > conclusion.** It read *"do not start this until O-1 is resolved"* — **O-1 closed 2026-09-05**,
-    > and its second gate, O-3's *"the owner should be asked before this starts"*, was answered by the
-    > owner's 2026-09-20 instruction to do this item. **Both blockers are met; the item is open work.**
-    > It also budgeted **2 pairs per run ≈ 24 runs**, fitted on the per-language work of item 93. The
-    > measured rate on THIS item is **one lesson / four pairs per run** (2026-09-20, twice), because
-    > the abridged set is identical in all four languages and one English read scopes all four.
-    > ⛔ **What is NOT settled is O-3**: every pair this item closes adds unreviewed machine
-    > translation to a "(Beta)"-labeled language. That is the owner's call, not a run's.
-    > **No count lives here on purpose** — `npm run translation-completeness` prints the live list.
+    ⛔ **What this item did NOT settle, and no run can: O-3.** Every pair it closed is machine
+    translation no fluent speaker has read. Human share is **0% in all four languages**. "Fully
+    translated" here means *clears this corpus's own volume threshold* and nothing more.
 
-    - **Why it is cheap to resume when the time comes: everything item 93 learned transfers.** The
-      per-language density predictors, the ceiling arithmetic, the paragraph-parity check, the strict
-      figure multiset, the control-before-negative-result discipline and the three named defect shapes
-      (**bare list**, **partial enumeration**, **whole-list omission**) are all recorded in item 93
-      and its run-log entries. Read item 93's bullets first; do not re-derive them.
-    - **One thing that does NOT transfer, measured 2026-08-24.** Item 93's density bands were fitted
-      on `economy` lessons only. `essentials` lessons are shorter and more list-shaped than `economy`
-      lessons, and item 93 already records that the ja:ko predictor loses all precision on short
-      fields. **Re-fit the band on `essentials` lessons 12, 13 and 15 — the three that are already
-      fully translated — before budgeting anything here.** Those three are the only in-track
-      reference points that exist.
-    - ⚠️ **PROGRESS, kept here so the next run does not re-derive it (updated 2026-09-21).** Eleven
-      lessons have now been closed one per run: **1, 6, 10, 9, 3, 2, 8, 5, 7, 4 and 11**, in that order.
-      **Remaining: 14 alone** — **3** pairs, one run at the measured rate. ⭐ **This is the last
-      lesson in the item, and it is the one that is unlike the other eleven: it is three pairs, not
-      four.** Its `es` reads **0.83** and has never been abridged, so **the closing run edits ko, zh
-      and ja only** — do not budget or verify a fourth language, and do not read `es`'s absence from
-      the abridged list as a measurement failure. No ranking decision is left: there is one candidate.
-      ⚠️ **When lesson 14 lands, item 94's `npm test` completeness WARN clears and W-8.5's
-      priority clause expires by its own terms** (item 160's WARN is already clear). The 0%-human-review
-      WARN is **O-3's, not this item's**, and will still be printing — a 1-WARN `npm test` is what
-      done looks like here, not a 0-WARN one.
-      ⚠️ **Both remaining lessons still owe the numeral-profile check below as well as paragraph
-      parity** — lesson 4's parity was *perfect* and its arithmetic was still gone.
-    - ⭐ **The lesson-5 counter generalizes, and lesson 7 is why (2026-09-21).** That run counted the
-      lesson's recurring concrete *noun* per section. The same count run over a **term a later
-      section treats as already introduced** finds the same class of break: English lesson 7 names
-      withholding **4 times in §1 and 4 in §2**; before this run the four translations read **0–1 in
-      §1 and 4–5 in §2**, so §2 — fully translated — opened on a definite noun phrase (es *"La
-      retención de cada cheque de pago"*) for a mechanism its own lesson had never introduced.
-      **Read the profile, not the totals: a section that is present can still be broken by what was
-      cut from the section before it.**
-      **Lessons 11 and 14 still owe both defects.**
-      ⚠️ **A FOURTH defect shape, and lesson 4 is its pure case (2026-09-21): the lesson's named
-      worked example deleted wholesale while the abstract definition it exists to illustrate is
-      kept — with paragraph parity perfect, so parity cannot see it.** Lesson 4 teaches credit
-      scores through two named people, Elena and David, who carry §0 and §1 (English profile
-      **Elena 3/3/0, David 2/3/0**). All four translations read **0/0/0**: both people were gone
-      and what survived was the definition. Paragraph counts were **3/2/3 in all five languages**,
-      matching English exactly, so the lesson-5 parity check and the lesson-3 paragraph check would
-      both have passed it. **The instrument that does see it is the numeral profile per section**:
-      English reads **8/5/3** numerals by section, all four translations read **2/0/3** — §1 had
-      *zero* of English's five, so the entire worked car-loan comparison (`$20,000` at 6% vs 14%,
-      `$4,700` of extra interest over five years) existed in no language but English. **Run the
-      numeral profile per section, with an already-closed lesson as the control** (lesson 7 read
-      0/1/5 in all five, so the instrument separates done from not-done).
-      ⭐ **And the naming convention is MEASURABLE, not a choice**: "Maria" appears 9 times in the
-      English corpus and is transliterated consistently in every language (es María, ko 마리아,
-      zh 玛丽亚, ja マリア — 10 occurrences each, with "Sofia" returning 0 everywhere as the negative
-      control). Elena/David followed that precedent rather than being invented.
-      ⚠️ **A THIRD defect shape, and lesson 5 is its pure case: a cross-section dependency broken by
-      the abridgement, where the surviving section refers back to something the cut sections were
-      carrying.** Lesson 5's English threads one worked example through all three sections — a local
-      coffee shop that becomes a national chain (`coffee` appears **2/3/2** by section). Its four
-      translations read **0/0/1**: §2 said "**that** coffee chain's new product" with a demonstrative,
-      in all four languages, while §0 and §1 — which introduce the coffee shop in English — had
-      replaced it with an abstract definition. **The learner met a definite reference to a thing the
-      lesson had never shown them.** The instrument is cheap and worth reusing: count the lesson's own
-      recurring concrete noun per section, per language, and compare the profile to English's. A
-      profile that differs is a broken thread even when paragraph parity and per-section ratios look
-      fine. (Lesson 5 also had a second dangling back-reference: §2's "the previous section pointed at
-      holding both stocks and bonds" pointed at a paragraph that existed only in English.)
-      ⚠️ **The shortfall ranking needs its own control, added 2026-09-20 after lesson 2.** A rank is
-      only meaningful if a *translated* lesson scores clearly differently: measured on the same run,
-      lessons 2, 3 and 12 score **0.9082 / 0.9245 / 0.9270** against the remaining six's
-      **0.5803-0.6820**. The bands do not overlap, so the ranking is separating done from not-done
-      rather than sorting noise. Re-derive both halves; do not quote these.
-      ⚠️ **CORRECTION to this item's concrete-first note, found on lesson 3 (2026-09-20) and worth
-      applying to the rest.** The note below records `essentials` 1-9 as nine for nine concrete-first.
-      **That is a fact about the ENGLISH and can be false of the translations at the same time.**
-      Lesson 3's English opens on a scene ("Imagine you put $1,000 into an account earning 6% a
-      year"); all four of its translations opened with a definition, because **the abridgement had
-      deleted the concrete opener**. So on an abridged lesson the two defects this item tracks
-      separately can be one deletion, and restoring the translation closes both. Check the opener in
-      the translation, not only in the English, before concluding a lesson costs translation only.
-      ⚠️ **A defect shape this item had not recorded, and lesson 3 is the pure case: parity can be
-      perfect while the content is gone.** Lesson 3's translations matched English **2/3/2 on
-      paragraphs before any edit** — nothing had been cut at the paragraph level. What had been cut
-      was every number: the worked $1,000 → $1,060 → $1,123.60 chain, the Rule-of-72 doubling
-      chain, and both named characters. **Paragraph parity is necessary and nowhere near sufficient;
-      on lessons that teach an arithmetic, the numeral-parity check is the one that bites.**
-      ⚠️ **The ledger cannot see this work, and that is worth knowing before you trust it.**
-      `translation-review.mjs` keys each entry on a hash of the **English** source, so rewriting a
-      translation from a summary into a full translation leaves `review-status` reading
-      "44/44 reviewed, 0 stale" — the entry now vouches for text that no longer exists. Re-marking is
-      a manual step a run has to remember; it is not enforced and nothing fails if it is skipped.
-    - **The abridged set being identical across all four languages is new, and it is an opportunity.**
-      Every previous phase of this work was per-language. Here the same 12 lessons are abridged in
-      every language, so a single English-side read of a lesson scopes the defect for all four at
-      once. **Read once, translate four times** is available on this item and was not available on 93.
-    - **O-3 applies to this item with more force than it did to 93.** Human review share is 0% in all
-      four languages. 93 at least added unreviewed prose on the path the product is about; this item
-      would add ~48 pairs of it to the optional track. **The owner should be asked before this starts,
-      not after** — see O-3 at the top of this backlog.
+    ⭐ **The finding worth keeping — a lesson-level ratio is structurally blind to within-paragraph
+    deletion in whichever language expands most (found 2026-09-22, on the closing lesson).** This item
+    budgeted lesson 14 as **three** languages, on the strength of the shipped instrument scoring `es`
+    at 0.83 against a 0.812 cut and never flagging it; `LAUNCH_READINESS.md` §10.4 had recorded the
+    same reading on 2026-09-05. Measured per paragraph, `es` was abridged in **exactly the same three
+    paragraphs** as ko/zh/ja, missing the same clauses — Spanish expands to ~116% of English here, so
+    dropping about a quarter of a lesson still clears a lesson-level threshold by 2.2%. The closing run
+    edited **four** languages. **The instrument that sees it**, and the one to reuse on any future
+    completeness claim, is the **per-paragraph** ratio: split each section body on the paragraph break,
+    divide translated by English characters, normalize by that language's p90, and read per paragraph
+    rather than per lesson. **Its control is what makes it usable:** over the already-full `essentials`
+    lessons (12, 13, 15) it returns **80 cells, minimum 0.705, nothing below 0.70**, while lesson 14
+    returned **13 of 24 below 0.70** — the bands do not overlap, so it separates done from not-done
+    rather than flagging everything. After the edit lesson 14's own minimum was **0.706**, inside the
+    control band.
 
-    > **NOTE ADDED 2026-08-31 by the run that audited §3.0 clause 2 — a SECOND, independent content
-    > defect on this same track, measured the same day. Filed here rather than as a numbered item
-    > (W-6.2 rule 2 + W-6.4), because it is the same decision as the one above: is the optional track
-    > worth spending runs on before O-1?** §3.0.2 says *"Concrete before abstract. Lead with a thing
-    > that happens to a person, then name the concept."* **`essentials` 10, 11, 12, 13, 14 and 15 —
-    > six consecutive lessons — each open by defining their subject** ("Mutual funds and ETFs charge
-    > an annual fee called an expense ratio…", "A brokerage account is just a container…", "A will is
-    > a legal document…", "A credit report is a detailed record…"). **`essentials` 1-9 are nine for
-    > nine concrete-first** — Maria, James, Elena, "Picture a neighborhood of a thousand homes". The
-    > habit stopped at lesson 10 and did not return.
-    > ✅ **Lesson 10 is CLOSED 2026-09-20** (scheduled dev-agent), in the same pass as its translation,
-    > which is what this note asks for: it now opens on Nadia and Priya, two graphic designers opening
-    > their January mail, and the definition follows in ¶2. **Five remain: 11, 12, 13, 14, 15.**
-    > ⚠️ **One premise of the paragraph below broke on contact and the correction is reusable.** It
-    > says none of the six "contains a concrete scene anywhere in the lesson to promote". **Lesson 10
-    > did** — an unnamed staff-vs-freelance designer contrast sitting in ¶2 of its own first section,
-    > which is why the fix cost one authored paragraph rather than a whole scene: it named the two
-    > designers and promoted them. **Check each remaining lesson for a promotable scene before
-    > budgeting it as authored-from-nothing.**
-    > **Cost, and why it is bigger than it looks:** unlike `money` 24 — which was fixed the same day
-    > by inverting two paragraphs, because its scene was already written — **none of these six
-    > contains a concrete scene anywhere in the lesson to promote** (refuted for lesson 10 above;
-    > re-check the other five rather than inheriting this). Each needs a scene authored from
-    > nothing, then carried into `es`/`ko`/`zh`/`ja`, on lessons that are *also* on this item's
-    > abridged list. **So do it in the same pass as the translation work above, not separately** —
-    > the "read once, translate four times" opportunity applies to both defects at once, and doing
-    > them apart pays the five-language cost twice.
-    > **The measurement, so nobody re-derives it:** first two sentences of section 1, screened for a
-    > named person or a scene verb, 44 lessons, three controls fired (29 and 1 must read concrete, a
-    > synthetic definition-first opener must read abstract). The screen has a **measured 3-in-13
-    > false-positive rate** (lessons 35, 39 and 26 use a metaphor, an analogy and a concrete scenario
-    > and satisfy the clause without a name or a scene verb), so **it is a reading aid and must not
-    > be turned into a build gate** — that is why no check was built. See the 2026-08-31 run-log
-    > entry for the full method and the false-positive list.
-    > ⛔ **THE AUDIT'S OWN ARITHMETIC DID NOT CLOSE, and it was four days before anyone noticed —
-    > corrected 2026-09-04 (scheduled dev-agent) by re-running the screen with its own three
-    > controls.** The 2026-08-31 entry says *"Ten are real"* and then names **seven**: `essentials`
-    > 10-15 and `money` 24. **Three counted defects were never written down**, so the note above —
-    > the only place a picker looks — reads as *"the main path is clean and the cluster is on the
-    > optional track."* **It is not.** Re-running the strict screen (scene verb or name, in the first
-    > two sentences of section 1, controls: lesson 29 and lesson 1 must read concrete, a synthetic
-    > definition-first opener must read abstract — all three fired) flags **15 of 44** today against
-    > the audit's 13, the difference being scene-verb vocabulary rather than corpus drift. Subtracting
-    > the audit's seven named defects and its three recorded false positives leaves exactly three,
-    > **all of them `economy` — the track a new install opens on**:
-    > - **37 (QE & QT)** — the real one, and the only lesson in the whole flag set with **no person,
-    >   no scene and no metaphor of its own** anywhere in the section that carries its claim. Its
-    >   "master dial already turned down to 0%" is lesson 35's metaphor, arriving by explicit
-    >   cross-reference. ✅ **FIXED 2026-09-04** — a concrete lead in five languages; see the run log.
-    > - **34 (the four levers)** and **40 (the three rules)** — **both false positives, and the reason
-    >   generalizes.** Each opens with a one-sentence enumerating stem and then goes concrete
-    >   *immediately*: 34's ¶1 is *"Think of a city government facing a budget shortfall that lays off
-    >   workers"*, 40's second sentence is *"Remember the family from “The Long-Term Debt Cycle”"*.
-    >   A screen that reads two sentences cannot tell a definition-first lesson from a **list whose
-    >   stem is one sentence long**, and both of these are lists.
-    > **So the honest false-positive rate is 6 in 15, not 3 in 13** — the screen is roughly twice as
-    > wrong as the note above says, which strengthens rather than weakens its conclusion that it must
-    > never become a build gate. **Nothing on the main path is now open under this clause**; the
-    > `essentials` 11-15 cluster is the whole remainder (10 closed 2026-09-20).
+    ⭐ **Five defect shapes were found under this item, and every one of them survives paragraph
+    parity.** Each was found only after the previous instrument had passed the lesson: **(1)
+    whole-paragraph deletion** (lessons 1, 2, 6, 8, 9, 10); **(2) numbers cut out of intact
+    paragraphs** — lesson 3 matched English 2/3/2 on paragraphs with every figure gone; **(3) a broken
+    cross-section dependency** — lesson 5's §2 said "*that* coffee chain" for a shop only English had
+    introduced; **(4) a named worked example deleted wholesale while the definition it exists to
+    illustrate is kept** — lesson 4's parity was a perfect 3/2/3 and Elena/David read 0/0/0 in all
+    four; **(5) uniform within-paragraph clause compression** — lessons 11 and 14, where every sentence
+    keeps its subject and loses the subordinate clause carrying the mechanism. **Parity is necessary
+    and nowhere near sufficient:** the per-section numeral profile catches (2) and (4), the
+    recurring-concrete-noun profile catches (3), and only the per-paragraph ratio above catches (5).
 
+    ⚠️ **Twice the missing clause was the lesson's own hedge — a §10.1 matter, not a completeness
+    one.** Lesson 11 dropped English's second hedge ("nor that every fee is unjustified — some
+    strategies genuinely cost more to run") in all four languages, leaving a lesson about fees reading
+    closer to "cheaper is better" than the English does. Lesson 14 dropped "which is why this lesson
+    explains what a will does rather than how to write one" in all four — the sentence that scopes a
+    lesson about wills as explanatory rather than a how-to. **Both restorations move the lesson toward
+    §10.1, not against it. Check hedge parity, not only volume, whenever an abridged lesson touches
+    §10.1.**
+
+    ⭐ **Naming and currency conventions here are MEASURABLE, not choices.** "Maria" appears 9x in the
+    English corpus and is carried consistently into every language (es María, ko 마리아, zh 玛丽亚,
+    ja マリア), with "Sofia" returning 0 everywhere as the negative control — so lesson 4's Elena/David
+    followed an existing precedent rather than being invented. Currency follows each file's own
+    dominant form (es `$N`, zh `N美元`, ja `Nドル`); **`ko` is genuinely mixed and must be broken by
+    within-lesson consistency instead.** Two splits were found and deliberately left standing, because
+    closing either is a corpus-wide call rather than a rider on a translation pass: the cross-module
+    `$` vs `美元`/`ドル` split against `moneyVisuals.js`, and the cross-track `普里娅`/`普莉娅` spelling
+    of Priya.
 
 96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
     exactly — 772 vs 3,294 characters, to the character — and the item's own scope contained one
@@ -5202,6 +5086,71 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-22 (scheduled dev-agent; **item 94's last lesson, and W-8.5's clause expires with it** — `npm test`'s WARNs were re-read first: item 160's is still clear, item 94's still stood, so W-8.5 resolved to item 94 and no ranking decision was left, there being one candidate) — **`essentials` lesson 14, "Wills & Beneficiaries", is now fully translated — in FOUR languages, not the three the item budgeted.** es 0.83 → **1.10**, ko 0.37 → **0.49**, zh 0.24 → **0.32**, ja 0.33 → **0.43**. **Abridged pairs 3 → 0, abridged lessons 1 → 0.** Item 94 is closed; the whole corpus now clears the completeness threshold in all five languages.
+
+⭐ **The premise was wrong in its disposition, not just its figures, and this is the third time step 3.5 has changed what a run did rather than what it reported.** Item 94 said, in bold: *"its `es` reads **0.83** and has never been abridged, so the closing run edits ko, zh and ja only — do not budget or verify a fourth language."* `LAUNCH_READINESS.md` §10.4 carried the same reading from 2026-09-05 (*"the pair that left is lesson 14's `es`, whose Spanish was not edited — it reads `0.83` both times"*). **Both were wrong. Spanish lesson 14 was abridged exactly as the other three were, missing the same clauses in the same three paragraphs.**
+
+**Why the shipped instrument cannot see it, stated as a mechanism rather than a miss.** The threshold is `0.7 x` a corpus-wide p90, and `es` expands to **1.16x** English here — so the `es` cut sits at **0.812**. Lesson 14's Spanish had lost about a quarter of its content and still scored **0.83**, clearing by **2.2%**. **A lesson-level ratio is structurally blind to within-paragraph deletion in whichever language expands most**: the bigger the expansion factor, the more prose a lesson can lose while still clearing its own bar.
+
+**The instrument that does see it, with the control that makes it readable.** Split each section body on the paragraph break, divide translated by English characters, normalize by that language's p90, read **per paragraph**:
+
+| | es | ko | zh | ja |
+|---|---|---|---|---|
+| §0 ¶1 (intestate succession) | **0.32** | **0.35** | **0.43** | **0.36** |
+| §0 ¶2 (details vary / lesson scope) | **0.50** | **0.46** | **0.40** | **0.44** |
+| §1 ¶1 (the divorce mistake) | **0.47** | **0.44** | **0.47** | **0.51** |
+| §1 ¶2 (beneficiary forms) | 0.76 | **0.67** | 0.77 | 0.75 |
+| §0 ¶0, §1 ¶0 | 0.89–1.00 | 0.71–0.82 | 0.79–0.90 | 0.71–0.85 |
+
+⭐ **The control is the whole reason this is usable, and it fired in both directions.** Run over the three `essentials` lessons that are already full translations (12, 13, 15) it returns **80 cells, minimum 0.705, nothing below 0.70**. Lesson 14 returned **13 of 24 below 0.70**. The bands do not overlap, so the instrument separates done from not-done rather than flagging everything — and **after the edit lesson 14's own minimum is 0.706, inside the control band.** An en-vs-en negative control returns 1.00 across the board.
+
+**What was actually gone, read by hand rather than inferred from the ratios.** All four languages kept the first sentence of §0 ¶1 and dropped both the parenthetical describing what the intestate formula *does* (spouse and children in preset shares, distant relatives if no immediate family) **and the entire second sentence** — the three cases that make the point, an unmarried couple together for decades, one child needing more support, who the deceased would have chosen to raise their kids. §0 ¶2 lost its parenthetical (state rules, notarization, witnesses) and its closing clause. §1 ¶1 kept the setup of the mistake and **dropped the sentence stating its outcome**.
+
+⚠️ **Two of those are not completeness items.**
+1. **§0 ¶2's dropped clause is "which is why this lesson explains what a will does rather than how to write one" — the lesson's own scope disclaimer, missing in all four languages.** That is a §10.1 matter: a lesson about wills was reading, in every non-English language, without the sentence that scopes it as explanatory rather than a how-to. **This is the second consecutive lesson whose missing clause was its own hedge** (lesson 11 dropped "nor that every fee is unjustified"). Restoring it moves the lesson toward §10.1, not against it.
+2. ⭐ **§1 ¶1's dropped sentence is the one the lesson's own quiz question asks about.** q028 (fully translated in all five languages) asks who actually receives the 401(k); English §1 ¶1 answers it in terms — *"the account goes to whoever's name is on the beneficiary form, not whoever the will names"* — and **that sentence existed in no language but English.** The abstract form survived in §1 ¶0 and the takeaway, so the question was not unanswerable, but the paragraph built to answer it stopped at the setup. **Worth reusing: check an abridged lesson's quiz question against the paragraph that teaches it, not just against the lesson as a whole.**
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0** — 0 FAIL, **1 WARN**. The completeness WARN is **gone**; the remaining WARN is O-3's 0%-human-review line, which is not this item's |
+| `npm run check-blindspot` | **exit 0**, 9 ok — §10.1 advice-adjacency across all five languages, §2.3 live-looking dates over 26 teaching modules |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built in 553ms, exit 0**. Exit code read from `$?` on its own line, never through a pipe |
+| Readback | All **14** replacements re-imported and compared against intent: **14 exact, 0 mismatched**. Mutation control (`décadas`→`decadas`) returns **0** hits |
+| Untouched content | **0 unintended changes**; **26** paragraphs/fields asserted **byte-identical** (both headings, `takeaway`, `thinkAbout`, §0¶0 and §1¶0 in all four languages, and every one of the other 14 lessons). Comparator control fires on a one-space difference |
+| English | **0 `.en.js` files in `git diff --name-only`**; every `sourceHash` in the review ledger unchanged (**0 changes across all 44 lessons**), which is the independent proof English did not move |
+| Diff shape | **2 changed lines per file, 4 files**; line counts unchanged at 273 in all four |
+| Encoding | `U+FFFD` scan **0** in all four files |
+| **Live render** | Served `dist/` statically, unlocked 1–13 via `localStorage`, opened `#/lesson/14` in the real DOM in **all four languages**: **38 restored clauses, 0 missing, 0 cross-language leaks**, nonsense probe false in all four. The strings are provably new — the edit script asserted each occurred **0 times** in the source before writing |
+| Mobile | **0 px horizontal overflow at 375×812 in all four languages**, viewport asserted real (375, not 0) before reading, and a planted 2000px element produced **+500 px** and **0** after removal |
+| Redo | Lesson 14 has **not** been closed before: the commit-message probe returns **0** for lesson 14 and **≥1** for all eleven previously closed lessons |
+
+#### One control had to be rebuilt before any render result was read
+The static server's first version would have answered **200** to any path, making "the page loaded" unfalsifiable. Rewritten to fall back to `index.html` only for **extensionless** paths, it returns **404** on a bogus `.js`, **200** on a real hashed asset and **200** on `/`. Only then was anything read from the DOM. (Also re-confirmed: seeding `localStorage` does not switch language — the picker must be driven with a native value setter plus a bubbling `change`, **and the switch asserted** — and `npm test | tail` reports the filter's exit code, not the suite's, because zsh spells it `pipestatus`.)
+
+#### A four-pass "unreproducible" note in §10.4, resolved rather than re-warned
+§10.4's essentials-volume fraction carried a warning that **four consecutive passes had failed to reproduce their predecessor's level** (gaps of 1.1pp, 0.9pp, 0.2pp, 0.2pp), concluding "the level is not a series and only the movement is safe to read." ⭐ **The level was never drifting — the passes were aggregating the four languages differently.** Re-run on the pre-edit state, the row's own stated method reproduces the published **89.8% exactly** when the four languages are summed before dividing, and reads **88.8%** when the four per-language fractions are averaged. **What identifies it as the aggregation step and not the measurement is that all four per-language figures reproduced exactly** — es 93.0%, ko 87.1%, zh 88.8%, ja 86.1%, the published values to the decimal. The method sentence now names the aggregation; the level is a series again, and reads **91.1%** (es 94.4%, ko 88.3%, zh 90.1%, ja 87.3%) after this edit.
+
+#### Bookkeeping, hand-patched rather than regenerated
+`scripts/translation-completeness-baseline.json`: **exactly 4 changed lines**, asserted afterwards that **lesson 14 is the only lesson whose ratios moved** (a `--write` re-records all 44). `scripts/translation-review-ledger.json`: **4 records** re-dated to 2026-09-22 and marked `ai`; **`sourceHash` untouched on all four and on all 44 lessons**. `LAUNCH_READINESS.md` §10.4: **one generated line** via `npm run readiness -- --write`, plus **eight hand-written clauses** each asserted to match exactly once before replacing — including the `0.83` correction, filed where the wrong reading originated rather than only in the backlog. **The p90 reference is byte-identical before and after (es 1.16, ko 0.58, zh 0.36, ja 0.51), so this is a per-lesson diff and not a threshold move.**
+
+#### Step 5: adversarial self-check
+- **Blindspot register.** §10.1: nothing here instructs or recommends, and the restored §0¶2 clause **strengthens** the row — it is the lesson's own "explains what a will does rather than how to write one", which was missing in all four languages. §1¶2's restored text is explicitly *not* an instruction ("isn't a specific instruction on what any one person's beneficiaries should be"). `check-blindspot` passes in all five. §2.3: no dates in the new prose, live-date scan agrees across 26 modules. §10.2 Dalio: nothing. §10.3: untouched. **No invented quantities — lesson 14 carries no figures, and none were added.**
+- **DECISIONS.md.** No conflict: content stays in `.js` modules, `localStorage`-only state untouched, Vite unchanged, "(Beta)" labeling unchanged.
+- **Already-done backlog item.** Not a redo, by the controlled commit-message probe above.
+- **My own verification claim.** A reviewer re-running these commands gets these figures, with the caveats stated rather than buried: **in-tree `npm run build` does not work on this machine** (out-of-tree script used, as documented); **every visual claim rests on DOM text extraction plus one screenshot**, not on reading the translations as a fluent speaker would; and **the per-paragraph instrument is this run's own**, not a shipped check — it is written up in item 94 so the next run can rebuild it, but `npm test` does not enforce it.
+- ⛔ **The limit, unchanged: this is machine translation no fluent speaker has read.** This run added four more pairs of it and re-marked the ledger `ai`. Human share is **0% in all four languages** — **O-3 is the owner's call and closing item 94 does not settle it.**
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ⭐ **The `es` blindspot is corpus-wide and item 94 only exhausted the lessons the *lesson-level* instrument could see.** Every completeness claim in this repo — including the two main tracks declared "fully translated in all four languages" on 2026-08-22 and 2026-08-24 — rests on that same lesson-level ratio, and `es` is the language it is weakest in. **Nothing here says those tracks are abridged; it says the check that cleared them cannot rule it out.** A per-paragraph sweep of all 44 lessons × 4 languages is one cheap run (the instrument and its control are in item 94) and is **the single highest-value follow-up this run found** — it either confirms the corpus clean with a real instrument or finds the next lesson 14.
+- **W-8.6's Markdown guard is still unfiled** and is still the cheapest open guard; §84 now covers the six constructs across 38 modules, so the corpus is clean and guarded on that axis — re-read W-8.6 before filing, it may already be satisfied.
+- **The cross-module `$` vs `美元`/`ドル` split and the cross-track `普里娅`/`普莉娅` spelling of Priya** remain, both recorded in item 94's conclusion.
+- **W-8.1 still stands and no run can move it.** These corrections are committed, **not deployed**.
+
+**Owner-facing, one line:** the last untranslated lesson — the one that tells you your 401(k) goes to whoever is on the beneficiary form and not to whoever your will names — shipped to every non-English reader with that sentence removed, along with the line saying the lesson explains what a will does rather than how to write one; all of it is restored, **and the run found that the Spanish version was abridged too, which the project's own instrument had said twice that it was not** — so item 94 closed at four languages instead of three, and the whole 44-lesson corpus is now fully translated.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-21 (scheduled dev-agent; **W-8.5's mandated pick** — `npm test`'s WARNs were re-read first, before anything else: item 160's is still clear, item 94's still stands, at **7 pairs / 2 lessons**, so W-8.5 resolves to item 94 alone. Of the two lessons left, the item's relative-shortfall ranking puts **14 marginally first**, and I re-derived it rather than inheriting it: **lesson 14 at 0.6695 against lesson 11 at 0.6759**, a gap of **0.0064** — the same gap the item records, at levels 0.0013 higher because I used the published rounded p90s. **The item's own rule for a gap this small is to pick on some other ground and say which**, so: **lesson 11, because it is four abridged pairs to lesson 14's three** (`es` 14 reads 0.83 and has never been abridged) **and because closing it keeps the abridged set identical in all four languages** — the property this item names as what makes the remainder one schedulable block. It also leaves the asymmetric lesson last rather than in the middle) — **`essentials` lesson 11, "Investment Fees", is now fully translated in all four languages.** es 0.81 → **1.13**, ko 0.38 → **0.51**, zh 0.25 → **0.33**, ja 0.34 → **0.45**. Abridged pairs **7 → 3**, abridged lessons **2 → 1**.
 
