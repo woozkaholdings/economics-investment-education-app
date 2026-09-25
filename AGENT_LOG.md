@@ -338,7 +338,7 @@ for the history. No open P1/P2 items.
 > over 1,200; 5 over 900.** The split worked and the corpus is not over-long. ⚠️ **Watch, do not act:**
 > reading time went 171 → **174 min** this week and every hedge adds words. **If a future review finds
 > the max back over ~1,500, the cause is this mode and the fix is a break, not a shorter hedge.**
-> ⚠️ **One cosmetic residue, noted and deliberately not "fixed":** the Yield Curve glossary entry now
+> ✅ **Residue below CLOSED 2026-09-25 (dev-agent): both years now sit in `f`, and the entry says why they differ.** ~~One cosmetic residue:~~ the Yield Curve glossary entry now
 > reads "the six US recessions since 1976" in its definition and "every US recession since 1955" in
 > its example. Both are correct and `4cad5d9` explains exactly why the two dates differ (1957 and
 > 1960 predate `DGS10` and are untestable here). **A learner sees two start years two sentences
@@ -5098,6 +5098,35 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-25 (scheduled dev-agent; **a free pick**. W-8.5 has expired and `npm test` shows **0 FAIL, 1 WARN** (O-3's). The previous run was a free pick, so its residual (a hand read of ko/zh/ja short strings) was a legal pick #1. I did not take it. **The pick is W-8.7's named cosmetic residue**: the one open item that a weekly review had already scoped, that shows on screen, and that needs no new instrument) — **the Yield Curve glossary entry no longer shows two different start years two sentences apart.** `f` said "the six US recessions since 1976" and `ex` said "every US recession since 1955". Both claims now sit in `f`, and the entry now tells the learner why the dates differ: 1976 is when daily data on the usual 10-year-minus-2-year gap begins. `ex` now points back to "that track record" and keeps its hedge. Changed in all five languages; no claim was weakened and no figure changed.
+
+**Step 3.5: the premise, re-measured with controls.**
+- *"A learner sees both":* checked, not assumed. `entry.f` and `entry.ex` render together on all three surfaces (`Glossary.jsx:208/213`, `TermDetail.jsx:59/65`, `GlossaryTerms.jsx:129/133`). **Holds.**
+- *"1976 is the series start, not a choice":* checked on FRED's keyless CSV. `T10Y2Y`'s first row is **1976-06-01**, and a bogus series id returns **404** (control). **Holds.** 1955 still rests on 4cad5d9's reasoning: 1957 and 1960 predate `DGS10`, so it cannot be tested here and was left as it stood.
+- The premise held, so the disposition held: fix how the entry reads without touching either claim.
+
+**The fix.** `src/content/glossary.js` changed in one line (the entry is a single source line). Written by a patcher that required each of the 10 old strings (5 languages × `f`/`ex`) to appear **×1** and each new one **×0**. It kept the file's `—` escape style, re-imported the module and checked every value. No provenance comment went into `src/` (W-8.3).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged); §67 glossary completeness **0/344 flagged** |
+| Readback | patcher re-import: 10/10 values match; `git diff --stat`: 1 file, 1 line |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Built bundle | new en and zh phrases: 1 file each; old "since 1976 it came": **0**; nonsense probe: **0** |
+| Live render | **Not done, on purpose:** this is a data string. It renders through the same text child as before, and the bundle probe shows the new text ships |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, no Dalio, no kids framing, no new date or live figure. "More than four years later" is kept as it was, and no future event can falsify it. `check-blindspot` passes inside `npm test`.
+- **DECISIONS.md:** no conflict.
+- **Undoing done work:** 4cad5d9's measured range (7 to 25), its 2022 counterexample, its "since 1955" and the quiz-derived hedge in `ex` are all still present in every language. I checked each against the diff.
+- **My own claims:** a reviewer re-running the FRED curl pair, `npm test`, the build and the bundle grep gets the same results. ⛔ The new ko/zh/ja/es wording is machine-written and unreviewed (O-3).
+- No conflict found.
+
+**Owner-facing, one line:** the glossary's Yield Curve card mentioned "since 1976" and then "since 1955" two sentences later with no explanation; it now gives both and says why the dates differ, in all five languages. Committed, **not deployed** (W-8.1).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-25 (scheduled dev-agent; **a free pick** — W-8.5 expired when item 94 closed, and `npm test` confirms it: **0 FAIL, 1 WARN**, the one being O-3's 0%-human-review line. The previous run was a W-8.5 pick, so W-6.2 rule 1 does not arise. The pick is the previous run's own "single highest-value follow-up": the per-paragraph sweep of all 44 lessons × 4 languages) — **the sweep came back clean, and the real defect was in the one place it cannot look: four Spanish quiz questions had dropped the noun that says what they are asking about.** `es` "¿Cuál es la parte más importante?" (*of what?* — "of the economy" kept by ko/zh/ja), "¿Cuánto dura el ciclo corto?" (short-term **debt** cycle), "Una curva invertida predice:" (inverted **yield** curve), and one stem that was ungrammatical, "¿Qué pasa en un desapalancamiento diferente de recesión?". All four fixed (q002, q003, q005, q006); nothing else changed.
 
