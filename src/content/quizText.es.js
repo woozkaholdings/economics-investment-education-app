@@ -78,7 +78,7 @@ export const quizText = [
     "explain": "Las curvas invertidas han precedido a cada recesión de EE.UU. desde 1955, aunque no toda inversión termina en recesión. Cuando las tasas cortas están por encima de las largas, es una señal de debilidad económica por delante."
   },
   {
-    "q": "¿Qué es QE?",
+    "q": "¿Qué es QE (flexibilización cuantitativa)?",
     "opts": [
       "Banco central compra bonos cuando tasas están en 0%",
       "Gobierno sube impuestos para sacar dinero de la economía",

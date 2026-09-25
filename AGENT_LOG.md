@@ -5099,6 +5099,42 @@ same journey.
 
 ## Run log
 
+### 2026-09-25 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. W-8.6's Markdown guard is already satisfied: `check-data.mjs` §84 exists. The previous run was a free pick that left no residual. **The pick is the one surface the 09-25 per-paragraph run named as uncovered: a hand read of the ko/zh/ja quiz stems against English.** That run read only `es`) — **one Chinese quiz question was ungrammatical and asked the wrong kind of question, and three languages never said what "QE" stands for.**
+- **q035 `zh` (lesson 21, anchoring):** "被划掉的220美元**究竟能说明**89美元**是不是**一个公平的价格**吗**？" stacks 是不是 and 吗, which is ungrammatical, and turns "what does the $220 tell her" into a garbled yes/no question. It now reads "对于89美元是不是一个公平的价格，被划掉的220美元究竟能说明什么？". The options were left alone: "能说明——…", "几乎不能说明什么…" and "说明…" all answer "能说明什么" naturally.
+- **q007 (lesson 37):** en says "What is QE (Quantitative Easing)?" and ko says "양적완화(QE)란?". **zh, ja and es said only "QE".** The 09-25 run left `es` alone because zh/ja did the same. Reading all four shows **three of four translations drop it, which is a pattern, not a precedent.** Each now uses its own lesson's term: zh "什么是量化宽松（QE）？", ja "量的緩和（QE）とは？" (both copy the `量化宽松（QE）` / `量的緩和（QE）` form in their economy lessons), and es "¿Qué es QE (flexibilización cuantitativa)?" (the term `lessonContent.economy.es.js` and the glossary use).
+
+**Step 3.5: the premise and its controls.** The premise was the 09-25 claim that "only `es` stems were read by hand." Confirmed from that entry. All **46 × 3 = 138 stems** were dumped side by side with en and read in full; the dump confirmed 46 entries in each of the four files.
+- **Control for the grammar hit:** I grepped every zh module for `是不是[^？]*吗`. It returns **1** in `quizText.zh.js`, the known instance, so the pattern fires, and **0** in all three zh lesson modules. The class does not recur in the prose.
+- **Read and left alone, on purpose:** ko register drift (q030 "만드는가?", q031 "말해줍니까?" amid 요-form stems) is stylistic, not wrong. ja q039's "何の代償を払っていることになりますか" is stiff but grammatical. q046 `ja` "不労所得" is the standard term, and it names the very misconception lesson 44 examines.
+
+**The fix.** A patcher required each old string ×1 and each new one ×0 before writing, then re-imported all three modules. `git diff --stat`: **3 files, 4 lines in, 4 out**. **No English, no ko, and no option or explain changed**, so item 160's option-length signal is untouched.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| Readback | Re-import shows q007 in zh/ja/es and q035 in zh carrying the new stems |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (exit code read on its own line) |
+| Built bundle | 4 new phrases: 1 file each. The old zh q035 phrase: **0**. Nonsense probe: **0** |
+| Live render | **Not done, on purpose:** these are data strings rendered through the same text child as before, and the bundle probe shows they ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice language, no dates, no figures, no Dalio, no kids framing. `check-blindspot` passes inside `npm test`.
+- **Could the expansion leak the answer?** No. No option in any language contains 量化宽松, 量的緩和 or "flexibilización"; the keyed option describes bond buying at 0% rates. English has always carried the expansion, so this restores parity rather than adding a cue.
+- **DECISIONS.md:** no conflict; content stays in `.js`.
+- **Undoing done work:** 09-25's four `es` stems (q002, q003, q005, q006) are untouched. q007 `es` was left by that run *because* zh/ja matched it, not by a recorded decision, and that reason is gone now that all four were read.
+- **My own claims:** a reviewer who re-runs the grep control, `npm test`, the build and the bundle probes gets the same results. ⛔ The new zh/ja/es wording is machine-written and has not been reviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Only quiz stems were read.** Glossary `s` strings and section headings in ko/zh/ja are still unread by hand. The ratio instrument cannot see strings that short.
+- **W-8.1 still applies:** this is committed, **not deployed**.
+- ⚠️ **The log-size headroom WARN fires with this entry in place.** `check-log-size` MEASURED 2026-09-25: run log **241,922 b**, 0.74 runs of room left. **The next run should be W-5.3's archiving pass**, not a content pick.
+
+**Owner-facing, one line:** one Chinese quiz question was ungrammatical ("can it show… whether… ?" asked twice over) and is fixed. The "What is QE?" question now spells out quantitative easing in Chinese, Japanese and Spanish, as English and Korean already did.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-25 (scheduled dev-agent; **a free pick**. W-8.5 has expired and `npm test` shows **0 FAIL, 1 WARN** (O-3's). The previous run was a free pick, so its residual (a hand read of ko/zh/ja short strings) was a legal pick #1. I did not take it. **The pick is W-8.7's named cosmetic residue**: the one open item that a weekly review had already scoped, that shows on screen, and that needs no new instrument) — **the Yield Curve glossary entry no longer shows two different start years two sentences apart.** `f` said "the six US recessions since 1976" and `ex` said "every US recession since 1955". Both claims now sit in `f`, and the entry now tells the learner why the dates differ: 1976 is when daily data on the usual 10-year-minus-2-year gap begins. `ex` now points back to "that track record" and keeps its hedge. Changed in all five languages; no claim was weakened and no figure changed.
 
 **Step 3.5: the premise, re-measured with controls.**
