@@ -1348,6 +1348,18 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     §10.1, not against it. Check hedge parity, not only volume, whenever an abridged lesson touches
     §10.1.**
 
+    ✅ **The corpus-wide per-paragraph sweep this item asked for ran 2026-09-25, and it came back clean.**
+    **1,340 paragraph cells** (44 lessons × 4 languages): **0 parity breaks, 11 cells below 0.70.** Eight
+    are lesson 16 §0 ¶2-3 in all four languages — **condensation a 2026-09-19 owner-directed run chose
+    on purpose and named so no run "fixes" it** (archive, "fix L13 §0 and L16 next"); leave it. The
+    other three (4 ja §1¶1, 9 es §1¶0, 17 es §0¶0) were read in full and are tighter wording with
+    every fact kept. Controls: lessons 12/13/15 → 80 cells, min 0.709; dropping one sentence from a
+    known-good es paragraph → 0.93 to 0.28. **The main tracks are not abridged in `es`.** Takeaways,
+    thinkAbouts, quiz stems/options/explains and glossary `f`/`ex` swept per field the same way: no
+    field short in all four languages. ⚠️ **The instrument's blind spot is short strings** (it reads
+    only fields ≥60 English chars), and that is where the real defect was: **four `es` quiz stems
+    (q002, q003, q005, q006) had dropped the noun ko/zh/ja all kept** — fixed 2026-09-25, see the run log.
+
     ⭐ **Naming and currency conventions here are MEASURABLE, not choices.** "Maria" appears 9x in the
     English corpus and is carried consistently into every language (es María, ko 마리아, zh 玛丽亚,
     ja マリア), with "Sofia" returning 0 everywhere as the negative control — so lesson 4's Elena/David
@@ -5086,6 +5098,42 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-25 (scheduled dev-agent; **a free pick** — W-8.5 expired when item 94 closed, and `npm test` confirms it: **0 FAIL, 1 WARN**, the one being O-3's 0%-human-review line. The previous run was a W-8.5 pick, so W-6.2 rule 1 does not arise. The pick is the previous run's own "single highest-value follow-up": the per-paragraph sweep of all 44 lessons × 4 languages) — **the sweep came back clean, and the real defect was in the one place it cannot look: four Spanish quiz questions had dropped the noun that says what they are asking about.** `es` "¿Cuál es la parte más importante?" (*of what?* — "of the economy" kept by ko/zh/ja), "¿Cuánto dura el ciclo corto?" (short-term **debt** cycle), "Una curva invertida predice:" (inverted **yield** curve), and one stem that was ungrammatical, "¿Qué pasa en un desapalancamiento diferente de recesión?". All four fixed (q002, q003, q005, q006); nothing else changed.
+
+**Step 3.5 — the premise, re-measured with controls.** The 09-22 entry said the lesson-level check "cannot rule out" abridged `es` on the two main tracks.
+- **Per paragraph, 1,340 cells: 0 parity breaks, 11 below 0.70.** Negative control (lessons 12/13/15): **80 cells, min 0.709** (09-22 published 0.705; the p90s have moved a little since). Positive control: removing the last sentence of a known-good es paragraph in lesson 13 moves it **0.93 → 0.28**. Both fire.
+- ⭐ **The premise broke on its disposition, not only its number.** Eight of the eleven are **lesson 16 §0 ¶2-3 in all four languages**, which looks exactly like lesson 14. **It is not.** The 2026-09-19 owner-directed run read those clauses, restored the one that carried teaching (Dan's savings), and **left the rest out on purpose** ("a name that turns up in nearly every book written about money", "a person with a bit more money buying something they wanted", "worth being honest about that") — its words: *"Restoring them would be padding to clear a threshold."* Found by grepping the archive for the dropped English before editing anything. **Not touched.** Fixing it would have undone a recorded decision.
+- The other three (4 ja §1¶1, 9 es §1¶0, 17 es §0¶0) were read in full: tighter wording, no fact dropped.
+- **Other translated fields** (takeaway, thinkAbout, quiz stem/option/explain, glossary `f`/`ex`: 450 fields × 4), each language against its own p90 for that field type: **no field short in all four; `es` never flagged.** The injected-truncation control (q006's es explain cut in half) came back **0.37**, so it fires.
+- **What the ratio cannot see: strings under ~60 characters**, where one word is a large share and noise is high. I read all 46 `es` quiz stems next to English by hand. The four above are the only ones where `es` alone dropped the head noun that ko, zh and ja all kept (q007's "¿Qué es QE?" also drops the expansion, but zh/ja do too, so it is left).
+
+**The fix.** `src/content/quizText.es.js`: 4 stems, done by a patcher that checked each old string appeared **×1** and each new one **×0** before writing. Terms matched to what the corpus already uses: "ciclo de deuda a corto plazo" (3 existing hits; the grep's control), "curva de rendimiento" (glossary's `es` term; "curva de rendimientos" gets 0 hits). **No English changed, no option changed** (so item 160's option-length signal is not touched), no ko/zh/ja changed.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, as before) |
+| Readback | Re-imported: indices 1, 2, 4, 5 carry the new stems; `git diff` **4 lines out, 4 in**, one file |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (exit code read on its own line) |
+| Built bundle | All 4 new stems found only in `quizText.es-*.js`; the old garbled stem gives **0** hits; nonsense probe **0** |
+| Live render | **Not done**, and I'm saying so: this changes a string in a data file, not the UI. The stem renders through the same text child as before, and the bundle probe shows it ships |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice language, no dates, no figures, no Dalio, no kids framing. `check-blindspot` passes inside `npm test`.
+- **DECISIONS.md:** no conflict: content stays in `.js`, and "(Beta)" is unchanged.
+- **Already done / undoing something:** ⭐ **the check that mattered.** The obvious edit (lesson 16 §0) would have reversed the 09-19 decision; I found that and did not make it. The quiz stems are not in any completed item (checked by grepping for the old strings).
+- **My own claims:** a reviewer re-running the patcher's asserts, the bundle grep and `npm test` gets the same results. The sweep scripts were scratch files and were not committed (W-8.4: `scripts/` +0 lines). Their method and controls are written into item 94 so the next run can rebuild them. ⛔ The new Spanish is still machine-written; no fluent reader has checked it (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Only `es` stems were read by hand.** The ko/zh/ja stems I read for q002-q007 only (they kept the nouns). A hand read of all four languages' **short strings** (stems, glossary `s`, headings) is the one surface no instrument here covers.
+- **I did not build a per-paragraph check.** The corpus is clean, §33's lesson-level baseline already catches new drift, and W-8.4 argues against adding script weight. This would change if a future English edit grows a paragraph.
+- **W-8.1 still applies:** this is committed, **not deployed**.
+
+**Owner-facing, one line:** checking every paragraph of every lesson in four languages found **no cut-down translations left** (the one flagged lesson was trimmed on purpose on 09-19). Four Spanish quiz questions had lost the word that says what they're asking about, e.g. "What's the most important part?" with no "of the economy". Those are fixed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-22 (scheduled dev-agent; **item 94's last lesson, and W-8.5's clause expires with it** — `npm test`'s WARNs were re-read first: item 160's is still clear, item 94's still stood, so W-8.5 resolved to item 94 and no ranking decision was left, there being one candidate) — **`essentials` lesson 14, "Wills & Beneficiaries", is now fully translated — in FOUR languages, not the three the item budgeted.** es 0.83 → **1.10**, ko 0.37 → **0.49**, zh 0.24 → **0.32**, ja 0.33 → **0.43**. **Abridged pairs 3 → 0, abridged lessons 1 → 0.** Item 94 is closed; the whole corpus now clears the completeness threshold in all five languages.
 

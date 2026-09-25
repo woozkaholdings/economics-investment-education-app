@@ -28,7 +28,7 @@ export const quizText = [
     "explain": "El gasto total impulsa la economía. Gasto = dinero + crédito. Cada dólar gastado se convierte en el ingreso de otra persona."
   },
   {
-    "q": "¿Cuál es la parte más importante?",
+    "q": "¿Cuál es la parte más importante de la economía?",
     "opts": [
       "Crédito",
       "Oro",
@@ -38,7 +38,7 @@ export const quizText = [
     "explain": "El crédito es la parte más importante de la economía, y el monto de los nuevos préstamos oscila más que cualquier tipo de gasto: en EE.UU., hogares y empresas contrajeron unos $2.1 billones de deuda nueva al año en 2006 y luego esa deuda se redujo en unos $0.7 billones al año en 2009-10. En Estados Unidos, el crédito total pendiente es muchas veces mayor que la base monetaria (M0)."
   },
   {
-    "q": "¿Cuánto dura el ciclo corto?",
+    "q": "¿Cuánto dura el ciclo de deuda a corto plazo?",
     "opts": [
       "1-2 años",
       "20-30 años",
@@ -58,7 +58,7 @@ export const quizText = [
     "explain": "Cuando el gasto y los ingresos crecen más rápido que la producción de bienes, los precios suben. Eso es la inflación."
   },
   {
-    "q": "¿Qué pasa en un desapalancamiento diferente de recesión?",
+    "q": "¿Qué ocurre durante un desapalancamiento que lo distingue de una recesión?",
     "opts": [
       "La bolsa sube",
       "El gobierno deja de gastar",
@@ -68,7 +68,7 @@ export const quizText = [
     "explain": "En una recesión normal, bajar las tasas de interés suele ayudar a que el crédito y el gasto se recuperen. En un desapalancamiento no basta, porque las deudas ya son demasiado grandes para los ingresos. Las tasas no estaban en 0% cuando llegaron los picos de 1929, 1990 y 2007: estaban por encima del 5%. En EE.UU., el Fed las bajó cerca del 0% a finales de 2008, y la crisis siguió de todos modos. Por eso hacen falta la QE y las demás herramientas."
   },
   {
-    "q": "Una curva invertida predice:",
+    "q": "Una curva de rendimiento invertida predice:",
     "opts": [
       "Alza inmediata",
       "Inflación baja",
