@@ -5099,6 +5099,43 @@ same journey.
 
 ## Run log
 
+### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. **The pick is the previous run's one named residual: a hand read of the lesson section headings in ko/zh/ja.** This is the first time in a row that a run took its own previous run's residual, so W-6.2 rule 1 allows it. **The next run may take a residual of this one only once more**) — **three lesson section headings were wrong in one language each: one was garbled, one dropped the concept its section teaches, and one turned the lesson's own test into a statement.** These headings are the bold titles inside the lesson reader.
+- **zh money 24.0 was garbled.** "…这正是想要**要**借用它的名字的原因。" had a doubled 要 and no quotation marks, so 想要 ("wants", the noun) reads as the verb "to want". It is now "“需要”跳过了那个问题。正因如此，“想要”才借用它的名字。" The body already quotes “需要” this way.
+- **zh essentials 10.1 dropped "both halves".** It said "承担两份负担" ("bearing two burdens"), and the section teaches that the self-employed pay the employer's half as well as their own. It is now "自雇税：两半都由自己承担", using the body's own phrase "自雇者要自己承担两半".
+- **ko money 25.1 dropped the test's first question.** "언제 필요할지 모르는데, …" says "you don't know when you'll need it". The test the section teaches asks the reader to work out when. It is now "테스트: 언제 필요할 수 있는가, 그리고 그날 가치가 떨어져 있어도 괜찮은가?", which matches the body ("얼마나 빨리 필요할 수 있는가") and the plain ending of the sibling test heading, 24.1.
+
+**Step 3.5: the premise and its controls.** The premise was that the ko/zh/ja headings had never been read by hand, and it held. **The first dump returned 0 headings, and the control caught it:** the merged module is `sections[i].heading[lang]`, not `sections[lang][i]`. The corrected dump returned **107 headings × 5 languages across 44 lessons, with 0 missing**, and I read all of them.
+**Read and deliberately left alone:**
+- **es "el/del Fed" (35.2).** The es corpus uses the masculine form 37 times and "la Fed" 5 times, so it is the house choice, not a slip.
+- **ko 44.0 "'수동적'이라는 단어가 빼놓는 부분".** It is a free rendering of "Nothing Starts Passive", but it is faithful in sense.
+- **The ko 다/입니다 register mix** across the money headings. It is cosmetic and appears in about 8 headings.
+- **en 3.2 ("stay invested") against the four "must be reinvested" renderings.** They are close enough in sense, and all four agree.
+
+**The fix.** The patcher required each old string ×1 and each new string ×0 before writing. `git diff --stat` shows **3 files, 3 lines in, 3 out.** No English, body, takeaway, es or ja text changed. `translation-review.mjs` hashes only the English source, so review coverage is correctly unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| Readback | Re-importing `lessonContent.js` prints all three new headings exactly; the en 24.0 control is unchanged |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Built bundle | Each new string is in 1 file, each old string in 0. Known-string control `时间胜过时机` = 1; nonsense probe = 0 |
+| Live render | **Not done, on purpose.** The headings are the same text node as before, and the bundle probe shows the new strings ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** the three changes are headings with no figures, dates, advice or Dalio. The ko 25.1 wording asks the same question as the English and recommends nothing. `check-blindspot` passes inside `npm test`.
+- **DECISIONS.md / done work:** no conflict. The 09-25 quiz-stem and glossary fixes are untouched.
+- **My own claims:** a reviewer who re-runs the dump, `npm test`, the build and the bundle probes gets the same results. ⛔ The new zh/ko wording is machine-written and unreviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Lesson titles and subtitles in `lessons.js`** are still unread by hand in ko/zh/ja. They are the last short-string surface. ⚠️ Under W-6.2 rule 1, the next run may take this residual, but the run after it may not.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** three lesson section headings now read correctly: one Chinese heading had a doubled character, one Chinese heading lost "both halves" of the self-employment tax, and one Korean heading had turned a question into a statement.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. The previous run was an archiving pass, so W-6.2 rule 1 does not arise. **The pick is the residual both 09-25 entries named as still open: a hand read of the ko/zh/ja glossary `s` strings**) — **four glossary entries showed a name in some languages that dropped half of what English shows.** `s` is the row title in Reference → Glossary, the heading in the term detail, and the chip label under lessons (`Glossary.jsx:201`, `TermDetail.jsx:54`, `GlossaryTerms.jsx:61`), so this is the first thing a learner reads for the term.
 - **PMI `ja`: "PMI" → "購買担当者景気指数（PMI）".** en/ko/zh/es all expand the acronym, and the ja `f` never does either, so **a Japanese reader of the glossary was never told what PMI stands for.** The wording copies ja lesson 39 ("PMI（購買担当者景気指数）").
 - **Fed Funds Rate `ja`: "FF金利" → "フェデラルファンド金利（FF金利）".** The other four languages name the rate in full. The long form is the ja lesson heading, and the ja quiz stem already pairs the two.
