@@ -32,7 +32,7 @@ import {
   budgetCaption, budgetDescription, budgetLabels, budgetSegments, budgetTitle,
   compoundCaption, compoundDescription, compoundLabels, compoundSeries, compoundTitle, compoundYears,
   flipAxisLabels, flipCaption, flipCrossing, flipDescription, flipMarkerLabel, flipMonths,
-  flipSeries, flipSeriesLabels, flipTitle, flipYNorm, flipZoneLabels,
+  flipSeries, flipSeriesLabels, flipTitle, flipYNorm, flipZoneLabels, flipZoneSeries,
   gapAxisLabel, gapCaption, gapDescription, gapEarners, gapOf, gapRuleLabel, gapSegmentLabels,
   gapTitle,
   incomeKinds,
@@ -108,6 +108,15 @@ const MONEY_VISUALS = new Set(["budgetSplit", "compounding", "taxBrackets", "mor
 // are written that way, and converting them per locale would make the chart
 // disagree with the prose beside it.
 const usd = (n) => `$${n.toLocaleString("en-US")}`;
+
+// Lesson 23's two rewards, indexed like `flipSeries()`: 0 = the sooner $50
+// (amber), 1 = the later $65 (green). Line, label ink, zone wash and zone edge
+// all come from one entry, and each tinted zone picks its entry through
+// `flipZoneSeries()`, so a band can never be washed in the other reward's color.
+const FLIP_PALETTE = [
+  { line: graph.amber, ink: ink.warn, wash: surface.warnWash },
+  { line: graph.green, ink: ink.ok, wash: surface.okWash },
+];
 
 // ── Lesson 36's four curve shapes, as ONE curve ───────────────────────────
 //
@@ -379,11 +388,11 @@ export default function LessonVisual({ lessonId, t, lang }) {
           series={flipSeries().map((s, i) => ({ label: flipSeriesLabels[lang][i], values: s.values }))}
           crossing={flipCrossing()}
           yNorm={flipYNorm}
-          colors={[graph.amber, graph.green]}
-          labelInks={[ink.warn, ink.ok]}
+          colors={FLIP_PALETTE.map((p) => p.line)}
+          labelInks={FLIP_PALETTE.map((p) => p.ink)}
           zones={flipZoneLabels[lang]}
-          zoneColors={[surface.okWash, surface.warnWash]}
-          zoneEdges={[graph.green, graph.amber]}
+          zoneColors={flipZoneSeries().map((i) => FLIP_PALETTE[i].wash)}
+          zoneEdges={flipZoneSeries().map((i) => FLIP_PALETTE[i].line)}
           markerLabel={flipMarkerLabel[lang]}
           axisLabels={flipAxisLabels[lang]}
           description={flipDescription[lang]}

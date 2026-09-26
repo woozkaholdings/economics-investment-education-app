@@ -3064,31 +3064,20 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       100/115/130% — 130% being `FONT_SCALE_STEPS`' own ceiling, so nothing reachable in-app moves —
       and collapses only at 150/200%.
 
-152. **[Content/QA — filed 2026-08-30 by the run that closed item 151, as its stated residual rather
-    than smuggled into the same commit.] §50 now proves lesson 23's zone/series/axis labels say the
-    right things in the right positions. The COLORS those positions are drawn in are paired by index
-    too, in a different file, and nothing checks that pairing at all.**
-    - **The coupling, read off `LessonVisual.jsx:190-194` on 2026-08-30:**
-      `colors={[graph.amber, graph.green]}` (series 0 = the sooner $50 = amber, series 1 = the later
-      $65 = green), `labelInks={[ink.warn, ink.ok]}`, `zoneColors={[surface.okWash, surface.warnWash]}`
-      and `zoneEdges={[graph.green, graph.amber]}`. The zone arrays are **deliberately the reverse of
-      the series arrays**: zone 0 is the band where the *later* reward wins, so it is washed with the
-      *later* reward's green. That inversion is correct and it looks like a mistake, which is exactly
-      the shape someone "tidies".
-    - **The hole:** rewrite `zoneColors` to `[surface.warnWash, surface.okWash]` for consistency with
-      `colors`, and the figure washes the wait-for-the-$65 band in the $50's amber and vice versa,
-      while §50 (i) and (j) both stay green — they read content strings and this is a JSX prop. The
-      learner then reads a band whose color says one thing and whose label says the other.
-    - **Why it was not done in item 151's commit:** (j) asserts over `moneyVisuals.js` exports, which
-      `check-data.mjs` already imports. These four arrays are JSX props in a component file that no
-      §50 block reads, so covering them needs either a source-text parse of `LessonVisual.jsx` (brittle)
-      or lifting the color choice into the content module beside the labels it belongs to (a real
-      refactor, and the better answer). **Decide which before writing any check** — a regex over JSX
-      props is the kind of instrument this log has repeatedly found reading the wrong thing.
-    - **Carry a control:** whichever route, injecting the swapped `zoneColors` must fail and the
-      shipped order must pass. If lifting into content, the control is free the way (j)'s was.
-    - **Honest priority: low.** Zero live instances — the pairing is correct today and was measured,
-      not assumed. Downstream of O-1 like everything else.
+152. **✅ DONE 2026-09-26 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1; the
+    full reasoning is in that day's run-log entry. **Premise held**: the four props had only moved
+    (`LessonVisual.jsx:190-194` → `:382-386`), and the reversed `zoneColors` was still correct and
+    still unguarded. **Route: lift into data, the one the item preferred** — but only the *choice*,
+    not the tokens: `moneyVisuals.js` now exports `flipZoneSeries()` (each zone's winning series,
+    derived from `flipValue` at the two end vantage points, today `[1, 0]`), and
+    `LessonVisual.jsx` takes line, label ink, zone wash and zone edge for each series from **one**
+    `FLIP_PALETTE` entry. The inversion is no longer typed anywhere, so there is nothing to "tidy".
+    **Guard: `check-data.mjs` §50 (k)** — model half (`flipZoneSeries()` must equal (j)'s
+    arithmetic winners) and wiring half (the four props must route through `FLIP_PALETTE` /
+    `flipZoneSeries()`, each palette entry one hue family). The wiring half reads JSX as text,
+    kept to fixed expressions and proven by two in-script injections; both halves also proven by
+    injecting into the real files (both FAIL, restored byte-identical). Rendered output unchanged,
+    measured live on `dist/`.
 
 151. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (j) —
     THREE pairs, not the two the item scoped. Every premise held, including the one it flagged as
@@ -5098,6 +5087,40 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-26 (scheduled dev-agent; **a free pick, and not a residual of the short-string chain**, as the previous entry's ⛔ required. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. **The pick is backlog item 152**, which is the oldest open item that is scoped, needs no owner input and is a code change a reviewer can read in minutes) — **lesson 23's two tinted zones now take their colors from the reward they belong to, not from a hand-typed array that had to be written backwards.**
+- **The defect class (W-6.2 rule 3: the learner-visible failure).** The preference-flip figure has two tinted bands. The left band is labeled "Here, the $65 feels worth more", and it must be washed in the $65 line's green. That pairing was the literal prop `zoneColors={[surface.okWash, surface.warnWash]}`, the reverse of `colors={[graph.amber, graph.green]}`. It was correct, but it looked like a typo. "Tidied" to match `colors`, it would tint the $65 band in the $50's amber. Every existing §50 block would stay green, because they read content strings and this was a JSX prop.
+- **The fix, which is the route the item preferred.** `src/content/moneyVisuals.js` now exports `flipZoneSeries()`. It returns each zone's winning series index, derived from `flipValue` at the two end vantage points; today that is `[1, 0]`. `src/components/LessonVisual.jsx` defines one `FLIP_PALETTE` entry per series (`{ line, ink, wash }`). All four props are now derived: `colors` and `labelInks` map the palette, and `zoneColors` and `zoneEdges` go through `flipZoneSeries()`. The reversal is no longer written anywhere by hand. Only the *choice* moved into content; the theme tokens stay in the component, so the content module still imports no theme.
+- **The guard is `check-data.mjs` §50 (k).** The **model half** asserts that `flipZoneSeries()` equals the winners block (j) already derives from the arithmetic. The **wiring half** asserts that the four `<PreferenceFlip>` props are those exact derived expressions and that each palette entry's line, ink and wash belong to one hue family. A mixed entry is the same bug one level down. The item warned that regexes over JSX read the wrong thing, so this half matches fixed expressions only and carries its own two injections (the old literal array and a mixed-hue entry). If either injection is not caught, or its anchor has gone, §50 fails.
+
+**Step 3.5: the premise and its controls.** The premise held in full. The four props had moved from `:190-194` to `:382-386` with the same values, and nothing else read them (`grep zoneColors|zoneEdges` → only `LessonVisual.jsx:385-386` and `charts.jsx`'s consumer). **External controls, injected into the real files and restored from a scratchpad copy (`cmp` byte-identical):**
+1. The tidied `zoneColors={[surface.warnWash, surface.okWash]}` in `LessonVisual.jsx` → **FAIL ×2**: the wiring half, plus the in-script control whose anchor had gone, which reports that honestly rather than passing.
+2. `flipZoneSeries` reversed to return `[0,1]` → **FAIL ×1**, from the model half, naming the arithmetic's `[1,0]`.
+**One self-inflicted FAIL on the way:** §59 caught "labelled" in my new comment. It is fixed ("labeled"), which shows the US-English guard still fires on new code.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| §50 line | now ends "…zone tints follow flipZoneSeries() [1,0] through one FLIP_PALETTE entry per series — two injections … both caught." |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Live render | `dist/` served statically and opened at `#/lesson/23` (all 44 lessons marked complete in storage, then cleared). Zone rects: `var(--surface-ok-wash)`, `var(--surface-warn-wash)`. Strokes: amber, green. Legend: "Here, the $65 feels worth more" = ok-wash / green edge, "Here, the $50…" = warn-wash / amber edge. Series inks: warn / ok. **This is identical to the pre-change mapping, so pixels are unchanged.** The control for the probe is that the zone labels in the same legend rows are the ones (j) proves sit on the right sides. |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no content text changed. No figures, dates, advice or Dalio. `check-blindspot` passes inside `npm test`.
+- **DECISIONS.md:** no conflict. Content stays a `.js` module, it gains a pure function with no theme import, and nothing touches state or storage.
+- **Done work:** (i) and (j) are untouched and still pass. (k) extends them and does not re-check labels.
+- **Is the wiring check a regex-over-JSX that reads the wrong thing?** That is the item's own warning. It is bounded: exact expressions, not a parse. A harmless refactor, such as renaming `p` to `c` in the map callback, **will** fail it. I accept that false-positive cost: the message says "route it through FLIP_PALETTE … or repoint this block", and a loud false positive is cheaper than a silent miss here.
+- **My own claims:** a reviewer who re-runs the two injections, `npm test`, the build and the live probe gets the same results.
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- The other money figures (`labelInks` at `LessonVisual.jsx:233/286/299/362/409/501`) pair inks to series by index too. None of them has a reversed second array, which was the specific trap here. No live instance was seen, so none was filed.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** no visible change. The two colored bands in the "later vs now" chart can no longer be swapped by a tidy-up edit, and the test suite now proves it.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. **The pick is the previous run's named residual: a hand read of the lesson titles and subtitles in `lessons.js` for ko/zh/ja.** This is the second run in a row to take its predecessor's residual, which W-6.2 rule 1 allows once more and no further. ⛔ **The next run may NOT take a residual of this one**) — **lesson 27's title lost its point in three languages, one Chinese title named the wrong thing, and one Chinese subtitle was garbled.** Titles show on the lesson card, at the top of the reader, and in quoted cross-references inside other lessons and quiz explanations.
 - **Lesson 27 (loss aversion) in ko/zh/ja.** English asks why losing $50 *hurts more than finding $50 feels good*. All three translations said "why does losing $50 hurt more than finding $50", and finding money does not hurt at all. That drops the pain-versus-equal-pleasure asymmetry, which is what the lesson teaches. The titles now compare pain with pleasure: ko "왜 50달러를 잃은 아픔이 50달러를 주운 기쁨보다 더 클까?", zh "为什么损失50美元的痛苦，比捡到50美元的快乐更强烈？", ja "なぜ50ドルを失う痛みは、50ドルを拾う喜びよりも大きいのか？". **The title is quoted verbatim in lesson 28's body and in one quiz explanation in each language, so all 3 × 3 copies changed together.**

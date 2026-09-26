@@ -417,6 +417,24 @@ export function flipCrossing() {
   return s.month - wait;
 }
 
+// Which curve each tinted zone belongs to, as an index into `flipSeries()`
+// (0 = sooner, 1 = later). `PreferenceFlip` fills zone 0 from the left edge to
+// the crossing and zone 1 from the crossing to the right edge, so each zone is
+// the reward worth more at that end. Today that is [1, 0]: the zones run in the
+// REVERSE order of the series, which is correct and looks like a mistake. The
+// component takes each zone's wash and edge from its winning series' color
+// through this function rather than from a second hand-written array, so the
+// band where the $65 wins can only be tinted like the $65's line (backlog item
+// 152, 2026-09-26). `check-data.mjs` §50 (k) holds both halves.
+export function flipZoneSeries() {
+  const rewards = [flipRewards.sooner, flipRewards.later];
+  const ends = [flipMonths[0], flipMonths[flipMonths.length - 1]];
+  return ends.map((now) => {
+    const [soonerV, laterV] = rewards.map((r) => flipValue(r.amount, r.month, now));
+    return laterV > soonerV ? 1 : 0;
+  });
+}
+
 export const flipTitle = {
   en: "What each option feels worth, as the $50 gets closer",
   es: "Cuánto parece valer cada opción a medida que se acercan los $50",

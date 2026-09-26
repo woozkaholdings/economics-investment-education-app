@@ -6811,7 +6811,7 @@ if (keyedGroupsChecked < 4) {
   const need = [
     "flipRewards", "flipDiscountK", "flipMonths", "flipValue", "flipSeries", "flipCrossing",
     "flipTitle", "flipSeriesLabels", "flipAxisLabels", "flipZoneLabels", "flipMarkerLabel",
-    "flipCaption", "flipDescription", "flipYNorm",
+    "flipCaption", "flipDescription", "flipYNorm", "flipZoneSeries",
   ];
   const missing = need.filter((k) => mv[k] === undefined);
   if (missing.length > 0) {
@@ -7242,8 +7242,90 @@ if (keyedGroupsChecked < 4) {
       if (ordered) flipLangsOrdered += 1;
     }
 
+    // (k) WHICH COLOR SAYS WHICH (backlog item 152, 2026-09-26). (j) proves
+    //     the zone LABELS sit on the right sides; the zone COLORS are a
+    //     different channel. They used to be a hand-written JSX prop,
+    //     `zoneColors={[surface.okWash, surface.warnWash]}`, deliberately the
+    //     reverse of `colors` — correct, and exactly the shape someone
+    //     "tidies". Swapped, the band labeled "the $65 feels worth more" is
+    //     washed in the $50's amber, and every block above stays green because
+    //     they read content strings. The fix lifted the choice into data:
+    //     `flipZoneSeries()` names each zone's winning series, and
+    //     `LessonVisual.jsx` takes every color for a series from ONE
+    //     `FLIP_PALETTE` entry. This block holds both halves:
+    //       model  — flipZoneSeries() equals the winners (j) derives from the
+    //                arithmetic, as series indices;
+    //       wiring — the <PreferenceFlip> props route through FLIP_PALETTE and
+    //                flipZoneSeries(), and each palette entry's line, ink and
+    //                wash are one hue family (a mixed entry is the same bug
+    //                moved one level down).
+    //     Reading JSX as text is the brittle route the item warned about, so it
+    //     is kept to fixed expressions and proven against two injections below.
+    {
+      const indexOf = (amount) => (amount === s.amount ? 0 : amount === l.amount ? 1 : -1);
+      const wantZones = [indexOf(leftWinner), indexOf(rightWinner)];
+      const zonesMatch = (got) => Array.isArray(got) && got.length === 2 && got.every((v, i) => v === wantZones[i]);
+      if (!zonesMatch(mv.flipZoneSeries())) {
+        fail(`§50: flipZoneSeries() returns ${JSON.stringify(mv.flipZoneSeries())}, but the arithmetic puts the $${leftWinner} on top at the left edge and the $${rightWinner} at the right, i.e. series ${JSON.stringify(wantZones)}. The component tints each zone from this, so the figure now washes a band in the color of the reward that loses there.`);
+      }
+      if (zonesMatch([wantZones[1], wantZones[0]])) {
+        fail(`§50 (k): the zone-series comparison accepts the reversed pair ${JSON.stringify([wantZones[1], wantZones[0]])}, so it cannot detect a swap. The instrument is broken; a pass here means nothing.`);
+      }
+
+      const FAMILY = {
+        "graph.amber": "warn", "ink.warn": "warn", "surface.warnWash": "warn",
+        "graph.green": "ok", "ink.ok": "ok", "surface.okWash": "ok",
+      };
+      const wiringProblems = (src) => {
+        const out = [];
+        const pal = src.match(/const FLIP_PALETTE = \[([\s\S]*?)\n\];/);
+        if (!pal) return ["no `const FLIP_PALETTE = [ ... ];` declaration"];
+        const entries = [...pal[1].matchAll(/\{\s*line:\s*([\w.]+),\s*ink:\s*([\w.]+),\s*wash:\s*([\w.]+)\s*\}/g)];
+        if (entries.length !== 2) out.push(`FLIP_PALETTE has ${entries.length} readable { line, ink, wash } entries, not 2`);
+        entries.forEach((e, i) => {
+          const fams = e.slice(1).map((tok) => FAMILY[tok] ?? `unknown(${tok})`);
+          if (new Set(fams).size !== 1) out.push(`FLIP_PALETTE[${i}] mixes ${e.slice(1).join(" / ")} (${fams.join(" / ")})`);
+        });
+        if (entries.length === 2 && FAMILY[entries[0][1]] === FAMILY[entries[1][1]]) out.push("both FLIP_PALETTE entries are the same hue, so the two curves cannot be told apart");
+        const el = src.match(/<PreferenceFlip\b([\s\S]*?)\/>/);
+        if (!el) return [...out, "no <PreferenceFlip ... /> element"];
+        const need = {
+          colors: "FLIP_PALETTE.map((p) => p.line)",
+          labelInks: "FLIP_PALETTE.map((p) => p.ink)",
+          zoneColors: "flipZoneSeries().map((i) => FLIP_PALETTE[i].wash)",
+          zoneEdges: "flipZoneSeries().map((i) => FLIP_PALETTE[i].line)",
+        };
+        for (const [prop, expr] of Object.entries(need)) {
+          if (!el[1].includes(`${prop}={${expr}}`)) out.push(`<PreferenceFlip> ${prop} is not \`${expr}\``);
+        }
+        return out;
+      };
+      const lvPath = join(ROOT, "src/components/LessonVisual.jsx");
+      const lvSrc = readFileSync(lvPath, "utf8");
+      const shipped = wiringProblems(lvSrc);
+      for (const msg of shipped) {
+        fail(`§50: lesson 23's zone colors are no longer derived from the series they belong to — ${msg} (src/components/LessonVisual.jsx). A hand-written zone color array is how a band gets washed in the other reward's color while every label check stays green. Route it through FLIP_PALETTE and flipZoneSeries(), or repoint this block.`);
+      }
+      // Controls: the pre-item-152 literal props, and a palette entry whose
+      // wash belongs to the other hue. Each must be caught, or a clean result
+      // above means the instrument is reading nothing.
+      const injections = [
+        ["the old hand-written zone arrays", lvSrc.replace(
+          "zoneColors={flipZoneSeries().map((i) => FLIP_PALETTE[i].wash)}",
+          "zoneColors={[surface.warnWash, surface.okWash]}")],
+        ["a mixed-hue palette entry", lvSrc.replace(
+          /(\{ line: graph\.amber, ink: ink\.warn, wash: )surface\.warnWash/,
+          "$1surface.okWash")],
+      ];
+      for (const [what, injected] of injections) {
+        if (injected === lvSrc || wiringProblems(injected).length === 0) {
+          fail(`§50 (k): the control "${what}" was ${injected === lvSrc ? "not injected (its anchor text is gone)" : "injected and NOT caught"}. The wiring check is not reading what it claims to; update the control's anchor or the parser before trusting a pass.`);
+        }
+      }
+    }
+
     if (failures === 0) {
-      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve. $${s.amount}, $${l.amount} and the $${l.amount - s.amount} between them are read out of lesson 23's own body, and $${s.amount}/$${l.amount} out of the caption, description, zone labels and series labels the figure renders, in all ${flipLangsAnchored} language(s) — control proven both directions in each. Which label says which is checked too: the zone, series and axis pairs are consumed by position, and in all ${flipLangsOrdered} language(s) element 0/1 name the $${leftWinner}/$${rightWinner} side the arithmetic puts them on — each key's spec proven swap-detectable, and the exclusion half that makes it one proven live against a pair stating both rewards in both positions.`);
+      console.log(`  §50 lesson 23's preference flip holds: $${s.amount}@${s.month}mo vs $${l.amount}@${l.month}mo at k=${k} (> the ${kMin} the lesson requires) reverses exactly once, at month ${Number(solved).toFixed(3)} — solved and sampled agree, both options worth $${eqS.toFixed(2)} there — and both of the lesson's stated choices fall out of the curve. $${s.amount}, $${l.amount} and the $${l.amount - s.amount} between them are read out of lesson 23's own body, and $${s.amount}/$${l.amount} out of the caption, description, zone labels and series labels the figure renders, in all ${flipLangsAnchored} language(s) — control proven both directions in each. Which label says which is checked too: the zone, series and axis pairs are consumed by position, and in all ${flipLangsOrdered} language(s) element 0/1 name the $${leftWinner}/$${rightWinner} side the arithmetic puts them on — each key's spec proven swap-detectable, and the exclusion half that makes it one proven live against a pair stating both rewards in both positions. Which COLOR says which too: zone tints follow flipZoneSeries() ${JSON.stringify(mv.flipZoneSeries())} through one FLIP_PALETTE entry per series — two injections (the old literal zone array, a mixed-hue entry) both caught.`);
     }
   }
 }
