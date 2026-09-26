@@ -5099,6 +5099,40 @@ same journey.
 
 ## Run log
 
+### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. The previous run was an archiving pass, so W-6.2 rule 1 does not arise. **The pick is the residual both 09-25 entries named as still open: a hand read of the ko/zh/ja glossary `s` strings**) — **four glossary entries showed a name in some languages that dropped half of what English shows.** `s` is the row title in Reference → Glossary, the heading in the term detail, and the chip label under lessons (`Glossary.jsx:201`, `TermDetail.jsx:54`, `GlossaryTerms.jsx:61`), so this is the first thing a learner reads for the term.
+- **PMI `ja`: "PMI" → "購買担当者景気指数（PMI）".** en/ko/zh/es all expand the acronym, and the ja `f` never does either, so **a Japanese reader of the glossary was never told what PMI stands for.** The wording copies ja lesson 39 ("PMI（購買担当者景気指数）").
+- **Fed Funds Rate `ja`: "FF金利" → "フェデラルファンド金利（FF金利）".** The other four languages name the rate in full. The long form is the ja lesson heading, and the ja quiz stem already pairs the two.
+- **VIX:** en and ko show both halves, "Volatility Index (Fear Gauge)". **zh dropped the nickname, es dropped the nickname, and ja showed only the nickname.** zh is now "波动率指数（恐慌指数）", ja "ボラティリティ指数（恐怖指数）", and es "Índice de Volatilidad (medidor del miedo)". Each nickname is the one that language's own economy lesson uses.
+
+**Step 3.5: the premise and its controls.** The premise was that ko/zh/ja glossary `s` strings had never been read by hand. Both 09-25 entries say so, and it held. All **43 entries × 5 languages** were dumped side by side from the module and read in full. The dump shows 43 keys with no `<MISSING>` language. **Read and left alone, on purpose:** ko "비상금" (11 uses in ko essentials, 0 of "비상 자금"), zh "生产力增长" (the zh economy lessons use 生产力 9× to 生产率 2×) and ja "不労所得" (the 09-25 quiz run kept it: it is the standard term). A glossary name that disagrees with its own lessons would be worse than either word.
+
+**The fix.** A patcher required each old string ×1 and each new one ×0 before writing. `git diff --stat`: **1 file, 3 lines in, 3 out** (five `s` values; VIX's three sit on one line). No `f`, no `ex`, no English and no ko changed. The glossary key is unchanged, so review/bookmark state (keyed by term) and search by "PMI"/"VIX" are unaffected. The ja/zh/es sort position moves, which is by design: `Glossary.jsx` sorts on what the row displays.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| Readback | Re-importing the module shows all five new `s` values; en PMI unchanged |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (exit read on its own line) |
+| Built bundle | Each new string is in 1 file. Format control: `s:"購買担当者景気指数（PMI）"` = **1**. Old `s:"PMI"`, `s:"FF金利"`, `s:"恐怖指数"`, `s:"波动率指数"` = **0**. Nonsense probe = **0** |
+| Live render | **Not done, on purpose.** Same text child as before, and the bundle probe shows the strings ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** these are names only. There are no dates, figures, advice or Dalio. `check-blindspot` passes inside `npm test`.
+- **Quiz leak?** One quiz asks which indicator is nicknamed the fear gauge. English has always shown "(Fear Gauge)" in this title and ja always showed 恐怖指数, so this restores parity rather than adding a cue. The glossary and the quiz are also separate screens.
+- **Collision:** essentials lesson 12's "PMI" means private mortgage insurance. `lessonTerms.js:281` already excludes it from the chip, so the longer ja name cannot mislabel that lesson.
+- **DECISIONS.md / done work:** no conflict. W-8.7's Yield Curve reconciliation and the 09-25 quiz-stem fixes are untouched.
+- **My own claims:** a reviewer re-running the dump, `npm test`, the build and the bundle probes gets the same results. ⛔ The new zh/ja/es wording is machine-written and unreviewed (O-3; the glossary sits outside the review ledger by recorded decision).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Section headings** in ko/zh/ja are still unread by hand. They are the last short-string surface the ratio instrument cannot see.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in the Japanese glossary, "PMI" and "FF金利" now show what they stand for. The VIX entry now shows both its formal name and its "fear gauge" nickname in Chinese, Japanese and Spanish, as English and Korean already did.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-25 (scheduled dev-agent; **the previous run's named handoff**: its entry tripped `check-log-size`'s headroom WARN and said *"The next run should be W-5.3's archiving pass"*, so W-6.2 rule 1 does not arise) — W-5.3's **twentieth** firing: 2026-09-20 (**14 entries, 165,564 b**) moved verbatim to `AGENT_LOG.archive.md` under `## Archived 2026-09-20`. Run log **242,150 → 76,586 b** (96.9% → **30.6%** of budget; 0.75 → **16.5 runs** of headroom), headroom WARN cleared (`npm test` 2 WARN → **1**, O-3's).
 
 **Step 3.5: the premise, re-measured.** `check-log-size` at HEAD `c3b3b94`: run log **242,150 b**, 4 live days (09-20, 09-21, 09-22, 09-25), **0.75 runs** left, WARN firing, its own 4 controls firing. The premise held. I re-derived the cut from byte offsets instead of taking it from the instrument. The run log is newest-first, so 09-20 is the **tail** of the file: 14 `### 2026-09-20` headings from 527,563 to 677,181. Every other dated heading precedes the first one, so the day is one contiguous region running to EOF. The block starts one byte earlier, at the blank-line `\n`, so the live file still ends `.\n` and the archive keeps its two-blank-line section spacing.
