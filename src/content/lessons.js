@@ -271,13 +271,13 @@ export const lessons = [
   },
   {
     id: 10, track: "essentials", icon: "📋", color: "#78350f", minutes: 3,
-    title: {"en":"W-2 vs. 1099: Why Your Tax Bill Changes With How You're Paid","es":"W-2 vs. 1099: Por Qué Tu Factura de Impuestos Cambia Según Cómo Te Pagan","ko":"W-2 vs. 1099: 받는 방식에 따라 세금 부담이 달라지는 이유","zh":"W-2与1099：为什么你的纳税方式取决于你如何被支付","ja":"W-2対1099：支払われ方によって税金が変わる理由"},
+    title: {"en":"W-2 vs. 1099: Why Your Tax Bill Changes With How You're Paid","es":"W-2 vs. 1099: Por Qué Tu Factura de Impuestos Cambia Según Cómo Te Pagan","ko":"W-2 vs. 1099: 받는 방식에 따라 세금 부담이 달라지는 이유","zh":"W-2与1099：为什么领薪方式不同，税单也会不同","ja":"W-2対1099：支払われ方によって税金が変わる理由"},
     subtitle: {"en":"The same income can owe very different taxes depending on whether you're an employee or a contractor","es":"El mismo ingreso puede deber impuestos muy distintos según seas empleado o contratista","ko":"같은 소득이라도 직원인지 계약자인지에 따라 세금 부담이 크게 달라질 수 있습니다","zh":"同样的收入，作为雇员和作为承包商所欠的税可能大不相同","ja":"同じ収入でも、従業員か契約者かによって税額は大きく変わり得る"},
   },
   {
     id: 11, track: "essentials", icon: "💸", color: "#be123c", minutes: 3,
     title: {"en":"Investment Fees: The Cost You Don't See on a Bill","es":"Comisiones de Inversión: El Costo Que No Ves en una Factura","ko":"투자 수수료: 청구서에 안 보이는 비용","zh":"投资费用：账单上看不到的成本","ja":"投資手数料：請求書に現れないコスト"},
-    subtitle: {"en":"A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you","es":"Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor","ko":"연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다","zh":"年化1%的费用听起来很小，但它会像复利那样不利地累积，正如利息会像复利那样对你有利地累积","ja":"年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります"},
+    subtitle: {"en":"A 1% annual fee sounds tiny, but it compounds against you the same way interest compounds for you","es":"Una comisión anual del 1% suena pequeña, pero se compone en tu contra igual que el interés se compone a tu favor","ko":"연 1% 수수료는 작아 보이지만, 이자가 당신에게 유리하게 복리로 쌓이듯 수수료도 당신에게 불리하게 복리로 쌓입니다","zh":"年化1%的费用听起来很小，但它会以复利的方式对你不利地累积，就像利息以复利的方式对你有利地累积一样","ja":"年1%の手数料は小さく聞こえますが、利息があなたに有利に複利で積み上がるのと同じように、手数料もあなたに不利に複利で積み上がります"},
   },
   {
     id: 12, track: "essentials", icon: "🏠", color: "#334155", minutes: 5,
@@ -376,7 +376,7 @@ export const lessons = [
   },
   {
     id: 27, track: "money", icon: "💔", color: "#b91c1c", minutes: 4,
-    title: {"en":"Why Does Losing $50 Hurt More Than Finding $50 Feels Good?","es":"¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?","ko":"왜 50달러를 잃는 것이 50달러를 줍는 것보다 더 아플까?","zh":"为什么损失50美元比捡到50美元更让人难受？","ja":"なぜ50ドルを失うことは、50ドルを拾うことよりも辛いのか？"},
+    title: {"en":"Why Does Losing $50 Hurt More Than Finding $50 Feels Good?","es":"¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?","ko":"왜 50달러를 잃은 아픔이 50달러를 주운 기쁨보다 더 클까?","zh":"为什么损失50美元的痛苦，比捡到50美元的快乐更强烈？","ja":"なぜ50ドルを失う痛みは、50ドルを拾う喜びよりも大きいのか？"},
     subtitle: {"en":"The pain of a loss and the pleasure of an equal gain aren't mirror images of each other — and that lopsided math quietly shapes decisions where the dollar amounts are supposed to be the only thing that matters.","es":"El dolor de una pérdida y el placer de una ganancia equivalente no son imágenes especulares el uno del otro — y esa aritmética desigual moldea en silencio decisiones en las que se supone que solo importan las cifras.","ko":"손실의 고통과 그와 같은 크기의 이득이 주는 기쁨은 서로 거울처럼 대칭을 이루지 않습니다 — 그리고 이 기울어진 셈법은 오직 금액만이 중요해야 할 결정들을 조용히 좌우합니다.","zh":"同样大小的损失带来的痛苦和收益带来的快乐并不是彼此的镜像——而这种不对称的算法，正悄悄左右着那些本该只看金额大小的决定。","ja":"同じ大きさの損失がもたらす痛みと利益がもたらす喜びは、互いの鏡像ではありません——そしてこの偏った計算が、本来なら金額だけが問題であるはずの決断を、静かに左右しています。"},
   },
   {

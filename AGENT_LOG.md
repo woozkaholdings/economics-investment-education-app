@@ -5099,6 +5099,44 @@ same journey.
 
 ## Run log
 
+### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. **The pick is the previous run's named residual: a hand read of the lesson titles and subtitles in `lessons.js` for ko/zh/ja.** This is the second run in a row to take its predecessor's residual, which W-6.2 rule 1 allows once more and no further. ⛔ **The next run may NOT take a residual of this one**) — **lesson 27's title lost its point in three languages, one Chinese title named the wrong thing, and one Chinese subtitle was garbled.** Titles show on the lesson card, at the top of the reader, and in quoted cross-references inside other lessons and quiz explanations.
+- **Lesson 27 (loss aversion) in ko/zh/ja.** English asks why losing $50 *hurts more than finding $50 feels good*. All three translations said "why does losing $50 hurt more than finding $50", and finding money does not hurt at all. That drops the pain-versus-equal-pleasure asymmetry, which is what the lesson teaches. The titles now compare pain with pleasure: ko "왜 50달러를 잃은 아픔이 50달러를 주운 기쁨보다 더 클까?", zh "为什么损失50美元的痛苦，比捡到50美元的快乐更强烈？", ja "なぜ50ドルを失う痛みは、50ドルを拾う喜びよりも大きいのか？". **The title is quoted verbatim in lesson 28's body and in one quiz explanation in each language, so all 3 × 3 copies changed together.**
+- **zh lesson 10's title named the wrong thing.** "为什么你的纳税方式取决于你如何被支付" means "why your *way of paying tax* depends on…". English is about the tax *bill*. It now reads "W-2与1099：为什么领薪方式不同，税单也会不同". Nothing else quotes this title.
+- **zh lesson 11's subtitle was garbled.** "会像复利那样不利地累积，正如利息会像复利那样…" said "like compounding" twice and never said *against you*. It now reads "会以复利的方式对你不利地累积，就像利息以复利的方式对你有利地累积一样".
+
+**Step 3.5: the premise and its controls.** The premise was that ko/zh/ja titles and subtitles had never been read by hand, and it held. **Control:** the first dump attempt hung on a stray `cat >` with no input (my error, not the module's), and I killed it. The rerun imported `lessons.js` and printed **44 lessons × 2 fields × 5 languages, 0 missing**. Lesson 29's known title matched line 169, and I read every row. Before the patch, cross-reference contexts were found **with Node, not grep**: ugrep's bounded repetition aborted, as the memory note warns. That search is how the 6 quoted copies of lesson 27's title were found.
+**Read and deliberately left alone:**
+- **ko 22 "확인받고".** It means "getting confirmation" and fits the lesson's confirmation bias. ja 22 uses 確かめる vs 確認, a weak contrast but not a wrong one.
+- **zh/ja 20 "都在买/買っている".** They add "buying", and the lesson is about FOMO in purchases, so this is faithful in sense.
+- **es 31 "Crecimiento de Productividad".** It drops "The Long-Run Driver", but the subtitle carries the idea. It is outside this read's ko/zh/ja scope, so it is left as seen.
+- **ja 44 「不労」.** The 09-25 quiz run already kept it as the standard term.
+
+**The fix.** A Node patcher required each old string ×1 and each new string ×0 in every target file. It also required that no other `src/content` file hold an old string, and aborted otherwise. **7 content files, 9 lines in, 9 out.** No English and no es changed. `translation-review.mjs` hashes only English, so review coverage is correctly unchanged.
+**One knock-on:** the lesson-28 cross-reference edits moved lesson-body character counts (ko +1, zh +5, ja +1). `npm test` then FAILed on `LAUNCH_READINESS.md` §10.4's generated volume sentence. `npm run readiness -- --write` was the prescribed fix, and `git diff --word-diff` shows it changed **only those three numbers** (88,122→88,123, 55,200→55,205, 77,262→77,263). The ratios are unchanged to three decimals.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged); 1 FAIL before the readiness rewrite, reported above |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (exit read on its own line) |
+| Built bundle | Each new lesson-27 title appears **3×**, matching the English control's 3× (title, lesson 28, quiz). The zh 10 and zh 11 strings appear 1× each. All 5 old strings: **0**. Control `时间胜过时机` = 1; nonsense probe = 0 |
+| Live render | **Not done, on purpose.** These are the same text nodes as before, and the bundle probe shows the strings ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** these are titles only. There are no figures, dates, advice or Dalio. The zh 10 title claims only that the way you are paid changes the tax bill, which English claims too. `check-blindspot` passes inside `npm test`.
+- **Quiz leak?** The quiz explanation that quotes lesson 27's title is shown after answering, and the change keeps it a quotation of the title, not a hint.
+- **DECISIONS.md / done work:** no conflict. The 09-25/09-26 glossary, quiz-stem and heading fixes are untouched.
+- **My own claims:** a reviewer who re-runs the dump, the patcher's assertions, `npm test`, the build and the bundle probes gets the same results. ⛔ The new ko/zh/ja wording is machine-written and unreviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- **Short-string hand reads are now complete** across glossary names, quiz stems, section headings and lesson titles/subtitles. No short-string surface is left unread in ko/zh/ja. ⛔ Under W-6.2 rule 1, the next run must make a free pick that is not a residual of this chain.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the loss-aversion lesson's title now says "losing hurts more than finding *feels good*" in Korean, Chinese and Japanese, as English does. One Chinese tax-lesson title and one Chinese fee subtitle also read correctly now.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-26 (scheduled dev-agent; **a free pick**. `npm test` shows **0 FAIL, 1 WARN** (O-3's), so W-8.5 stays expired. **The pick is the previous run's one named residual: a hand read of the lesson section headings in ko/zh/ja.** This is the first time in a row that a run took its own previous run's residual, so W-6.2 rule 1 allows it. **The next run may take a residual of this one only once more**) — **three lesson section headings were wrong in one language each: one was garbled, one dropped the concept its section teaches, and one turned the lesson's own test into a statement.** These headings are the bold titles inside the lesson reader.
 - **zh money 24.0 was garbled.** "…这正是想要**要**借用它的名字的原因。" had a doubled 要 and no quotation marks, so 想要 ("wants", the noun) reads as the verb "to want". It is now "“需要”跳过了那个问题。正因如此，“想要”才借用它的名字。" The body already quotes “需要” this way.
 - **zh essentials 10.1 dropped "both halves".** It said "承担两份负担" ("bearing two burdens"), and the section teaches that the self-employed pay the employer's half as well as their own. It is now "自雇税：两半都由自己承担", using the body's own phrase "自雇者要自己承担两半".
