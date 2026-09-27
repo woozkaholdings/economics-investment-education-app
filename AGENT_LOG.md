@@ -221,6 +221,132 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-9 — set by the weekly review 2026-09-27. Supersedes W-8's *active* clauses below. The standing rules are UNCHANGED and still binding: W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule (but read W-9.4, which bounds it differently), W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week shipped 30 commits, build green, and `npm test` went 2 WARN → 1.** Item 94 closed
+> 2026-09-22 and item 160 is closed, so **both of W-8.5's mandated picks are done and that clause
+> expired exactly as written.** The corpus now clears the completeness threshold in all five
+> languages with **0 abridged pairs**. The execution quality this week is the best-evidenced this
+> project has produced — controls on both sides, instrument findings the run did not plan for and
+> repaired rather than whitelisted, limits stated. ⛔ **This block disputes none of that. It is
+> about where that quality is being spent, and about one number that is no longer the dev agent's
+> fault.**
+>
+> ### W-9.0 — W-8.8's test, taken first, as it required.
+> Measured 2026-09-27 off `check-log-size.mjs`'s MEASURED line, before this block was written:
+> backlog **411,512 b**, floor **449,918 b** (90.0% of budget), run log **115,555 b** (46.2% of
+> warn, 5 live days). **W-8.8's test PASSES, and by more than it asked:** the bar was "below
+> 413,641 b on 2026-09-27" and the backlog came in **2,129 b under** it.
+> ⭐ **Read what that means, because it reverses the story W-8.0 told.** W-7.2 rule 1 is not
+> merely holding the line — **run activity was net-NEGATIVE on the backlog this week**, because
+> items 94 and 160 were replaced by their conclusions instead of annotated with them. **The
+> accretion that remains is not coming from the runs. It is coming from the weekly reviews:** W-8
+> cost 11,676 b, W-7 12,567 b, W-6 17,717 b. Three review blocks outweigh a fortnight of dev-agent
+> restraint. That is this reviewer's problem before it is a run's, and W-9.6 prices this block.
+>
+> ### W-9.1 ⛔ PRIORITY — the one structural fix, and it is run-sized, measured, and nobody's fault.
+> The floor is at **90.0% of its 500,000 b budget** with **54.8 runs** of headroom — at 4 runs/day,
+> the floor WARN fires around **2026-10-11**. W-5.3 archives the run log twenty times over; **nothing
+> has ever archived the backlog**, so every closed item still sits in it at full length.
+> **Measured 2026-09-27 by parsing the section itself:** of **152 numbered items, 137 are closed**
+> (✅/DONE/CLOSED/RETIRED/EXHAUSTED) and they occupy **244,116 b — 59.3% of the 411,512 b section.**
+> The 15 open items are 80,440 b. **Those three figures were measured BEFORE this block was
+> written**; the projection below is stated against the section as it stands WITH it, so the two
+> are not retypings of each other.
+> ⛔ **The pick for the next run that is not already mid-chain: a backlog archiving pass, built as
+> W-5.3's move and not as a new invention.** Move the closed items **verbatim** into
+> `AGENT_LOG.archive.md` under `## Archived backlog (closed items)`, leave a one-line pointer where
+> each block was, and change no open item. Projected: backlog **422,379 → ~178,000 b**, floor
+> **460,785 → ~216,000 b (~43% of budget)**, headroom **42.9 → ~240 runs**.
+> **Why this satisfies W-6.2 rule 3 despite no learner seeing the log:** rule 3 asks what failure a
+> new *check* would catch, and this is not a new check — it is the existing archiving recipe applied
+> to the section that now carries the mass. The learner-visible failure it prevents is the one O-6
+> names: a run spending its budget on log mechanics instead of the app.
+> ⚠️ **Do not delete anything.** Verbatim move, byte-accounted, the way all twenty run-log passes
+> were. If the move cannot be proven byte-exact, do not commit it.
+>
+> ### W-9.2 — a 72-hour outage, and the task entry that should have recorded it is disabled.
+> Dev-agent commits per day, 09-20 → 09-27: **10, 4, 1, 0, 0, 4, 4, 2.** The gap from `2783821`
+> (09-22 00:19) to `8af3d04` (09-25 00:05) is **~72 hours — about 12 missed runs at the 6-hour
+> cadence.** The market-data job committed at 19:49 on both 09-23 and 09-24, so **the machine was
+> up and the dev schedule was not.** No run entry mentions it, because a run that does not fire
+> cannot write one. **This is the second consecutive week with a multi-day silent gap** (W-8.2:
+> ~40 hours), and it is getting longer.
+> ⭐ **New this week, and it is the part an owner can act on:** the scheduled task
+> `economics-app-dev-agent` is **`enabled: false` with `lastRunAt` 2026-09-07**, and its cron reads
+> every 2 hours. Commits have continued on a clean **6-hour** cadence for twenty days regardless, so
+> **whatever is running the dev agent is not that task entry.** The stale entry is nonetheless the
+> `SKILL.md` a reader would open, and it still says *"the GitHub remote is NOT usable — never push,
+> never fetch"* — which stopped being true when O-4 made the repo public and Pages became canonical.
+> ⛔ **Owner action, not a run's: reconcile which task definition is authoritative and fix that
+> sentence in whichever one runs.** A run must still never push; the false half is "NOT usable".
+>
+> ### W-9.3 — W-8.1 was right about the cost and wrong about the shape. The deploy lag is a WEEKEND, not a coincidence.
+> **Re-measured 2026-09-27 from `origin/main`'s reflog, which is the only record of it:** pushes
+> landed at **21:16 on 09-21, 09-22, 09-23, 09-24 and 09-25** — five consecutive weekdays, each
+> on or just after that day's market commit — and **none on Saturday or Sunday.** The same shape
+> explains W-8.1: its "last push 2026-09-18 21:18, 28 commits behind" was measured on a **Sunday**,
+> at the peak of exactly this cycle, across the two highest-volume days the project has ever had.
+> **O-5's "current by coincidence" is no longer the right description of the steady state.** What
+> is true today, measured with `npm run check-deployed`: **❌ DIVERGED** — live
+> `assets/index-Csl251B_.js` against local `index-D_MFj2n0.js`, **6 commits** of 09-26/09-27
+> content corrections not live, live `market.json` **asOf 2026-09-25, age 2d**.
+> ⚠️ **The residual risk is thin margin, and it is worth stating precisely because it is small:**
+> `STALE_AFTER_DAYS` is 4, a Friday `asOf` is 3 days old by Monday's push, so **one missed Monday
+> push takes Reference → Sectors dark on Wednesday.** Route 1 (have the job push) still removes
+> this; route 2 (document it) now has a much easier sentence to write than it did last week.
+>
+> ### W-9.4 — the residual-chain rule is being satisfied to the letter while the mode runs unbounded.
+> **Six of the last seven runs were a hand read of one ko/zh/ja short-string surface** — glossary
+> names, quiz stems, section headings, lesson titles, quiz options, quiz explanations. Each entry
+> correctly cites W-6.2 rule 1, and each is correct: the chain was legally reset on 09-26 18:05 by
+> **one** non-residual pick (item 152) and immediately re-entered. **The rule counts consecutive
+> residuals; it does not count MODE, so a single interleaved pick buys an unbounded chain.**
+> ⛔ **W-9.4 replaces that bound for as long as this block is active: a run may not pick a
+> short-string hand read of a translated surface if EITHER of the previous two runs did, whatever
+> the residual bookkeeping says.** Rule 1 is unchanged for every other kind of pick.
+> ⭐ **This is a bound, not a verdict.** The mode is finding real defects at a high rate and W-9.5
+> is the reason that matters. But 44 lessons × every string × 4 languages is not a finite queue,
+> and **the constraint on this product has moved** — see W-9.5.
+>
+> ### W-9.5 — the proofreading passes have accidentally produced the strongest evidence O-3 has ever had. Escalate it.
+> O-3 asks the owner to re-affirm or cap shipping unreviewed machine translation. It was filed when
+> the defect rate was **hypothetical**. It is not hypothetical now. **This week's seven hand-read
+> passes found roughly thirty real defects in shipped non-English content**, every one of them
+> learner-visible: an ungrammatical Korean particle after a vowel-final noun; a Japanese passive
+> that made the *protection* pay the price; a Japanese potential form that read "high earners are
+> *able* to live paycheck to paycheck"; four Spanish quiz stems missing the head noun that says what
+> is being asked; a Chinese heading that dropped the concept its section teaches; a Korean heading
+> that turned the lesson's own question into a statement; "Rule of 72" with no mention of what it
+> approximates.
+> ⭐ **The finding is not that any one of these is severe. It is the density, and the surface.**
+> Every pass into a surface nobody had hand-read came back with defects — glossary names, stems,
+> headings, titles, options, explanations, six for six. **Human review share is still 0% in all
+> four languages.** The 2026-08-11 "(Beta)" decision was made about a smaller, static corpus and
+> without a measured error rate; there is now one.
+> ⛔ **Ask the owner for a decision; do not restate the blocker in a closing line.** That is O-1's
+> own lesson, recorded at the top of this backlog: sixteen consecutive closing lines moved O-1 none
+> of the way, and one direct instruction moved it all of the way in twenty minutes. **The ask is
+> one sentence: fund a fluent review of one language, or cap what ships under "(Beta)", or
+> re-affirm it now that the rate is known.**
+>
+> ### W-9.6 — O-2 is the whole critical path and no one asked about it this week.
+> Every §4.3 content clause is **met** (44 lessons / 174 min / all tracks translated). The one
+> unmet Phase-0 gate — **installer lesson-1 completion ≥40%** — is scored **❌ Unmeasurable** and
+> stays that way until a provider key exists. The code half has been done and verified since
+> 2026-09-05; the owner action is **four steps and roughly twenty minutes**, written out in O-2.
+> **Nothing a run did this week moved the launch, because nothing a run CAN do moves it.** That is
+> not a criticism of the runs — it is the reason W-9.5's escalation and this one belong at the top
+> of the report rather than in a closing line.
+>
+> ### W-9.7 — the cost of this block, per W-7.2 rule 5.
+> Backlog **411,512 b** before this block. W-8 cost 11,676 b, W-7 12,567 b, W-6 17,717 b, and
+> W-9.0 shows those blocks are now the accretion. **This block was written to be cheaper than its
+> three predecessors**; the after-figure goes in the report, read off `check-log-size.mjs` and not
+> retyped from here. **The test of W-9 is not whether the next run agrees with it — it is whether
+> W-9.1 has landed and the floor is below 300,000 b on 2026-10-04.** Next review: open with a fresh
+> MEASURED line before anything else.
+
 > ## PRIORITY BLOCK W-8 — set by the weekly review 2026-09-20. Supersedes W-7's *active* clauses below. W-7's standing rules (W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule) are UNCHANGED and still binding. ⚠️ **There was no weekly review on 2026-09-13 — `reviews/` goes 09-06 → 09-20, so this block covers two weeks of direction and one week of commits.** Read this first.
 >
 > **The week shipped 66 commits, build and tests green, and the content work in them is the
