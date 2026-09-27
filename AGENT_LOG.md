@@ -1195,51 +1195,17 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 >   deliberately marked low value: it guards a property that currently holds, which is worth doing
 >   cheaply and worth nobody's afternoon.
 
-55. **✅ DONE 2026-08-17 (scheduled dev-agent). Pruned to "Completed and pruned" below as
-    `former item 55`; the diagnosis is kept here because three of its five findings are worth not
-    re-deriving.** See the run log.
+55. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-56. **✅ DONE 2026-08-17 (owner-directed pick). Pruned below as `former item 56` — but read the
-    correction first, because this item's premise was false and its evidence was an artifact.** See the run log.
+56. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-57. **✅ DONE 2026-08-17. Curation rules 1 and 2 are now DATA (`deliberatelyUnlinked`, 33 entries)
-    enforced by `check-data.mjs` §17b, so "unlinked" can no longer be mistaken for "undefined".**
-    See the run log — the item's own 11 occurrences were all deliberate exclusions, and it could not
-    see the one real gap by construction.
-    > **STANDING NOTE for whoever measures this surface again: §17b sweeps only the keys in
-    > `glossary.js`.** "0 unexplained" therefore means every *glossary term* is accounted for — **not**
-    > that §3.0.3 is satisfied. Jargon with no glossary entry is invisible to it. That residual is
-    > item 60. **Re-run the control too**: the first measurement returned 0 because glossary entries
-    > key the term at `en.s`, not `term.en`, so the matcher compared objects and matched nothing.
+57. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-58. **✅ DONE 2026-08-17 — the doc-vs-tree sweep ran; 13 contradictions listed with file:line in the
-    run entry, fixes filed as item 61.** None needed the owner, contrary to the item's prediction.
-    > **The transferable pattern, worth not re-deriving: a "measured `<date>`" annotation is LEAST
-    > trustworthy when its date matches the change it sits above.** Same-day figures get written
-    > before the day's work finishes. Grep `measured 20` and `as of 20` in `src/` and `scripts/`,
-    > not just in the Markdown docs.
-    > **Cheapest disposition for a stale count inside an argument that does not need it: delete it**,
-    > rather than correcting or guarding it.
+58. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-59. **✅ DONE 2026-08-17 (scheduled dev-agent). `check-data.mjs` §28 now asserts AA on 108 pairs
-    (54 per palette) every `npm test`, and the note's own figures are machine-checked. For the fifth
-    item running the premise was partly wrong, and this time it was the half that named a defect.**
-    > **Two things worth not re-deriving.** (a) The pair set is **derived by prefix, not listed** —
-    > affordable only because the full cartesian product passes, so nothing needs exempting; if a
-    > future palette edit makes one pair fail, resist adding an exemption list, because that is the
-    > hand-maintained shape F10 was filed against. (b) `--ink-on-fill` must stay out of the ink list:
-    > it is `#ffffff` in light mode, so pairing it with `--surface-canvas` manufactures a 1.0:1
-    > failure for a pair the app never renders.
+59. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-63. **✅ DONE 2026-08-17 (scheduled dev-agent). Light `--graph-neutral` was given a value, the four uses
-    are classified, and `check-data.mjs` §28b enforces 3:1 on 70 graph×surface pairs. For the ninth item
-    running the premise was partly wrong — and this time BOTH of its headline numbers were, in the
-    direction that had made the item look optional.** See the run log.
-    > **The hex this headline used to quote was stale for four days and cost two wrong figures in
-    > shipped code comments (item 125).** It said `#7c8494`, the value this run set; the 2026-08-23
-    > warm repaint moved the token and nobody re-read the headline. **The value is deliberately not
-    > restated here** — restating it just re-arms the trap. `src/index.css` is the palette; read it
-    > there. Enforced by `check-data.mjs` §52.
+63. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 72. **🟡 DEV-AGENT HALF DONE 2026-08-17 (scheduled dev-agent). The build is deployable and the
     clicks are written down; the OWNER HALF — choose a host, drag the folder, hold the URL — is the
@@ -1247,980 +1213,118 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     moves, alongside item 18. Do not re-pick this item to "improve" the deploy docs; the refuting
     number is a URL, and no amount of further writing produces one.**
 
-74. **✅ CLOSED 2026-09-08 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1; the
-    measurements, the controls and the refuted half are in this date's run-log entry.
-    **What was true when it was filed (2026-08-17):** a deployed copy's `market.json` freezes at build
-    time, so after `STALE_AFTER_DAYS` (**4**) the Sector-performance screen stops showing figures —
-    §2.3 working as intended — and **nothing owned the rebuild**. The item's own recommendation was
-    *"cheapest real answer is probably not a script: connect the host to the repo, and the existing
-    job's commit is the trigger."*
-    **What is true now:** that is exactly what shipped. `.github/workflows/deploy-pages.yml` (owner
-    decision 2026-09-07) publishes on every push to `main`, so a deploy follows a commit and no human
-    has to remember a drag-and-drop. **The item's headline gap is closed by the host migration, not by
-    this run.**
-    ⛔ **But the gap MOVED rather than vanished, and this is the part to keep: the deploy follows a
-    PUSH, and nothing owns the push.** Measured 2026-09-08 from `origin/main`'s reflog: pushes happened
-    **2026-08-26 00:15**, then not again until **2026-09-07 22:06** — a **twelve-day gap**, inside which
-    the daily market commits of 09-01, 09-02, 09-03 and 09-04 all landed. They reached the live host
-    only when eight owner-directed pushes went out on 09-07 for an unrelated reason. The scheduled
-    market job **commits and does not push**, and a dev-agent run is forbidden to. So the live site's
-    market data is current **by coincidence**, not by ownership. → **filed as owner action O-5.**
-    ✅ **What this run built, because it is the half a run CAN own — noticing.** `npm run check-deployed`
-    now computes the age of the market.json **the live host actually served** against
-    `STALE_AFTER_DAYS` (imported from `src/lib/useMarketData.js`, never restated) and projects the date
-    the live Sectors screen goes dark, as an **advisory that never touches the verdict** — the header's
-    standing rule, kept, because a guard that reds every few days for an expected reason is a warning
-    nobody reads. A `--today` flag makes the projection exercisable on any day.
-    ⛔ **And the defect that made this worth a run rather than a note:** `check-market-freshness.mjs`
-    reads the file **in the tree** and then said *"Reference → Sectors is ALREADY rendering the
-    unavailable state — on the live site, for anyone who opens it."* That is a claim about a host made
-    from a file on disk — W-7.1's guess, in `npm test`, on every run. Three messages corrected to say
-    what they measured and to point at the check that owns the live half.
-73. **✅ DONE 2026-08-20 (scheduled dev-agent). The audit's three §10 blindspots are now
-    `LAUNCH_PLAN.md` §10.8/10.9/10.10 and claim D3 is `CLAIMS.md` row 16 (§9.1 says "16 claims").**
-    See the run log for the full staged wordings and the two premise breaks.
-    > **STANDING METHOD, and this item broke on it twice: find the sentence by its TEXT, never by a
-    > line number.** `LAUNCH_PLAN.md:529` was correct when filed and was line 549 a day later —
-    > twenty lines of unrelated owner edits above it. A line-targeted edit would have silently
-    > corrupted an unrelated sentence.
-    > **B-1's refuting number is measured against `src/` APPLICATION CODE, not all of `src/`.**
-    > Against all of `src/` the ratio is ~1.1-1.25x and the tripwire reads "not refuted" in the very
-    > window that produced the finding; against application code it is 7.5-10x. D3's check date is
-    > **2026-09-05** and the item records how to measure it.
+74. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
+73. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-77. **✅ DONE 2026-08-19/20 by the owner's own commit `5633b79`, not by a dev-agent run — which is
-    why it sat here marked blocked. Confirmed by measurement, not by reading the commit subject.**
-    See the run log.
-    > **⚠️ DO NOT "fix" a track-count failure by relaxing the count. This was measured.** The
-    > `essentials` track is registered in the readiness figures; a run that loosens the assertion to
-    > make `npm test` green is removing the thing that caught a real split.
+77. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-84. **✅ DONE 2026-08-20 (owner-directed) — 237 cross-references converted from numbers to titles
-    across five languages, guarded by `check-data.mjs` §16b (proven by injection).** See the run log.
-    > **⚠️ THE CORRECTION, and it is why no figure filed in this item should be trusted: the headline
-    > count was WRONG BY 80%** — filed as 128, actual 237. **The reference style, so a future run
-    > matches it:** the quoted title *head* (text before the colon).
+84. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-87. **✅ DONE 2026-08-20 (owner-directed, interactive) — a wrong-target reference found only because
-    the title rewrite forced every reference to be resolved.** See the run log.
+87. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-85. **✅ DONE 2026-08-20 (owner-directed, interactive).**
-    - **⚠️ KNOWN BOUNDARY, written into the code rather than left implied.** The pattern is English
-      month names, so a Spanish "marzo 2026" or a Japanese "2026年3月" still passes. Closing that needs
-      a per-language date vocabulary, which item 85 did not scope. What this covers is the English
-      source the translations are made from, which is where such a figure would enter the app.
+85. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-86. **✅ DONE 2026-08-20 (owner-directed) — a factual error found by reading the bodies, fixed in
-    all five languages: lesson 6 named only one of the two ways a taxable account is taxed. All four
-    translations carried the same error in compressed form.** See the run log.
+86. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-80. **✅ DONE 2026-08-20 (owner-directed, interactive) — found by the first live QA sweep of the
-    `essentials` track. The reader's `Previous` button walked straight through locked lessons.**
+80. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-81. **✅ DONE 2026-08-20 (owner-directed, interactive) — surfaced by the same sweep. Practice was the
-    one surface still printing a raw lesson id.** See the run log.
+81. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-82. **✅ DONE 2026-08-20 (owner-directed, interactive) — built as scoped, and the item's own premise
-    turned out to be UNVERIFIABLE with the instrument available here. Read the instrument note.**
-    - **⚠️ THE PREMISE I COULD NOT PROVE, stated plainly because the item told the next run to verify
-      against the live accessibility tree and that instruction does not work as written.** This item
-      claimed "a `<section>` without an accessible name is not exposed as a landmark region". In the
-      `read_page` accessibility tree here, a **bare `<section>` with no name at all still renders as
-      `region`** — I stripped the attribute from all three in the live DOM and the tree was unchanged.
-      So the before/after difference this item was filed to produce is **not observable with this
-      tool**, and any future run that "verifies" a landmark fix by seeing `region` in `read_page` has
-      verified nothing.
+82. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-83. **✅ DONE 2026-08-20 (owner-directed, interactive).** See the run log.
+83. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-79. **✅ DONE 2026-08-20 (scheduled dev-agent) — built as scoped, and the item's own proposed wording
-    was measured to be FALSE in one of the states it has to cover.**
-    - **⚠️ THE CORRECTION, and it is the reason this item is worth reading rather than skimming.**
-      The item scoped the copy as "the newest reading we have is from {date}, **which is too old to
-      show**". That sentence is **false in a state `isStale` also covers**: `freshness()` returns stale
-      for a date more than `FUTURE_TOLERANCE_DAYS` (1) *ahead* of the device clock, which
-      `DECISIONS.md:82-91` established deliberately (item 44). Reproduced live before writing any copy —
-      `asOf: 2026-09-30` rendered `Market data isn't available right now. (As of 2026-09-30)`, a date
-      **41 days in the future**. So the shipped key says **"too far from today"**, which is true in both
-      directions, and it stays one key rather than two. Do not "improve" it back to "too old".
+79. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-78. **✅ DONE 2026-08-20 (owner-directed). `check-data.mjs` §30 covers `src/utils/date.js` — the
-    app's whole notion of "today", which the market-data staleness contract and the review scheduler
-    both rest on. This is regression cover, not a bug fix, and the filing run said so.** See the run
-    log — the premise was wrong in both directions at once, which is why §30 is not the section this
-    item described.
+78. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-88. **✅ DONE 2026-08-20 (owner-directed, same day it was filed). Filed by the run that closed item
-    64, built by the next one. The premise held and the two-sided control fired exactly as scoped.** See the run log.
+88. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-89. **✅ DONE 2026-08-20 (scheduled dev-agent). The three stale lines are repaired the §29 way —
-    dated Update appended, line marked historical — and §31 now reads `DECISIONS.md` too. Unusually,
-    the premise held on every hit it named — every line number and every verdict checked out. What it
-    got wrong was the disposition.** See the run log.
+89. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-90. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). Both mismatches fixed by the `#`
-    count, guarded by `check-data.mjs` §32b, and the file is now 36/36 consistent. The item's count
-    was right and complete — a whole-file sweep found exactly the two it named, no more.**
+90. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-91. **✅ DONE 2026-08-21 (owner-directed: "sweep everything except the dated records"). 123 lines
-    swept across 32 files; 10 kept, each with a recorded reason.** See the run log.
-    > **⚠️ The item's own headline count was WRONG (~69 vs 123) because the scan used `analys[ei]s`,
-    > which flags two correct US spellings while missing the entire `-ise`/`-ised`/`-isation`/`-iser`
-    > family.** Three passes were needed before it stopped finding new forms. **If a guard is ever
-    > wanted, the honest scope is learner-visible strings only.**
-    > **`AGENT_LOG.md` and `AGENT_LOG.archive.md` are excluded by design, per §31** — run-log entries
-    > are dated records. So are quotations. That exception is why two of the owner's own US-English
-    > edits were flagged and left alone (W-5.7).
-    > ⛔ **CORRECTION 2026-08-27 (item 128's run): this item's closing claim — "the final whole-repo
-    > scan returns exactly the 10 intended exclusions and nothing else" — was FALSE on the day it was
-    > written, and the run log's entry for it is a dated record that stays verbatim, so the correction
-    > lives here.** Measured against the tree at this item's own commit (`git archive 9232cd0`):
-    > **nine British spellings in `src/` and seven in `scripts/` sat outside the exclusion list**,
-    > all in code comments, including a `colour` — a form this item's entry lists as one it fixed.
-    > The 123-line result and the 1,316-string learner-visible result are both sound; only the
-    > whole-repo sentence overstated its instrument, which walked values and not comments.
-    > **The advice at the top of this item was right and has now been taken**: the guard exists as
-    > `check-data.mjs` §55, scoped to learner-visible strings. See items 128 and 130.
+91. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-92. **✅ DONE 2026-08-21 (owner-directed, same day it was filed). One string changed — "Borrowing
-    gets dearer" → "gets more expensive" — and the item's premise held exactly: a two-pass sweep of
-    all 1,316 learner-visible English strings found ONE genuine instance, the one this item named.** See the run log.
+92. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-93. **✅ ECONOMY PHASE CLOSED 2026-08-24 (filed 2026-08-21). The main path is fully translated in
-    all five languages — `npm run translation-completeness` reports 0 abridged pairs across lessons
-    12-40 in every language. The remainder (48 pairs, `essentials` 1-11 and 14, identical in `es`,
-    `ko`, `zh` and `ja`) is tracked as item 94. DO NOT PICK THIS ITEM AGAIN; do not roll 94 back
-    into it.** Full detail — six tranches per language, the defect examples, the per-run arithmetic —
-    is in the run log.
-    > **STANDING RULE (from W-5.5), and it has fired three times.** The abridged-pair count is re-read
-    > off `npm run translation-completeness` by whoever touches this item, **in the same commit**, in
-    > **all three places**: this box, item 94's headline, and `LAUNCH_READINESS.md` §10.4's prose. It
-    > has read a stale 68, 60, 56, 54 and 50; it is **48** as of 2026-08-24.
-    - **The density bands, which are what item 94 needs and must not be re-derived.** A translated
-      lesson lands at **`es` 1.02-1.20** (median 1.119), **`ko` 0.45-0.60**, **`zh` 0.285-0.357**,
-      **`ja` ~0.50**. These are *language* numbers: do not target another language's band, and do not
-      read a low ratio as abridgement across languages. Above ~1.25 in `es`, check for added
-      sentences. **The bands were fitted on `economy` lessons only — item 94 says to re-fit on
-      `essentials` 12, 13 and 15 before budgeting.**
-    - **The rising-reference drag applies to `es` and NOT to `ko`/`zh`/`ja`.** `ABRIDGED_BELOW` is
-      0.7x each language's own p90, so in `es` every completed lesson lifted the bar and pushed
-      untouched lessons under it. In `ko` the p90 did not move at all (0.5510 before and after),
-      because the already-complete money track occupies the top decile. Expecting the drag elsewhere
-      causes a false alarm.
-    - **Track boundaries, read off `lessons.js`'s `track` field:** `essentials` **1-15**, `money`
-      **16-28**, `economy` **29-40**. This item said "money 12-28" in four places for two days. **Do
-      not use "12-28" to scope work.**
-    - **Why no check saw any of this, and the trap it still sets.** `check-data.mjs` asserts
-      *presence* and *structural agreement with English*; a field that exists, is well-formed, agrees
-      with English and carries a quarter of its content passes every one. **`translation-review-ledger.json`
-      read 100%/0-stale for months over exactly this content** — it records that a reviewer saw the
-      text, not that the text is all there. **A green ledger is not evidence about this item.**
-    - **Three defect shapes, all needing reading rather than a ratio: bare list** (rule headings with
-      no body), **partial enumeration** (three of five gauges), **whole-list omission**. Plus two
-      specific warnings: **`zh`/`ko` lesson 30 §1 is different content, not an abridgement** — check
-      `ja` 30 before assuming it is a translation — and **`《》` in Chinese is not exclusively a
-      lesson-reference marker** (lesson 22's are article headlines), so any guard treating it as one
-      will false-positive.
-    - **The `es` currency defect does not generalize — measured, do not re-derive.** `ko` writes the
-      long scale correctly and `zh`/`ja` contain no `$` at all. One instance, already fixed, no
-      guard warranted.
+93. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-94. **✅ DONE 2026-09-22 (scheduled dev-agent) — the whole item, replaced by its conclusion per W-7.2
-    rule 1.** The `essentials` track's abridged translations are closed: **0 abridged pairs across all
-    44 lessons in all four languages** (`npm run translation-completeness`). Filed 2026-08-24 at 48
-    pairs / 12 lessons; closed one lesson per run in the order **1, 6, 10, 9, 3, 2, 8, 5, 7, 4, 11, 14**
-    across 2026-09-20/21/22. This item's `npm test` completeness WARN is gone and **W-8.5's priority
-    clause expires by its own terms**; the **1 WARN that remains is O-3's 0%-human-review line, not
-    this item's** — do not read it as this item still being open.
+94. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ⛔ **What this item did NOT settle, and no run can: O-3.** Every pair it closed is machine
-    translation no fluent speaker has read. Human share is **0% in all four languages**. "Fully
-    translated" here means *clears this corpus's own volume threshold* and nothing more.
+96. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ⭐ **The finding worth keeping — a lesson-level ratio is structurally blind to within-paragraph
-    deletion in whichever language expands most (found 2026-09-22, on the closing lesson).** This item
-    budgeted lesson 14 as **three** languages, on the strength of the shipped instrument scoring `es`
-    at 0.83 against a 0.812 cut and never flagging it; `LAUNCH_READINESS.md` §10.4 had recorded the
-    same reading on 2026-09-05. Measured per paragraph, `es` was abridged in **exactly the same three
-    paragraphs** as ko/zh/ja, missing the same clauses — Spanish expands to ~116% of English here, so
-    dropping about a quarter of a lesson still clears a lesson-level threshold by 2.2%. The closing run
-    edited **four** languages. **The instrument that sees it**, and the one to reuse on any future
-    completeness claim, is the **per-paragraph** ratio: split each section body on the paragraph break,
-    divide translated by English characters, normalize by that language's p90, and read per paragraph
-    rather than per lesson. **Its control is what makes it usable:** over the already-full `essentials`
-    lessons (12, 13, 15) it returns **80 cells, minimum 0.705, nothing below 0.70**, while lesson 14
-    returned **13 of 24 below 0.70** — the bands do not overlap, so it separates done from not-done
-    rather than flagging everything. After the edit lesson 14's own minimum was **0.706**, inside the
-    control band.
+97. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ⭐ **Five defect shapes were found under this item, and every one of them survives paragraph
-    parity.** Each was found only after the previous instrument had passed the lesson: **(1)
-    whole-paragraph deletion** (lessons 1, 2, 6, 8, 9, 10); **(2) numbers cut out of intact
-    paragraphs** — lesson 3 matched English 2/3/2 on paragraphs with every figure gone; **(3) a broken
-    cross-section dependency** — lesson 5's §2 said "*that* coffee chain" for a shop only English had
-    introduced; **(4) a named worked example deleted wholesale while the definition it exists to
-    illustrate is kept** — lesson 4's parity was a perfect 3/2/3 and Elena/David read 0/0/0 in all
-    four; **(5) uniform within-paragraph clause compression** — lessons 11 and 14, where every sentence
-    keeps its subject and loses the subordinate clause carrying the mechanism. **Parity is necessary
-    and nowhere near sufficient:** the per-section numeral profile catches (2) and (4), the
-    recurring-concrete-noun profile catches (3), and only the per-paragraph ratio above catches (5).
+98. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ⚠️ **Twice the missing clause was the lesson's own hedge — a §10.1 matter, not a completeness
-    one.** Lesson 11 dropped English's second hedge ("nor that every fee is unjustified — some
-    strategies genuinely cost more to run") in all four languages, leaving a lesson about fees reading
-    closer to "cheaper is better" than the English does. Lesson 14 dropped "which is why this lesson
-    explains what a will does rather than how to write one" in all four — the sentence that scopes a
-    lesson about wills as explanatory rather than a how-to. **Both restorations move the lesson toward
-    §10.1, not against it. Check hedge parity, not only volume, whenever an abridged lesson touches
-    §10.1.**
+102. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ✅ **The corpus-wide per-paragraph sweep this item asked for ran 2026-09-25, and it came back clean.**
-    **1,340 paragraph cells** (44 lessons × 4 languages): **0 parity breaks, 11 cells below 0.70.** Eight
-    are lesson 16 §0 ¶2-3 in all four languages — **condensation a 2026-09-19 owner-directed run chose
-    on purpose and named so no run "fixes" it** (archive, "fix L13 §0 and L16 next"); leave it. The
-    other three (4 ja §1¶1, 9 es §1¶0, 17 es §0¶0) were read in full and are tighter wording with
-    every fact kept. Controls: lessons 12/13/15 → 80 cells, min 0.709; dropping one sentence from a
-    known-good es paragraph → 0.93 to 0.28. **The main tracks are not abridged in `es`.** Takeaways,
-    thinkAbouts, quiz stems/options/explains and glossary `f`/`ex` swept per field the same way: no
-    field short in all four languages. ⚠️ **The instrument's blind spot is short strings** (it reads
-    only fields ≥60 English chars), and that is where the real defect was: **four `es` quiz stems
-    (q002, q003, q005, q006) had dropped the noun ko/zh/ja all kept** — fixed 2026-09-25, see the run log.
+103. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-    ⭐ **Naming and currency conventions here are MEASURABLE, not choices.** "Maria" appears 9x in the
-    English corpus and is carried consistently into every language (es María, ko 마리아, zh 玛丽亚,
-    ja マリア), with "Sofia" returning 0 everywhere as the negative control — so lesson 4's Elena/David
-    followed an existing precedent rather than being invented. Currency follows each file's own
-    dominant form (es `$N`, zh `N美元`, ja `Nドル`); **`ko` is genuinely mixed and must be broken by
-    within-lesson consistency instead.** Two splits were found and deliberately left standing, because
-    closing either is a corpus-wide call rather than a rider on a translation pass: the cross-module
-    `$` vs `美元`/`ドル` split against `moneyVisuals.js`, and the cross-track `普里娅`/`普莉娅` spelling
-    of Priya.
+104. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-96. **✅ DONE 2026-08-24 (scheduled dev-agent), same day it was filed. The premise re-measured
-    exactly — 772 vs 3,294 characters, to the character — and the item's own scope contained one
-    impossible instruction; see the premise correction below. [Bug/UX — filed 2026-08-24 by the
-    scheduled dev-agent, proved in a live browser with a control. HIGH VALUE, and it gets worse the
-    moment O-1 lands.] A lesson whose content chunk fails to load renders as an empty lesson with a
-    working "Mark Complete" button — silently, with no error state.** See the run log.
+105. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-97. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `check-data.mjs` §36, plus an `export`
-    on `HTML_LANG` so the coverage half is an exact map comparison rather than a regex. Premise
-    re-measured and it held exactly — `documentElement.lang` and `HTML_LANG` had two hits in the whole
-    repo, both inside the hook. Scope grew by one assertion the item did not ask for and one the
-    item asked for that turned out to be the weak half; see the run-log entry. [A11y/Tooling — filed
-    2026-08-24 by the run that fixed the defect, deliberately not smuggled into
-    the same commit.] Nothing stops `<html lang>` from drifting out of sync with the picker again.** See the run log.
+115. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-98. **✅ DONE 2026-08-24 (scheduled dev-agent) — the metadata, the multilingual tab title, the
-    guard (`check-data.mjs` §38) and one extension to `check-blindspot.mjs`, in one commit.
-    Premise re-measured and it held; two facts the item did not have narrowed the scope, and the run
-    found two defects in its own work. See the run-log entry.**
+114. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-102. **✅ DONE 2026-08-25, same run it was filed — found by a live DOM sweep of the built app, not
-    by reading code. `<main role="tabpanel">` and `<nav role="tablist">` exposed NO `main` and NO
-    `navigation` landmark, and two of three bottom tabs pointed `aria-controls` at ids that did not
-    exist. Zero new locale keys.** See the run log.
-    > **Why the app's usual answer did not apply:** five other tablists here are inside a landmark
-    > already, so the pattern that is right everywhere else was wrong exactly once.
+113. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-103. **✅ DONE 2026-08-25 (scheduled dev-agent). Shipped — but as a skip-to-NAVIGATION link, not
-    the skip-to-content link this item asked for. Three of the item's premises were wrong, and the
-    third one changed the disposition. Read the correction before re-deriving any of this.**
+112. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-104. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. DECIDED (a): the list
-    now sorts by `relativeStrength.rank`, and the 1M/3M/6M control was NOT removed — because the
-    item's argument for removing it was measurably wrong. Guarded by `check-data.mjs` §42.**
+111. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-105. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. Shipped as
-    `scripts/a11y-sweep.js` (9 probes, a self-planting control per probe) plus `check-data.mjs` §43
-    and an Environment-note procedure. THE ITEM'S OWN PRESCRIBED GATE WAS WRONG AND WAS REPLACED —
-    read the correction below before touching the file.**
-    - **⛔ PREMISE CORRECTION, and it changed the design rather than a number.** The item specified
-      that the script "**must refuse to report a zero unless `document.hasFocus() &&
-      document.visibilityState === 'visible'`**". **Measured: both are permanently false in this
-      preview pane even when the tab is fronted and the page is demonstrably rendering** — buttons
-      measured 139×44, the document 2944px tall, the screenshot correct. That gate would have
-      refused to report **anything, ever**: the exact silent-zero failure it was written to prevent,
-      wearing the costume of a safety check. **Implemented instead: a per-capability gate.** Hard-gate
-      on *live layout* (achievable, provable, and the thing the geometry probes actually need);
-      mark only focus-EVENT-dependent probes `UNAVAILABLE`; report `VACUOUS` — never `ok` — for a
-      probe that scanned nothing.
+110. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-115. **✅ CLOSED 2026-09-08 BY OWNER DECISION ("raise the budget") — the option this item held open
-    since 2026-08-26 is taken, and the full reasoning is in `DECISIONS.md`.** Collapsed to its
-    conclusion per W-7.2 rule 1 from 8,082 b; the six passes' methods and figures are in the run log
-    for 2026-08-26, 08-27, 08-30, 09-02, 09-04 and 09-08.
-    **What was true:** the never-archived floor was over a 250,000 b budget, and this item held the
-    two remedies only the owner could authorize — delete closed items outright, or raise the budget.
-    Six compression passes ran against it. **What is true now:** `FLOOR_MAX` is **500,000** and
-    `FILE_CEILING` **850,000**; the floor stood at 430,586 b when the decision landed and the suite
-    reports **0 warnings on this section for the first time since 2026-08-27**.
-    ⭐ **The measurement that decided it, and it is the one to keep: the budget was unreachable by the
-    only remedy it named.** This item's fifth pass measured the headline-only projection as
-    **invariant to compression** — 254,621 b before a pass and 254,621 b after, identical to the byte
-    — because compression and the headline-only cut remove *the same material*. So no number of
-    further passes could reopen the option, and the standing warning was evidence the **budget** was
-    wrong rather than the writing (item 121's own clause).
-    ⛔ **`FLOOR_MAX` and `FILE_CEILING` are COUPLED; never move one alone.** `RUN_LOG_HARD` is derived
-    (`FILE_CEILING - FLOOR_MAX`), so raising the floor alone drops the run log's *fail* line below its
-    own warn line and fails the suite — measured, not reasoned. A startup assertion now refuses to
-    print a verdict from an incoherent pair, proven by injection.
-    ⚠️ **Still true and not changed by this:** compression is near its floor under the current rule —
-    the remaining closed-item mass is standing rules, traps and `⚠️`/`⛔` blocks that the rule's
-    kept-list protects, corroborated from the other direction by the sixth pass declining items 115,
-    121, 168 and 125 as protected. **The lever that still works is W-7.2 rule 1**, and the lever never
-    pulled is W-6.2 rule 2 — not filing zero-live-instance residuals as numbered items at all.
+109. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-114. **✅ DONE 2026-08-26 (scheduled dev-agent). Lesson 30 §1 now says "monetary base (M0)" — and
-    the matching standard term in each language — and carries a §3.0.3 chip to the `M0` glossary
-    entry.** See the run log for three premise corrections, one of which changed the fix.
-    > **The one worth carrying: the prescribed wording would have FAILED the build.** §17 requires the
-    > section's English text to mention the glossary key or its `en.s`, and a bare "monetary base"
-    > is neither `M0` nor `Monetary Base (M0)` — hence the parenthetical in the shipped prose.
-    > **§2.3 boundary:** the phrase exists because the 2026-08-02 run removed dated figures from it.
-    > Rewording it must not reintroduce a number.
+123. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-113. **✅ DONE 2026-08-26 (scheduled dev-agent). Shipped as `check-data.mjs` §49 — three
-    detectors, each proven against its own sample, plus the two `__selftest_*` call sites as a
-    live control. One premise correction below. See the run log.** See the run log.
+124. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-112. **✅ DONE 2026-08-25 (owner-directed). Both axes shipped — 5 languages × 2 font scales — and
-    the app came back clean in all 130 sweeps. The defects were all in the instrument: 12 states
-    per language were unreachable because every recipe matched ENGLISH display text. Recipes now
-    select by id, position, ARIA, numerals, and labels read from the app at runtime. Residual (a
-    static guard) deferred to item 113 because `check-data.mjs` was mid-refactor by another
-    session. See the run log.**
+125. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-111. **✅ RETIRED 2026-08-25 (owner-directed) — no defect. All nine of its states measured clean, so
-    the yield stopped at three-for-three. The run shipped `scripts/a11y-states.js` (19 states, each
-    with an arrival assertion) + `check-data.mjs` §48 instead, so that a clean answer is
-    reproducible in ~1.6s rather than an afternoon of hand-driving. Residual filed as item 112.
-    See the run log.**
-    - **⛔ TWO PREMISE CORRECTIONS, both to text I wrote myself this morning.**
-      **(a)** There is no `Kids.jsx` — the age selector lives in
-      `src/screens/reference/ParentGuide.jsx`.
-      **(b) The claim that item 109 read the batch-pause and session-complete states "on an
-      *unseeded* queue" was simply false**, and item 109's own table says so: it records
-      `batch pause (10 of 14)`, i.e. a seeded fourteen-question queue. I had misread item 109's
-      seeding-trap paragraph, which is about a seed that silently *reverted*, not an absent one.
-      Re-measured on a properly seeded queue: both states reproduce `12` exactly.
-    - **The seeding trap is already documented and cost item 109 a reading** — writing `ecycles_review`
-      while the app is running does nothing, because `useAppState` holds review state in React and
-      saves over it. Do the `setItem` and the reload in the same call.
+127. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-110. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. Thesis confirmed a third
-    time — and the defect was on the one screen with 100% reach. Eleven states swept; the first-run
-    disclaimer modal was the only one with a finding. Fixed in two halves (the background is now
-    `inert` + `aria-hidden`, and the dialog title is the `<h1>`), guarded by `check-data.mjs` §47.
-    Residual filed as item 111. See the run log.**
+128. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-109. **✅ DONE 2026-08-25 (scheduled dev-agent), the same day it was filed. The suspicion was right
-    and the defect was worse than the item guessed: mid-quiz the page had NO `<h1>` at all — its
-    entire outline was one `<h3>`. Fixed by making the question the runner's `<h1>` (`headingLevel`
-    prop on `<Question>`, default `"h3"` so the lesson reader is untouched), guarded by
-    `check-data.mjs` §46 — and the `headingOrder` probe, which called this screen "ok" every time it
-    ever ran, was fixed in the same commit. See the run log.**
+129. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-123. **✅ DONE 2026-08-27 (scheduled dev-agent), the day after it was filed. Shipped as
-    `check-data.mjs` §51 — and the item's headline premise was WRONG in the direction that had made
-    it look optional: it said "one known instance and it is already fixed", and there were TWO MORE
-    STILL SHIPPING.** See the run log.
-    > **The correction, kept because it is the reason the item was worth picking.** The item priced
-    > itself "low-medium" on the grounds that the class was invisible but empty. Reading the call
-    > sites found `AsymmetryChart`'s shared zero line (the two bars ARE their distance from it, and
-    > they run in opposite directions) and `CycleChart`'s long-run trend line (`trendLabel` is drawn
-    > beneath it and names it, so a caption refers to it). Both were `line.strong`, both measured
-    > **1.71:1 light / 1.62:1 dark** on `surface.card` — live, in the rendered DOM, not just from the
-    > palette — and both are now `graph.neutral` at **5.24:1 / 4.47:1**.
-    > **The generalizable half: no `--line-*` token clears 3:1 against ANY surface in either palette
-    > (28 pairs, worst 1.75:1).** So a meaningful line-token graphic is a defect *by construction* and
-    > no shade of the token fixes it — which is why §51 is a call-site rule, not a color threshold.
-    > §51a machine-checks that premise so the rule cannot outlive its own justification.
-    > ⛔ **What §51 does NOT cover, stated so the next run does not assume it does.** It matches SVG
-    > paint attributes. `AsymmetryChart`'s zero line was a `borderTop` on a positioned `<div>` —
-    > lexically identical to the ~50 correct card borders — and was found by *reading the file*, not
-    > by the scanner. That residual is **item 124**.
+131. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-124. **✅ DONE 2026-08-28 (owner-directed, as one half of item 135). Built exactly as this item's
-    "shape that could work" specified — a live-DOM probe rather than a widened source pattern —
-    and proven firing on a REAL figure, not only on a plant.**
+134. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-125. **✅ DONE 2026-08-27 (scheduled dev-agent). The one stale figure is gone, the standing rule is
-    now enforced by `check-data.mjs` §52 — and the item's own hypothesis was REFUTED: nothing else
-    moved in that repaint.** See the run log.
-    > **The premise correction, and it is the reason to keep this item rather than prune it.** The
-    > item predicted a sweep "would find whatever else moved in the same repaint." It was run across
-    > all of living text — the backlog, the App summary, the Environment note, the five standing
-    > docs, and all 72 files under `src/` — and found **exactly one real defect, item 63's headline**.
-    > Three other hits were false positives — two are registered, and the third was this item's own
-    > original text, which no longer quotes the hex — and all three are instructive: two name a token while
-    > quoting the *other* side of a pair, and `lessons.js`'s comment is flagged **because it exists to
-    > argue that lesson 32's decorative accent is not `--graph-amber`**. **This was a defect, not a class.**
-    > **Standing rule, unchanged and now enforced: a hex quoted in this log is a dated observation,
-    > not the palette.** Read the token out of `src/index.css` every time, including when a closed
-    > item states it confidently.
-    > **Disposition of item 63's headline, per item 58's rule (a stale figure inside an argument that
-    > does not need it is deleted, not corrected).** The hex is **not restated** with a fresh value —
-    > restating re-arms the trap four days later. The headline now says the run gave the token a
-    > value and points at `src/index.css`.
-    > ⚠️ **§52's scope is narrower than this item imagined, and that is stated in the code rather
-    > than implied: it catches a hex sharing a LINE with the token it misattributes.** A hex whose
-    > token is named a paragraph away, or referred to only as "the amber", is invisible to it. The
-    > small register is a measured result, not an omission. Residual filed as **item 126**.
-    > **The run log and `AGENT_LOG.archive.md` are deliberately OUT of scope** (§31 / item 91: an
-    > entry that recorded "3.76:1 at `#7c8494`" was true when written). That exclusion is not
-    > cosmetic — injection 5 removed the boundary and a dated entry's injected probe value
-    > immediately failed the build.
+136. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-127. **✅ DONE 2026-08-29 (scheduled dev-agent). Shipped as `scripts/numerals.mjs` + `check-data.mjs`
-    §61, with §53(f) now per-language and §21's caption read rather than asserted about. Read the two
-    corrections below before extending any of it.** See the run log.
-    - **The decision the item left open, made on measurement:** the **numeral normalizer**, not
-      §54(e)-style label anchoring — labels are not available here, because lesson 17's claim *is* its
-      numerals. Scoped to Arabic digits + myriad units (`만/万/萬`, `천/千`, `억/亿/億`, `조/兆`);
-      deliberately no Chinese numeral characters and no written-out English, the corpus using digits
-      throughout.
-    - ⛔ **THE ITEM'S CHARACTERIZATION OF §21 AND §50 WAS WRONG, and the truth is slightly worse.**
-      It said the blind spot "applies to §21's and §50's figure-vs-prose checks". Neither had a
-      body-prose check at all: both pin literals and assert **about** prose ("the caption states these
-      figures in all five languages") with nothing reading it. §21 is fixed; **§50 is not — see item
-      150.**
-    - ⚠️ **THE INSTRUMENT TRAP THIS ITEM WARNED ABOUT HAS A FIFTH CASE IT DID NOT NAME, and it is the
-      one that bites.** Korean `만` is *both* the myriad marker and the particle "only". Lesson 7's
-      Korean caption says `$4,000만 30% 구간에` and the first draft of the parser read it as
-      40,000,000, reporting a figure as missing that is plainly there. **The fix is NOT a
-      currency-prefix rule** — that was tried and the corpus refuted it, since the Korean markets copy
-      writes `$6000억`. It is that **a thousands-separated mantissa never takes a myriad unit**:
-      measured over the whole corpus, 58 digit-runs are followed by a unit char, 57 genuine and none
-      with a comma, 1 false and it has one.
-    - **Where the controls live now:** §61 asserts the parser against 9 specimens as **exact set
-      equality**, 4 of them refutations a greedy parser fails. §21's and §53's own per-language
-      controls prove the instrument is *on*; §61 is what proves it is *right*.
+137. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-128. **✅ DONE 2026-08-27 (scheduled dev-agent), the same day it was filed — but read the premise
-    correction, because the item's headline was three times too small, its file list was missing a
-    rendered surface, and the real finding is about item 91 rather than about a word.** See the run log.
-    > **The item said "8 occurrences in one file, honest priority: low." Measured: 11 occurrences
-    > across 8 lines, plus a fourth coupled surface the item's own fix-list omitted
-    > (`quizText.en.js`, a rendered quiz explanation), plus `specialised` in the same lesson body and
-    > `favour` in a rendered answer option — 36 British spellings across 11 files in total.**
-    > ⛔ **The correction that matters is to item 91's closing claim, and it is the reason this stopped
-    > being a spelling nit.** Item 91 (2026-08-21) closed with *"the final whole-repo scan returns
-    > exactly the 10 intended exclusions and nothing else"*. Re-measured by extracting the tree at item
-    > 91's own commit (`git archive 9232cd0`, read-only) and re-running the scan: **nine British
-    > spellings sat in `src/` outside that exclusion list on the day it was written**, plus seven more
-    > in `scripts/` — and `colour` is a form item 91's entry lists as one it fixed. Its trustworthy
-    > number came from walking 1,316 **learner-visible strings**, a corpus with no comments in it;
-    > the "whole-repo" sentence claimed a scope its instrument never had.
-    > **The transferable lesson, and the reason the fix was a guard and not a rename: a style rule
-    > with no instrument is a claim, not a property.** Six days after item 91, lessons 42-44 shipped
-    > "Labour income" — the term lesson 42 *defines* — into lesson prose, a legend label, a caption
-    > and a screen-reader description, and nothing noticed. Closed by `check-data.mjs` **§55**, scoped
-    > exactly as item 91's own closing advice recommended (learner-visible strings only).
-    > ⚠️ **Two traps this run hit, both worth not re-deriving.** (1) A blanket `labelled`→`labeled`
-    > replace rewrites **`aria-labelledby`**, a real ARIA attribute name (17 occurrences repo-wide);
-    > it broke §44 inside this very run. (2) A sweep instrument whose extension list omits **`.mjs`**
-    > reports "0 occurrences across 0 files" for `scripts/`, which reads exactly like clean.
+135. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-129. **✅ DONE 2026-08-27 (owner-directed: "do item 129 next"), the same day it was filed. Coverage
-    restored 77% → 84% in all four languages. The premise held — and the reading found a defect the
-    rename had nothing to do with, which is the case for reading over re-stamping.** See the run log.
-    > **The premise was proved, not assumed:** the English delta since the reviewed state is exactly
-    > **12 word-level hunks, 11 `labour`→`labor` + 1 `specialised`→`specialized`**, measured with a
-    > controlled differ (a planted prose change reported 2 hunks; a self-compare reported 0).
-    > ⛔ **The finding: `ja` lesson 43 wrote 「急を要すもの」, the archaic `要す` where modern Japanese
-    > takes the attributive `要する`** — unrelated to the rename, and **a re-stamp would have vouched
-    > for it**. Confirmed against the app's own Japanese rather than from memory:
-    > `lessonContent.essentials.ja.js` conjugates the same position correctly, so the corpus
-    > contradicted itself. Fixed.
-    > **Two deviations were recorded and deliberately left** (`ko` 42's rendering of "the four
-    > thousand dollars" as the per-person $1,000; `zh` 44's "far more than people usually realize"
-    > for "unusually well protected"). Neither misstates a figure or breaches §10.1. **Over-editing a
-    > language whose only check is this review is the larger risk** — that judgment is the reusable part.
-    > ⚠️ **What this does NOT establish.** Every mark is `method: "ai"`. Per
-    > `scripts/translation-review.mjs`'s reviewer-of-record note this is real content review but **not**
-    > a native-speaker pass, and the correlated-blind-spot caveat applies. **Human review share is
-    > still 0% in all four languages** — that is O-3, and it is the owner's.
+132. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-131. **✅ DONE 2026-08-28 (owner-directed: "do items 131 and 132 next") — 28 of 28 pairs, coverage
-    95% → 100% in all four languages, 7 stale → 0.** Collapsed to its conclusion 2026-09-08 per W-7.2
-    rule 1 from 6,461 b; the per-tranche chronology and the superseded figure corrections are in the
-    run log for 2026-08-27 and 2026-08-28.
-    **What was true:** seven lessons were flagged stale against their reviewed-English hash, and this
-    item scoped the work as a re-stamp, one language per run. **What is true now:** all 28 pairs were
-    **read in full**, not re-stamped, and the reading found defects no consistency check could reach.
-    ⭐ **Five findings that outlive the item, which is why it is collapsed rather than deleted.**
-    1. **A uniform omission is invisible to every cross-language check in this repo.** Lesson 1 named
-       María in §1/§2 while **all four** translations had dropped her introduction from §0 — and
-       because they agreed with each other, §16 (which verifies translations against English, not
-       English against sense) could not see it. **Reading is the only instrument for that class.**
-    2. **A lesson's rendered surface spans `lessonContent` AND `moneyVisuals`.** Normalizing the `es`
-       body's two spellings on that file's majority was wrong; the live page then showed the other
-       spelling from a different module. **"The majority in this file" is a sample, not a convention.**
-    3. **Count code points, not `wc -m`, on any CJK corpus.** `wc -m` counts bytes with no UTF-8
-       locale set (three Han characters report 9), inflating ko/zh/ja roughly threefold. Ratios
-       survived because both sides were measured the same way; absolute figures did not.
-    4. **A hash over the source language cannot see drift in the target.** Staleness truthfully said
-       "the English moved a little" while the *translations* had grown 2.8x–4.7x — ~29,000 characters
-       of never-reviewed machine translation that the flag called a re-review and which was a **first**
-       review.
-    5. **A pair whose source has not moved is not thereby correct.** Lessons 1 and 4 were
-       byte-identical to their reviewed state and the read still found the defect in (1).
+133. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-134. **✅ DONE 2026-08-27 (owner-directed: "do item 134 next"), the same day it was filed — shipped
-    as `check-data.mjs` §56, with 33 live repairs. Read the premise correction: this item was wrong
-    about the size of the problem AND wrong about the design, and the design error was the one that
-    would have shipped a check that fails on correct prose.**
-    > ⛔ **"Zero live instances as of this entry" was wrong by 33.** The item measured `lessonContent`
-    > only. Re-measured across the twelve modules §55 walks, in all five languages: **`zh` carried 8
-    > corner-bracket spans and 25 ASCII-single-quote spans — 33 in 15 strings across 5 modules** —
-    > against its own 152 full-width quotations. `en`, `es`, `ko` and `ja` were clean. **The hand
-    > review that found 2 of these missed 33 of the same family, because it was only looking where it
-    > was reading.**
-    > ⛔ **"The title/non-title join is the load-bearing part" was exactly backwards — it is the main
-    > FALSE-POSITIVE source, and building it would have failed the build on correct copy.** Several
-    > lesson-title heads are ordinary common nouns. `locales.ja.heroInsight` writes 「取引」 quoting the
-    > concept — the English at that spot is a plain *"transactions"*, no lesson reference — and the
-    > join would have flagged it as a mis-bracketed title. Lesson 44's own title
-    > (`The Part the Word “Passive” Leaves Out`) would have been flagged too, for containing quotes.
-    > **§56 therefore reads REPERTOIRE, not role**: which marks each language may use at all, decidable
-    > from the character, no sentence understanding, no false-positive class.
-    > **The honest cost, stated in §56's header rather than hidden: it does NOT catch the `ja` title
-    > drift** that this item was half-filed for. Telling a title reference from an ordinary quotation
-    > needs context; that stays with review. It does catch the `zh` drift, and it caught 33 more.
-    > **Also corrected: `ja` uses `『』` for SEVEN coined labels, not six** — the sixth-vs-seventh is
-    > `moneyVisuals`, outside `lessonContent`, which is the same scope error as the headline.
+138. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-136. **✅ DONE 2026-08-28 (owner-directed: "do item 136 next"). `figureClaims` now covers 7 of 11
-    primitives; the remaining four are documented as deliberately uncovered WITH the measurement
-    behind each, so no future run has to re-derive them. 2 of 5 built, 3 declined — read the two
-    corrections, because this item dismissed its strongest candidate in a line and misdescribed
-    another.**
-    > ⛔ **`BracketStack` was grouped with `Bar` as rendering "values whose only relation is
-    > proportional to the number beside them". That describes `Bar` and not `BracketStack`**, whose
-    > caption opens *"Below the old income line the two stacks are **identical**"* — an equality
-    > between rendered boxes in two different columns, the same shape as `outcomeGrid`'s claim and
-    > the same shape as the defect that shipped there twice. Built. Measured live: the shared bands
-    > render **65.17px and 78.22px in both columns**, and `minHeight: 2` cannot bind (smallest band
-    > 13.03px).
-    > ⛔ **The strongest candidate of the five was not discussed at all: lesson 3's `GrowthCurve`**,
-    > whose own text states four render claims — same starting point, one line straight, the other
-    > curving, and a gap that widens. Built.
-    > **THE TEST THAT DECIDED BOTH, and it is the transferable part.** Every one of these claims is
-    > true of the source arithmetic **by construction** — which is exactly what refuted
-    > `ProportionBar`. The question that separates them is **whether a CONTEMPLATED edit breaks it**.
-    > For `GrowthCurve` one exists with a date: item 137 gave lesson 23 a log y-axis on 2026-08-28
-    > and declined to do the same here on judgment alone. Measured in the real plot box, a log axis
-    > **swaps the two descriptions** — the "straight" line bends from **0 → 6.69** off its chord
-    > (2.7 stroke widths) while the "curving" one flattens from **15.61 → 0.01**. Proved on the LIVE
-    > figure, not only a plant: injecting that axis fired both halves (7.36px vs a 2.75px stroke;
-    > 0.01px), and restoring the points returned the sweep to 0.
-    > **The three declined, on measurement rather than judgment:** `YieldCurve` and `CycleChart` are
-    > **hardcoded SVG path constants** — no data→render mapping exists to break, so a claim would
-    > assert a literal against itself (a stronger reason than this item's "no stated quantity",
-    > which was wrong: their orderings *are* stated). `Bar` is the one case where this item's own
-    > reasoning holds, and it **prints each value as text above its bar** — the same property item
-    > 137 used to keep `GrowthCurve` linear. **`ProportionBar` stays refuted; do not rebuild it.**
-    > ⚠️ **Latent false positive now written into the probe: `data-figure` sits on the PRIMITIVE.**
-    > `GrowthCurve` is generic and only lesson 3 uses it, so claim and caption agree today. A second
-    > lesson drawing two curving lines through it would inherit a claim its caption does not make.
-    > **Fix is to move `data-figure` to the call site, not to loosen the claim.** The same latency
-    > already applies to `lossAsymmetry` and `outcomeGrid`.
+139. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-137. **✅ DONE 2026-08-28 (scheduled dev-agent). Lesson 23's y-axis is logarithmic; the left edge
-    went from 1.64px apart under a 2.58px stroke (0.64x) to 7.00px (2.72x), and `figureClaims`
-    reports the figure clean in a live render. Read the premise correction — BOTH of this item's
-    stated blockers were larger on paper than in measurement, which is why it had been filed
-    rather than shipped.**
-    > ⛔ **"`flipDescription` would have to be rewritten in five languages" — FALSE, measured.**
-    > A log axis mutes the hockey stick but does not spend it: the $50's last-segment slope goes
-    > from **9.68x** the mean of the earlier segments to **3.48x**, still by far the steepest
-    > stretch, and it still crosses and still finishes **15.6%** of the plot height clear (was
-    > 35.0%). Every clause of the text alternative — "turns sharply upward, crosses above ..., and
-    > finishes well above it" — was checked against the rendered geometry and holds. **No content
-    > string in any language was touched.**
-    > ⛔ **"§50 (f)'s drawability clause would need re-deriving" — FALSE.** That clause tests where
-    > the crossing sits **along the x-axis** (5%–95%). A y-scale cannot move it, and the live
-    > marker/bracket check confirms it did not.
-    > **The trade that IS real, stated so the owner can reverse it in one line** (`flipYNorm` in
-    > `moneyVisuals.js`): the late upturn is less dramatic than it was. It was shipped because the
-    > alternative is a figure whose caption says "the $65 is simply the better deal" over a
-    > picture that draws one line — and because this axis carries no label, gridline or printed
-    > value, so a monotone transform spends nothing a reader could have read off it.
-    > **Now a property, not a claim:** `check-data.mjs` §50 (i) asserts ≥5% of plot height at both
-    > edges (the stroke is exactly 2.5% of plot height at every scale, so that is two stroke
-    > widths) **and** that the scale never reorders the curves. Both halves were proven by
-    > injection — the old linear scale reports 1.59%, a non-monotone scale reports the reorder.
-    > ⚠️ **Deliberately NOT changed: `GrowthCurve` keeps its linear axis.** The same argument does
-    > not transfer — that figure **prints its endpoint values as text**, so its axis is readable
-    > and a log transform there would misstate numbers a reader can check. A log axis is safe here
-    > *because* this one is deliberately unlabeled.
+146. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-135. **✅ DONE 2026-08-28 (owner-directed: "do item 135 next"), the same day it was filed — shipped
-    together with item 124 as `a11y-sweep.js`'s `figureClaims` probe, because they were one probe
-    read from two sides. Read the premise correction: the capability BOTH items said "already
-    exists" did not, and finding that out fixed a live hole in a different probe.**
-    > ⛔ **"The a11y sweep already renders the app and walks each `role="img"` subtree" was false,
-    > and it is the sentence both items were built on.** `imagesWithoutAlt` selected
-    > `img, svg[role='img']` — an ARIA role on an element the selector could not match. Measured:
-    > on lesson 28 the page holds **1** `[role="img"]` and the probe matched **0**, with the
-    > control firing on lesson 44's `<svg role="img">` so the selector was proven working rather
-    > than broken generally.
-    > ⛔ **AND THE SCOPE OF THAT HOLE WAS WRONG TWICE — the second time mine, in the fix's own
-    > comment.** I first wrote "two of eight figures are divs", from the two I happened to have
-    > open. Parsing every `role="img"` against its owning component says **6 of 11 primitives**
-    > are `<div role="img">` — `Bar`, `ProportionBar`, `AsymmetryChart`, `BracketStack`,
-    > `GapColumns`, `OutcomeGrid` — i.e. the probe was blind to the **majority** of the app's
-    > figures, not to an exception. **The hand count was wrong in the same direction as item
-    > 134's: it counted where it was looking.** Nothing shipped unnamed (§22 guards it at the call
-    > site), but the probe's claim was broader than its behavior — the lying zero that file exists
-    > to prevent, in the file itself. Fixed to `img, [role='img']` in the same commit.
-    > **What shipped:** four figures now DECLARE the relation their own caption states, keyed by a
-    > language-independent `data-figure` attribute, and the probe checks that and nothing else —
-    > `outcomeGrid` (four cells equal), `earningsGap` (the two gap segments equal), `lossAsymmetry`
-    > (the loss bar taller), `incomeTradeoff` (labor's dot on the rail, the others clear of it by
-    > more than a dot diameter). Deliberately **not** a generic "does this figure look right"
-    > check, which would be unfalsifiable.
-    > **The measurements are non-trivial, which is the point** — lesson 17's two gap segments render
-    > at **7.08px each while their columns are 70.8px and 170px** (and both are above the
-    > `minHeight: 4` floor, so the equality is not an artifact of it); lesson 27's bars are
-    > **37.5px vs 75px**, the 2x the lesson states; lesson 44's labor dot lifts **0.0px** off the
-    > rail against the other three at **48.4 / 72.6 / 96.8** with a 10.3px diameter.
-    > **Residual — 7 of 11 primitives still have no declared claim. That is item 136**, and it is
-    > deliberate rather than unfinished: a claim is only worth writing where the caption states a
-    > checkable relation.
+147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-132. **✅ DONE 2026-08-28 (owner-directed) — 8 sentences added, cross-track references now 40/40.
-    Read the premise correction first: this item's central claim was wrong by 8 and its
-    recommendation was the opposite of what the corpus does.**
-    > ⛔ **"These are the only two cross-track pointers in the corpus" — there are TEN.** Measured by
-    > resolving every quoted title head in every English lesson body against `lessons.js`'s `track`:
-    > **44 quoted-title references, 10 cross-track**, in four directions, not the two this item names.
-    > **Eight of the ten were already translated in all four languages**; lessons 1 and 4 were the
-    > only gap, 8 instances of 40.
-    > ⛔ **Which reverses this item's recommendation.** It said *"do not fix it in isolation —
-    > translating one sentence into four languages inside an otherwise-abridged lesson makes the
-    > corpus less coherent, not more."* But **lessons 5 and 9 are also `essentials`, also abridged,
-    > and their cross-track pointers ARE translated** — lesson 9 (`es` 0.539 / `zh` 0.173) is *more*
-    > abridged than lesson 4 (0.684 / 0.227). Keeping the pointer is the corpus's established
-    > practice in half the cases, so fixing these two made it **more** consistent. **The item priced
-    > the fix against a rule the corpus does not follow.**
-    > ⚠️ **Instrument trap, worth not re-deriving: the first measurement said 15 missing and was
-    > wrong.** `head()` split titles on an **ASCII** colon, so every `zh`/`ja` head became the whole
-    > title and five correctly-translated references read as absent. Caught only because the control
-    > was re-keyed to `zh`/`ja` text read by eye. **A split character is a locale, not a delimiter** —
-    > item 127's myriad-grouping trap in a new costume.
+175. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-133. **✅ DECIDED AND CLOSED 2026-08-29 (scheduled dev-agent) — NO PROSE CHANGE, and a guard shipped
-    instead (`check-data.mjs` §60). Read the premise corrections first; two of the item's three
-    factual claims were wrong, and the third does not lead where the item assumed.**
-    > **The original item, kept because the question was a good one:** `ko` uses `대출자` for
-    > *lender*, and the word — literally "one who lends out" — is very frequently read as the person
-    > *taking* the loan in ordinary Korean consumer-finance usage.
-    - **⛔ PREMISE CORRECTION 1 — the alternative the item names does not exist in the corpus.** The
-      item measured "`대출 기관` 8". That string, with the space, occurs **0 times**. The corpus uses
-      **`대출기관`** (no space), 8 times. A run following the item literally would grep, get zero, and
-      conclude the alternative was never adopted — the exact false negative item 127 warns about.
-    - **⛔ PREMISE CORRECTION 2 — the eight uses are a different track, and the split is semantic, not
-      accidental.** `대출기관` appears **only in `essentials`** (credit scores, mortgages, PMI — where
-      the referent really is an institution). `대출자` appears **only in `economy`** (bond buyers,
-      credit markets, "foreign lenders") where 기관 would be wrong or narrowing. So "the corpus
-      already carries an unambiguous alternative and uses it eight times" is false as an argument for
-      swapping: the two words are cleanly partitioned by track and each is right where it sits.
-    - **The third claim reproduces, and it still does not warrant an edit.** All **13** `ko` sites
-      were read in context this run. Every one is resolvable from its own sentence or its immediate
-      neighbors: the apposition `은행, 신용협동조합, 또는 딜러`; the verb `빌려줍니다`; `추가 대가를
-      요구`; and in the glossary the explicit contrast `차입자가 내는 금리는 곧 대출자가 얻는 수익`.
-      **`대출자` is never used for a borrower anywhere in the corpus.** So this is a readability
-      preference in a language with 0% human review, and **item 76's standing rule applies verbatim**
-      — rewriting on one run's reading is the unmeasured multi-language drift items 69 and 76 exist to
-      prevent.
-    - **What shipped instead, and why a guard for a property that currently holds.** The measurement
-      generalized: the five languages' *role vocabulary* had never been checked at all. Measured
-      2026-08-29 across 5 languages x 3 tracks — **zero role errors anywhere.** `economy` carries
-      lender 13x and borrower 3-4x in every language; `es` renders three of English's four
-      "borrower"s as **`deudores`** (a correct synonym the item's method would have scored as
-      missing); `zh` splits `essentials`' eight lenders as `贷方` 5 + `贷款机构` 3. `check-data.mjs`
-      **§60** now asserts, en-anchored, that a track using a role word >= 2x in English has that role
-      lexically present in all four translations. It is **presence, not counts** — a count tripwire
-      fails on any legitimate rewrite.
-    - **The residual that is NOT closed, stated rather than buried:** §60 cannot see a *swap*. A
-      translation that used `대출자` for the borrower and `차입자` for the lender throughout would
-      keep both roles lexically present and pass. Catching that needs per-sentence alignment, which
-      is item 76's instrument and still unbuilt. **§60 catches collapse and drop, not inversion.**
+174. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-138. **✅ DONE 2026-08-28 (owner-directed: "do item 138 next"), the same day it was filed. Shipped
-    as `check-data.mjs` §58, proved able to fail four ways — including by replaying the real
-    eight-day defect. Read the two corrections: this item specified the wrong detector, and one of
-    its own numbers was a guess.**
-    > ⛔ **"Key on the `(in <Track>)` suffix" would have covered 23% of the surface.** Measured: only
-    > **10 of 44** references carry that suffix, and they are exactly the 10 cross-track ones — the
-    > suffix names the *other track*, so it appears only when the reference crosses one. The 34
-    > same-track references are bare quoted titles.
-    > ⛔ **"The same-track references are already correct" was UNVERIFIED when this item was filed** —
-    > the filing run measured per-language presence for the 10 cross-track references only and
-    > generalized to all 44. Re-measured: **176 instances, 0 missing**, so the claim was true. It was
-    > still a guess wearing a number, and it was my own entry's.
-    > **The design that replaced it, and it is the transferable part: require the target to be marked
-    > as a TITLE, not merely mentioned.** Fourteen lesson heads are ordinary common nouns (`Credit`,
-    > `Taxes`, `Insurance`, `Transactions`, `Budgeting`), so a substring test accepts the ordinary
-    > word and calls a dropped reference present. §58 requires each language's own title marks (§56's
-    > repertoire), which **closes the gap §56's header records as out of its reach** — §56 reads
-    > repertoire and cannot tell a title reference from an ordinary quotation; §58 knows which spans
-    > are references because English says so.
-    > ⚠️ **Prefix hazard, found by probing rather than by it firing: `Credit` is a prefix of `Credit
-    > Scores` and of `Credit Reports vs. Credit Scores`.** Match extracted spans for **equality**;
-    > never `includes(mark + head)`. Both give 44 today; only equality stays right.
-    > ⚠️ **§33 looked like it should have caught the original defect and could not**, and the reason
-    > generalizes: §33 and its baseline **did not exist on 2026-08-20** (the baseline file was added
-    > 2026-08-21 by `e455663`), so it recorded the already-degraded ratio as the norm. **A baseline
-    > taken after a defect makes the defect the baseline.**
-    > **Scope shipped wider than this item asked:** lesson prose **and** `quizData.explain` — §16's
-    > two surfaces, so the title era does not cover less than the numeric era did. **50 references
-    > (44 prose, 6 quiz), 200 instances, 0 dropped, 0 unmarked.**
+173. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-139. **✅ DONE 2026-08-28 (scheduled dev-agent), the same day it was filed. Shipped as
-    `check-data.mjs` §28c — 14 ring x surface pairs at 1.4.11's 3:1, both palettes, the ring token
-    DERIVED from the `:focus-visible` rule rather than hardcoded. The item's "cheaper 80%" was the
-    right shape and its WCAG citation was wrong; read the two corrections below.** See the run log.
-    > **PREMISE CORRECTIONS 2026-08-28, both from measuring rather than reading.**
-    > **(1) The criterion.** The item cites "WCAG **2.4.11** (focus appearance)". In WCAG 2.2,
-    > 2.4.11 is *Focus Not Obscured (Minimum)*; the appearance criterion is **2.4.13, and it is
-    > AAA**. The AA bar that actually binds a focus indicator's contrast is **1.4.11**, which is
-    > what §28c asserts. 2.4.13's AREA/THICKNESS half remains uncovered — `outline: 2px solid`
-    > with a 2px offset is what ships and nothing measures it.
-    > **(2) "It currently clears AA everywhere §28 already measures it" — §28 does not measure it
-    > at all.** §28 pairs `--ink-*` against surfaces and `--ink-on-fill` against fills; §28b pairs
-    > `--graph-*`. **No section paired the ring token against a surface.** That the ring looked
-    > covered is a coincidence of the palette: `--ink-accent` and `--fill-accent` hold the *same
-    > hex* in both palettes, so §28 was measuring an identical number for a different reason.
-    > **The control that settles it:** repointing `:focus-visible` at `--line-hairline` — a token
-    > both §28 and §28b exclude — produces **14 failures, every one of them §28c, and zero from
-    > anything else in the suite.** An invisible focus ring was green across the whole build.
+172. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-146. **✅ DONE 2026-08-29 (scheduled dev-agent). The a11y matrix has a third axis — viewport width —
-    and §3.0.7's 375px promise now has a stated, refusable measurement behind it.**
-    - **What shipped:** `A11yStates.expectViewport(px)` declares the width a session is sweeping at
-      and **throws** when the DOM disagrees; `env()` gains `layoutViewportWidth`, `viewportExpected`
-      and `viewportMatches` (never silently `true` — `null` means no claim was made); `runAll()`
-      gains an unconditional `viewportClaim` line; and `selftest()` gains a two-sided control that
-      proves the assertion accepts the true width and refuses a wrong one, restoring any prior
-      declaration either way.
-    - **The result it was built to state, 2026-08-29 at `resize_window` mobile:** all **19 states
-      clean at 375px** — 12 no-reload in one `runAll`, plus all 7 reload-seeded states driven
-      individually (`first-run-modal`, `lesson-unfinished`, `lesson-midquiz`,
-      `practice-all-questions`, `practice-runner`, `practice-batch-pause`, `practice-complete`).
-      `smallTargets` and `horizontalOverflow` — the two probes that exist for this clause — reported
-      **12 ok / 0 findings** with **0 vacuous**, over a session in which all 11 sweep controls fired.
-      **§3.0.7 holds; it had simply never been said.**
-    - ⛔ **The item's own opening premise was FALSE and step 5 caught it — do not re-derive the
-      wrong version.** The first draft said the app had never been swept at 375px. It has: the
-      **2026-08-04** accessibility pass swept 375px, 320px portrait, 320px + the 130% font step, and
-      568x320 landscape, `scrollWidth === innerWidth` everywhere. The true, narrower gap is that
-      that pass was **one geometry equality rather than these eleven probes**, and predates this
-      matrix (2026-08-25), the storage preconditions, both other axes, the 2026-08-23 warm palette
-      and serif pairing, and more than half of today's 44 lessons.
-    - **The measurement that justified the item, with its control:** `viewportWidth` appears **zero**
-      times in `AGENT_LOG.md` and its archive — no matrix sweep has ever stated a width — while the
-      control terms `htmlLang` (8) and `sweepLangs` (18) appear, so the grep was live rather than
-      broken. The hazard is the lying zero one level up: **a full sweep at desktop width reports 19
-      clean states and reads exactly like a mobile sweep.**
-    - ⚠️ **`innerWidth` is not the width the app lays out into, and the delta is not constant.**
-      Measured on three screens: Practice cold `375/375` (page does not scroll), Reference `375/360`,
-      lesson 1 `375/360` — this harness renders a classic space-consuming scrollbar only where the
-      page scrolls, which a phone's overlay scrollbar never does. **A first draft of the code comment
-      called the 15px "persistent" from a single sample; that was wrong and is corrected in place.**
-      Assert on `innerWidth` (the only figure constant across states), read `layoutViewportWidth`
-      **per state**, and never from the summary `env`, which is sampled once after the last state.
-      The sweep is therefore *stricter* than a real 375px phone on exactly the scrolling screens, so
-      a clean `horizontalOverflow` cannot be a false pass in that direction.
-    - **Residual, deliberately not built:** 320px and landscape are in the 2026-08-04 pass and in no
-      instrument. One axis with one asserted width is the honest unit of work here — **filed as item
-      147** rather than smuggled in.
+171. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-147. **✅ DONE 2026-08-29 (owner-directed: "do item 147 next"), the day it was filed. All three
-    widths swept — and "no new code needed" was wrong: the compounding case found a real defect and
-    the run shipped a fix.** See the run log.
-    - **The three configurations and what they returned.** 320px portrait: **19/19 states clean**
-      (12 no-reload + all 7 reload-seeded). 568x320 landscape: **12/12 clean**, plus the first-run
-      modal specifically (the 2026-08-04 pass called it out) — dialog 320px tall, no internal
-      scroll, "Got it" button fully visible at bottom 241 of 320. **320px x 130% font: 11/12 —
-      one real finding**, below.
-    - ⛔ **The item predicted "no new code, unless a width produces findings". A width produced
-      findings.** `Reference > Market signals` scrolls the document horizontally at 320px x 130%:
-      `scrollWidth=323 vs clientWidth=305`, an 18px overflow, traced to the Fed-balance-sheet
-      `Bar` chart's last column ("Second tightening"). **Clean at 320px x 100% and at 375px** — it
-      is specifically the compounding case, which is exactly what the 2026-08-04 pass was checking
-      for and the reason that configuration is on the list. **Filed as item 148**, because the fix
-      is a design call rather than a defect with one right answer.
-    - **What this run DID ship, which is the other half of the same screen:** `Bar`'s box height is
-      now font-relative. See item 148 for why the horizontal half was separated from it.
-    - **Standing note for the next width sweep.** The reload-gated states were swept at 320
-      portrait but **NOT at 130% font** — `runAll` covers only the 12 no-reload states, and the
-      seven others are three tool calls each. So the lesson and quiz screens are **unmeasured at
-      the compounding configuration**. That is a real coverage gap, stated rather than rounded off,
-      and it is where the next instance would live.
-    - **✅ THAT GAP IS NOW MEASURED (2026-08-29, scheduled dev-agent) and it is clean.** All seven
-      reload-gated states driven individually at **320px x 130%**, `rootFontSizePx: 20.8` asserted
-      on each: **7/7 clean, `0 unavailable` on every one.** With `runAll`'s 12 that is **19/19 at
-      one declared axis, 18 clean** — the single finding being item 148's known overflow, which
-      reproducing here is a control rather than a regression.
-    - ⛔ **AND THIS ITEM'S OWN "19/19 clean" WAS OVERSTATED.** `focusVisibleOnTab` needs a
-      tabbed-into document; `begin()` reloads and throws that state away, and only the `verdict`
-      string says so while `status` stays `"ok"`. This item's seven states were therefore swept on
-      **ten** probes, not eleven, and a hand-assembled total could not show it. **The findings
-      stand; the coverage did not.** `A11yStates.coverage()` plus the Tab step now in the header
-      recipe are the fix — see item 149.
-
-175. **✅ DONE 2026-09-09 (scheduled dev-agent), the same run it was found** — filed in conclusion
-    form per W-7.2 rule 1; the instrument, its control and the full before/after are in this date's
-    run-log entry.
-    **What was true:** the in-lesson glossary chips (`GlossaryTerms.jsx`, the §3.0.3 surface) put a
-    term's definition into a panel that was **not a live region**, and the component's own header
-    said why: *"it follows its trigger in DOM order, which is where a screen reader looks next."*
-    That is true of the **last** chip in a row and false of every other one — `lessonTerms.js` yields
-    **54 chip rows, 29 of them multi-chip, 104 chips of which 50 are not last in their row.** The
-    worst case is a 5-chip row (essentials 6, economy 25) where the first chip's definition sits four
-    nodes past it. `aria-controls` does not bridge that; most screen readers ignore it.
-    **What is true now:** the panel carries `role="status"` on the container that was already always
-    rendered, so the region exists before its content — item 174's rule, and verbatim the idiom
-    `PolicySim.jsx` has used eleven files away since item 34, for a component with the identical shape
-    (a row of buttons over one shared panel). Measured live: opening "Stock" on lesson 35 moves the
-    page's live-region character total **0 → 361** where it previously moved **0 → 0**, and the swap
-    to "Bond" moves it **361 → 337** in place — the case PolicySim's header names as its whole reason
-    for a live region, and the case the old rationale did not cover at all.
-    ⭐ **Why the item-174 sweep did not catch it, and it is the third recurrence of one shape.** That
-    run swept the app's live regions and closed the class at "all six are now correct". **The class
-    was "a surface that swaps content in place"; the sweep's scope was "elements already carrying a
-    live-region role"** — so a surface with no region could not appear in it. Identical to §82, whose
-    class was "an ARIA composite role with no keyboard contract" and whose scope was one role string.
-    **A sweep keyed on the marker cannot find the surfaces missing the marker.**
-    ⚠️ **Unchanged limit:** no screen reader is drivable from this host, so this is a DOM-precondition
-    claim, not a measured announcement.
-    **No check shipped** (W-6.2 rule 3, W-6.3 quoted in the run-log entry): deciding from JSX which
-    panels *ought* to be live is the brittle regex item 152 was declined for, and nothing in
-    `scripts/` reads live regions today.
-
-174. **✅ DONE 2026-09-08 (scheduled dev-agent), the SAME day it was filed** — replaced by its
-    conclusion per W-7.2 rule 1; the two instruments, their controls and the full measurements are in
-    its run-log entry, now in `AGENT_LOG.archive.md` under `## Archived 2026-09-08`.
-    ✏️ **BOTH dates in the line above were wrong until 2026-09-09 (archiving pass), and the absolute
-    one had corrupted the run log itself.** This item's run-log entry was headed `### 2026-09-09`
-    while the commit that wrote it, `4e08fd8`, is authored **2026-09-08 20:12**; the item was filed by
-    `3ec70af` 2026-09-08 18:16, so the close came **1h56m** later, not a day. The heading is corrected
-    in the archived copy. ⛔ **This is what item 142's rule is for — a typed date and a file position
-    are not evidence, `git log`'s author date is** — and the mistyped character cost more than a wrong
-    date: `check-log-size.mjs` read the run log as **two non-contiguous days** and warned that the
-    archiving cut was "not obvious", which is why this pass measured before it cut.
-    📏 **The class, measured rather than guessed (2026-09-09).** All 27 live run-log headings were
-    diffed against the author date of the commit that added each: **26 agreed, 1 did not** — this one.
-    Relative-day prose was checked separately for items 170-175 against their filing and closing
-    commits: **5 evaluable, 2 wrong** (173 and this one, both claiming "the day after" for a same-day
-    close), 3 correct (170, 171; 172 and 175 are self-contained). **No check was built** (W-6.2
-    rule 3): the learner-visible-failure sentence cannot be written honestly — no learner reads
-    `AGENT_LOG.md`. The instrument is one `git show --unified=0 | grep '^+### '` loop over
-    `git log --format=%H -- AGENT_LOG.md`, and it is recorded here so it need not be re-derived.
-    **What was true:** the app had six ARIA live regions and two of them announced nothing, because
-    the node was inserted with its text already inside it — `LessonReader`'s "Complete!" toast (9
-    chars at insertion, every lesson completion) and `App`'s `PracticeCoachMark` (64 chars, once per
-    install). Both are `position: fixed` overlays meant to leave, so `Question.jsx`'s "render it
-    always and empty" fix did not transfer.
-    **What is true now:** `ui.jsx` exports a persistent, `SrOnly`, always-mounted `Announcer`; the
-    toast is `aria-hidden` and the coach mark has dropped its `role` (**not** `aria-hidden` — it owns
-    two reachable buttons). Both messages reuse existing locale keys, so **no translation debt was
-    added**. Re-measured on `index-DnLpZ5BO.js`: **0 nodes created by either interaction**, both
-    regions populated in place, controls firing in both directions. **All six regions are now
-    correct**, so the class is swept and closed at zero.
-    ⚠️ **The one thing to carry forward, because it bites an instrument this repo relies on:** a
-    persistent announcer means *"does a `role="status"` node exist on this screen"* answers YES
-    everywhere, and on the path it is usually non-empty. Item 169's silent-discard measurement was
-    written on that test; it is annotated in `DECISIONS.md` and `deepLink.js` as retired, with the
-    replacement — **read the announcer's CONTENT, never its presence.**
-    ⚠️ **Unchanged limit:** no screen reader is drivable from this host, so this is a DOM-precondition
-    claim, not a measured announcement.
-
-173. **✅ DONE 2026-09-08 (scheduled dev-agent), the SAME day it was filed** — replaced by its
-    conclusion per W-7.2 rule 1; the measurements are in that date's twelfth run-log entry, now in
-    `AGENT_LOG.archive.md` under `## Archived 2026-09-08`.
-    ✏️ **"the day after it was filed" corrected 2026-09-09 (archiving pass), from git rather than from
-    reading:** filed by `1e9baad` 2026-09-08 12:13, closed by `6adb2bc` 2026-09-08 16:15 — **4h02m,
-    one day.** See item 174 for the measured class this belongs to.
-    **What was true:** closing a lesson dropped focus to `<body>`, so a keyboard or screen-reader
-    learner who finished a lesson deep in a 44-row path was returned to the top of the DOCUMENT.
-    Re-measured live before editing on `index-BC_zH3HN.js` at 375x812: the row was at `scrollY 713`
-    when opened, `activeElement` was **BODY** after Back, and the same read reported a focused row
-    and a focused `h1` elsewhere, so BODY was a finding and not a dead instrument. **What is true
-    now:** `App` records the lesson open **at close time** into `returnFocusIndex` and `Learn`
-    restores it behind `Reference.jsx`'s guard — restore only when focus actually fell — reused
-    rather than re-derived. All three close paths are covered, including browser Back/back-swipe via
-    `onRoute`, which the item had listed as out of reach.
-    ⭐ **The finding the item did not contain, and it is the one worth keeping: the obvious fix would
-    have failed SILENTLY on a whole track.** `Learn` unmounts while a lesson is open, so closing one
-    re-seeds the accordion from the *next* lesson's track — measured: read an `essentials` lesson
-    while `money` holds the next lesson, close it, and the essentials `<ol>` is `hidden` again.
-    `focus()` on a row inside a hidden subtree is a no-op that throws nothing and returns nothing
-    (measured, with a visible row as the control that took focus on the same call). Seeding
-    `openTrack` from the row being restored fixes it; reading `activeElement` back afterwards turns
-    any residual no-op into the scroll-to-top the learner would otherwise have got.
-    ⚖️ **The one behavioral trade, decided rather than stumbled into:** `closeLesson`'s unconditional
-    `scrollTop()` is gone, because "go to the top of the path" and "put me back on the row I was
-    reading" cannot both be honored. `Learn` now runs exactly one of them. `focus({preventScroll:
-    true})` would have kept both at the price of a focus ring parked off-screen, which is WCAG
-    2.4.7's problem rather than a fix for it. **Measured: the trade is invisible in the most common
-    case** — a new learner closing the path's first lesson still lands at `scrollY 0`, because that
-    row is already there.
-
-172. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was found** — filed in conclusion form
-    per W-7.2 rule 1; the measurements are in this date's seventh run-log entry. **What was true:**
-    tapping the tab you are already standing on returned you to that tab's root on **Learn only**.
-    `goToTab` resets what the shell owns (`reading`), and a pushed view owned by a SCREEN —
-    Reference's `section`, Glossary's `selectedTerm`, Practice's `session` — was invisible to it, so
-    from Reference › Glossary two taps on the highlighted Reference tab left the screen
-    byte-identical (14,378 chars both times) and the Review tab did the same mid-session, while the
-    identical gesture on Learn returned to the path. Switching tabs and back DID clear them, but only
-    as a side effect of `ScreenBoundary` being keyed by `tab`. **What is true now:** `goToTab` calls
-    `dismissAllPushed()` when `key === tab`, draining the same stack Back pops — so no new state, no
-    remount, and Learn's track accordion is measurably preserved. Back still closes ONE level and the
-    re-tap goes to the root; that difference is deliberate and is guarded. `check-data.mjs` §81,
-    proven by six injections. ⭐ **The transferable part is that this section's own first draft was
-    structural and went GREEN on a broken drain** — swapping the loop for `stack[stack.length - 1]()`
-    leaves a function that still exists and still closes something. Splitting the pure `dismissAll(stack)`
-    out so the guard can *run* it, rather than pattern-match its source, is what made injection 5 fire.
-
-171. **✅ DONE 2026-09-08 (scheduled dev-agent), the day it was filed** — replaced by its conclusion
-    per W-7.2 rule 1; the measurements are in this date's fifth run-log entry. **What was true:**
-    `isUnlocked(index)` asked only whether the PREVIOUS lesson in display order was completed and
-    never whether THIS one was, so anything inserted at the front of a track re-locked finished
-    work — `b6c9bc9` (2026-08-25) prepended ids 41-44 to `money`. Re-measured live before editing,
-    with the id-migration flag pre-set so nothing was remapped: completed `[16,17,18]` rendered the
-    id-16 row `disabled: true` carrying **both** "Complete previous lessons first" and "Completed",
-    and the learner could not reopen it; control `[44,16,17,18]` opened the same row. **What is true
-    now:** the rule moved to `src/lib/lessonUnlock.js` and gained clause 1 — a completed lesson is
-    always open — chosen over option (b) because (a) subsumes it: the contradictory row is now
-    unreachable by construction rather than merely relabelled. Guarded by `check-data.mjs` §80,
-    which sweeps the completed-AND-locked invariant across 8 completed-set shapes and carries the
-    control that fails if the sequential gate widens (3 of 44 open on a fresh install). Proven by
-    four injections. `CLAIMS.md` A1's mechanism citation and `DECISIONS.md`'s tracks section were
-    updated in the same commit.
-
-170. **✅ DONE 2026-09-08 (owner-directed: "do item 170 next"), the day it was filed** — replaced by
-    its conclusion per W-7.2 rule 1; the measurements are in this date's second run-log entry.
-    **What was true:** `Practice.jsx` rendered the §10.1 disclaimer once, at the foot of the queue
-    overview, behind the three `return`s inside `if (session)` — so it was gone from the moment
-    "Practice all questions" was pressed, through the question runner, the batch pause and the
-    completion card. Re-measured before editing, with the landing as the control: landing ✅ ×1,
-    all three session states ❌. **What is true now:** one `<Disclaimer>` in the file inside a local
-    `ScreenFrame`, all four returns through it, all four states verified ✅ ×1 on the built app.
-    ⭐ **The item offered three options and the choice was made on a measurement, not a preference.**
-    Option (c) was to accept the runner as deliberately chrome-free; it lost because `LessonReader`
-    renders the **same `components/Question.jsx`** with `<Disclaimer>` directly beneath it — the app
-    had already decided that a quiz question carries the notice, and the only open question was
-    whether its two screens agree. Option (b) (pause and completion card only) would have left the
-    runner disagreeing with the lesson reader over the identical question.
-    ⛔ **The class is CLOSED at two instances and that is swept, not assumed** — the other six §10.1
-    surfaces each have exactly one top-level `return` in their component, so no branch can skip the
-    string. `App.jsx`'s is in `FirstRunNotice`, defined above the default export; the awk recipe is
-    in LAUNCH_PLAN.md §10.1. **Do not re-run this sweep.**
+170. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 168. **✅ DONE 2026-09-06 (scheduled dev-agent), the same run it was found — content and guard in one
     commit. [Content/QA] A same-track cross-reference that points FORWARD is a pointer at a LOCKED
@@ -2286,35 +1390,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       `b6c9bc9` put lessons 41-44 in front deliberately and the reference was written forward — but
       the class is the same, and §75 is what makes the next reorder loud.
 
-169. **✅ CLOSED 2026-09-07** (commit below), and it is replaced by its conclusion per W-7.2 rule 1.
-    **What was true:** on the Reference › Market Dashboard, a two-word label spilled ~40px outside
-    its own card in `es` under browser/OS text zoom. **What is true now:** the offending span carries
-    `minWidth: 0` instead of `whiteSpace: "nowrap"`, so the body's `overflow-wrap: break-word` can
-    break the word; measured 0 overflow at 100/130/150/175/200% in all five languages.
-    ⚠️ **Three things this item asserted were wrong, and they are kept here because they are the
-    reusable part — every one of them was refuted by measuring, not by reading.**
-    **(a) It named the wrong component.** "The QE/QT cards' label rows" — the QE/QT block is two
-    `<Note>` elements with no flex row in them. The defect was in the **rate-effects** cards
-    ("How rate moves have historically related to asset classes"), on the **one** card of six whose
-    noun is YIELD → es "Rendimiento". The numbers in the item were right; the name on them was not.
-    **(b) Its fix (a), `minWidth: 0` alone, is a TRAP, not a weaker option.** Measured on the live
-    page: the span's box shrinks 154 → 114 and **the ink does not move** — still one line, still
-    `scrollWidth` 154, still spilling onto the next card. A row-level geometry probe goes GREEN on it
-    while the learner sees the identical screen. It works only in combination with dropping `nowrap`.
-    **(c) Its fix (b), `overflow-wrap: anywhere`, changes nothing at all** while `white-space: nowrap`
-    is on the same element — `nowrap` suppresses every break, and no `overflow-wrap` value overrides
-    it. ⭐ **And a fourth, which was this run's own hypothesis and died the same way:** a non-breaking
-    space does **not** pin the arrow to its noun under `anywhere`, which treats the nbsp as an
-    arbitrary break point (control: a synthetic noun that fits alone but not with the arrow renders
-    `"Cotizado " / "↑"` with nbsp and plain space alike). The arrow survives on the shipped corpus
-    because "Rendimiento" is itself wider than the card, so the break lands mid-word — **incidental,
-    not guaranteed**, and said plainly here rather than claimed as a property.
-    **No check was built** (W-6.2 rule 3 / W-6.3). The learner-visible sentence is writable, but the
-    only statically decidable form is a regex for one declaration in one file, which is a guard for a
-    property that currently holds; the generalizable rule — "a `nowrap` on a flex item that has to fit
-    a container" — is not statically decidable. `scripts/` untouched, so W-6.3's ratio stays at the
-    **2.25x** (20,616 / 9,124) measured this run. The regression guard is item 155's text probe, and
-    the trap in (b) is written into the source comment where the next editor will hit it.
+169. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
     the same close reading of the economy track. All three are LIVE and were read on the built app,
     not inferred; none is a residual of that run's own edit.]**
@@ -2576,202 +1652,17 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       > for this chain: the 2026-09-05 filing run was link one and the (b) run was link two. A run
       > may not take (a) or (c) as its headline pick.**
 
-166. **✅ DONE 2026-09-04 (scheduled dev-agent). The Sector screen now credits both sources, and
-    `check-data.mjs` §73 keeps it doing so.** See the run log. Two five-language locale keys —
-    `priceSourceTemplate` ("Sector and index prices from {source}.") under the sector list and
-    `economicsSourceCredit` (the Federal Reserve Bank of St. Louis / FRED®) under the economics list —
-    both gated on `!isSample`, since crediting a vendor for fixture numbers would be false.
-    `priceSourceName()` in `src/lib/useMarketData.js` maps `market.json`'s **adapter name** to the
-    vendor's display name and returns `null` for anything unknown.
-    ⚠️ **The part worth not re-deriving: `source` is an adapter slug, not a display string**, so a new
-    adapter in `adapters.js` with no entry in `PRICE_SOURCE_NAMES` renders *real vendor prices with no
-    credit and no error anywhere*. That silent path is what §73 exists for; DECISIONS.md names Twelve
-    Data as the drop-in alternative, so the switch is a live possibility, not a hypothetical.
-    ⛔ **Checked and DECLINED in the filing walk, kept so it is not re-derived: the missing disclaimer
-    on Glossary and Kids is NOT a defect.** `check-blindspot.mjs`'s `EXPECTED_SURFACES` is a closed
-    list of 8 that deliberately excludes Glossary, TermDetail and ParentGuide, `Reference.jsx`'s §10.1
-    comment says so, and the check fails on an EXTRA surface as well as a missing one. Adding one
-    means editing LAUNCH_PLAN §10.1 and that list together — owner-facing, not a fix.
-    ⚠️ **And the instrument trap:** `grep -c '<Disclaimer' Sectors.jsx` returns 0 while the screen
-    plainly renders one — it emits the bare `{t.disclaimer}` string. A component-name grep is not a
-    disclaimer census.
-    > ⚠️ **A NOTE, not a sub-item and not a new numbered item (W-6.2 rule 2). The RELATIVE-STRENGTH
-    > MEASURE was swept 2026-09-09 and is CLEAN — do not re-open it, and in particular do not "fix"
-    > the threshold's units.** The measure, its published payload, its five-language learner-facing
-    > copy and `check-data.mjs`'s assertions were read together against real data. **Zero defects.**
-    > Three things are worth not re-deriving:
-    > **(1) The units hypothesis is WRONG, and it is attractive.** A thinkScript field named
-    > `Outperform_Percent_1` = 0.5, compared against the RAW decimal sum, sitting in a payload block
-    > that declares `unit: "percentage-points"`, reads like a 100x mismatch. It is not one.
-    > `DECISIONS.md` records the raw-decimal reading as the closed decision, and the data agrees with
-    > it: read as 0.5 **percentage points** the flag would fire on 8 of 11 sectors on an ordinary day,
-    > which is not a highlight. **The only source of truth for the study's intent is the owner's
-    > thinkScript, which is not in this repo** — so this is not a run's call in either direction.
-    > **(2) The reachability measurement, and the control that decides it, because the pooled number
-    > lies.** Every `public/data/market.json` ever committed was replayed — 23 distinct `asOf` dates,
-    > 2026-08-04 → 2026-09-08, 264 sector observations. **Pooled: 2 of 264 clear the threshold, so it
-    > looks live.** Split by `source`: **both of those 2 are `source: "fixture"`** — synthetic
-    > placeholder rows — and across the **242 real (`tiingo`) observations the maximum is 35.9 pp
-    > (raw 0.359), 72% of the threshold, with ZERO clearing it.** So 0.5-as-raw is strict but not
-    > absurd: it marks outperformance the real data has approached and not yet reached. ⛔ **`source`
-    > is the control on this file. A distribution computed across `market.json` history without
-    > splitting on it is measuring the fixtures too.**
-    > **(3) `outperforming` and `outperformThreshold` have NO consumer, measured with controls.** Both
-    > grep to **0** under `src/` outside `relativeStrength.js`, while the sibling fields of the same
-    > published block — `provisional`, `rank`, `method`, `unit`, `periods` — return **4 to 55**, so
-    > the grep plainly reaches these files. The job drops the flag and `parts` at serialization;
-    > `market.json` carries the threshold as metadata and no flag at all. **Kept, not deleted:** the
-    > "why does it rank there" UI they exist for is the owner's to build. **No check was built** —
-    > W-6.2 rule 3, because after a clean sweep of a surface no learner can see, the learner-visible
-    > sentence cannot be written honestly. `scripts/` untouched; the replay stayed in the scratchpad
-    > and the figures above are the record.
+166. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-165. **✅ FULLY CLOSED 2026-09-06 (owner-directed), content and guard both** — collapsed to its
-    conclusion 2026-09-08 per W-7.2 rule 1 from 20,571 b. The repair chronology, the layered headline
-    corrections and the instrument-convention argument are in the run log for 2026-09-02 through
-    2026-09-06; `0a30707` is the guard's commit.
-    **What was true:** the quiz's `explain` field — the surface item 160 moves reasoning *into* — was
-    abridged in a large share of question/language pairs, concentrated on the main path, so a learner
-    answering in es/ko/zh/ja got one sentence where the English reader got the mechanism.
-    **What is true now:** every open pair is repaired, and `check-data.mjs` **§74** guards the field on
-    every `npm test`, shipping at **0/184 abridged, 7 `READ_COMPLETE` entries (0 inert), 7 control
-    groups firing** — read off the suite this run, not off this item. The 7 exemptions are compact-CJK
-    renderings that carry every English clause and flag by hundredths: **item 162's false-positive
-    class recurring in a third corpus**, and padding them would be writing filler to satisfy an
-    instrument.
-    ⛔ **Read §74's numbers against §74, never against this item.** §74 computes p90 with
-    `ceil(0.9n)-1`, matching its §66/§67 siblings; this item's historical figures used
-    `round(0.9n)-1`, and on this corpus the two genuinely disagree (third decimal, and whether `q002`
-    ja flags). Control 5 pins the convention against a vector where they diverge, so a future switch
-    fails loudly instead of silently redefining every figure.
-    ⚠️ **Three traps kept because nothing else states them.** (1) **A p90 reference is computed from
-    the corpus it measures**, so repairing the corpus moves the instrument — quote one with a date.
-    (2) **Sentence-counting is a proxy for content and re-punctuation defeats it**: a translation that
-    splits one English sentence in two matches the total while dropping a whole sentence, which is how
-    a "closed" claim got made twice off a measure this item's own text said not to trust over the
-    ratio. (3) **A fingerprint list is a measurement, not an estimate** — the first `READ_COMPLETE`
-    list shipped with lengths typed rather than measured, and control 7 named all three on its first run.
-    ⭐ **The finding that outlives the item: a fix applied to one corpus is not applied to the
-    concept.** `DECISIONS.md` records a 2026-08-16 review repairing an es-only dropped word in a lesson
-    body; seventeen days later the quiz explanation *of the same mechanism* still dropped it in three
-    languages, because `translation-review.mjs` and `check-data.mjs` §33 both read `lessonContent` and
-    neither had ever opened `quizText`.
-    **Tracked elsewhere, not here:** the lesson *bodies* on those same `essentials` lessons are still
-    condensed summaries — item 94 and `npm test`'s translation-completeness warning. **O-3 applies:**
-    ~1,050 characters of machine translation shipped here, none read by a fluent speaker.
+165. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-164. **✅ DONE 2026-09-02 (scheduled dev-agent) — the headline premise reproduced exactly, and the
-    item's own list of phrasings did not: one of the three it proposed fires on shipped teaching
-    copy. Widened in all five languages, with a two-sided control.**
-    - **Premise, re-measured before editing (step 3.5), by plant and control:** planting
-      `qeQtSection: "QE, QT — now is a good time to buy"` into `src/locales/en.js` gave **PASS**;
-      the control plant `"you should buy now"` gave **FAIL**. Blind pattern list, live corpus —
-      exactly as filed.
-    - ⛔ **What the item got wrong, and it is the part worth keeping.** It named three missing
-      phrasings: *"a good time to buy"*, *"consider buying"*, *"worth buying"*. **`worth buying`
-      fires on a shipped money-track takeaway** — "wants are everything else, including plenty of
-      things worth buying" — so landing the item as written would have failed the build on correct
-      content. `consider buying` has zero live hits but is a normal teaching framing
-      ("consider buying versus renting") and was dropped for the same reason. **The first Spanish
-      draft repeated the mistake independently**: `momento (de|para) comprar` fires on a shipped
-      lesson's temporal "En el momento de comprar, ambas decisiones se sintieron iguales", so the
-      Spanish patterns now require the evaluative or copular frame (`un buen momento para comprar`,
-      `es el momento de comprar`). Both live sentences are now must-stay-clean controls.
-    - **Shipped:** a **timing** class in five languages (8 patterns) plus the softened first-person
-      verbs the existing recommendation patterns missed (`we suggest|advise`, `sugerimos|aconsejamos`,
-      `권해 드립니다`, `おすすめします`). §10.1 goes from **25 to 33 patterns**. Every one was checked
-      against the current corpus for false positives first — **0 hits across 39 files** — and each of
-      the five plants that a learner could have met (`now is a good time to buy` / `ahora es un buen
-      momento para comprar` / `지금이 매수하기 좋은 시기입니다` / `现在是买入的好时机` / `今が買い時です`)
-      now FAILs the check.
-    - ⚠️ **A pattern's own must-flag sample is not optional, proven by one that was dead when
-      written.** The Korean timing pattern was drafted as `(매수|…|팔)기 좋은` and matched **nothing**
-      — not even `매수하기 좋은 시기`, the phrase it exists for. It looked identical to a clean
-      result. The new control asserts each timing pattern against the advice sentence it was written
-      for, so a dead pattern fails loudly instead of reporting a clean corpus forever.
+164. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-163. **✅ CLOSED 2026-09-02, all three parts** — replaced by its conclusion per W-7.2 rule 1. The full
-    argument, the premise corrections and the live measurements are in the 2026-09-02 run-log entries.
-    **What was true:** (a) the Review recap told a learner who got 0 of 10 right "nice work" under a
-    green success tick, an inch above ten red crosses; (b) the heading rotor put the whole Fed
-    balance-sheet chart inside "Yield Curve Shapes", because two blocks sat between unrelated `h2`s;
-    (c) `Bar` rendered `9` where its own `aria-label` read `9.0`. **What is true now:** the tick and the
-    headline both branch at `correctCount === 0` (`166b0fe`), one `qeQtSection` heading owns the QE/QT
-    pair and the figure (`7d5cc52`), and `Bar` takes the `formatValue` prop its three siblings in the
-    same file already had (`154b152`).
-    ⭐ **The durable half, and it is why this item is worth remembering at all: all three sub-items were
-    filed by the run that had just LOOKED at the screen, and (a)'s scope, (b)'s two figures and (a)'s
-    priority label were every one of them wrong.** (b) claimed "4 of 7 blocks" and the screen has eight,
-    of which three unheaded blocks turned out to be correct markup; (a) named one site and there were
-    two, and called the defect "a judgment call, not a falsehood" when the second site was a plain
-    falsehood in five languages. **A residual is a claim about the code, not a reading of it — a
-    residual filed by the run that saw the thing is not exempt from step 3.5.**
-    ⚠️ **One thing deliberately left open, measured rather than assumed:** `es` alone writes a comma
-    decimal in the balance-sheet description while the chart face renders a period in every language.
-    The app has no locale-aware runtime number formatter (`numerals.mjs` is script-side; the only
-    runtime one is `usd`, hardcoded `en-US`). Pre-existing, one language, and (c) strictly *reduced* the
-    disagreement — `es` face-vs-description now differs only in separator, where before it also
-    differed in precision.
+163. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-162. **✅ DONE 2026-09-02 (owner-directed: "do the ko/zh/ja glossary translations too"), the same
-    day it was filed — the O-3 call this item said it needed, made for this corpus.** All 42 true
-    positives completed across ko/zh/ja (45 strings including the three VIX bands), §67 reads
-    **0/336 abridged**. **The durable part is the instrument's false-positive rate, now recorded as
-    data:** after the fix, **30 of 336 pairs (9%)** still scored under threshold and every one was
-    READ and is complete — the discursive item-35 English rendered in compact CJK. They live in §67's
-    `READ_COMPLETE` with the code-point length each had when read; **control 6** proves a listed pair
-    cut to 20% FAILS rather than hides, and a plant on the live file confirmed it (36 → 16 cp, exit 1).
-    ⚠️ **Read this before applying the same method to item 161's kidsContent remainder:** if the
-    parent guide's remaining 21 ko/zh/ja pairs are the same shape, some of them will turn out to be
-    complete compact translations too — read each, do not pad.
-    **`entry.f` renders on TWO screens** — the Glossary list (`Glossary.jsx`) and the term-detail
-    screen (`TermDetail.jsx`) — in whatever language the learner has selected. This is not a
-    latent corpus.
-    **The mechanism is authoring date, not language, and the evidence is the cross-language
-    overlap: 14 paths flagged in ALL FOUR languages at once**, and they are exactly the original
-    macroeconomic cohort (Bubble, CPI, Credit, Credit Spread, Deflation, Deleveraging, Fed Funds
-    Rate, GDP, Inflation, PMI, Productivity Growth, QE, QT, Yield Curve). The personal-finance
-    entries added 2026-08-16 (item 35) are complete clause-for-clause in every language; the macro
-    entries carried over at the 2026-08-01 split were written as terse glosses and never grew.
-    `glossary.js`'s own header already said the file has two vocabularies of two different vintages
-    — nothing had ever measured what that cost the translations.
-    **A second, narrower mechanism rides along: an English-only edit that never propagated.**
-    `Credit.f`'s "monetary base (M0)" clause was added 2026-08-26 by item 114 in English alone,
-    which is why the Spanish scored 0.58 while the rest of its sentence was a full translation.
-    ⚠️ **The ratio has BOTH error directions here too, and this run found a false negative in its
-    own corpus rather than inheriting the warning from §66.** `VIX` es scored **1.00** — a clean
-    ratio — and was still incomplete: the English carries three bands (below 15 / 25-35 / above 40)
-    and every one of the four translations carried two, dropping the middle "fear" band. It was
-    fixed alongside the flagged set, and it is the reason this item says **an unflagged pair is not
-    a certified pair.** The same shape is likely to remain in ko/zh/ja and §67 cannot see it.
-    ⚠️ **Do NOT re-use §66's `MIN_EN * 2` gap heuristic here.** It fits `kidsContent` (shortest
-    body 95) and fails on this corpus for no defect at all — the glossary's longest short name is
-    35 code points and its shortest definition is 70, so 40 sits in a real and empty gap that 80
-    would have condemned. §67's control 5 asserts the gap **this** corpus has. Copying a threshold
-    across corpora is the drift this log keeps catching in figures; it applies to constants too.
-    **§67's known blind spot, asserted as a control rather than left as prose:** a corpus abridged
-    EVENLY in every unit moves its own p90 and reads as clean. There is no recorded baseline for
-    `glossary.js`, so nothing here would catch slow uniform decay.
+162. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-161. **✅ DONE 2026-09-02 (owner-directed: "do item 161's remaining ko/zh/ja pairs too") — the O-3
-    call this item said it needed, made for this corpus.** §66 reads **0/192 abridged**. Reading the
-    21 flagged pairs found **18 true positives and 3 complete translations**; reading the UNFLAGGED
-    side found **7 more abridged pairs the ratio never caught** — including the exact one this item
-    predicted (ko `13-17.lessons[1]` dropping the 12-24 month lag) and zh `5-8.lessons[1]` dropping
-    *"That's like inflation!"*, the blurb's entire point, at a ratio the check called clean. All 25
-    completed. **9 pairs remained under threshold after the fix and all 9 are complete** — recorded in
-    §66's `READ_COMPLETE` with the length each had when read; control 6 proves a listed pair cut to
-    20% FAILS (plant on the live file: zh `13-17.parentTip` 26 → 9 cp, exit 1). **Transferable:** on
-    both corpora audited today the ratio's misses were in BOTH directions and roughly equal in count
-    — the reading, not the ratio, is the measurement.
-    ⚠️ **The ratio is a screening proxy and has BOTH error directions — read every flagged pair
-    before believing it.** False positives on short units: `13-17.parentTip` scores zh 0.23 and is a
-    complete translation; the three `title`s scored 0.35 and are complete, which is why §66 excludes
-    units under 40 code points and controls that exclusion. False negatives too: `13-17.lessons[1]`
-    ko silently drops *"But it takes 12-24 months to feel the change!"* and never flagged.
-    **§66's known blind spot, asserted as a control rather than left as prose:** a corpus abridged
-    EVENLY in every unit moves its own p90 and reads as clean. §33's recorded baseline, not §66, is
-    what would catch slow uniform decay; `kidsContent` has no such baseline.
+161. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 160. **🟡 PARTLY DONE, and its own stop-clause is CORRECTED (2026-09-02, owner-directed: "do item 160
 ⭐ **PROMOTED by the weekly review 2026-09-20 (W-8.5).** This item still carries a standing `npm test` WARN (longest-option tapping scores en 52.2% against a 25.0% baseline) and was not picked once in the 61 dev-agent commits of 2026-09-13 → 09-20. **While that WARN stands, this item outranks a sentence-audit pick** — see W-8.5 for the rule and the override clause.
@@ -2955,39 +1846,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       are here because a marker count caught them — q020's *edit the pair or neither* tie constraint,
       and the ⚠️ note that the old `q12`-style labels are ARRAY POSITIONS rather than ids. **The live
       §65 figures are the stop line's, not any tranche's.***
-159. **✅ DONE 2026-09-01 (scheduled dev-agent) — but the premise as written is WRONG in its
-    headline and RIGHT in its consequence, and the correction changed what got built. Read the
-    correction before citing this item.**
-    > ⛔ **PREMISE CORRECTED 2026-09-01, by measurement, before any edit (step 3.5).** The claim
-    > "**every** content instrument sweeps `sections` and skips `takeaway`/`thinkAbout`" is false and
-    > was cheap to refute: `translation-review.mjs`, `translation-completeness.mjs`,
-    > `refresh-readiness.mjs`, `jargon-candidates.mjs` and four separate corpus walks inside
-    > `check-data.mjs` all read both fields today, by name. **And the lesson-38 failure this item was
-    > filed from was not a field-coverage failure at all** — `check-blindspot.mjs` greps whole files
-    > line by line, so §10.1 has never been field-scoped; the takeaway survived because no *pattern*
-    > matched it, not because no sweep read it. Attributing that escape to field coverage would have
-    > sent the fix to the wrong place.
-    > **What the measurement did find, and it is the item's real content:** exactly ONE instrument
-    > was field-blind — §17b's `mentionedIn`, the §3.0.3 coverage sweep — and the UI was blind the
-    > same way, because `GlossaryTerms` rendered under sections only. The two agreed with each other.
-    > **9 glossary-term uses across 7 lessons were visible to nothing**: GDP and Debt-to-GDP Ratio on
-    > 33, Deflation and Credit on 34, QE on 35, Interest Rate on 38 and on 9, Emergency Fund on 8,
-    > Stock on 11. §17b printed "0 unexplained" over a corpus that never contained them.
-    > **Shipped:** `TAIL` is now a section key in `lessonTerms.js` carrying those 9 chips, a chip row
-    > renders under the takeaway/reflection pair with its own five-language label, §17 validates
-    > `TAIL` entries against that pair's text, §17b sweeps it, and two new guards fail if either the
-    > row or the widened corpus goes away. Sweep 136 → 145 uses, 95 → 104 chips, 30 → 31 lessons,
-    > 0 unexplained on both sides. `deliberatelyUnlinked` was NOT used: its only two legitimate
-    > reasons are `defined-here` and `other-sense`, and not one of the nine is either.
-    **Scope note before anyone builds an instrument for this (W-6.3 — `scripts/` is 2.3x `src/`).**
-    The cheap version is not a new script: it is adding `takeaway`/`thinkAbout` to the field list
-    that §17b and the §10.1 corpus walk already iterate. Measure which existing sweeps take a field
-    list at all before proposing a new section.
-    **Residual, filed as a NOTE under this item rather than as a numbered item (W-6.2 rule 2), because
-    it measures zero live instances today:** the same closing-pair blindness could exist in the other
-    direction for `LessonVisual` captions and `PolicySim` copy, which no per-field corpus walk names
-    at all. Not measured this run. **If a future run picks it, measure first — this item is the
-    standing proof that a residual's own headline can be wrong while its consequence is real.**
+159. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 158. **[Owner decision — filed 2026-08-31, NOT actionable by a run. §10.2's text bans "no direct
     quotes, anywhere in the app", and the app ships a direct Warren Buffett quotation.]**
@@ -3068,169 +1927,18 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > untracked is copied in. To exercise the primary path instead, use `git clone -q .`.
     >
 
-156. **✅ DONE 2026-09-03 (scheduled dev-agent) — the measurement this item asked for was taken, and
-    it cleared the axis the item names while finding a LIVE defect on an axis the item does not
-    mention.** The item's question — does the coach mark center correctly at 320px/200%? — answers
-    **yes**, at 100/115/130/150/200%: `left: 16, right: 304`, `scrollWidth === clientWidth === 320`,
-    0 box and 0 text overflows. **The pattern-consistency argument was sound and the change it
-    defended was right.**
-    ⛔ **What the item did not scope was the VERTICAL clearance, and that was broken in shipping
-    code.** `bottom` was `calc(… + 12px + 76px + 10px)`, where `76px` is the nav pill's height
-    measured at the 1.3x font scale — a text-driven quantity frozen as a constant. Browser/OS text
-    zoom goes past 1.3x (WCAG 1.4.4, AA — the same criterion item 153 established): the clearance
-    fell 23.4 → 18.2 → 12.9 → 6.6px across 100/115/130/150% and **inverted to a 37.2px overlap at
-    200%**, where the pill is 123.2px tall. The coach mark is `zIndex: 150` over the nav's 100, so
-    `elementFromPoint` at the top edge of **all three tabs** returned the coach mark. Tap targets
-    shrank by 32px of 113px rather than dying, and the overlay was plainly visible over the tab bar.
-    - **Fixed:** `--nav-h` is published from a `ResizeObserver` on the nav and the offset reads
-      `var(--nav-h, 76px)`. Verified at six root font sizes in `en` and `ko`: `--nav-h` matches the
-      measured pill to ≤0.02px and clearance is exactly 10px throughout.
-    - ⚠️ **`rem` was considered and is WRONG, which is the transferable part.** The pill's height is
-      not a function of root font size alone — the tab labels wrap (item 153), so at the **same** 200%
-      root font the pill is **123.2px in English and 99.2px in Korean**. No font-relative constant
-      spans a 24px language-dependent gap; re-expressing the px constant as `4.75rem` would have been
-      the same defect in a better-looking unit.
-    - **The durable methodology note is in the run-log entry** and a reviewer needs it: in the Browser
-      pane `requestAnimationFrame` never resolves, and `ResizeObserver` does not deliver while the
-      pane is hidden — a planted control observer fired 0 times and the fix looked like a no-op. A
-      `computer{action:"screenshot"}` forces the paint that delivers the callbacks.
+156. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-155. **✅ CLOSED 2026-09-08 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1;
-    the full argument, every measurement and the refuted premise are in this date's run-log entry.
-    **What was true:** the text-zoom sweep that had found the class's live defects existed only in
-    each session's browser console, and `a11y-sweep.js`'s `horizontalOverflow` could not see text
-    overflow at all — an overflowing word does not widen its element's border box, so a right-edge
-    scan reads the box as innocent. Four live defects in this class in ten days (the Reference hub's
-    clipped headings, the lesson reader's "Completar" button, `MarketSignals.jsx`'s bare `1fr` grid,
-    seven ja/zh fullwidth-bracket clips), each found by an ad-hoc probe that then evaporated.
-    **What is true now:** `a11y-sweep.js` carries a 12th probe, `textOverflow`, reading
-    `el.scrollWidth` against the element's own box, with the four exclusions each chosen from a
-    measurement on this app (XHTML namespace only — 16 phantom SVG `<text>` findings on the Market
-    Dashboard; the visually-hidden idiom; deliberate `nowrap` + `ellipsis`; scrollable self or
-    ancestor) and a deepest-element rule, because one planted leaf produced **17** flags. It has a
-    planted control that `check-data.mjs` §43 now requires (11 → 12 probes declared, all
-    layout-gated ones controlled). Swept clean and non-vacuous over 10 screen readings at 320px/200%
-    in `en` and `ja`, with the control re-fired in the `ja` context to prove the zero was a reading.
-    ⛔ **One premise of this item was REFUTED and must not be re-derived:** it said the
-    scrollable-ancestor exclusion "applies to the BOX probe too", citing the parent guide's age-band
-    rail as a false positive "on every run at 200%". Measured 2026-09-08: it is **not**.
-    `horizontalOverflow`'s element scan is gated on `documentElement.scrollWidth > clientWidth`, and
-    on that screen the rail is clipped so the document never scrolls — the gate never opens and the
-    scan never runs. The exclusion is needed for the **new, ungated** text probe (where the rail
-    reports 424 against a 288px box) and **`horizontalOverflow` was correctly left untouched.**
-154. **✅ DONE 2026-08-30 (owner-directed: "fix the fresh-clone test failure now") via ROUTE (a)
-    — `drafts/income-hierarchy.en.md` is now TRACKED, and a fresh clone exits 0.**
-    > **The measurement, both directions, on the tree that shipped the fix:**
-    > `git archive $(git write-tree)` into an empty directory, `node_modules` symlinked, the two
-    > gitignored `economic-cycles-v*.jsx` copied, **and `drafts/` deliberately NOT copied** —
-    > `npm test` exits **0** (4 warnings, all recorded debt). The working tree also exits **0**.
-    > **Before the fix the same recipe exited 1**, which the weekly review reproduced first so
-    > the fix had something to prove.
-    > **Why (a) and not (c):** route (a) makes `DECISIONS.md:669`'s citation TRUE rather than
-    > exempted — the file is the approved proposal behind shipped lessons 41-44, and a source
-    > document for shipped content belongs in the repo. `drafts/` was never gitignored
-    > (`git check-ignore` exits 1), so nothing about the owner's setup argued against it.
-    > **Route (c) is still worth doing and is filed as item 157** — it prevents the whole class,
-    > which (a) does not.
-    > ⚠️ **The file carries British spellings ("labour", "favour", "specialised", "catalogue")
-    > and they are CORRECT AS THEY STAND. Do not "fix" them.** It is a dated approval document
-    > (2026-08-18) cited as a dated record by `DECISIONS.md`, and item 91's house-style rule
-    > exempts quotations and dated records verbatim. It is also genuinely out of scope: §59's
-    > MARKDOWN set is exactly five normative documents (`DECISIONS.md`, `LAUNCH_PLAN.md`,
-    > `CLAIMS.md`, `README.md`, `LAUNCH_READINESS.md`) — measured, not assumed, and the reason
-    > tracking the file introduced no §59 failure.
+155. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
+154. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-153. **✅ DONE 2026-08-30 (scheduled dev-agent) — but read the premise correction first, because
-    this item named the WRONG SCREEN, its numbers did not reproduce, and the basis on which W-6.2
-    parked it was the one thing that turned out to be false.**
-    > **PREMISE RE-MEASUREMENT 2026-08-30 — the headline was false at `HEAD` and the item was still
-    > right that a defect existed.** Re-measured on the screen the item named (320px, light, `en`,
-    > Reference > Market Dashboard), with the chart confirmed rendered (all five bars present, so
-    > not a lying zero): **0 overflowing nodes at 100/115/130/150/200%**, scrollWidth 320 at every
-    > step except 324 at 200% — against the item's claimed 3/9/15 nodes and 323/359/447. The item's
-    > figures were taken BEFORE item 148's fix landed and were filed unchanged after it.
-    > **The tab-bar half was real but on a different screen.** Sweeping all nine screens instead of
-    > the one named found the failures on **Reference hub** (scrollWidth **408** vs a 320 viewport,
-    > 16 nodes, at 200%) and **Sector performance** (**379**, the `NAV` itself 347px wide).
-    > **⚠️ The instrument the item prescribed cannot see the worst of it.** A right-edge scan over
-    > `getBoundingClientRect()` misses TEXT overflow, because an overflowing word does not widen its
-    > element's border box. The tell is a `scrollWidth` that disagrees with a zero node count, and
-    > following it found clipped headings the box probe called clean.
-    > **⚠️ W-6.2 parked this item as "zero live instances AND honest priority: low". That parking
-    > was correct given the item's TEXT and wrong about the app:** the real instances were live and
-    > learner-visible — a hub that scrolled sideways, headings cut off mid-word under
-    > `overflow-x: hidden`, and three age-band labels drawn on top of one another. The park is not
-    > the defect; **an item's own numbers going stale between filing and reading is**, which is what
-    > step 3.5 exists for.
-    - **Measured 2026-08-30, 320px light, `en`, Reference > Market Dashboard, by overriding the root
-      font size directly:** 100% and 115% clean; **130% → 3 overflowing nodes** (scrollWidth 323);
-      **150% → 9** (359); **200% → 15** (447). At 150% and above the overflowing set stops being the
-      chart alone — `NAV`, a `BUTTON` and a `SPAN` from the bottom tab bar appear in it.
-    - **What item 148's fix does and does not cover.** The chart half is fixed: below 375px the bars
-      are rows, so the chart no longer overflows at any of these steps. **The tab bar is untouched**
-      and was never in item 148's scope.
-    - **The honest framing, because it decides the priority.** `FONT_SCALE_STEPS` tops out at **1.3**,
-      so 150% and 200% are not reachable through the app's own control — only through browser or OS
-      text zoom. WCAG **1.4.4 (Resize Text, AA)** is about exactly that path, so this is a real
-      criterion and not a hypothetical, but it is one the app has never claimed.
-    - **Carry a control if you pick it up:** the root-font override used above is the instrument, and
-      its two-sided control is that 100%/115% must read clean on the same screen in the same pass.
-    - **Honest priority: low-to-medium.** Downstream of O-1 like everything else.
-    - **✅ WHAT SHIPPED (2026-08-30).** One root cause in five places: a flex or grid track whose
-      automatic minimum is its MIN-CONTENT size, so it could not shrink when text grew.
-      `TileGrid` → `repeat(auto-fit, minmax(min(6.5rem, 100%), 1fr))`; the nav pill → `100vw`-based
-      width and auto-margin centering instead of `100%`/`left: 50%`; the tab buttons → `minWidth: 0`
-      plus a wrappable label; `Segmented` → `flexShrink: 0` so its container's `overflowX: auto`
-      scrolls instead of the labels overlapping; Settings' radio rows → `flexWrap: "wrap"`; and
-      `body { overflow-wrap: break-word }` so a long word breaks rather than being CLIPPED by the
-      `overflow-x: hidden` that was already there. **9 screens × 100/130/200% all report 0 box and 0
-      text overflow, scrollWidth 320 throughout**, both probes' controls firing in the same pass.
-    - **The threshold was computed, not eyeballed, and the first draft was a regression.** `9rem`
-      collapsed the hub to one column at 100% on every 320px phone. `6.5rem` keeps two columns at
-      100/115/130% — 130% being `FONT_SCALE_STEPS`' own ceiling, so nothing reachable in-app moves —
-      and collapses only at 150/200%.
+153. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-152. **✅ DONE 2026-09-26 (scheduled dev-agent)** — replaced by its conclusion per W-7.2 rule 1; the
-    full reasoning is in that day's run-log entry. **Premise held**: the four props had only moved
-    (`LessonVisual.jsx:190-194` → `:382-386`), and the reversed `zoneColors` was still correct and
-    still unguarded. **Route: lift into data, the one the item preferred** — but only the *choice*,
-    not the tokens: `moneyVisuals.js` now exports `flipZoneSeries()` (each zone's winning series,
-    derived from `flipValue` at the two end vantage points, today `[1, 0]`), and
-    `LessonVisual.jsx` takes line, label ink, zone wash and zone edge for each series from **one**
-    `FLIP_PALETTE` entry. The inversion is no longer typed anywhere, so there is nothing to "tidy".
-    **Guard: `check-data.mjs` §50 (k)** — model half (`flipZoneSeries()` must equal (j)'s
-    arithmetic winners) and wiring half (the four props must route through `FLIP_PALETTE` /
-    `flipZoneSeries()`, each palette entry one hue family). The wiring half reads JSX as text,
-    kept to fixed expressions and proven by two in-script injections; both halves also proven by
-    injecting into the real files (both FAIL, restored byte-identical). Rendered output unchanged,
-    measured live on `dist/`.
+152. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-151. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (j) —
-    THREE pairs, not the two the item scoped. Every premise held, including the one it flagged as
-    needing confirmation. Read the corrections below.**
-    > **PREMISE RE-MEASUREMENT 2026-08-30 — all four premises TRUE, which is itself worth recording
-    > after ten consecutive items whose premises were wrong somewhere.** `flipZoneLabels[0]`→$65 /
-    > `[1]`→$50 and `flipSeriesLabels[0]`→$50 / `[1]`→$65 in all five languages, read through
-    > `amountsIn` with a live-instrument control, not by eye.
-    > **The ⚠️ "confirm the drawn order" flag resolved in the item's favor.** `PreferenceFlip` fills
-    > `zoneColors[0]` from the left edge to the crossing; at the left vantage the later reward is
-    > perceived higher (4.643 vs 3.846). So zone 0 IS the wait-for-the-$65 band and the item's stated
-    > assertion direction was right, not its mirror. The block derives this from `flipValue` at the two
-    > end vantage points rather than pinning it, so a `k`/reward edit moves the expectation.
-    > **SCOPE WAS WIDER THAN THE ITEM SAID, for the second item running.** `flipAxisLabels` is the same
-    > shape — two elements, consumed by position (`[0]` drawn at the left edge, `[1]` at the right),
-    > `[1]` states $50 in all five languages, `[0]` states neither — and block (i) reads neither of
-    > them. Swapped, the figure captions its left edge, where the lesson says both rewards are a year
-    > off, with "the $50 is available today". Same instrument, no extra cost, so it shipped here.
-    > **The control the item proposed was the one that did not survive.** "A swap must fail while the
-    > other four languages stay clean" covers the CONTENT and is what the five injections do. As an
-    > INSTRUMENT probe it is unreachable: every spec is symmetric, so a passing pair's reverse always
-    > fails the `must` half and a "reverse also passes" probe can never go red. It was written, proven
-    > dead, and replaced. See the run log for both deleted probes and what shipped instead.
+151. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-150. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as `check-data.mjs` §50 block (i) —
-    FIVE surfaces per language, not the one the item scoped. Both of the item's premises held; the
-    scope was wider than it said. Read the correction below.**
+150. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 149. **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
     residual rather than smuggled into the same commit.] `coverage()` can now name a probe that did
@@ -3259,10 +1967,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       content or over an owner-facing item**, and note that item 120 carries the same caveat for the
       same reason. Downstream of O-1 like everything else.
 
-148. **✅ DONE 2026-08-30 (scheduled dev-agent). Shipped as a fourth option the item had not
-    priced — the columns become ROWS below 375px — plus `check-data.mjs` §62. The item's mechanism
-    was exactly right; two of its numbers were not, and the fix had a silent failure mode of its own
-    that the first working version shipped. Read the corrections below.**
+148. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
     residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
@@ -3316,58 +2021,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       write one, and the net must still flag its British spelling.
     - **Honest priority: low.** Zero live instances after the fix above, measured.
 
-145. **✅ DONE 2026-08-29 (owner-directed: "do item 145 next"), the day after it was filed — and the
-    item's central claim was FALSE. Two safety-relevant checks were live-defective the whole time.**
-    - **What the item said, and what was wrong with it.** It said: *"No shipped instrument is
-      affected, and that was verified rather than assumed."* **It was assumed.** The run that filed it
-      checked which scripts *import* the content modules, found that every script it thought of as a
-      "prose reader" imports, and generalized. It never considered a script that **greps the raw files
-      without reading prose semantically** — which is exactly what `check-blindspot.mjs` does.
-    - **THE LIVE DEFECT, proven by injection in both directions 2026-08-29.** `check-blindspot.mjs`
-      reads `src/content/*.js` raw and applies **seven patterns that open with `\b`**: six §10.1
-      advice patterns (en + es) and the §2.3 month-year date pattern. Lesson bodies are stored one
-      physical line each with paragraph breaks as the literal escape `\n`, so the character before a
-      paragraph-initial word is the letter `n` and **no word boundary exists**.
-      **Measured, same phrase, same file, two positions:** `"We recommend buying now."` injected at a
-      paragraph start → §10.1 reports **clean, build passes**; injected mid-paragraph → **build
-      fails**. Identically for `"January 2026 was the turning point."` against §2.3.
-      **So the two checks that exist to keep investment-advice language (§10.1) and live-looking dates
-      (§2.3) away from learners were blind to the most likely position for a new sentence** — the
-      start of a paragraph.
-    - **The fix, and why it is an expansion rather than a split.** `grepFiles` now routes every line
-      through `matchesLine()`, which expands the literal `\n` to a real newline before matching. A
-      newline is a non-word character, which is precisely the boundary the leading `\b` needs.
-      Splitting on the expanded newlines was rejected: it would renumber every hit, and the `file:line`
-      in a failure message is how the owner finds the string. **Only `\n` needed expanding** — the
-      corpus's other escapes (`\"`, `\\`) already put a non-word character before the next word, the
-      CJK patterns never had boundaries to lose, and the unanchored patterns
-      (`you should (buy|sell|invest)`) were never affected.
-    - **The control that keeps it fixed, and it is executable rather than a comment.** A new
-      end-of-file control plants the banned phrases in the corpus's real `\n`-escaped storage shape
-      and requires they be caught; it also runs the **pre-fix matcher** on the same line and reports
-      that it still misses — so the expansion is demonstrated to be load-bearing rather than asserted.
-      It uses **the real pattern objects** (captured into module-level holders), not a second copy —
-      item 141's lesson. Three further branches report distinct causes: patterns never captured,
-      patterns broken outright, and a false positive on descriptive prose (`"were bullish"` must stay
-      clean, so a widened net is caught as well as a narrowed one).
-    - **The rest of the sweep, done properly this time and with a reason per script.** SAFE, verified
-      individually: `check-data.mjs` §55 (walks **imported objects** — `TR`, `lessonContent`,
-      `glossary` — so newlines are real), §59 (comment prose and Markdown, both real newlines), and
-      its three `\b` uses (JSX source and prop strings, not content); `refresh-readiness.mjs`
-      (dynamic `import()` in a `Promise.all` — my previous grep shape missed it and would have
-      misfiled it as "no content access"); `translation-completeness`, `jargon-candidates`,
-      `translation-review`, `check-payload`, `fetch-market-data` (all import). `check-measurements`,
-      `check-claims`, `check-backlog`, `check-log-size`, `owner-tree` touch no content file and hold
-      no leading-`\b` regex.
-    > ⚠️ **THE STANDING LESSON, and it is not about escapes.** The false claim was not a guess — it
-    > carried the words *"verified rather than assumed"* and named the scripts it checked. What made
-    > it wrong was the **category**: "instruments that read prose" silently excluded "instruments that
-    > grep files", and the sweep inherited that category without ever stating it. **A negative result
-    > is only as wide as the set it enumerated — so write down the set, not just the verdict.** The
-    > enumeration above is in this item for exactly that reason.
-    - **The rule for measuring this corpus is unchanged and still one line: import it, never grep it.**
-      Where a raw scan is genuinely required — as in `check-blindspot.mjs`, which must report
-      `file:line` — expand `\n` first and **carry a control that plants a paragraph-initial specimen**.
+145. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 143. **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
     remainder §59 deliberately does not cover.] Four British spellings live in `AGENT_LOG.md`'s
@@ -3387,46 +2041,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       note). Fix the 4 by hand, leave the 22, and do not put the file in §59's scope.
     - **Honest priority: low.** Zero learner-visible instances. Downstream of O-1.
 
-142. **✅ DONE 2026-08-29 (scheduled dev-agent). `check-log-size.mjs` scans the run log into
-    REGIONS, not dates, and its cut plan now says when a day it proposes moving is in more than one
-    piece.** See the run log for the measurements and the sabotage test.
-    - **One of the item's own figures was wrong and is corrected here:** the two 2026-08-27 blocks
-      were **1,070 lines apart**, not 367 — 367 is the length of the *first block* (lines 4746–5112
-      of `744dc8c`). The headline claim and both byte totals (77,928 b / 121,136 b) reproduced
-      exactly.
-    - **The standing lesson, which is about controls and not about archiving.** The live file has one
-      region per day, so running the new splitter on it can only ever prove it does not *hallucinate*
-      a split. Under a sabotage that made the splitter position-blind again, control 3's live line
-      still read **"every day is contiguous"** — a green that means nothing. The positive fixture has
-      to be synthetic (control 4), and it is what makes the negative result on the live file readable.
-    - **Still true and deliberately unchanged:** the live section is prepend-order, the archive is
-      ascending, and both are conventions — the defect was that the *tool* assumed contiguity, never
-      that the file is wrong. Do not "fix" this by re-sorting the live log.
+142. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-141. **✅ DONE 2026-08-29 (scheduled dev-agent), the same day it was filed — folded into item 130's
-    commit exactly as this item directed ("do not pick it alone… worth folding into the next run
-    that touches §55"). The stem is in `scripts/us-english.mjs` in the `emphasise` shape, and both
-    halves of the trap are now controls: `hypothesised`/`hypothesising` are in MUST_CATCH,
-    `hypothesis`/`hypotheses` in MUST_NOT_CATCH. §55's control line moved 34 → 38 specimens and
+141. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-130. **✅ DONE 2026-08-29 (scheduled dev-agent). Shipped as `scripts/us-english.mjs` (the shared
-    pattern set, its two control lists, and a real comment tokenizer) plus `check-data.mjs` §59,
-    which reads 1,111 comment blocks across 87 source files and 1,892 lines of the five normative
-    Markdown documents. The `us-english:allow` marker is load-bearing from today: 13 exemptions
-    are honored, including the 4 that earlier runs placed in `DECISIONS.md` and `LAUNCH_PLAN.md`
-    in anticipation of a checker that did not exist. All 7 comment spellings and both unmarked
-    Markdown ones were swept IN THE SAME COMMIT, as this item required.**
-    > ⚠️ **One half of the premise was wrong and it changed the section's scope, not just a
-    > figure.** The item's source-side claim reproduced EXACTLY — 7 real British spellings in
-    > comments, the same seven it names. Its Markdown claim ("2 unmarked … against 4 correctly
-    > carrying `us-english:allow`") was measured over `DECISIONS.md` and `LAUNCH_PLAN.md` only.
-    > Over the whole normative set the figure is **40 unmarked, 38 of them in `AGENT_LOG.md`** —
-    > and of that file's 27 real hits (11 more are `aria-labelledby`), **22 are MENTIONS**: a run
-    > log that documents a spelling rule has to quote the spellings, and `AGENT_LOG.md:1465` names
-    > all seven comment spellings in the act of filing this item. **So `AGENT_LOG.md` is out of
-    > §59's scope on measurement**, not on convenience — marking 22 lines would be churn and every
-    > future entry about §55 would fail the build. The 4 real British spellings in the log's own
-    > prose are item 143.
+130. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 126. **[Docs/Integrity — filed 2026-08-27 by the run that closed item 125, as its stated residual
     rather than smuggled into the same commit.] §52 only sees a hex that shares a line with the
@@ -3477,77 +2096,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     4. **Open items stay byte-identical, asserted rather than eyeballed** — that is the binding
        constraint on every pass since.
 
-121. **✅ DONE 2026-08-27; EXTENDED 2026-08-28 to rates; RATE PROJECTION CORRECTED 2026-09-01 —
-    read the correction first, because the extension shipped a figure that was wrong by 15x in the
-    direction that hides work.**
-    > ⛔ **CORRECTED 2026-09-01 (scheduled dev-agent).** The runs-left projection divided headroom by
-    > the **net** mean over every sampled interval — a series that includes archiving and compression
-    > commits as large negatives. Measured over the identical 16-commit window on 2026-09-01: run-log
-    > net mean **+680 b/commit**, writing-only mean **+10,481 b over 12 of 15 intervals**. One
-    > archiving commit (**-115,573 b**) and two commits that touched the file without touching the run
-    > log produced the whole gap. The line therefore printed **"101.3 run(s)"** of headroom where the
-    > honest answer was **6.6**, and the floor's version printed the incoherent **"-Infinity run(s) of
-    > writing to come back out"**.
-    > **The failure is self-concealing, which is why it survived two runs that both looked at it:
-    > performing an archiving pass injects a large negative into the window, which lowers the mean,
-    > which reports MORE headroom — so the remedy makes the next application of the remedy look
-    > unnecessary.** Two consecutive runs deferred a due pass on the strength of that line.
-    > **Fix:** project from the writing rate (positive intervals only), print the net rate beside it,
-    > and say which one the runs-left figures use. If a window contains no growing interval there is
-    > no writing rate, so it falls back to the net mean — which is then <= 0 and prints "no growth at
-    > the sampled rate" rather than a large false headroom. Net **+15 lines**; no new section, no new
-    > script (W-6.3).
-    > **Why the existing controls could not catch it, which is the transferable part.** The extension
-    > shipped with a positive control that plants *uniform* growth (`+1,000 b/commit` → reports
-    > `+1,000`). In an all-positive window the net mean and the writing mean are the SAME NUMBER, so
-    > that plant passes identically before and after this fix. **A control built from a clean synthetic
-    > series cannot detect a defect whose trigger is a mixed one.** The plant needed a negative in it.
-    > (The original **+9,170 b/commit** figure quoted below was measured in a window that happened to
-    > contain no archiving commit, so it was correct when written — this is drift into a defect, not an
-    > error at the time.)
-    > **EXTENDED 2026-08-28 (scheduled dev-agent): the script measures the RATE as well as the level,
-    > and warns when a budget is less than one run's writing away.** A level says *where the file is*;
-    > it cannot say whether a remedy works. Measured over the 15 intervals since item 122's
-    > compression pass: floor **+3,541 b/commit** mean (min -748, max +8,506, **1 of 15**
-    > net-negative), run log **+9,170 b/commit**. Item 122 bought **26,939 b ≈ 7.3 runs** against a
-    > leak of one run per run. **Headroom when this was written: floor 894 b = 0.25 runs.**
-    > ⛔ **That reframes items 115/121/122 and W-5.3, and it is the durable part.** All four treat the
-    > problem as a LEVEL with two remedies (archive / compress). Both remedies are one-off, the growth
-    > is continuous, and no level reading can show that: **"floor at 99.6% of budget" reads as *nearly
-    > there*, while the identical state read as a rate says *the next commit crosses it*.** A
-    > compression pass is not a fix, it is a **bailing bucket that buys ~7 runs**.
-    > **Every git read is controlled, because a failed history read would report a delta of ZERO** —
-    > item 108's "a proxy fails green" exactly. Four controls, all proven by injection in throwaway
-    > repos rather than argued: a planted **+1,000 b/commit** growth reports **+1,000 exactly**; and a
-    > revision missing `## Run log`, an all-identical floor, and an absent git checkout each report
-    > **UNAVAILABLE** naming the control that failed. **None of them can print a zero.**
-    > ⚠️ **The new warn is CLEARABLE, not decoration** — it goes quiet as soon as a compression or
-    > archiving pass lands, which is why it is a warn and not a permanent banner. **If it ever becomes
-    > permanent, that is the evidence that the BUDGET is wrong rather than the writing**, and moving a
-    > budget is the owner's call under item 115's rule, not a run's.
-    > ⚠️ **Do not read the mean as a per-RUN figure without checking.** It is per *commit touching
-    > `AGENT_LOG.md`*, and bookkeeping commits (the owner-tree fingerprint ones) contribute a real
-    > +0 that pulls it down. The hand figure over substantive runs only was +3,705 b.
-    > **What it does NOT do, deliberately, and this is the part to read before picking it up.**
-    > This is **not** item 115's option (b), and it does **not** close W-5.3's defect. The script's
-    > own header argues (b) would not have worked: (b) re-points the *trigger* at a run-log byte
-    > count, but the mismatch is between the trigger and the *action clause*, so a run-log trigger
-    > would fire and "archive entries before the most recent review boundary" would still select
-    > zero. A real fix makes the action clause byte-driven too — **that is a rule change, and item
-    > 115 says a dev-agent implements whichever the owner names and must not choose.** So the
-    > script COMPUTES the whole-day cut plan and prints it; it never archives.
-    > **The two budgets, and why splitting them is the point.** `run log` is archivable; `floor`
-    > (App summary + backlog + Environment note) is never archived, so **archiving cannot move the
-    > floor by one byte** — only a backlog-compression pass can. On 2026-08-26 the file was 915 KB
-    > with a ~485 KB floor: emptying the run log entirely still could not reach 600 KB, and the
-    > rule had no way to say so. Each budget now names the remedy that can actually move it.
-    > **Baseline measured 2026-08-27, all green:** file 295,551 b, run log 79,527 b (32% of its
-    > 250 KB warn budget), floor 216,024 b (86% of its 250 KB budget, backlog 88% of that). **The
-    > floor is the one to watch** — it is at 86% and archiving is powerless against it.
-    > ⚠️ **Do not add a fingerprint to its `MEASURED log-size:` line.** Every commit here changes
-    > `AGENT_LOG.md`, so the fingerprint would be stale before the next run read it and
-    > `check-measurements.mjs` would report RETIRED forever — the vacuous green item 116 warns
-    > about. It re-measures live instead; there is no retyped number to guard.
+121. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 120. **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
     rather than smuggled into the same commit.] The storage audit tests ONE point in
@@ -3569,12 +2118,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       question the instrument cannot answer, written down so it is not rediscovered. Downstream
       of O-1 like everything else. **Do not pick this over content or over an owner-facing item.**
 
-119. **✅ DONE 2026-08-26 (scheduled dev-agent). Nine judgments became nine measurements: eight
-    screens are provably storage-independent and one — the Glossary, exactly the candidate this
-    item named — was silently sweeping the wrong variant.** See the run log.
+119. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-118. **✅ DONE 2026-08-26 (scheduled dev-agent). The cold sweep came back clean; the instrument did
-    not.** See the run log.
+118. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 117. **[UX/Product — filed 2026-08-26 by the run that scoped "Practice all questions" to the
     questions the learner has reached, as its stated residual rather than smuggled into the same
@@ -3674,94 +2220,19 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
-116. **✅ DONE 2026-08-28 (scheduled dev-agent). `focusVisibleOnTab` is a real probe; the sweep
-    reports `0 unavailable` for the first time. The item's central premise — that the harness
-    cannot focus a document — was FALSE, and it is the reason the probe sat stubbed for two
-    days.** See the run log.
-    > ⛔ **PREMISE CORRECTION, and it is the durable half of this item.** "What blocks it is the
-    > harness" was wrong. Every 2026-08-26 measurement reproduces exactly **at page load**, and
-    > the word that did not belong was *permanent*: the document simply has **no focused area
-    > until a real input event reaches the pane**. Send one `computer{action:"key", text:"Tab"}`
-    > and on the next call `hasFocus()` is true, focus events fire, `:focus` and `:focus-visible`
-    > both match, and a later programmatic `.focus()` **inherits** focus-visible — which is what
-    > lets one probe cover a whole screen without a Tab press per element. `visibilityState`
-    > stays `"hidden"` throughout, so it was never the signal to read.
-    > **⚠️ Seed with Tab, NOT with a click.** A click gives `:focus` without `:focus-visible`
-    > (the spec's pointer-vs-keyboard heuristic). Since `index.css`'s `:focus-visible` rule is
-    > the app's *only* focus styling, a click-seeded sweep finds every control ringless and
-    > reports the whole app broken. This is why `focusVisibleSelectors` is measured as its own
-    > third capability rather than inferred from `focusSelectors` — the item-108 proxy mistake
-    > has now been available to make three times, once per pseudo-class.
-    > **⚠️ `hasFocus()` also lies about KEYBOARD DELIVERY, which is a second proxy failure and
-    > cost a wrong conclusion inside this very run.** With the first-run dialog open it read
-    > `true` across sixteen key presses of which a capturing `document` keydown listener received
-    > **zero** — while a synthetic dispatch to that same listener fired, proving the listener was
-    > alive. Eight of those presses had already been read as *"the focus trap holds"*. **If a
-    > measurement depends on a key press landing, plant a keydown listener and count trusted
-    > events.** Redone that way the trap does hold: 16 trusted keydowns, focus entered the dialog
-    > and never left — §47's static guard now has its rendered-tree half.
-    > **Residual, filed as item 139:** the probe answers *"does anything change on focus"*, not
-    > *"is the change perceivable"* — WCAG 2.4.11/1.4.11 contrast of the indicator is uncovered.
+116. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-108. **✅ DONE 2026-08-26 (scheduled dev-agent). The focus capability is now MEASURED by a planted
-    control (`measureFocus()`) instead of inferred from `document.hasFocus()`, and
-    `check-data.mjs` §43(d) fails if the proxy ever returns. Residual filed as item 116.**
+108. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-107. **✅ DONE 2026-08-25 (scheduled dev-agent), the day after it was filed. Shipped as the
-    `unnamedRegions` probe in `scripts/a11y-sweep.js`, with a planted control in `selftest()`
-    (§43(c) proved able to fail on it) and a five-variant discrimination matrix measured live.**
+107. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-106. **✅ DONE 2026-08-25 (scheduled dev-agent). Fixed by marking up the two block labels the
-    lesson reader already had — `as="h2"` on `{t.hookTitle}` and `{t.checkTitle}` — and guarded by
-    `check-data.mjs` §45, which was proved able to fail in three modes.**
+106. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-101. **✅ DONE 2026-09-05 (scheduled dev-agent), the day after O-1 closed** — collapsed to its
-    conclusion 2026-09-08 per W-7.2 rule 1 from 6,819 b, including two `ORIGINAL TEXT (retained)`
-    tails that rule 2 retires. The measurements are in the 2026-09-05 run entry.
-    **What was true:** `og:url` and `og:image` were the two preview tags item 98 could not ship —
-    both must be absolute and there was no origin, and `og:image` also needed an image the repo did
-    not have. **What is true now:** `index.html` carries `og:url`, `og:image`
-    (+`:width`/`:height`/`:alt`), `twitter:image` and `twitter:card: summary_large_image`;
-    `public/og-card.png` is 1200x630; `check-data.mjs` §38 covers all of it.
-    ✅ **And it is LIVE, measured 2026-09-08 rather than assumed.** The ⛔ block this item carried said
-    the card was not live — true of the *retired Netlify host*. Against the canonical URL:
-    `og-card.png` → **200** with a nonexistent-path control at **404**, and the served `index.html`
-    carries `og:image` pointing at the canonical origin. Pages deploys on push, so the owner action
-    that block named no longer exists.
-    ⛔ **The refuted suspicion, recorded so nobody re-raises it.** `index.html` source reads
-    `href="/icon.svg"`, which looks like a live violation of the no-leading-slash rule the whole
-    path-agnostic build rests on. It is not: **Vite rewrites public-directory references in
-    `index.html` against `base`**, and the built file reads `./icon.svg` — measured on a real build,
-    with a control (the same grep over a copy with the slash restored does find it). **The invariant
-    is on the BUILT output, not on the source**, and neither `vite.config.js` nor this item said so.
-    ⚠️ **`og:url`/`og:image` are the only two absolute URLs in the build**, so the origin is written
-    into every `dist/`. §38 pins both to the URL in README's Deploying section, so a move to a custom
-    domain fails `npm test` instead of silently unfurling the old host.
-    ⭐ **The under-scoping worth keeping: a browser is a rasterizer.** This item treated the card as
-    blocked on "adding a raster toolchain". It was not — the card is authored as Canvas2D drawing code
-    (`scripts/og-card.js`), rendered once and decoded to PNG. Zero new dependencies, so item 12's
-    port-cost rule never engaged, and the card is editable text rather than an opaque binary.
+101. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-99. **✅ DONE 2026-08-24 (scheduled dev-agent) — both halves, the fix and the guard, in one commit.
-    `Learn` and the app shell now sit behind error boundaries, and `check-data.mjs` §37 holds the
-    invariant.**
+99. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-100. **✅ DONE 2026-08-24 (scheduled dev-agent). Shipped as `src/lib/chunkError.js` (call-site
-    tagging), a function-form `ErrorBoundary` fallback, and `check-data.mjs` §39. Read the premise
-    correction first — the defect was real and reproduced live, but "one line of code" was wrong.**
-    > ⚠️ **A NOTE, not a sub-item (W-6.2 rule 2). `LoadFailure` still reloads in place, and against a
-    > PERMANENTLY missing chunk that is also a loop.** Filed 2026-09-09 by the run that fixed the
-    > `AppError` half. Measured the same session, not inferred: the built `LessonReader` chunk was
-    > moved out of `dist/`, `#/lesson/29` produced `LoadFailure` (so the tagging still discriminates
-    > after that run's edit — a free regression control), and its button reloaded to `app_opened`
-    > 1 → 2 **at the same hash**, back onto the same message. **This is the accepted trade, not an
-    > oversight**, and the reason is written into `ui.jsx`: the dominant cause of a chunk 404 is a
-    > redeploy invalidating a content-hashed chunk under an open tab, which a reload at the SAME url
-    > repairs while keeping the reader's place — routing them to `#/learn` would cost every one of
-    > those readers their place to help the rarer case where the file is genuinely gone from the
-    > server. **Honest priority: low; one live instance, and it needs a judgment (or a
-    > reload-attempt counter in `sessionStorage`) rather than a measurement — do not pick it by
-    > default.**
+100. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 76. **[Content/Process — filed 2026-08-18 by the run that built item 69's instrument half, which is
     what turned this from an opinion into a blocked measurement.] `zh` and `ja` `Brokerage Account`
@@ -3796,20 +2267,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > part: "is this role represented at all?" is answerable today; "is this phrasing typical?" is
     > not.**
 
-95. **✅ DONE 2026-08-24 (scheduled dev-agent), same run it was filed. [Process/Tooling — filed by
-    the W-5.4 run's own closing note: "nothing stops a future run from writing `## 2026-…` again."]
-    `check-data.mjs` §35 now asserts the run-log heading convention in both `AGENT_LOG.md` and
-    `AGENT_LOG.archive.md`: every dated entry heading is `###`, every heading inside an entry is
-    `####`.** See the run log.
+95. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-75. **✅ DONE 2026-08-20 (owner-directed). `--fill-warn` exists in both palettes,
-    `NOTE_TONES.warn.rule` points at it, and no `.jsx` under `src/` holds a hex literal any more — and
-    for the thirteenth item running the premise broke, this time on the VALUE the item had already
-    decided.** See the run log.
+75. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-65. **✅ DONE 2026-08-17 — decided AMBER MOVES, because re-measuring the item's own figures changed
-    the answer: amber's real contrast margins were 2-3x smaller than the item claimed, so the token
-    moved instead of the exemption being made permanent. Proved by injection in both directions.**
+65. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 70. **[Process — filed 2026-08-17 by the run that found item 67's headline number was wrong, because the
     error is structural and will recur.] Every measurement this repo reports lands in `AGENT_LOG.md` by
@@ -3869,123 +2331,24 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       no instrument ever emitted. The cheap defense remains item 70's — paste the tool's line, and if you
       need a number the tool does not print, print it.
 
-69. **✅ DONE 2026-08-18 (scheduled dev-agent) — and the headline finding is that it was NEVER BLOCKED.**
-    - **No gated figure moved, and the ledger does not apply.** Entry count stays **32**, so
-      `LAUNCH_PLAN.md` §1's generated "32 glossary terms" is untouched — which is why this was shippable
-      while `Dividend` (items 64/67) still is not: that one *adds a key*. The APR trap does not apply
-      either: `scripts/translation-review-ledger.json` is keyed by **lesson id** over `lessonContent` and
-      does not cover the glossary, and it hashes the **English** source, which this edit does not touch.
-    - **⚠️ ko/zh/ja are NOT closed by this run, and this item's own claim about them is partly wrong.**
-      The filing says all three are "already more descriptive than the English was". Re-read against the
-      actual strings, that holds for **`ko` only** — `실현된 매매 차익` ("realized *buy–sell* profit")
-      genuinely explains the mechanism. **`zh` `已实现的收益` and `ja` `実現した利益` are the local
-      term-of-art shape** ("realized gains" / "realized profit"): roughly where the English *was* before
-      item 67, not ahead of it. **Deliberately not rewritten** — no instrument covers non-`en` glossary
-      prose, and changing two translations on my own reading is exactly the unmeasured multi-language
-      drift this item was filed to avoid. It is a real residual, not a closed question; it is the smaller
-      half of the "bigger version" bullet below.
+69. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-68. **✅ DONE 2026-08-17 — built as scoped, minus one half that was measured and honestly declined.
-    The glossary report went 57 → 54, the first time an in-place expansion made the number go DOWN.**
+68. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 67. **🟡 TWO-THIRDS DONE 2026-08-17 (scheduled dev-agent) — the two terms that needed no new key are
     fixed and rendered-verified; only the `Dividend` half is still blocked.** See the run log.
 
-66. **✅ DONE 2026-08-17 (scheduled dev-agent) — measured, and the instrument is permanent.**
+66. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-60. **✅ DONE 2026-08-17 (scheduled dev-agent).** The residual has an instrument (`npm run jargon`)
-    and the gap it found is closed: Brokerage Account is a glossary entry, chipped on lesson 6.
-    Collapsed to its conclusion 2026-09-08 per W-7.2 rule 1 from 6,265 b; the FOMO and
-    relative-strength investigations are in the 2026-08-30 and 2026-09-02 run entries.
-    ⚠️ **The instrument REPORTS, it does not certify.** `0 unexplained` covers the glossary keys that
-    exist, and its threshold (≥2 lessons or ≥3 uses) suppresses hundreds of lower-reach candidates
-    that nobody has read. Two premise corrections stand: **APR is not money-track jargon** (one use in
-    all 40 lessons, in economy L35, filed with its disposition in item 64) and **"beneficiary" is not
-    a gap** (lesson 14 is titled for it and teaches it).
-    ⭐ **A green coverage number is a statement about the vocabulary you already admitted, and new
-    content arrives outside it.** §17b reported 0 unexplained and was *correct* while money lessons
-    41-44 shipped four unglossed high-reach terms (Labor/Business/Investment/passive income), because
-    they were not keys. **A run that adds lessons should run `npm run jargon` on the track it touched.**
-    ⛔ **And the instrument's own report line once overstated what it had checked.** It printed "no
-    acronym in this corpus is expanded next to itself" — a claim about content the count could not
-    support, since suppression needs *every* occurrence glossed. FOMO was glossed once and bare three
-    times; the report now says "…EVERY time it appears" and names the terms spelled out somewhere.
-    **The meta-lesson is sharper than the fix:** the note that sent a run after FOMO hedged that it
-    "was not measured", and that hedge was the only true sentence in it — the confident half was
-    written anyway, and measuring showed no entry was due at all.
-    ⚠️ **The corpus is LESSON PROSE, and the app's densest finance vocabulary is not all in lesson
-    prose.** `jargon-candidates.mjs` and §17b both read `lessonContent`; neither can see
-    `src/locales/*.js` or the Reference screens' own modules. The live instance was **"relative
-    strength"**, on all eleven Sector rows and defined nowhere (controls: "yield curve" and "fed funds
-    rate" are found and defined in the same corpus). Fixed in place, and a glossary entry added
-    2026-09-02 — the only key whose use is a Reference screen rather than lesson prose, so it carries
-    no chip and §17b needs none from it. **Before building a sweep for this, note the corpus is ~6,228
-    chars of English chrome and every other figure on those screens already carries its own `what`
-    line; a whole instrument for one term lands on the wrong side of W-6.3.**
-    **Still open, deliberately not taken:** the Sectors screen does not LINK to that glossary entry —
-    a reader has to know to look it up.
-    > ⛔ **NOTE 2026-09-09 — the app's OWN LESSON AND TRACK NAMES were being reported as undefined
-    > jargon, and the instrument now suppresses them. Do not re-derive this.** A lesson that
-    > cross-references another by title (the item 36 practice) fed that title to the capitalized-phrase
-    > rule: on `all`, **11 of 81 listed candidates were lesson-title or track-label fragments**, and
-    > the top three of the whole report were `Short-Term Debt`, `Short-Term Debt Cycle` and
-    > `long-term debt` — i.e. lessons **32 and 33**, whose titles those are. Item 68's shape exactly:
-    > adding a cross-reference made the report worse while making the content better. Suppressed by a
-    > word-aligned n-gram of **≥2 words** over the 44 titles + 3 track labels, printed with its
-    > citation, not applied to the `glossary` corpus, with a four-way control.
-    > ⚠️ **The one-word half is NOT covered and is the open residual.** This item's own
-    > *"beneficiary is not a gap (lesson 14 is titled for it)"* is a **one-word** fragment of
-    > *Estate Planning Basics: Wills and Beneficiary Designations*, and the two-word floor
-    > deliberately leaves it listed — a one-word title fragment is too ambiguous to suppress without
-    > eating `MORE`, `LESS`, `AND` and `RULE`, which were the first draft's false positives.
-    > **One live instance, honest priority low; do not pick by default.**
-    > ✅ **And the main path was swept for the first time and is CLEAN** — the script defaults to
-    > `money` (`argv[2] ?? "money"`) and neither log recorded an economy or essentials run. After the
-    > title fragments come out, every economy candidate is ordinary English, a glossary term the
-    > extractor split (`Funds Rate`), or defined inline (`Term Premium`, lesson 36, under its own
-    > heading). **No glossary entry is owed on the economy track.**
+60. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-64. **✅ BOTH CLOSED — struck from the W-5.2 pick list 2026-08-24 after seven days of being
-    recommended when nothing was open. `Dividend` shipped 2026-08-20; the other two keys landed
-    2026-08-17 (21 chips across 15 lessons). Nothing in this item is open.** See the run log.
-    > **Residual worth not re-deriving: §17b cannot see a `takeaway` or a `thinkAbout`.** Chips
-    > render per *section*, so a glossary term used only in those two fields is invisible to the
-    > coverage check in both directions.
+64. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-61. **✅ DONE 2026-08-17 (scheduled dev-agent). All 9 mechanical corrections applied, plus both guards
-    the item asked for — and for the fourth item running the premise was wrong in one place, which is
-    the part worth keeping.** See the run log.
+61. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-62. **✅ ITEM FULLY CLOSED 2026-08-21 — F4, F6, F11 and F12 all done; nothing here is open.** See
-    the run log.
-    > **A blocking pattern named by the run that closed F12, and it recurs: two consecutive "Next run
-    > should pick" notes pointed at work that was already finished.** Re-check a candidate's own item
-    > before picking it — a pick list is a claim about current state and goes stale like a figure.
+62. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-26. **[UX — owner-directed] Quizlet/Vocabulary + `UIUX/` design-reference review. ✅ CLOSED
-    2026-09-07 (scheduled dev-agent), when its last named follow-up — surfacing saved glossary terms —
-    shipped. Per W-7.2 rule 1 this is the conclusion, not the four passes that produced it; those are
-    in the run log for 2026-08-16, 08-21, 08-23 and 09-02, and in `DECISIONS.md`.**
-    - **What it was:** ~200 Mobbin screenshots of Quizlet/Vocabulary (2026-08-15) and later the
-      `UIUX/` folder (Buddy, Duolingo, Quizlet, Vocabulary, Nibble), read for transferable patterns.
-      Everything the two reviews named is now built — quiz markers, review recap, the Practice coach
-      mark, glossary examples, the review-batch interstitial, term detail + bookmark toggle, the five
-      `ui.jsx` primitives under its own header, the warm repaint, `MIN_TAP` (guarded by
-      `check-data.mjs` §34), and the Leitner box strip.
-    - ⛔ **Two standing instructions survive the close and still bind.** (1) **The owner's no-paywall
-      rule:** much of `UIUX/` is subscription UI, and none of it may be built from while §4.3's
-      Phase-0 gate is open. (2) **Do not re-derive the 2026-08-21 redesign**, and do not extend this
-      stream with newly invented ideas — the reference set is read, not a well to return to.
-    - ⛔ **The last follow-up was deferred for three years' worth of runs on a premise that could not
-      have come true, and the correction is the transferable part.** From 2026-08-16 the rule was
-      *"that should wait to see whether the underlying toggle gets used"*, restated four more times and
-      finally recorded here as *"blocked on item 18's analytics, not on effort."* Measured 2026-09-07:
-      `src/` has **8 `track()` call sites** (`grep -rn "track(" src`, control: the known
-      `EVENTS.LESSON_COMPLETED` site is among them) and **not one is the bookmark toggle**; there is
-      no term-bookmark event in §9.2's set. **No provider key would ever have produced the evidence the
-      wait was waiting for.** On top of that the wait was circular: a save with nowhere to read it back
-      has no reason to be used, so usage data would have under-reported it even if it existed.
-      ⭐ **A deferral names a condition; check that something in the tree can actually report it.**
+26. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 > **PRIORITY BLOCK — set by the weekly review 2026-08-09. SUPERSEDED 2026-08-16 (see above); all four
 > items below are closed. Retained for history.**
@@ -4061,282 +2424,27 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 > each names the plan clause it serves. They are listed in the reviewer's value order; a run is free to
 > disagree, but should say why in its entry. **Pick from here, not from the previous run's note.**
 
-33. **[Content — ✅ DONE 2026-08-16 after a third pass. `lessonContent` fixed, then `quizData.js` — which
-    the first two passes both missed entirely. §16 now guards both.]
-    The 2026-08-14 lesson-id renumbering missed every non-English in-prose cross-reference, the
-    lowercase English ones, and the plural `Lessons N and M` form.**
-    > **⛔ The two lessons this item exists to carry, both learned the expensive way.**
-    > **(1) A measurement taken with the same instrument that has the blind spot cannot detect the
-    > blind spot.** This item once reported "0 mismatches" across all five languages. It was wrong:
-    > the ~73 `ko`/`ja` references written as `N강` / `第N課` were invisible to the patterns doing the
-    > counting, and **67 of them were stale**. Both this item's "0 remain" *and* `npm test`'s green
-    > were produced by the very patterns that were failing to match. (Fixed under item 36, which
-    > widened the patterns and added the coverage tripwire.)
-    > **(2) A consistency check and a correctness check are different things.** §16 verifies that
-    > translations agree with English; **it cannot verify that the English is right** — and the plural
-    > form `Lessons 18 and 20` was stale in *every language at once*, so all five agreed with each
-    > other and no consistency check could ever see it. Caught only by reading the content (the
-    > sentence describes "a 401(k) or life insurance policy": 6 is *Retirement Accounts*, 8 is
-    > *Insurance*). **This limit is written into §16's header comment**; the only correctness guard is
-    > the nonexistent-id check.
-    > **What §16 covers now:** lesson prose *and* `quizData.js`'s `explain` fields, with the `en`/`es`
-    > patterns capturing the multi-number form (`Lessons 3, 5 and 7`) rather than only the first
-    > number. Quiz items are scoped **per item, not pooled per lesson** — an `explain` field has no
-    > sibling field for a translation to move a reference into, so pooling would just re-open the hole.
-    > Proven against the real bugs by re-injection, with a negative control (a translation legitimately
-    > carrying *fewer* references than its English still passes, so the intended asymmetry survives).
-    > **What this says about the translation-review ledger, worth carrying forward:** `DECISIONS.md`'s
-    > 2026-08-13 entry records an AI review pass over all 40 lessons × es/ko/zh/ja "checking
-    > faithfulness", marked 160/160 reviewed. That pass did **not** catch these 74 wrong references in
-    > 20 lessons. Not a reason to redo it — concrete evidence for the caveat that entry already states,
-    > that AI review has correlated blind spots. **The generalization: a mechanical, checkable property
-    > should get a script in `check-data.mjs`, not a reviewer's attention.**
+33. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-27. **[Content/UX — ✅ CLOSED 2026-09-07 (scheduled dev-agent): NO CANDIDATE REMAINS under this
-    item's own two rules, in any track. Do not pick it again without a new rule.] Lesson visuals.**
-    > **COLLAPSED 2026-09-07 (W-7.2 rule 1) from 48,083 b to this.** It was **11.2% of the entire
-    > backlog** — the largest single object in the file — and what it held was twelve chronological
-    > "Nth visual added" narratives, their layered corrections, and a decade of dated coverage counts
-    > that **this item's own text forbids anyone from quoting**. All of it is in the run log, in
-    > `AGENT_LOG.archive.md`, and in git (`413f9cc` is the last revision carrying the full text; each
-    > figure's design argument is one `git log -S` away). **Every per-figure do-not-improve warning
-    > that was dropped is asserted by `check-data.mjs` in code, with the same reasoning written into
-    > its failure message** — verified before deleting, not assumed. **The four constraints under
-    > "Standing constraints" below are the ones NO check holds; they are kept because of that.**
-    >
-    > **What was true:** the money track was the least illustrated of the three, and this item drove
-    > twelve figures onto it and its neighbours. **What is true now, measured 2026-09-07 with the
-    > parse below and its control:** **26** lessons carry no figure, and **all 26 are on the ⛔
-    > rejection list** — which has no stale entry either (bare-set against rejection-set, both
-    > directions, programmatically). Coverage: economy **7/12**, money **7/17**, essentials **4/15**.
-    > **The money track was exhausted before the closing run began** — all ten of its bare lessons
-    > were already rejected — so the last two unevaluated lessons in the whole app were economy 29
-    > and 31. Both were evaluated; both reject.
-    > **⛔ 29 — "Transactions: The Building Block" — REJECTED, rule 2, and it is the highest-stakes
-    > rejection in this item:** it is lesson 1 of the main path, the lesson §4.3's Phase-0 gate is
-    > about. Four designs, each already shipped or self-defeating: the transaction/income chain as a
-    > closed loop **is lesson 30's `SpendingLoop`**, one lesson later and deliberately placed there;
-    > `$500 ÷ 100 loaves = $5` as a partitioned total is `budgetSplit`/`mortgageSplit`/`BracketStack`'s
-    > shape, and the prose performs that division in one clause; transaction → market → economy as
-    > containment is `NestedCycles` one axis over; and a two-segment bar splitting the $500 into cash
-    > and credit **invents the one proportion the lesson is about**. **Rule 1 does NOT reject 29** — it
-    > states $500, 100 and $5 in all five languages and would invent nothing.
-    > **⛔ 31 — "Productivity Growth: The Long-Run Driver" — REJECTED, rules 1 AND 2.** Rule 1 with the
-    > invented quantity named, as the rule requires: the obvious figure is the straight productivity
-    > trend with credit swinging around it, and its entire visual claim is **the amplitude of those
-    > swings relative to the trend, and their period** — lesson 31 states **neither**, in any language
-    > (all five scanned: the lesson contains exactly **one** number, `$15,000`). The contrast that
-    > proves this reading is lesson 33, where `NestedCycles` was allowed *because* the prose bounds
-    > both spans ("5-8 years", "75-100 years"). Rule 2 rejects it twice over: that shape **is**
-    > `NestedCycles`, two lessons later, and section 2's "same $15,000, opposite outcome" is
-    > **`SunkFork`'s** topology, shipped on lesson 19. ⚠️ It is also **Dalio's signature chart**;
-    > §10.2 is *not* what rejected it — rules 1 and 2 did, independently and first — but a run
-    > reaching for that design should know it is adjacent to a closed blindspot as well.
-    > ⭐ **The transferable finding, and it is why this closes rather than parks: the economy track's
-    > two remaining gaps are surrounded by the shapes that would fill them.** 29 sits beside lesson
-    > 30's loop; 31 sits between 32/33/38's cycles. That is not an obstacle to route around — it is
-    > the do-not-redraw rule reporting that **this track's figure vocabulary is complete.**
-    > **What would legitimately reopen this item:** a genuinely NEW shape nobody has drawn here,
-    > argued from a sentence some lesson's prose cannot write — **not** a lesson off the list below,
-    > and **not** a softening of either rule. The rules are load-bearing, not ceremony: between them
-    > they killed six named designs on the closing run alone.
-    >
-    > **⛔ NEVER QUOTE A COVERAGE COUNT FROM THIS ITEM, including the one three paragraphs up.** Every
-    > count ever typed here has gone stale — "money is 4/28" survived four weeks, and the 2026-08-27
-    > figures were still being quoted on 2026-09-07 when all three were wrong. **Run the parse; it
-    > takes one command and cannot be stale:**
-    > ```
-    > node -e "const u=new URL('file://'+process.cwd()+'/src/content/lessons.js').href;import(u).then(async({lessons})=>{const fs=await import('node:fs');const m=fs.readFileSync('src/components/LessonVisual.jsx','utf8').match(/LESSON_VISUALS\s*=\s*\{([\s\S]*?)\n\}/);const ids=[...m[1].matchAll(/^\s*(?:'([^']+)'|\"([^\"]+)\"|([\w-]+))\s*:/gm)].map(x=>x[1]||x[2]||x[3]);const by={};for(const l of lessons)(by[l.track]??=[]).push(String(l.id));for(const[t,v]of Object.entries(by))console.log(t,v.filter(i=>ids.includes(i)).length+'/'+v.length,'bare:',v.filter(i=>!ids.includes(i)).join(' '))})"
-    > ```
-    > **Carry the control:** it must parse **44** lessons, must find `36`, must not find `9999`, and
-    > must report **0 orphan ids**. ⚠️ A *regex* over `lessons.js` returns **0 lessons** — the entries
-    > are multi-line; importing the module is what works, and the control is what catches it.
-    >
-    > **THE TWO RULES. Every rejection below is one of them.**
-    > 1. **The quantity rule.** Does the prose state every quantity *the shape needs*, or only the
-    >    ones that make it sound plausible? A shape needing **zero** passes vacuously.
-    >    ⛔ **IT IS ABOUT INVENTED QUANTITIES, NOT ABOUT HAVING SOME — misread that way it has
-    >    wrongly rejected TWO lessons**, 25 (shipped 2026-09-04) and 19 (shipped 2026-09-07), both
-    >    re-decided under this correction rather than overridden. **When this rule rejects a lesson,
-    >    name the quantity that would have to be invented and the mark it would be invented for.** If
-    >    that sentence cannot be written, the rule is not what is doing the rejecting.
-    >    ⭐ **A shape whose parameters cancel can be sourced from a single stated fact, and that is
-    >    not inventing one** — `SplitBand` (lesson 12) is the worked case: neither principal nor
-    >    payment survives the amortization algebra, so the whole curve follows from the one number
-    >    the lesson states.
-    > 2. **The do-not-redraw rule.** A figure may not restate a shape this app already ships.
-    >
-    > **⛔ MEASURED REJECTIONS — DO NOT RE-DERIVE ANY OF THESE.** `money`: **16, 18, 20, 21, 22, 24,
-    > 26, 41, 42, 43**. `essentials`: **2, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15**. `economy`: **29, 31,
-    > 35, 39, 40**. That is all 26 bare lessons. ~~19~~ and ~~25~~ were on this list and are now
-    > **shipped**, both via rule 1's correction rather than an override. **There is no named
-    > candidate, deliberately** — a named candidate is how this item became count-shaped twice. A run
-    > that wants one reads a lesson's prose and names what the prose cannot do. **Do not pick a
-    > lesson because a diagram is "plausible" there.**
-    >
-    > **Where each shipped figure's argument and guard live.** Twelve figures ship; each is a
-    > component in `src/components/charts.jsx` and each is asserted by a numbered `check-data.mjs`
-    > block whose failure messages carry the reasoning. The pointer, verified alive 2026-09-07 (all
-    > twelve return ≥2 hits in both files, which is the control):
-    > `grep -n '<Component>' src/components/charts.jsx scripts/check-data.mjs` for `BracketStack`,
-    > `GrowthCurve`, `GapColumns`, `PreferenceFlip`, `TradeoffPlot`, `OutcomeGrid`, `SpendingLoop`,
-    > `BalanceBand`, `SplitBand`, `NestedCycles`, `MatchGrid`, `SunkFork`.
-    > ⚠️ **Do NOT grep the `LESSON_VISUALS` kind names** (`outcomeGrid`, `budgetSplit`, `earningsGap`,
-    > …): measured 2026-09-07, six of nine return **zero** hits in `check-data.mjs`, so that pointer
-    > reads as "unguarded" for figures that are in fact guarded. The component name is the live key.
-    >
-    > **STANDING CONSTRAINTS — the four things here that NO check asserts. Everything else in this
-    > item's old body was either dated record or a warning `check-data.mjs` now enforces.**
-    > 1. 🔎 **The yield-curve morph's halfway frame is the lesson's own flat shape, and nothing in
-    >    the code asserts it.** All four shapes share the x control points `10,40,70,130` and differ
-    >    only in height, so the halfway frame of a **normal → inverted** morph is `37.5,37.5,35,35`
-    >    against the authored **flat** shape's `38,37,36,34` — **21× closer to flat than to either
-    >    endpoint**, so the animation walks lesson 36's own stated sequence (normal → flat →
-    >    inverted) with no new copy. Nobody designed this; it is an accident of the geometry. **A
-    >    future run must not re-author a shape's heights or "improve" the easing without re-checking
-    >    that property** — it is the figure's whole pedagogical claim.
-    > 2. ⚠️ **Lesson 36's four-up grid was TRADED, not lost.** The four shapes are no longer visible
-    >    simultaneously in the lesson; that was traded for the lesson's second section and takeaway
-    >    (which are a *transition*), for ~3× the linear size at 375px (§3.0.7), and for §3.0.1. **The
-    >    simultaneous comparison still ships unchanged in Reference > Market signals.** A run that
-    >    wants the grid back in the lesson **owes an argument against those three**, not a preference
-    >    for grids.
-    > 3. ⛔ **A figure's geometry is a RENDERED property and a source check cannot see it.** Two
-    >    figures shipped with every style literal correct and rendered unequal rows: `OutcomeGrid` at
-    >    **82px against 52px** (a label inside a cell) and `SpendingLoop` at **35px against 52px** (a
-    >    row heading wrapping to two lines) — CSS grid sizes a row to its tallest item, so the
-    >    inequality arrived through *content*. Both were found only by measuring the live DOM.
-    >    **The first live measurement of any new figure should be its boxes**, and prefer structural
-    >    invariants (no text in a cell; a fixed shared height) over stylistic ones. The two instances
-    >    are now held by §57 (e2) and §64; **the practice is general and is held by nothing.** The
-    >    general instrument is item 135.
-    > 4. ✅ **Lift a figure's labels from the lesson; do not translate them.** Every string
-    >    `SpendingLoop` renders except its text alternative is a **verbatim substring of lesson 30 in
-    >    the same language** (6 strings × 5 languages), so 24 of its 28 non-English strings are not
-    >    new translation at all. This matters because `DECISIONS.md`'s 2026-08-16 scope limit says
-    >    chart labels are *"the content type where an unreviewed translation is least visible, because
-    >    a wrong label still renders as a correctly-shaped chart"*, and the parity checks catch **a
-    >    missing language, never a wrong one**. `check-data.mjs` §64 is the first check here that
-    >    catches a *wrong* label, and it does it by anchoring to the lesson rather than by reviewing
-    >    the translation. **A future figure whose labels can be lifted should be lifted.**
-    >    ⚠️ **Pointer correction 2026-09-07:** the text this replaces cited "§64 (a)", "§64 (c)" and
-    >    "§64 (d)". **§64 carries no lettered sub-blocks** — all three properties (labels lifted
-    >    verbatim, the ring's step order, `LOOP_BOX` never gaining a size) are asserted inside a
-    >    single unlettered §64. Cite it plainly; the lettered form resolves to nothing.
-    >
-    > **⛔ One do-not-re-derive note that is NOT about a bare lesson, kept because a run could
-    > otherwise "fix" it: lesson 32 shares the `cycle` figure with lesson 38, deliberately.** When
-    > `NestedCycles` replaced the shared `cycle` figure on lesson 33 (2026-09-04), lesson 32 was left
-    > on it on measured grounds: scanning each lesson's own prose for the four rendered phase labels
-    > **in its own language** (positive control: lesson 38, which owns the vocabulary, scores 4/4 in
-    > all five), **lesson 33 scored 1 of 4 and lesson 32 scores 2-3 of 4** — lesson 32's own headings
-    > are "Expansion Phase" and "Contraction & Recession", so most of the labels are its own words.
-    > The parse above still shows `32 -> cycle` and `38 -> cycle`. **Zero learner confusion is
-    > *claimed* here, not measured** — a run picking this up should start from that scan rather than
-    > re-deriving it, and should not treat the shared figure as an oversight.
-    >
-    > ⭐ **And the finding that outlived the item, kept because it is about reading plans, not about
-    > figures.** §3.0.4 — the clause this item was built on — reads *"an LLM can explain a yield curve
-    > in text; a curve inverting in front of the reader is what a chat window cannot do."* **It was
-    > quoted fifteen times for its first half and never for its second.** The word is **"animated"**,
-    > and `charts.jsx` contained **zero** state or motion primitives in 1,047 lines until 2026-08-31 —
-    > every figure in the app was still. (Lesson 36's morph runs on `requestAnimationFrame` with an
-    > explicit `prefers-reduced-motion` check, because `index.css`'s reduce block uses `!important` on
-    > CSS animation/transition and is **blind to a rAF loop** — that guard is load-bearing, not
-    > ceremony.) **A plan clause can be cited accurately, repeatedly, for months, and still have half
-    > of it go unread — because each citation quotes it to justify the work already being done. The
-    > half nobody acts on is the half that does not resemble the current tranche.**
+27. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-28. **✅ MECHANISM DONE 2026-08-16 — `src/content/lessonTerms.js`, a curated lesson→glossary link
-    table, guarded by `check-data.mjs` §17. Do not re-pick this item to "finish" it: what remains is
-    a glossary *coverage* gap, and that is item 35.** See the run log.
+28. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-29. **[Process — ✅ DONE 2026-08-16. Both payload gaps closed, both proven in a live browser.]
-    Finish the §9.2 event payloads — the half of item 18 that is NOT owner-blocked.** See the run log.
+29. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-35. **✅ FULLY DONE 2026-08-21. Both batches shipped — 12 terms 2026-08-16, 2 more 2026-08-21. The
-    glossary is 35 terms (38 since the M0/M1/M2 entries).**
+35. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-36. **✅ CLOSED 2026-08-16 (fifth pass, owner-requested). `ja` cross-reference coverage 31 → 44,
-    equal to `ko` and `zh`. The guard that generalizes is in: `check-data.mjs` §16 prints the
-    per-language match count and fails on a drop.** See the run log.
-    > **THE STANDING LESSON, and it took four premature all-clears to learn: on this check a green
-    > `npm test` has repeatedly meant "not scanned", not "clean".** Hand-enumerating surface forms
-    > failed four times (`레슨 N`, `レッスン N`, `15강`, `第N講`), and the scope was wrong too —
-    > §16 walked lesson prose only and never read `quizData`. **Verify this class by injection, not
-    > inspection**, and use a **single-pass** substitution: a two-pass replace corrupts the counts.
+36. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-30. **[Process — ✅ DONE 2026-08-16. `CLAIMS.md` + `scripts/check-claims.mjs`, wired into `npm test`.
-    14 claims, 2 of them already refuted by this repo's own history.]**
-    > **Premise correction from building it:** "no such artifact exists" was half wrong. `LAUNCH_PLAN.md`
-    > **§4.6 already held four monetization claims**, each with a refuting number. What they lacked was a
-    > **check date** — the third of §9.1's three parts, and the one that makes a claim self-refuting
-    > rather than merely well-phrased. They are imported as B1–B4 rather than reinvented.
-    > **The register's most useful output is a concentration, not a claim:** 10 of 14 are unmeasurable
-    > today and nearly all name **item 18**. That reframes item 18 from one blocked backlog line into
-    > the thing keeping most of this project's stated beliefs unfalsifiable.
-    > **⛔ D1 and D2 are recorded as already REFUTED**, by evidence from this log, and they are why the
-    > adversarial self-check exists: **D1 — a run's self-reported verification can be trusted** — failed
-    > twice (the §10.1 "closed" claim that was half done; item 33's "0 remain" that the item-36 run
-    > disproved 67 references later). **D2 — a green `npm test` means the property holds** — failed via
-    > §16's ko/ja patterns matching 1-of-44 and 1-of-31. Per §9.1 the response must be a product change,
-    > not a softer restatement, so the three changes those forced (the adversarial self-check, the §16
-    > coverage tripwire, and this register) are listed in the file **specifically so they cannot later
-    > be quietly softened**.
-    > **`check-claims.mjs`** fails on a malformed row, a non-ISO check date ("when analytics land" is
-    > rejected by design), a duplicate id, a bad measurability value, or a missing file; it **warns** on
-    > past-due dates, which is what §9.3's audit question 4 reads. All six guards proven by injection.
-    > `CLAIMS_TODAY` overrides today's date so the past-due path is testable and no date is hardcoded (§2.3).
-    > **Known limit, written into the script's header:** it verifies shape and dates. It cannot verify
-    > that a claim is any good, that a threshold is the right number, or that a status is honest — and
-    > it specifically cannot catch a threshold softened *after* seeing the result, which is the failure
-    > §9.1 actually cares about. **That one stays a human duty.**
+30. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-31. **✅ DONE 2026-08-16 — hash routing shipped as scoped: `src/lib/deepLink.js`, `#/learn`,
-    `#/practice`, `#/reference`, `#/lesson/<id>`, one module, no router, respecting item 12's
-    port-cost rule.** See the run log.
-    > **⚠️ What this surfaced is an OWNER question, not a follow-up task: a URL does not unlock a
-    > lesson.** §5's acquisition funnel wants each lesson to be a shareable link, and the sequential
-    > unlock model means a shared link lands on a locked screen. Recorded in `DECISIONS.md` with the
-    > owner-facing cost. **Deliberately not built:** routes for the Reference sub-nav.
+31. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-37. **✅ DONE 2026-08-16. §10.4's translation-coverage figure is now enforced rather than trusted —
-    `check-data.mjs` §11b fails the build when it disagrees with the live ledger.** See the run log.
-    > **Deliberately NOT guarded: the same row's character-count figures.** They move by single digits
-    > on any content edit, so guarding them would make every content commit red. `refresh-readiness.mjs
-    > --check` owns the character sentence; §11b owns the coverage percentages and explicitly excludes
-    > char counts. The two comments read as contradictory only out of context.
+37. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-32. **✅ DONE 2026-08-17 — §9.3's first monthly audit, run nineteen days early and deliberately, as
-    `reviews/2026-08-17-monthly-audit.md`. Its three proposed §10 blindspots and claim D3 were
-    applied by item 73.** See the run log.
-    > **Deliberately NOT done: §9.3's closing "update §10" step** — §10 lives in `LAUNCH_PLAN.md`,
-    > which an audit should propose against rather than edit in the same pass.
+32. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-40. **[A11y — ✅ DONE 2026-08-16. Fixed as a pattern, not one line: the audit found the `<ol>`/`<ul>`
-    question was the *smaller* of the two defects in these lists.]**
-    > **The bigger find, which this item did not anticipate:** every list in the app sets
-    > `listStyle: "none"`, and **WebKit removes list semantics from exactly that** — so under VoiceOver
-    > on iOS all eight were announced as loose text, with no "list, N items" and no item position. The
-    > `<ol>`/`<ul>` mixup affected one list; this affected all of them, on the platform the app targets.
-    > All eight now carry an explicit `role="list"`.
-    > **⚠️ Honest limit on that half, stated because this log's D1 claim exists:** the `<ol>`→`<ul>` fix
-    > and the `role="list"` attributes were verified live; **the WebKit behavior itself was not**, because
-    > the preview browser here is Chromium, where `role="list"` is a no-op. That half rests on documented
-    > WebKit behavior, not on a measurement taken in this environment.
-    > **Guarded by `check-data.mjs` §20**, which fails if any `listStyle: "none"` list lacks
-    > `role="list"`, and — per item 36's lesson — fails *itself* if its scan matches fewer than 8 lists,
-    > so a dead pattern can't pass vacuously. Proven by three injections. **§20's header carries the
-    > per-list verdicts for all eight lists, and what the check cannot do** (it cannot tell whether
-    > `<ol>` or `<ul>` is right, which is the content judgment this item was actually about) — read them
-    > there rather than re-deriving them.
-    > ⚠️ **Renumbered 34 → 40 on 2026-08-16, and this is how to read older entries.** Two items were
-    > both numbered 34; this one moved, by blast radius rather than seniority — the other (the "Be the
-    > Fed Chair" policy simulator) is cited from seven files in `src/`, `scripts/` and `DECISIONS.md`,
-    > while every reference to this one was `AGENT_LOG.md` prose. **Run-log entries dated 2026-08-16
-    > that say "item 34's `<ol>`/`<ul>` a11y call" mean this item (40).** Those entries are history and
-    > stay verbatim. Any other "backlog item 34" — and every one in source code — means the simulator.
-    > `check-data.mjs` now fails the build if two backlog items share a number.
+40. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 24. **[Content — EXHAUSTED in substance; do not pick by default] The money track teaches mechanics, but
     the owner asked for judgment.** Compressed 2026-08-16 by the weekly review (W-3) from ~80 lines of
@@ -4512,152 +2620,33 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     owner-blocked** — §9.2 specifies `lesson_completed` *with duration* and `quiz_taken` *with score*,
     and neither payload carries them today. Fixing that now means the data is the right shape the day an
     account exists, instead of starting the measurement window with a known gap.
-34. **✅ BUILT 2026-08-16 — the "Be the Fed Chair" policy simulator, inside lesson 35: two
-    scenarios, three levers each, five languages, no score. Do not re-pick this to "extend" it.** See
-    the run log.
-    > **NUMBER NOTE, load-bearing: a second item also carried number 34** (the `<ol>`/`<ul>` a11y
-    > item, renumbered to **40**). **Every "backlog item 34" in source code means THIS item.** In
-    > run-log prose before 2026-08-16, "item 34" may mean either.
-    > **Two design decisions are protected only by file-header comments** in
-    > `src/content/policyScenarios.js` — read them before editing. **A third scenario must first
-    > justify itself**: the two built already cover the dual mandate's two halves.
+34. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-38. **✅ DONE 2026-08-16. All three sites now import `todayStr` from `src/utils/date.js`; the
-    market-pipeline one was the consequential half, since `asOf` drives the staleness contract.
-    Guarded by `check-data.mjs` §23.** See the run log.
-    > **Known limit, written into §23's header: it catches the IDIOM, not the mistake.** A hand-composed
-    > UTC date string still passes. The one legitimate UTC use is exempted by comment, not by path.
+38. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-39. **✅ CLOSED 2026-08-17 as its own scoping directed — both replacements (items 46, 47) landed.
-    Do not pick this again.** See the run log for the full scoping.
-    > **NOT TO BE BUILT, measured rather than judged: the co-landing detector as a build gate.** Over
-    > the sampled window it had a **57% false-positive rate**, and "same commit" is provably
-    > unreachable in this repo anyway. Blanket "every figure is guarded" cannot be automatic either —
-    > live claims and dated records are different classes, and §31 protects the second.
+39. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-46. **[Process — ✅ DONE 2026-08-17 (scheduled dev-agent). Shipped as `check-data.mjs` §26, with the
-    exemption vocabulary the item asked for and one design change it did not anticipate — patterns are
-    expanded and checked rather than skipped, which is what catches `DECISIONS.md`'s brace-contracted
-    reference to two deleted files. Closing note at the end of this item.] Every repo path
-    a tracked document names must exist.**
+46. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-47. **[Process — ✅ DONE 2026-08-17 (scheduled dev-agent). Shipped as `scripts/refresh-readiness.mjs`
-    with three modes; the two live figures are generated and `npm test` holds them. Item 39 is closed
-    with it.] Move `LAUNCH_READINESS.md`'s refresh snippets out of the document and compare their
-    output to the figures the document states.**
-    > **The `--write` mode is what makes the gate survivable**, and the scope did not name it. Bare
-    > prints the figures, `--check` compares them and is chained into `npm test`, and **`--write`
-    > rewrites them in place**. That third mode answers the objection §11b wrote down when it
-    > deliberately refused to guard character counts ("a build that fails over 19 characters would be
-    > turned off within a week"). **That objection is right about a hand-maintained figure and does not
-    > carry to a generated one** — the fix is now `npm run readiness -- --write`, one command instead of
-    > a re-derivation. §11b's coverage sentence was left alone; folding it in would have been a rewrite.
-    > **Guarded surface: exactly two sentences** — the §4.3 catalog row and §10.4's character sentence,
-    > the document's only figures that must equal the content *today*. ⚠️ **The negative control is the
-    > one that matters:** the doc's history figures (`112,387`, `100 minutes`, "by **exactly 19
-    > characters**") were verified untouched by a `--write` that did change something, because item 39's
-    > scoping showed live and historical figures share sentences and no parser separates them.
-    > **Item 39 is closed by this.** What it correctly ruled out (a co-landing detector as a build gate,
-    > 57% false positives) stays ruled out; the reporting-line idea it left for the weekly reviewer is
-    > still unbuilt and is a reviewer tool, not an `npm test` failure.
+47. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-49. **[Process — ✅ DONE 2026-08-17 (owner-directed). Two of the three proposed surfaces were REJECTED
-    on the measurement, the item's own ranking was backwards, and putting `README.md` under §26 turned
-    up a live §10.2 blindspot violation that had been in the repo's front-door document since it was
-    written.] Widen §26's surface, one form at a time.**
-    > ⚠️ **Do not treat this as a coverage gap to close on reflex.** §26's whole value is that a failure
-    > means something; each surface added is another exemption class to define first. **Measure the
-    > dead-reference count for a surface before deciding it is worth guarding** — item 46's own filed
-    > measurement was wrong in four ways, and two of the three surfaces here failed on their numbers.
-    > Full figures live in `check-data.mjs` §26's header, where the next person to widen it will read them.
-    > - **`README.md` — ADDED.** 31 references, **3 dead**. The only surface with live rot.
-    > - **Markdown link targets — ADDED, and they catch nothing today** (3 references, 0 dead). In
-    >   because coverage that depends on a formatting choice is a hole — rewriting `` `foo.js` `` as
-    >   `[foo.js](foo.js)` used to walk a reference out of §26 — not because it found anything.
-    > - **Un-backticked bare paths — REJECTED.** 16 references, 8 dead, all 8 *already* exempted in
-    >   backticked form: +8 exemptions for 0 new finds. Also unsound — the pattern matches `Node.js` in
-    >   "Requires Node.js 18+", which is English, not a file.
-    > - **`reviews/*.md` — REJECTED, and the measurement proved itself mid-run:** 98 references / 6 dead
-    >   on the first pass, **112 / 8** ninety minutes later after the weekly reviewer appended a section
-    >   correctly describing files item 45 deleted. **A dated snapshot accrues dead paths by doing its
-    >   job**, so it belongs on the history side — the same argument that keeps `AGENT_LOG.md` out.
-    > **`AGENT_LOG.md` is deliberately NOT proposed**, for that reason: an append-only history *should*
-    > name files that have since been deleted, and the annotation would outnumber the content. Recorded
-    > so the next run does not re-derive it as an oversight.
-    > **The find this item did not predict, and the reason adding a surface beat widening a pattern:**
-    > reading `README.md` properly for the first time turned up **"inspired by the framework popularized
-    > by Ray Dalio and other economists" in its opening sentence** — a §10.2 violation in the project's
-    > front-door document, while §10.2 had been reported closed since 2026-08-01 by a check that scanned
-    > `src/` and the v5 prototype, **i.e. the two places the rule was already obeyed.** Removed, and
-    > `check-blindspot.mjs`'s §10.2 scan now covers `README.md` — only README, because `LAUNCH_PLAN.md`
-    > and `LAUNCH_READINESS.md` name Dalio while *stating* the rule, and a check that forbids describing
-    > its own rule is unusable.
+49. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-41. **[A11y — ✅ DONE 2026-08-16. Fixed, guarded by a new §22 check — and the live verification of the
-    fix found that the same figure was failing sighted readers too, which is the more interesting
-    half. See the run log.] `Bar` is the one chart primitive with no accessible description.** See the run log.
+41. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-42. **[A11y — ✅ DONE 2026-08-16 (owner-requested, same evening it was filed). Content shipped as scoped;
-    two guard gaps found on the way, both closed — see the closing note and the run log.] The four `YieldCurve` figures
-    are labeled by `label`, not by a description — so their accessible name is "Normal (healthy)", which
-    names the curve without describing it.** See the run log.
+42. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-43. **[Process — ✅ FOUND AND FIXED 2026-08-16 by item 38's guard, on its first run. Filed as its own
-    item because the fix is one character and the finding is repo-wide.] `scripts/translation-review.mjs`
-    was invisible to `grep` — and had been since it was written on 2026-08-11.**
+43. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-44. **[Small — ✅ DONE 2026-08-17. Filed as small and "no §2.3 violation"; the second half of that
-    assessment was wrong, and finding out how was the run. See the closing note.] `useMarketData` treats
-    a future `asOf` as fresh, and `Sectors.jsx` destructures `ageDays` without using it.** See the run log.
+44. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-45. **✅ DONE 2026-08-17 (owner-requested). Lesson content is split by language as well as by track
-    — ten chunks — and the largest content chunk fell 499.27 kB → 116.84 kB. Proven equivalent before
-    anything was deleted.** See the run log.
-    > **One real behavior change, not a pure refactor: switching language in the picker now fetches a
-    > chunk.** `lessonContent.js` survives as a node-only merged view for the checks.
-    > **Deliberately not done: splitting `quizData.js`** (the largest remaining chunk) — the run log
-    > records why.
+45. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-48. **[Perf — ✅ DONE 2026-08-17 (owner-requested). Quiz text split per language, the same second
-    axis item 45 applied to lesson bodies. The 140.88 kB shared quiz chunk is gone.]** See the run log.
+48. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-50. **[Process — ✅ DONE 2026-08-17 (owner-requested). `scripts/check-payload.mjs`, wired into
-    `npm test`. Closes the first concern the 2026-08-16 review's §6.6 raised.]**
-    > **The gap it closes.** The per-language splits took the largest content chunk from 499.27 kB to
-    > 116.84 kB and deleted a 140.88 kB shared quiz chunk — and **nothing asserted any of it.** A single
-    > `import { quizData } from "../content/quizData.js"` added to a screen — the most natural line in
-    > the world to write — silently restores all five languages to that chunk, and **every existing
-    > check stays green, because the data is still correct. Only the bytes change.**
-    > **Why structure rather than bytes.** Byte assertions need `vite build` (which `npm test` does not
-    > run) and would need rewriting every time a lesson is edited. The structure that *produces* the
-    > payload is stable, and each failure mode is a nameable line of code. Four rules: every promised
-    > per-language module exists (derived from `TRACKS` × `LANGS`); ⛔ **no module under `src/` imports a
-    > merged view** (`lessonContent.js`, `quizData.js`) — the load-bearing rule, since those views
-    > statically import every language and any path into one drags the whole catalog back; per-language
-    > modules are imported **only dynamically** (a static import is that same failure one language at a
-    > time); and every per-language module is named by some dynamic `import()`, since a module no loader
-    > reaches is a runtime `TypeError` for one language only. **All four proven by injection**, tree
-    > clean and green after each.
-    > **Deliberately not checked:** chunk sizes, module counts, anything needing a build. If those are
-    > ever wanted they belong in a separate build-time check — this one stays fast enough for every commit.
-    > **Why a fifth script rather than a section in `check-data.mjs`:** contention. Three separate edits
-    > to `check-data.mjs` collided with concurrent dev-agent runs on 2026-08-16/17, twice forcing a
-    > commit to be reconstructed. A standalone file has no such conflict and matches the sibling pattern.
+50. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-12. **✅ DECIDED AND UNHELD 2026-09-07 (owner, interactive): the app ships on iOS to the App Store,
-    via Expo / React Native. The web app stays live and current.** Replaced by its conclusion per
-    W-7.2 rule 1; the full reasoning, the two rejected options and the measured port surface are in
-    `DECISIONS.md` § "Expo (React Native) vs. Vite (web-only)" and in this date's run log.
-    ⛔ **What did NOT change, and a run must not read this as permission.** "Do not migrate to Expo on
-    your own initiative" **still binds** — the rewrite is ~7,345 lines of UI and cannot be done one
-    two-hour run at a time. **What did change:** "do not deepen the web-only investment" is now a
-    measured cost rather than a theoretical one. Every new inline `style={{}}` and DOM-only component
-    joins the rewrite. **Prefer content, `lib/` and content-parity work until a costed migration plan
-    exists** — and that plan is the next thing this item wants, not code.
-    ⚠️ **The one external fact that is NOT settled**, separated from the one that is: the paid Apple
-    Developer Program membership is measured present, but `security find-identity` showed **one
-    `Apple Development` identity and no `Apple Distribution`** — build-and-run on a device, not ship.
-    A distribution certificate and provisioning profile are still real, undone steps.
+12. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 19. **[HELD] Genuinely child-facing kids content** (§10.3, reopened 2026-08-04) — a COPPA/store-
     classification decision, not a UI one. The parent-facing framing (closed 2026-08-01) stands until the
     owner decides otherwise; do not change `ParentGuide.jsx`'s framing on this run's own initiative.
@@ -5213,6 +3202,42 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-27 (scheduled dev-agent; **W-9.1's named pick**: the weekly review set it as *"the pick for the next run that is not already mid-chain"*, and no chain was open. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 does not arise: this is not a short-string hand read) — **the backlog's first archiving pass: 129 closed items moved verbatim to `AGENT_LOG.archive.md`, each leaving a one-line pointer under its own number.** Backlog **422,379 → 237,239 b**, floor **460,785 → 275,645 b** (92.2% → **55.1%** of budget). W-9's test for 2026-10-04 is a floor below 300,000 b, and it is already met.
+
+**Step 3.5: the premise, re-measured.** W-9.1 said *"of 152 numbered items, 137 are closed … 244,116 b"*. **I reproduced 152 and 137 exactly, and 137 is too many.** Its classifier matched `✅|DONE|CLOSED|RETIRED|EXHAUSTED` anywhere on an item's first line, so it counted five items that are not closed: **72** (🟡 HALF DONE; the owner half is open), **67** (🟡 TWO-THIRDS DONE), **160** (🟡 PARTLY DONE), and **17** and **24** (EXHAUSTED, which means "do not pick by default"; both still carry live direction). **132 items carry a ✅ on their own first line**, and that is the selection rule I used. I kept three of those 132 live on purpose: **122**, because its findings are the method for measuring a backlog, and **157** and **168**, because each carries a standing rule that no script enforces (`owner-directed` is a claim about a person; a cross-track reference must be a signpost, not a presupposition). So **129 items moved** (199,393 b) and 23 stay. The archive section's preamble says all of this.
+- **Bounding (item 122 finding 2):** an item ends at the next item or at the next column-0 line that is neither blank nor indented. So the last item (19) stops at "Notes for future runs", and item 26 stops at the retained 08-09 priority block, which is not an item and stays live. The one column-0 line inside an item is item 160's ⭐ line, which is handled explicitly.
+
+**The move.** A scratchpad mover (not committed) rebuilt both files and asserted five proofs before writing. (P1) Substituting each pointer back with its block restores the original byte for byte. (P2) The archive's existing content is an unchanged prefix. (P3) Each block appears exactly once in the new section and nowhere live. (P4) All 23 kept items are byte-identical. (P5) Live shrank by exactly moved − pointers (199,393 − 14,253 b). **An independent re-check parsed the committed archive section itself (129 blocks), substituted it into the new live file, and got `git show HEAD:AGENT_LOG.md` back byte-exactly, with 0 pointers left.** The first dry run aborted, because pointer `55.` is a substring of pointer `155.`. Matching is now newline-anchored; the abort was the proof working.
+
+**What the instrument caught: `check-data.mjs` §52b failed.** Its `HEX_ATTRIBUTION_OK` entry 0 excused a hex in closed item 59 (*"manufactures a 1.0:1"*). §52 scans the live backlog but not the archive, so the moved text is now out of its scope and the exemption was stale. **The check's own message says to delete it**, and I did, leaving a two-line comment that says where the text went. That is the only code change.
+
+**Positive control on the pointers:** I deleted pointer 46 from the live file, and `check-backlog.mjs` failed with **2 dangling citations** (`check-data.mjs:2863`, `:3136`). I restored the file from a scratchpad copy (`cmp` identical) and it passes again. ⛔ **So the pointer lines are load-bearing, for the same reason `former item N` labels are. Never drop one to save bytes.**
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| `check-backlog` | 152 items, no duplicates; **208/208** citations resolve |
+| §35 heading depth | 0 wrong across both log files (the new `##` heading is accepted) |
+| Build | `build-out-of-tree.sh` → ✓, bundle `index-D_MFj2n0.js`, **the same hash as before**, so no app code changed |
+| MEASURED | file 576,340 → **391,200 b**; backlog **237,239 b**; floor **275,645 b**; run log 115,555 b (untouched) |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no app content was touched, and the bundle hash proves it.
+- **W-5.3 says the backlog is "never archived",** and `check-log-size.mjs`'s header and floor label say the same. W-9.1 overrides that for closed items only. The label now overstates things, because the floor can be moved by this kind of pass as well as by compression. I did not reword the script, because the MEASURED numbers are correct either way. This is noted here as a doc drift.
+- **Done work undone?** No. Items 115 and 122 compressed in place; this pass moves text. Every open item is byte-identical (P4).
+- **Live references into moved items** (e.g. "item 73's standing method", "item 58's rule") now land on a pointer that names the archive section, where the full text is one search away. I did not check whether each such rule is enforced in code. Only 157 and 168 were kept live for their rules, because I identified those two as unenforced.
+- **Archive order:** the next W-5.3 pass will append `## Archived 2026-09-21` *after* this backlog section. That breaks the file's strict date order at one boundary. The section heading is undated on purpose, so no instrument reads it as a day.
+- **My own claims:** a reviewer who re-runs the reconstruction snippet described above against `HEAD~1` gets byte identity. No conflict found.
+
+#### Seen, not fixed (W-6.2 rule 2)
+- **Item 67 is probably stale.** It says the `Dividend` half "is still blocked", but moved item 64 says *"`Dividend` shipped 2026-08-20"*. Open items were out of scope for this pass (W-9.1: "change no open item"). The next run can confirm this against `glossary.js` and close it.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** 129 finished backlog items were moved word for word into the archive, which cuts `AGENT_LOG.md` by a third (576 → 391 KB) and clears W-9's 300 KB floor target a week early. The two asks in W-9.5 (translation review) and W-9.6 (the analytics key) are still yours.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-27 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. **The pick is the previous run's named residual: a hand read of the ko/zh/ja quiz `explain` strings.** That run was a free pick that did not itself take a residual, so W-6.2 rule 1 allows this. ⛔ **The next run may take a residual of this one only once more.**) — **ten explanation strings across seven quiz questions were wrong or short. Three questions had grammar or meaning errors (four strings), and four questions had dropped a clause the English makes (six strings; q025 in all three languages).** Explanations appear after the learner answers, so they are where the quiz teaches.
 - **ko q028 (lesson 14):** 「은퇴 계좌」**과** 「보험」 put the consonant-form particle after a vowel-final noun. It is now 「은퇴 계좌」**와**.

@@ -7651,13 +7651,9 @@ if (keyedGroupsChecked < 4) {
   // are CORRECT despite not matching. Anchored by text, never by line number
   // (item 73's standing method: LAUNCH_PLAN.md:529 was line 549 a day later).
   // An entry is [file, anchor substring, reason].
+  // (An AGENT_LOG.md "manufactures a 1.0:1" entry was dropped 2026-09-27: its text sat in closed
+  // item 59, which W-9.1's backlog pass moved to AGENT_LOG.archive.md, a dated record this scan skips.)
   const HEX_ATTRIBUTION_OK = [
-    [
-      "AGENT_LOG.md",
-      "manufactures a 1.0:1",
-      "The hex belongs to `--ink-on-fill` (named on the line above); `--surface-canvas` is the OTHER " +
-        "side of the pair being argued about. `--ink-on-fill` really is #ffffff in light mode.",
-    ],
     [
       "src/content/lessons.js",
       "is not a stale copy of",
