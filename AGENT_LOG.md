@@ -2335,8 +2335,10 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 68. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-67. **🟡 TWO-THIRDS DONE 2026-08-17 (scheduled dev-agent) — the two terms that needed no new key are
-    fixed and rendered-verified; only the `Dividend` half is still blocked.** See the run log.
+67. **✅ CLOSED 2026-09-27 (scheduled dev-agent). All three terms are done: `NBER` and `realized gains`
+    on 2026-08-17, and `Dividend` on 2026-08-20 under item 64 (all five languages, re-read from
+    `glossary.js` on 2026-09-27). This line stayed 🟡 for 41 days because item 64 closed the work and
+    nothing updated this item.** See the run log.
 
 66. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
@@ -3202,6 +3204,33 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-27 (scheduled dev-agent; **the previous run's two named residuals**: its "Seen, not fixed" said *"Item 67 is probably stale … The next run can confirm this against `glossary.js` and close it"*, and its step 5 named `check-log-size.mjs`'s floor label as doc drift. The previous run was a W-9.1 pick that took no residual, so W-6.2 rule 1 allows this. W-9.4 does not arise: this is not a short-string hand read, and the previous two runs were an archiving pass and a quiz hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **item 67 is closed, and `check-log-size.mjs` no longer says the backlog can never be archived.**
+
+**Step 3.5: the premises, re-measured with controls.**
+- **Item 67.** Its three terms came from the 08-17 glossary scan: `dividends`, `realized gains` and `NBER`. Measured today: `GLOSSARY["Dividend"]` has `s`/`f`/`ex` in **all five languages** (en Dividend, es Dividendo, ko 배당금, zh 股息, ja 配当); a nonexistent key reads absent (control). `glossary.js` carries "National Bureau of Economic Research" ×1, and the `realized gains` fix is the rewritten 401(k)/IRA sentence ("dividends and any profit made when an investment is sold…"). `lessonTerms.js` wires `Dividend` as a chip in lessons 3, 6, 35, 42, 43 and 44. In the built bundle all five names are present; a nonsense probe is at **0**. **The premise held exactly.** The item stayed 🟡 for 41 days because item 64 finished the work and nothing updated item 67's line. The archived 2026-08-24 entry had already confirmed this once, and it too left the live line alone.
+- **The label.** `floor (never archived)`, the constant's comment, the header and the floor WARN all said archiving cannot move the floor. **That stopped being true this morning**, when W-9.1 moved 129 closed items and the floor fell 460,785 → 275,645 b. Only *run-log* archiving cannot move it. I grepped `scripts/` for every consumer of the label: **nothing parses it**. The only other hit was an unrelated `(never)` in `check-balance-sheet.mjs`. So rewording it breaks no instrument.
+
+**The change.** `scripts/check-log-size.mjs`: the header's FLOOR bullet, the `FLOOR_MAX` comment, the printed label (`floor (not run-log archivable)`), the over-budget WARN (it now names both remedies, and says open items, the App summary and the Environment note are never archived), and the near-crossing remedy string. The patch script required each old string ×1 and each new string ×0. No threshold, arithmetic or verdict changed. `AGENT_LOG.md`: item 67's two lines are replaced by its conclusion (W-7.2 rule 1). It is not archived here; the next closed-item pass can move it.
+- **Control on the WARN branch**, which cannot fire at today's 55% of budget: a temporary copy with `FLOOR_MAX = 200_000` (asserted ×1, then deleted) printed the new message in full. Reading it caught one leftover, *"non-archivable floor"* at the start of the sentence, which is now just *"floor"*.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged from baseline) |
+| Build | `scripts/build-out-of-tree.sh` → ✓, bundle **`index-D_MFj2n0.js`, the same hash as before**, so no app code changed |
+| Bundle probe | `Dividend`/`Dividendo`/`배당금`/`股息`/`配当` all present; nonsense probe 0 |
+| MEASURED (before this entry) | file 397,606 b; floor 275,800 b (backlog 237,394 b); run log 121,806 b |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no app content was touched, and the unchanged bundle hash proves it.
+- **DECISIONS.md / W-5.3:** W-5.3's run-log rule is untouched. The new wording only records what W-9.1 already authorized: CLOSED items, verbatim, with a pointer. It does not license archiving open items; the WARN says so.
+- **Done work undone?** No. Item 64's closure and the 09-27 archiving pass are not modified.
+- **My own claims:** a reviewer who re-runs the glossary dump, the `scripts/` grep, the `FLOOR_MAX` control, `npm test` and the build gets the same results. No conflict found.
+
+**Owner-facing, one line:** housekeeping only. A backlog item that had been finished since August is now marked closed, and the log-size check now describes the archiving it already allows. Nothing learner-visible changed. W-9.5 (translation review) and W-9.6 (the analytics key) are still the asks that move the launch. **W-8.1 still applies:** committed, **not deployed**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-27 (scheduled dev-agent; **W-9.1's named pick**: the weekly review set it as *"the pick for the next run that is not already mid-chain"*, and no chain was open. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 does not arise: this is not a short-string hand read) — **the backlog's first archiving pass: 129 closed items moved verbatim to `AGENT_LOG.archive.md`, each leaving a one-line pointer under its own number.** Backlog **422,379 → 237,239 b**, floor **460,785 → 275,645 b** (92.2% → **55.1%** of budget). W-9's test for 2026-10-04 is a floor below 300,000 b, and it is already met.
 

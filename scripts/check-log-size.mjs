@@ -28,9 +28,12 @@
 //   * the RUN LOG    — archivable. Moving whole days into AGENT_LOG.archive.md
 //                      shrinks this and only this.
 //   * the FLOOR      — App summary + Prioritized backlog + Environment note.
-//                      W-5.3 says these are NEVER archived, so archiving cannot
-//                      move this number by a single byte. Only compressing the
-//                      backlog can (item 115's pass).
+//                      A RUN-LOG archiving pass cannot move this number by a
+//                      single byte. Two things can: compressing the backlog
+//                      (item 115's pass) and, since W-9.1 (2026-09-27), moving
+//                      CLOSED backlog items verbatim to the archive, leaving a
+//                      pointer. Open items and the other two sections are never
+//                      archived.
 //
 // Splitting them is the whole point. On 2026-08-26 the file was 915,262 bytes
 // with a floor of ~485 KB; an archiving pass that emptied the run log entirely
@@ -119,7 +122,7 @@ const LOG = join(ROOT, "AGENT_LOG.md");
 const ARCHIVE = join(ROOT, "AGENT_LOG.archive.md");
 
 const FILE_CEILING = 850_000; // owner-raised 2026-09-08 with FLOOR_MAX; see above.
-const FLOOR_MAX = 500_000; // warn — remedy is backlog compression, NOT archiving
+const FLOOR_MAX = 500_000; // warn — remedy is backlog compression or archiving CLOSED items, NOT run-log archiving
 const RUN_LOG_HARD = FILE_CEILING - FLOOR_MAX; // 350,000 — fail
 const RUN_LOG_MAX = 250_000; // warn — remedy is an archiving pass
 // The trap this asserts is the one that was measured above, not a hypothetical:
@@ -252,7 +255,7 @@ for (const s of sections) {
 }
 console.log("");
 console.log(`  run log (archivable) ${kb(runLog)}  — budget ${kb(RUN_LOG_MAX)} warn / ${kb(RUN_LOG_HARD)} fail`);
-console.log(`  floor   (never archived) ${kb(floor)}  — budget ${kb(FLOOR_MAX)} warn`);
+console.log(`  floor   (not run-log archivable) ${kb(floor)}  — budget ${kb(FLOOR_MAX)} warn`);
 console.log("");
 
 // ── The cut plan: the action clause, computed instead of interpreted. ──────
@@ -481,10 +484,11 @@ if (runLog > RUN_LOG_HARD) {
 
 if (floor > FLOOR_MAX) {
   warn(
-    `AGENT_LOG.md's non-archivable floor is ${kb(floor)}, over the budget of ${kb(FLOOR_MAX)}. ` +
-      `**Archiving cannot move this number** — the App summary, the backlog and the Environment note ` +
-      `are never archived (W-5.3). The remedy is a backlog compression pass; item 115 records the ` +
-      `rule the 2026-08-26 pass used. This is the failure mode where a run archives everything it ` +
+    `AGENT_LOG.md's floor is ${kb(floor)}, over the budget of ${kb(FLOOR_MAX)}. ` +
+      `**Run-log archiving cannot move this number** — the App summary, the open backlog and the ` +
+      `Environment note are never archived (W-5.3). The remedies are a backlog compression pass ` +
+      `(item 115 records the rule the 2026-08-26 pass used) or moving CLOSED backlog items verbatim ` +
+      `to the archive with a pointer each (W-9.1, first done 2026-09-27). This is the failure mode where a run archives everything it ` +
       `can and the file is still too big.`,
   );
 } else {
@@ -631,7 +635,7 @@ if (!rate.ok) {
   // measured. It clears the moment a compression or archiving pass lands, so it
   // is a condition to act on rather than a permanent decoration.
   for (const [name, left, over, remedy] of [
-    ["floor", floorRuns, floor > FLOOR_MAX, "a backlog compression pass (archiving cannot move the floor)"],
+    ["floor", floorRuns, floor > FLOOR_MAX, "a backlog compression pass or a closed-item archiving pass (run-log archiving cannot move the floor)"],
     ["run log", runLogRuns, runLog > RUN_LOG_MAX, "an archiving pass"],
   ]) {
     if (!over && left < 1) {
