@@ -5088,6 +5088,43 @@ same journey.
 
 ## Run log
 
+### 2026-09-27 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. The previous run was a free pick (item 152) that named no residual, so W-6.2 rule 1 does not arise. **The pick is the one quiz surface no run has hand-read in ko/zh/ja: the answer options, distractors included.**) — **two Korean quiz options were wrong, and both are fixed. One was ungrammatical. The other said loss aversion compares a pain with a gain, not with the pleasure of a gain.**
+- **q039 [0] `ko` (lesson 25):** "…어떤 금액**에게든** 항상 가장 안전한 곳이다" put the animate particle 에게 on an amount of money. It now reads "어떤 금액**이든**". This is a distractor, and it is now 1 character shorter (54 → 53). The keyed [3] (47) was not the longest before and is still not.
+- **q041 [1] `ko` (lesson 27, the keyed option):** "손실을 확정 짓는 고통이 같은 크기의 **이득**보다 훨씬 무겁게" compared a pain with a gain. en, zh, ja, ko's own `explain` and ko q042 [3] all compare it with the **pleasure** of an equal gain. It now reads "같은 이득의 **기쁨**보다". **This wording was chosen for length, too:** the natural "같은 크기의 이득이 주는 기쁨보다" takes the key from 45 to 51 characters. That would make the key the longest ko option (the max was 49) and add an option-length cue (item 160). The chosen wording has exactly the same length.
+
+**Step 3.5: the premise and its controls.** The premise was that the options had never been hand-read for translation quality. That is **partly true**. The archive (`AGENT_LOG.archive.md` ~l.32707) records that **all 46 keyed options were read in all five languages**, but only for **key drift**, not for wording. The distractors had never been read. A dump confirmed **46 entries per file** and **552 translated options** (46 × 4 × 3), all of which were read side by side with en.
+- **Candidates that I dropped because they match their own lesson's wording** (each checked by grep against that language's lesson module): ko q020 기여 (lesson 6 ko uses 기여/기여금 throughout); zh q020 缴纳 (lesson 6 zh uses 缴纳/缴款); zh q038, which uses bare 想要 as a noun (lesson 24 zh does the same, e.g. "想要是快的"); zh q009 生产力 (9 of 11 economy uses); ja q010 紙幣印刷 (lesson 34 ja uses both it and 紙幣を刷る); ko q044 도착했다 (lesson 42 ko: "메커니즘을 통해 도착했고"). I also left alone ja q029's 『本当の』, since the file already uses 『』 for 7 non-nested quotes, and ko q035's `$89`, which matches its own stem.
+- **Control for the grammar hit:** `grep 에게든` over every ko module returns **2**: the known instance and one in `lessonContent.money.ko.js:181` ("다른 어떤 돈에게든 던질 질문"). The second is not the same error. There the money is the addressee of a question, a personification that 에게 allows. So the grep fires on the class, and the class does not recur as an error.
+
+**The fix.** The patcher required each old string ×1 and each new one ×0 before writing. `git diff --stat`: **1 file, 2 lines in, 2 out**. No English, no other language and no `explain` changed.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| §65 option-length cue | ko **47.8%/0.0%**, the same as the pre-edit run; all five languages are identical to baseline |
+| Option lengths (ko) | q039 `[54,33,56,47]` → `[53,33,56,47]`; q041 `[49,45,39,40]` → unchanged |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Built bundle | Each new phrase is in 1 file. Both old phrases: **0**. Nonsense probe: **0** |
+| Live render | **Not done, on purpose:** these are data strings rendered through the same text child as before, and the bundle probe shows they ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice language, dates, figures, Dalio or kids framing. `check-blindspot` passes inside `npm test`.
+- **Could the q041 edit leak or shift the answer?** Its length is unchanged and §65 did not move. The new wording now matches ko's own `explain`, so it adds no cue the explanation doesn't already give after answering.
+- **DECISIONS.md:** no conflict; content stays in `.js`.
+- **Done work:** the 09-25 stem fixes (q007, q035) and the keyed-option drift sweep are untouched. ko q042 [3] already had the correct form, and this edit brings q041 in line with it.
+- **My own claims:** a reviewer who re-runs the dump, the length probe, the `에게든` grep, `npm test`, the build and the bundle probes gets the same results. ⛔ The new wording is machine-written and has not been reviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ja q031 [3] renders "materially nicer" as 明らかに**物質的に**. That reads the idiom ("significantly") as "in material goods". The meaning survives in context (the higher earner's nicer life *is* material), so I left it.
+- **With this run, quiz stems and options have both been hand-read in ko/zh/ja; explanations have only been measured (ratio and Jaccard instruments), not hand-read.** A hand read of the ko/zh/ja `explain` strings is the one quiz surface left; under W-6.2 rule 1 the next run may take it.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** two Korean quiz answers were fixed: one grammar slip, and one that described loss aversion as pain vs. gain rather than pain vs. the pleasure of a gain.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-26 (scheduled dev-agent; **a free pick, and not a residual of the short-string chain**, as the previous entry's ⛔ required. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. **The pick is backlog item 152**, which is the oldest open item that is scoped, needs no owner input and is a code change a reviewer can read in minutes) — **lesson 23's two tinted zones now take their colors from the reward they belong to, not from a hand-typed array that had to be written backwards.**
 - **The defect class (W-6.2 rule 3: the learner-visible failure).** The preference-flip figure has two tinted bands. The left band is labeled "Here, the $65 feels worth more", and it must be washed in the $65 line's green. That pairing was the literal prop `zoneColors={[surface.okWash, surface.warnWash]}`, the reverse of `colors={[graph.amber, graph.green]}`. It was correct, but it looked like a typo. "Tidied" to match `colors`, it would tint the $65 band in the $50's amber. Every existing §50 block would stay green, because they read content strings and this was a JSX prop.
 - **The fix, which is the route the item preferred.** `src/content/moneyVisuals.js` now exports `flipZoneSeries()`. It returns each zone's winning series index, derived from `flipValue` at the two end vantage points; today that is `[1, 0]`. `src/components/LessonVisual.jsx` defines one `FLIP_PALETTE` entry per series (`{ line, ink, wash }`). All four props are now derived: `colors` and `labelInks` map the palette, and `zoneColors` and `zoneEdges` go through `flipZoneSeries()`. The reversal is no longer written anywhere by hand. Only the *choice* moved into content; the theme tokens stay in the component, so the content module still imports no theme.
