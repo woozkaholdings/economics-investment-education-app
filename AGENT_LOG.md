@@ -5088,6 +5088,49 @@ same journey.
 
 ## Run log
 
+### 2026-09-27 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. **The pick is the previous run's named residual: a hand read of the ko/zh/ja quiz `explain` strings.** That run was a free pick that did not itself take a residual, so W-6.2 rule 1 allows this. ⛔ **The next run may take a residual of this one only once more.**) — **ten explanation strings across seven quiz questions were wrong or short. Three questions had grammar or meaning errors (four strings), and four questions had dropped a clause the English makes (six strings; q025 in all three languages).** Explanations appear after the learner answers, so they are where the quiz teaches.
+- **ko q028 (lesson 14):** 「은퇴 계좌」**과** 「보험」 put the consonant-form particle after a vowel-final noun. It is now 「은퇴 계좌」**와**.
+- **ko + ja q039 (lesson 25):** both said the *protection* was paying the price. ja 保護は…代償を**払われています** is also ungrammatical (a passive with 代償 as object). The ja now reads 保護**のために**…代償を払っています, which matches its own keyed option (…安定性のために…代償を払っている). The ko now reads 보호**의 대가를**…치르고 있지만.
+- **ja q031 (lesson 17):** 給料日から給料日へと暮らせる used the potential form ("high earners are *able* to live paycheck to paycheck"), which reads as a capability, not a risk. It now reads 高所得者**でも**…暮らす**ことがある**, the wording lesson 17's ja module already uses.
+- **zh q023 (lesson 9):** zh dropped en's last clause, "a bigger number on the statement didn't mean more real wealth". ko and ja keep it, and it is the lesson's point. Restored as 对账单上的数字变大，并不意味着实际财富增加了, using lesson 9 zh's own 实际财富.
+- **ko q017 (lesson 3):** said the Rule of 72 is "a quick approximation" without saying of what. It now says 돈이 두 배가 되는 기간을 빠르게 어림하는 방법 (어림 is lesson 3 ko's word).
+- **zh q006 and zh/ko/ja q025: repairs that the instrument forced.** See the next bullet.
+
+**Step 3.5: the premise and its controls.** The premise was that `explain` had been measured (length ratio, Jaccard) but never hand-read in ko/zh/ja. The 09-27 options entry says so, and I found no archived hand read. All **46 × 3 = 138** explanations were read side by side with en (dump: 46 entries per file in all four).
+- **Particle class, instrument + control:** a Node scan of every `*.ko.js` in `src/content` checks the vowel/consonant particle pairs 과/와, 은/는, 을/를 after a closing quote mark. It returned **exactly 1**, which is q028, the instance I had found by eye (the positive control). So the error class does not recur elsewhere. (I used Node, not grep, because this grep is ugrep and a bounded-repetition pattern aborts.)
+- **Lesson-wording controls:** each replacement was checked against its own language's lesson module (by a Node context dump) before it was chosen: ja 暮らすことがあり (money.ja), zh 实际财富 (essentials.zh), ko 어림셈 (essentials.ko), and ja's keyed q039 option.
+- **What the instrument caught that I did not plan for:** after the zh q023 addition, `npm test` rose **1 → 2 WARN**. The new WARN was §74's quiz-explanation shortfall, *"q006/L36 zh 0.273, q025/L11 zh 0.270"*. Lengthening one zh explanation raised zh's p90, and that tipped two zh explanations below 70% of it. **Both were omissions I had already noted while reading and had not planned to fix:** q006 zh dropped "a strong track record … so it isn't a perfect predictor", and q025 dropped "even though both funds hold identical investments". I repaired both rather than adding them to READ_COMPLETE, because they are real omissions. q025's clause was also missing in **ko and ja**, so I restored it there too. After that: **1 WARN** again, and §74 reads 0/184.
+
+**The fix.** Three patch scripts required each old string ×1 and each new string ×0 before writing. `git diff --stat`: **3 files, 10 lines in, 10 out**. No English, no options, no stems and no `quizMeta` changed. Every edited explanation was re-dumped and re-read after writing, because a count only proves that a replacement landed, not that it reads correctly.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged from baseline) |
+| §74 quiz-explanation shortfall | 0/184 (it was 2/184 transiently, mid-run; see above) |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Built bundle | 10/10 new phrases in 1 file each; 4/4 old phrases at **0**; nonsense probe **0** |
+| Live render | **Not done, on purpose:** these are data strings rendered through the same text child as before, and the bundle probe shows they ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** q006 still hedges ("not every inversion…", now plus "not a perfect predictor"). q039's "historically usually enough, though not a guarantee" is untouched in all languages. No advice language, dates, live figures, Dalio or kids framing was added. `check-blindspot` passes inside `npm test`.
+- **Answer leak?** `explain` shows only after answering, and no option changed, so §65's option-length cue is not affected.
+- **DECISIONS.md:** no conflict; content stays in `.js`.
+- **Done work:** the 09-25 stem fixes, the 09-27 option fixes and the 09-25 Yield Curve glossary wording are untouched. The q006 addition says nothing about start years, so the 1955/1976 distinction the glossary fix explains is not reopened.
+- **My own claims:** a reviewer who re-runs the dumps, the particle scan, `npm test`, the build and the bundle probes gets the same results. ⛔ All new wording is machine-written and has not been reviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ko/ja q006 also drop "a strong track record … not a perfect predictor", but each keeps the hedge "not every inversion was followed by a recession", and §74 does not flag them. I left them alone.
+- ko/ja q031 use the calque 월급날에서 월급날로 / 給料日から給料日へ. It matches their own lesson 17 wording, so changing it belongs to the lessons, not the quiz.
+- ja q042 renders self-attribution bias as 自己奉仕バイアス (self-serving bias), the same as lesson 28 ja. The two concepts are close, and the choice is consistent.
+- **With this run, all three quiz surfaces (stems, options, explanations) have been hand-read in ko/zh/ja.** The quiz chain is closed. This run names no quiz residual.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** ten quiz explanations (seven questions) in Korean, Chinese and Japanese were fixed. There were three grammar or meaning slips, and several explanations had dropped a clause the English makes, including the yield-curve "not a perfect predictor" hedge in Chinese.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-27 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit, so W-8.5 stays expired. The previous run was a free pick (item 152) that named no residual, so W-6.2 rule 1 does not arise. **The pick is the one quiz surface no run has hand-read in ko/zh/ja: the answer options, distractors included.**) — **two Korean quiz options were wrong, and both are fixed. One was ungrammatical. The other said loss aversion compares a pain with a gain, not with the pleasure of a gain.**
 - **q039 [0] `ko` (lesson 25):** "…어떤 금액**에게든** 항상 가장 안전한 곳이다" put the animate particle 에게 on an amount of money. It now reads "어떤 금액**이든**". This is a distractor, and it is now 1 character shorter (54 → 53). The keyed [3] (47) was not the longest before and is still not.
 - **q041 [1] `ko` (lesson 27, the keyed option):** "손실을 확정 짓는 고통이 같은 크기의 **이득**보다 훨씬 무겁게" compared a pain with a gain. en, zh, ja, ko's own `explain` and ko q042 [3] all compare it with the **pleasure** of an equal gain. It now reads "같은 이득의 **기쁨**보다". **This wording was chosen for length, too:** the natural "같은 크기의 이득이 주는 기쁨보다" takes the key from 45 to 51 characters. That would make the key the longest ko option (the max was 49) and add an option-length cue (item 160). The chosen wording has exactly the same length.
