@@ -2951,6 +2951,39 @@ same journey.
 
 ## Run log
 
+### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (lesson 33's figure text) named no residual, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is not a short-string hand read. **The pick came from a scan of every English sentence carrying a year, `%` or `$` figure (money, essentials, economy, glossary) for figures no log entry had measured.** Nearly all economy-track figures were already measured. Lesson 5's 2008 bond figure had been measured, but only on one fund) — **lesson 5 no longer gives one fund's 2008 return as the typical one.** It said *"a broad US bond fund returned about 8%"*. That is AGG, and AGG was the best of three broad bond funds that year. The index-tracking mutual fund returned 5%. It now says broad US bond funds **gained about 5%-8%, depending on the fund**, in all five languages.
+
+**Step 3.5: the premise, re-measured with controls.**
+- **The earlier measurement (archive, 2026-09-20 entry) used AGG only:** *"2008 is the cushion working (stocks -36.8%, `AGG` +7.9%…)"*. The lesson then called that one fund's figure "a broad US bond fund", as though it were typical.
+- **Tiingo `adjClose`, 2007-12-31 → 2008-12-31:** AGG **+7.90%**, BND **+6.86%**, VBMFX **+5.05%**, SPY **-36.81%**. For 2022: AGG **-13.03%**, BND **-13.11%**, VBMFX **-13.25%**. So the three funds agree for 2022, and the lesson's "about 13%" is correct for all three. For 2008 they spread over three points.
+- **Controls:** VBMFX 2008 +5.05% matches Vanguard's published 5.05%, and SPY -36.81% sits against the S&P 500's published -37.0%. A nonsense ticker (`ZZZQX`) → **HTTP 404**. The underlying Bloomberg US Aggregate index is published at +5.24% for 2008, which is the low end of the range. ETF `adjClose` is market price, not NAV. That is one reason AGG and BND sit above the index; I report the range and not a point estimate for that reason.
+- **Was it wrong?** Not false. It was cherry-picked: a learner reading "about 8%" takes it as what a broad bond fund did, and the index fund made 5%. The direction of the lesson's point (the cushion worked in 2008) holds at every point in the range.
+
+**The fix.** One clause per language in `lessonContent.essentials.*.js` (lesson 5 §2's closing paragraph). The patch script required each old string ×1 and each new one ×0 before writing. Range separators follow each file's own convention for percentage ranges (en/es/zh `5%-8%` style, ko `~`, ja `〜`; es uses "entre un 5% y un 8%", its prose form elsewhere). The 2022 sentence is unchanged: "that same kind of bond fund fell about 13%" is true of all three. Two knock-ons, both generated and not hand-typed: **`scripts/translation-review-ledger.json`**, where lesson 5 was re-marked (ai) in es/ko/zh/ja after the English edit made it stale; I read the changed paragraph in each language against the new English, and the rest of the lesson is unchanged since its 09-21 review. And **`LAUNCH_READINESS.md`**, where `npm run readiness -- --write` changed two numeric lines only (164,401 → 164,424 en chars and the §10.4 volume sentence).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged). The first re-run failed on the ledger/readiness figures, as intended, until both were regenerated |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** |
+| Built bundle (Node probe; zsh does not word-split a file list) | 5/5 new clauses each found in exactly its language's essentials chunk; old en and zh clauses **0**; nonsense probe **0** |
+| Live render | **Not done:** unchanged element, a string swap, and the bundle probe shows it ships |
+
+#### Step 5: adversarial self-check
+- **§10.1:** a historical range for past fund returns, with no fund named to the learner, no recommendation and no "now". check-blindspot passes.
+- **Does it weaken the lesson?** No. The claim it supports ("the cushion worked in 2008") holds from +5% to +8%. It gains a hedge that is true.
+- **DECISIONS.md / completed work:** it refines the 09-20 lesson-5 fix and does not undo it. The three-eras paragraph, the 2022 figures and the stock figure are untouched.
+- **O-3:** four translated clauses changed by machine, with ai re-marks. ⛔ Still 0% human review.
+- **My own claims:** a reviewer who re-runs the Tiingo script, `npm test`, the build and the Node bundle probe gets the figures above. No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- Lesson 13's *"a few decades ago, when a single trade could cost $10-$30"*. Plausible for late-1990s/2000s discount brokers, but it skips that commissions were already about $5 when they went to zero in 2019. It is not measured here, and I found no keyless source this run. It is not wrong enough to change on memory.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** lesson 5 gave AGG's 2008 return (+8%) as what "a broad US bond fund" did; the index fund made 5%, so it now says 5%-8% depending on the fund, in five languages. W-9.5 (O-3) and W-9.6 (O-2) are still the asks that move the launch. Market data `asOf 2026-09-25`, so Reference → Sectors goes dark on the live site if no push lands by 2026-09-30 (W-9.3).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 bars a short-string hand read, because the run before last was one; **this is not one** — it is an English accuracy fix carried into four languages, with the fact re-measured. The previous run (item 167's archive move) named no residual, so W-6.2 rule 1 does not arise. **The pick is the 2026-09-20 entry's named, unpicked residual** (archive, "Seen, deliberately NOT fixed"): *"`nestedCyclesDescription` (markets.js) still says the short cycles 'repeat every 5-8 years', flat"*) — **lesson 33's figure no longer tells screen-reader users that short debt cycles "repeat every 5-8 years".** It now says they come along every 5-8 years **on average**, and gives the real US spread (a year and a half to more than twelve years). That is what lesson 33's own prose has said since 2026-09-13, in all five languages.
 
 **Step 3.5: the premise, re-measured with controls.**
