@@ -1391,266 +1391,12 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       the class is the same, and §75 is what makes the next reorder loud.
 
 169. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
-167. **[Content/Accuracy — filed 2026-09-05 by the run that fixed lesson 34's US-1930s claim, from
-    the same close reading of the economy track. All three are LIVE and were read on the built app,
-    not inferred; none is a residual of that run's own edit.]**
-    > ⚠️ **A SEVENTH NOTE, not a sub-item (W-6.2 rule 2). The ANSWER-KEY-vs-TRANSLATED-OPTION-ORDER
-    > class is swept and CLOSED at zero instances — do not re-run it.** 2026-09-07. `quizMeta.answer`
-    > is an **index**, and entry i of `quizMeta.js` is entry i of all five `quizText.<lang>.js`, so a
-    > translation that reordered its own `opts` would grade a correct pick as wrong **in that language
-    > only**. `check-data.mjs` §3 checks option **count** parity and answer-index range; nothing tied
-    > the key to non-English content, and `quizMeta.js`'s header carries the rule as prose ("when
-    > editing options, move the whole option string and update `answer` to match") — the same shape as
-    > the order comment that file records having been burned by before 2026-09-01. **Zero
-    > misalignments, by three instruments.** (1) **Positional anchors** — digits + ALL-CAPS acronyms:
-    > 12 of 184 (question, language) pairs decisively evaluable, 0 flags. (2) **Per-option numeric
-    > agreement**: 136 of 736 (question, option, language) triples covered (18%), **4 flags, all
-    > legitimate rendering** — "longer than a year" → `1년`/`1年`, and "Priya's" → `프리야의 1,000달러`
-    > restoring the elided noun; a planted `ko` swap fired the control. (3) **`explain` ranked against
-    > that language's OWN options** by character 2/3-gram Jaccard (no segmentation, so es/ko/zh/ja
-    > score identically well): full coverage, and the usable signal is **cross-language differencing** —
-    > the 5 questions where exactly one language disagrees (`q007` ja, `q021` ko, `q031` ja, `q038` es,
-    > `q046` ja) were **all read by hand and are all correctly aligned and correctly keyed**. Also
-    > swept: **duplicate options, 0 across 230 (question, language) sets**, control fired.
-    > ⛔ **Two instrument findings, because both are traps this log has hit before.** **(a) In a
-    > Latin-script language an ordinary Latin word is not an anchor.** The first version scored
-    > shared vocabulary and returned 8 flags, **6 of them `es`, every one at a 0.01 margin** — the
-    > same shape as the fourth note's `\w`-is-ASCII artifact, one alphabet later. Anchors must be
-    > things translation cannot touch: digits and acronyms. **(b) Option LENGTH cannot be a guard, and
-    > this is measured rather than asserted.** Against every single adjacent swap of the real corpus
-    > as planted positives: raw length-rank Kendall tau catches **27%** at a threshold that already
-    > costs 7 false positives, and the per-question-normalized form **49% at a 10% flag rate**. It is
-    > a fine **ranking** — the 7 worst-ranked pairs were read by hand and all were aligned — and it is
-    > not a test. ⚠️ **A related fact for item 160, measured on the way:** option-length rank is
-    > **strongly preserved by translation** (median tau **0.67** over 179 pairs), which is the
-    > mechanism behind §65 scoring 52-57% in all five languages rather than in English alone — the
-    > four translations **inherit** the tell rather than adding one.
-    > **No check was built** (W-6.2 rule 3 — after an empty sweep the learner-visible sentence cannot
-    > be written honestly; and the only instrument with real coverage would ship a 4-entry exemption
-    > list for zero defects, the trade the fifth note declined). `scripts/` untouched; W-6.3's ratio
-    > unmoved. The scripts stayed in the scratchpad; the definitions above are the record.
-    > ⚠️ **Overlap disclosed rather than glossed:** the sixth note swept explain-vs-distractor in
-    > **English** and says do not re-run it — this ran the **four translations**, for a different
-    > question (option ORDER, not distractor plausibility); the fourth note swept numeric drift in
-    > **lesson bodies**, this swept **quiz options**. Neither English half is claimed as new work.
-    > ⚠️ **A SIXTH NOTE, not a sub-item (W-6.2 rule 2). The EXPLAIN-vs-KEYED-ANSWER class is swept
-    > and CLOSED at zero instances — do not re-run it.** 2026-09-07: the `explain` field a learner is
-    > shown the moment they answer was ranked against all four of its own options for every question,
-    > to find any explanation that justifies a **distractor** rather than the keyed answer. **46 of 46
-    > agree.** 16 flagged; **all 16 are instrument artifacts, read individually against the question
-    > text** — the tokenizer drops digits, so `q003`'s "1-2 / 20-30 / 75-100 / 5-8 years" and `q015`'s
-    > four percentage splits all reduce to the single token *years* / *needs wants savings* and tie at
-    > 1.000; `q017`'s options reduce to nothing at all and tie at 0.000. The rest lose on vocabulary
-    > their own explanation legitimately uses about the alternative it is rejecting (`q023`'s explain
-    > must say *nominal return* to subtract it; `q010` is the documented NOT-question). **No check was
-    > built** (W-6.2 rule 3 — after an empty sweep the learner-visible sentence cannot be written
-    > honestly; W-6.3's ratio is quoted in the run-log entry). The script stayed in the scratchpad.
-    > ⛔ **The instrument note, because the artifact rate is the finding here and not the zero:** a
-    > bag-of-words overlap **cannot rank numeric or near-identical-vocabulary options at all**, and it
-    > does not fail loudly when it can't — it returns a confident tie. Both controls passed (an
-    > explain restating the keyed option ranks it #1; one restating a distractor is flagged) and were
-    > still worthless for 5 of the 16, because **a control proves the instrument can see a difference
-    > it is shown, not that a difference exists to see.** Anyone re-opening this class needs an
-    > instrument that reads numbers as numbers.
-    > ⚠️ **A FIFTH NOTE, not a sub-item (W-6.2 rule 2). THREE more classes swept 2026-09-05 — do not
-    > re-run any of them.** (1) **Glossary↔lesson definitional agreement — ZERO real instances.** All
-    > 43 glossary terms against 1,319 English lesson sentences, plus `economicSignals.js` and the 68
-    > parallel English strings in `markets.js`; controls fired both ways (`Deflation` >0,
-    > `Blorptronics` 0). Two lookalikes died on inspection and must not be re-derived: lesson 36's
-    > *term premium* is already in `lessonTerms.js`'s `deliberatelyUnlinked` as `other-sense`, and
-    > lesson 11's *index fund* attribution to lesson 5 (which contains `index` zero times in five
-    > languages) is **supported**, because lesson 11 §0 supplies the bridge and lesson 5 describes the
-    > thing without naming it. (2) **Attributed cross-references — ZERO in 24.** Every sentence
-    > claiming another lesson *showed* something, read against its target; controls: a known title
-    > resolves, a fabricated one does not, self-references 0. (3) **Typographic integrity — ONE
-    > instance in 2,380 fields, fixed the same day**: lesson 5 §2 opened a sentence with a lowercase
-    > *the*, left there on 2026-08-20 when item 84's conversion replaced *"Lesson 38's"* and did not
-    > restore the capital; all four translations already read it correctly. Doubled words, double
-    > spaces, missing space after a period, space before punctuation and curly-quote balance are all
-    > **zero**. **No check was built for any of the three** (W-6.2 rule 3, W-6.3 at 2.15x): the
-    > sentence-case probe runs at a **96% false-positive rate** (22 of 23 are `EE.UU.`/`U.S.`/`vs.`
-    > or a `?”` closing a quoted question), so a guard means shipping an abbreviation allowlist for
-    > one defect in 44 lessons.
-    > ⛔ **The instrument trap, and it is a sharper version of the fourth note's:** the doubled-word
-    > probe reported **8 hits, all Spanish, all fake** — JS `\w` is ASCII-only, so in *"una economía a
-    > lo largo"* the `í` is a non-word char and `\b` matched before the final **a**, reading `a a`.
-    > **The control passed and was worthless: an English doubled word was planted to validate an
-    > instrument then pointed at Spanish.** Fixed with `\p{L}` and a control planted in the scanned
-    > language that also asserts the artifact is dead (`por toda una economía a lo largo` → 0).
-    > **A control has to be planted in the same alphabet as the corpus.**
-    > ⚠️ **A THIRD NOTE, not a sub-item (W-6.2 rule 2). The QUESTION-ANSWERABILITY class is swept and
-    > is CLOSED at one fixed instance — do not re-run this sweep.** 2026-09-05: every one of the 46
-    > end-of-lesson checks was scored against the lesson it is attached to *and* against all 44 lesson
-    > bodies. **44 of 46 rank their own lesson #1** (identity control: every lesson's own takeaway
-    > ranks that lesson #1, 44/44). The two that do not: `q045` at rank 2 inside its own four-lesson
-    > arc, **read and correct**; and **`q004` at rank 21 of 44** — *"What causes inflation?"* was
-    > attached to **lesson 30**, which contains the word *inflation* **zero** times and *production*
-    > **zero** times **in all five languages**, while lesson 32 contains each **twice in all five**.
-    > Fixed the same day by moving `q004` to lesson 32 (one integer; `q004`'s id is unchanged, so
-    > persisted Leitner state survives) plus L32's derived `minutes` 3 → 4. **No guard is due**
-    > (W-6.2 rule 3, W-6.3 at 1.82x): one defect in 46 does not earn a permanent instrument, and both
-    > sweep scripts stayed in the scratchpad.
-    > ⛔ **The trap, because a coverage score alone gets this wrong:** `q010` and `q005` score low for
-    > a legitimate reason — they ask which item is **NOT** one of a list, so the correct option is
-    > *deliberately* absent from the lesson. A word-coverage sweep cannot tell a NOT-question from a
-    > misplaced one. **The instrument that decides has to rank the question against every lesson, not
-    > score it against its own.** `q010` sits at rank 1 under that instrument.
-    > ⚠️ **And a live, unfixed find from the same walk, filed here rather than numbered: `checkIntro`
-    > is a fixed singular string.** *"A quick question before you move on."* renders above **two**
-    > questions on the two lessons that carry two (L34 all along, and L32 since the `q004` move — the
-    > count of affected lessons is 2 before and 2 after, measured, so nothing regressed). W-6.2 rule
-    > 3's sentence: *"a learner is told to expect one question and is shown two."* Fixing it is a
-    > five-language copy change (`checkIntro` has no count template; §68 is the precedent for one).
-    > **Honest priority: low** — it is a wording mismatch, not a false claim about the material.
-    > ✅ **DONE 2026-09-06 (scheduled dev-agent). Two keys, not a count template — and the note
-    > above pointed at the wrong precedent.** §68 IS about count templates, and its own failure
-    > message says to park a count outside the noun phrase rather than add a plural rule; a `{n}`
-    > here would have bought a scanned template needing an exemption, to render a number the learner
-    > can see by counting to two. The branch this needed already existed as `check.length`, so:
-    > `checkIntroPlural` in five languages, rendered on `check.length > 1`, one line in
-    > `LessonReader.jsx`. **The three languages that said "one" literally** — en "A quick question",
-    > es "Una pregunta", zh "先来一个小问题" — now read "A few quick questions", "Unas preguntas
-    > rápidas", "先来几个小问题"; ko and ja carried a singular by implication and now read 몇 가지 /
-    > いくつか. **Plural wording carries no number**, so a third question on some future lesson does
-    > not falsify it the way "a couple" would.
-    > ⚠️ **A FOURTH NOTE, not a sub-item (W-6.2 rule 2). The ENGLISH↔TRANSLATION NUMERIC-DRIFT class
-    > is swept and CLOSED at zero instances — do not re-run it.** 2026-09-05: percentages and 4-digit
-    > years compared between each English lesson and its four translations, **176 (lesson, language)
-    > pairs**. **4 flags, all false positives on inspection** — `L12 zh` writes `$1,800` as `1800美元`
-    > (no comma), `L11 ko` renders "exactly one percentage point" as `1%포인트`, `L32`/`L37 ko` render
-    > "approach zero" as `0%`. **No drift exists; no check was built** (W-6.2 rule 3 — after an empty
-    > sweep the learner-visible sentence cannot be written honestly).
-    > ⛔ **The transferable part is the instrument, not the result. The FIRST version reported 36 flags
-    > and every one was an artifact of its own regex:** the lookahead `(?![\d,.%])` rejected any year
-    > followed by a comma, so English lesson 36 — which reads *"turning positive again in 2024, well
-    > past…"* — scanned as containing **no 2024**, manufacturing a tidy story that ko/zh/ja were
-    > carrying a stale inversion window three days after that lesson was corrected in English. **It had
-    > no control.** With a two-sided planted probe (`2024,` `1929.` `2050` must be read; `1,929,000`,
-    > `20.24`, `1799`, `2100`, `12345` must not) the count fell **36 → 4 → 0 real**. A digit-scanner
-    > over prose needs its punctuation boundaries proven, and **"the translations drifted" is a
-    > conclusion attractive enough to skip proving the instrument first** — which is what happened.
-    > ⚠️ **A SECOND NOTE, not a sub-item (W-6.2 rule 2). The CHECKABLE-ARITHMETIC class is swept —
-    > do not re-run it.** 2026-09-05: every sentence in all three tracks carrying a multiplier word
-    > or two or more magnitudes was parsed out and recomputed — **120 sentences across 35 lessons,
-    > one defect**, in lesson 3 §2 (the early-saver comparison was false at the lesson's own 6%),
-    > fixed the same day in five languages. **The positive control was (a) below**: a sweep that
-    > misses lesson 37's "nine times the size" proves nothing, and this one caught it. Everything
-    > else checks out to the cent — lesson 11's fee example, lesson 18's $3,580, lesson 17's $1,050
-    > and $400, lesson 4's rate gap (which *understates*), lesson 3's own figure data. **No guard was
-    > built and none is due** (W-6.2 rule 3, W-6.3): one defect in 120 sentences does not earn a
-    > permanent regex. ⛔ **And the trap recorded in the run log: the folk "early saver stops
-    > contributing" framing is ALSO false at 6% ($197,395 vs $200,903) — do not "fix" lesson 3 by
-    > restoring it.**
-    > ⛔ **(a) below was deliberately NOT taken by that run** even though its sweep pointed straight
-    > at it — item 167 is exhausted for headline picks, and folding it in would have been the smuggle
-    > W-6.2's ⚠️ names. It is still open and still near-free.
-    > ⚠️ **A NOTE, not a fourth sub-item (W-6.2 rule 2). The research-authority class is swept and
-    > sits at ONE fixed instance — do not re-run this sweep.** 2026-09-05: every sentence in all
-    > three tracks citing research / studies / experiments / economists as authority was regexed and
-    > read — **25 hits, one defect**: lesson 18's ego-depletion claim ("willpower runs low over the
-    > course of a day the way a muscle gets tired"), fixed the same day in five languages. **The two
-    > lookalikes are innocent and were deliberately left alone:** lessons 19/27's loss aversion at
-    > "roughly twice" (the standard ratio, already hedged) and lesson 28's more-trading-lower-returns
-    > (Barber-and-Odean-shaped, replicated across markets). See the run log for the instrument, the
-    > control that caught a bad glossary grep, and why widening would have damaged two good lessons.
-    - **(a) ✅ DONE 2026-09-05 (scheduled dev-agent). "nine times" → "ten times" in all five
-      languages.** Premise reproduced exactly before editing (en/es/ko/zh/ja all carried the 9x
-      wording against the same $900B → $9T pair). **Disposition decided as the item asked:** the
-      em-dash clause modifies *the $9 trillion stack*, so it is a claim about the **peak**, and the
-      peak is 10x — which is also what the lesson's own two rounded figures divide to, and what the
-      real series gives ($8.97T ÷ $0.90T = 9.96). ⚠️ **It was NOT taken as a headline pick on its
-      own** — see (d) below, which is the defect this run actually went looking for and found in the
-      same lesson; (a) rode along because it is the same sentence-level class in the same section,
-      not because the chain resumed.
-      ORIGINAL TEXT, kept because the line above refers to it:
-      > **(a) Lesson 37 (QE & QT) says the balance sheet "grew from roughly $900 billion before 2008
-      > to a peak of about $9 trillion in 2022 — a stack of bonds nine times the size of the entire
-      > pre-2008 institution."** $9T against $900B is **ten** times, not nine; nine is the *increase*
-      > divided by the base. The sentence reads as a claim about the peak, so a learner doing the
-      > division gets a different number than the sentence gives them. Cheapest of the three; decide
-      > whether the intended claim is the peak (10x) or the growth (9x) and say which.
-    - **(d) ✅ DONE 2026-09-05 (scheduled dev-agent), and it is what this run was actually for.
-      Lesson 37's THINK prompt contradicted the lesson's own figure table three blocks above it.**
-      The body lists `QE1 (2008): $1.75 trillion`; the prompt read *"The Fed printed $2+ trillion in
-      2008 and unlimited in 2020."* Both in all five languages. Neither reading rescues it: it is
-      not QE1's $1.75T, and it is not the 2008 balance-sheet expansion (~$1.3T) either — `$2+
-      trillion` matches only the *total* balance sheet at end-2008, which is not a thing that was
-      "printed". Now reads *"$1.75 trillion in QE1 starting in 2008"*, reusing each language's own
-      existing rendering of that figure from the table above it (`$1.75 billones`, `$1.75조`,
-      `1.75万亿美元`, `1兆7500億ドル`) rather than a fresh translation of the number.
-      ⛔ **A THIRD SURFACE carries `$2+ trillion` and was deliberately NOT changed — do not
-      re-derive this.** `src/content/kidsContent.js:84` says *"The Fed printed $2+ trillion to stop
-      the collapse"* in all five languages. It is **not** pinned to a single year and it reads across
-      the whole crisis response, where QE1+QE2 = $2.35T makes "$2+ trillion" fair; and it sits on the
-      parent-facing guide with no adjacent figure to disagree with. **The defect was the
-      self-contradiction, not the number** — same call, and same reasoning, as (b)'s two untouched
-      neighbours.
-    - **(b) ✅ DONE 2026-09-05 (scheduled dev-agent). Lesson 36's THINK prompt no longer poses a
-      settled episode as an open bet.** Premise re-measured and confirmed exactly as filed in all
-      five languages before editing; see the run log. The replacement anchors on a **closed
-      interval** — "the 12-18 month window … closed at the end of 2023 without a US recession" —
-      because the obvious alternative ("no recession *yet*") is a §2.3 liability that nothing checks.
-      ⛔ **CORRECTED 2026-09-13: the 12-18 month figure itself was wrong, and this item's "do not
-      re-derive" rested on a record nobody had measured.** FRED (`GS10`−`GS1`, `GS10`−`TB3MS`,
-      `T10Y2Y` vs `USREC`) puts only 2-3 of 6-10 inversion episodes inside 12-18 months; leads ran
-      ~6 months to ~2 years. The lesson body (twice), THINK prompt, quiz option and glossary now state
-      that range; the 1955 claim and the hedge are unchanged. See the 2026-09-13 run log.
-      "this time is different" leaves lesson 36 but stays in lesson 33, where the corpus actually
-      teaches it as bubble psychology.
-      ORIGINAL TEXT, kept verbatim because the entry above refers to it:
-      > **(b) Lesson 36 (Yield Curve): the THINK question contradicts the lesson body on the same
-      > screen.** The body's second section now says the 2022 inversion "stayed inverted for roughly
-      > two years … before turning positive again in 2024, well past the 'typical' 12-18 month lead
-      > time"; the THINK prompt three blocks below still asks *"The yield curve inverted in 2022.
-      > Historical pattern says recession within 12-18 months. Some say 'this time is different.' What
-      > do you think?"* — i.e. it poses as open a window the body has already closed. Same class as the
-      > 2026-09-04 QT/tapering and 2s10s finds: a screen disagreeing with itself. Five languages.
-    - **(c) ✅ DONE 2026-09-06 (scheduled dev-agent). CONFIRMED as a third self-contradiction, and
-      the item's own open question is closed by measurement.** The stop-clause below asked whether the
-      glossary already draws the distinction. It does, in the sharpest possible way: **the `Recession`
-      entry does not mention prices at all** (NBER's broader criteria; its example pairs rising
-      unemployment with falling GDP), so this was never a whole-app simplification the owner chose.
-      `lessonTerms.js` attaches **both** chips to this exact section, so the contradicting definition
-      was one tap below the sentence. Fixed in five languages: businesses **discount**, activity
-      shrinks, that is the recession — and deflation is now a distinct, conditional deeper case that
-      **echoes the glossary's `Deflation` entry** rather than contradicting the `Recession` one.
-      ⚠️ **`disinflation` was deliberately NOT introduced** (zero occurrences corpus-wide; naming it
-      buys a glossary key in five languages to teach a label the lesson does not need), and **both
-      `Deflation` and `Recession` had to stay in the English section** or §17(d) fails the two chips.
-      Lesson 34's "deflationary tools" is the adjective sense and was correctly left alone.
-      ORIGINAL TEXT, kept because the entry above refers to it:
-      > **(c) Lesson 32 (Short-Term Debt Cycle) equates an ordinary recession with deflation** —
-      > "businesses start cutting prices to attract customers — that's deflation … That's a recession."
-      > Most postwar US recessions ran *disinflation*, not a falling price level. ⚠️ **Not measured
-      > against the glossary yet** — the glossary's own `Deflation` entry and lesson 34's use of the
-      > word have to be read first, because if they already draw the distinction this is a third
-      > self-contradiction and if they do not it is a whole-app simplification the owner may have
-      > chosen. **Do not treat (c) as confirmed; (a) and (b) are.**
-    - **W-6.2 rule 3, answered:** (a) "a learner divides 9 by 0.9 and gets a different answer than
-      the sentence"; (b) "the lesson tells a reader on one screen that the window is open and that it
-      closed"; (c) "a learner is taught that recession means prices fall"; (d) "the lesson prints
-      $1.75 trillion in a table and $2+ trillion in the prompt three blocks below it". **No check is
-      proposed for any of them** — all four are single sentences, and `scripts/` at 2.15x `src/`
-      (W-6.3) says a regex is the wrong instrument. **Honest priority: (b) medium — it is a live
-      self-contradiction on the main path; (a) low but near-free; (c) unmeasured.**
-      ⛔ **ITEM 167 IS FULLY CLOSED 2026-09-06 — (a), (b), (c) and (d) are all done.** Its five
-      notes stay as do-not-re-run records of swept classes.
-      ORIGINAL LINE, kept because the line above supersedes it:
-      > ⛔ **ONLY (c) IS LEFT. (a), (b) and (d) are done.**
-      ⚠️ **AND THE W-6.2 rule 1 BAR BELOW HAS LAPSED — corrected 2026-09-05, because it was
-      re-read literally rather than carried forward.** Rule 1 reads: *"A run may not take its
-      **own previous run's** residual as its headline pick **more than TWICE in a row**."* Both
-      qualifiers had stopped applying. The chain was filing-run → (b)-run, and **ten runs
-      intervened** before this one, so nothing was "in a row"; and item 167 was filed by a run
-      twelve runs back, so it is not **this** run's previous run's residual under any reading.
-      **A bar written while a chain was live does not survive the chain** — the same shape as
-      W-5.2's ratio expiring with item 93, and the same shape as W-5.2's own ⚠️ standing warning
-      that a pick-list goes stale exactly like a figure does. The clause is annotated rather than
-      deleted so the correction is visible.
-      ORIGINAL CLAUSE, kept because the correction above refers to it:
-      > ⛔ **(b) is DONE, so this item is now a two-part remainder — and W-6.2 rule 1 is EXHAUSTED
-      > for this chain: the 2026-09-05 filing run was link one and the (b) run was link two. A run
-      > may not take (a) or (c) as its headline pick.**
+167. **✅ Closed 2026-09-06; archived verbatim 2026-09-28** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
+    All four lesson defects (a)–(d) are fixed in five languages. ⛔ **Its notes record seven classes
+    swept and CLOSED — do not re-run any without reading the archived item first:** research-authority
+    citations; checkable arithmetic; English↔translation numeric drift; question answerability;
+    glossary↔lesson agreement, attributed cross-references and typography; `explain` vs keyed answer;
+    answer key vs translated option order. `kidsContent.js`'s "$2+ trillion" was kept on purpose.
 
 166. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
@@ -3204,6 +2950,34 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 bars a short-string hand read, because the previous run was one. The previous run named no residual, so W-6.2 rule 1 does not arise. **The pick is item 167, which has been fully closed since 2026-09-06 but was still live, because its closure was in its last paragraph and not on its first line.** The 09-27 W-9.1 pass moved only items with a ✅ on the first line, so it kept this one) — **item 167 (24,991 b, 261 lines) moved verbatim to the archive; the floor is down 24,358 b.** It was the largest closed item still in the live backlog. It is replaced by a pointer that lists the seven swept classes, so a run can still see what not to re-run.
+
+**Step 3.5: the premise, re-measured with a control.** The claim is "item 167 is fully closed". I checked the shipped English content, not the item's text. The four old strings are at **0**: "nine times the size", "printed $2+ trillion in 2008", the lesson 36 "recession within 12-18 months" prompt, and "that's deflation". Their replacements are present: "ten times the size" ×1, "$1.75 trillion in QE1" ×1, and lesson 32's "discount" ×1. Each of es/ko/zh/ja carries 1.75 twice, once in the table and once in the prompt. **Control:** `kidsContent.js`'s "printed $2+ trillion", which the item kept on purpose, is still **1**, so the grep can see that string when it is there.
+
+**The move.** It is the same procedure as the 09-27 pass (W-7.2 rule 1: a closed item is replaced by its conclusion). The block went into `## Archived backlog (closed items)` at its old place in the order: between 168 (still live) and 166. The archive's preamble gained a three-line note that says why this item came a day late. The live pointer keeps the part that is still useful: the seven classes the item's notes mark swept-and-closed, and the kids-guide exception.
+
+#### Verification
+| check | result |
+|---|---|
+| Byte accounting (asserted in the mover before writing) | live shrank by exactly block − pointer (**24,991 − 633 = 24,358 b**); archive grew by exactly block + preamble note (**25,237 b**) |
+| Independent proof against `git show HEAD:AGENT_LOG.md` | HEAD's block found **×1** in the archive and **×0** in live; the live file outside the hunk is byte-identical to HEAD; **control:** the block with one extra space is found **×0** |
+| `check-backlog.mjs` | ok: 152 items, no duplicates; all 208 citations resolve |
+| `check-log-size.mjs` | this tree on top of HEAD: **floor −24,358 b**, run log +0 b (before this entry) |
+| Live references to item 167 | none in `src/`, `scripts/` or other docs; the log's own hits are figures like `167,613 b` |
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged) |
+| Build | **Not run, on purpose:** only `AGENT_LOG*.md` changed, and neither file is in the bundle |
+
+#### Step 5: adversarial self-check
+- **Does archiving lose guidance?** This is the real risk. The notes exist to stop re-sweeps. The pointer names all seven classes and says to read the archived item first, and `^167\. ` finds it in the archive as the preamble describes.
+- **W-7.2 / W-5.3:** nothing was deleted or edited. The move is verbatim and proven against HEAD, not against my own copy.
+- **Blindspot register, DECISIONS.md:** no content or source touched.
+- **Already-done work:** this finishes W-9.1's pass for one item its selection rule missed. It does not redo it. The other items without a ✅ were checked by size and first line: 72, 160, 17, 24 and the open ones really are open or partial. 67 carries its ✅.
+- **My own claims:** a reviewer re-running the HEAD-based proof, `check-backlog`, `check-log-size` and `npm test` gets the figures above. No conflict found.
+
+**Owner-facing, one line:** housekeeping only. Nothing learner-visible changed, and the asks that move the launch are still W-9.5 (O-3, translation review) and W-9.6 (O-2, the analytics key). **W-8.1 still applies:** committed, **not deployed**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run took the 09-27 archiving run's residuals and named none of its own, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (item 67's closure, the W-9.1 archiving pass) was one. **The pick is the one translated surface no run has hand-read in ko/zh/ja: the UI strings in `src/locales/`**, which appear on every screen) — **four defects fixed across seven strings: one ungrammatical Chinese rank label, one Japanese QT line with the wrong actor, three Chinese strings in a different register from the rest of the app, and two Korean strings using a different word for "lesson" than the rest of the UI.**
 - **zh `rankTemplate` (Reference → Sectors, every sector row):** `"{of} 中第 {rank}"` rendered as *相对强度：11 中第 3*, which is not grammatical Chinese (it needs a measure word and a noun). It now reads `"{of} 个中第 {rank} 名"` → *11 个中第 3 名*, which matches the ko `{of}개 중 {rank}위`.
