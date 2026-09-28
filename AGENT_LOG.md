@@ -2951,6 +2951,35 @@ same journey.
 
 ## Run log
 
+### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 bars a short-string hand read, because the run before last was one; **this is not one** — it is an English accuracy fix carried into four languages, with the fact re-measured. The previous run (item 167's archive move) named no residual, so W-6.2 rule 1 does not arise. **The pick is the 2026-09-20 entry's named, unpicked residual** (archive, "Seen, deliberately NOT fixed"): *"`nestedCyclesDescription` (markets.js) still says the short cycles 'repeat every 5-8 years', flat"*) — **lesson 33's figure no longer tells screen-reader users that short debt cycles "repeat every 5-8 years".** It now says they come along every 5-8 years **on average**, and gives the real US spread (a year and a half to more than twelve years). That is what lesson 33's own prose has said since 2026-09-13, in all five languages.
+
+**Step 3.5: the premise, re-measured with controls.**
+- **Where the string goes:** `LessonVisual.jsx:243` → `NestedCycles` → `aria-label` on the `role="img"` SVG (`charts.jsx`). It is the figure's whole text alternative, so a screen-reader user hears it in place of the picture.
+- **The mismatch is real in all five languages.** Lesson 33 carries the hedge ×1 per language: en "every 5-8 years on average … a year and a half to more than twelve years", es "en promedio … un año y medio a más de doce años", ko "평균적으로 … 1년 반 … 12년이 넘었습니다", zh "平均每5-8年 … 一年半 … 十二年", ja "平均すると … 1年半 … 12年を超えて". The description had none of these words in any language.
+- **The fact, re-measured rather than inherited:** FRED `USREC` (keyless CSV, 2,061 monthly rows). Recession starts since WWII: **12**, from 1948-12 to 2020-03. Start-to-start gaps: **min 1.50, max 12.17, mean 6.48 years, n = 11**. So "5-8 on average" and "a year and a half to more than twelve" both hold. **Control:** the same parser finds a 1929 start in the pre-war rows, so it is reading real recession flags.
+- **Why the printed label stays flat:** `nestedCyclesShortLabel` ("every 5-8 years") must be a verbatim substring of lesson 33 (§71 (a)), and it is one. §71 (c) bounds the drawn cycle count by it. The description is deliberately outside §71 (a) (the check-data comment says so), so it is the one place the figure can hedge. That answers the residual's open question: the alt text may hedge where the printed label cannot.
+
+**The fix.** `markets.js` only: 5 description strings plus the header comment, which now records why the spread is there and the USREC figures. The patch script required each old string ×1 and each new one ×0 before writing. Each translation reuses that language's own lesson-33 wording for the hedge; it does not translate the English. I did not change the count, the spans, the §10.1 "no position in time" rule, or any visible label.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged). §71 passes, and so does check-blindspot |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, bundle `index-DuEW4CPF.js` |
+| Built bundle | 5/5 new strings found in 1 file each; old en and zh strings **0**; nonsense probe **0** |
+| Live render | **Not done, on purpose:** it is an `aria-label` data string on an unchanged element, and the bundle probe shows it ships |
+
+#### Step 5: adversarial self-check
+- **§10.1 / §2.3:** the new text gives a historical range. It gives no date, no reading and no "where are we now". The figure still does not answer lesson 33's "does today look late?" question. check-blindspot passes.
+- **Is "in the US" a new claim?** No. Lesson 33 scopes the spread to the US since WWII, and so does the USREC measurement. Without that scope the range would be unsupported.
+- **DECISIONS.md / completed work:** no conflict. This finishes the 09-13 hedge on the one surface that run left out. It does not reopen the visible label or §71.
+- **O-3:** four new translated clauses, but each is lifted from that language's reviewed-by-nobody lesson text rather than newly machine-written. ⛔ Still 0% human review.
+- **My own claims:** a reviewer who re-runs the USREC script, `npm test`, the build and the bundle probes gets the figures above. No conflict found.
+
+**Owner-facing, one line:** a screen-reader user on lesson 33 heard that short debt cycles "repeat every 5-8 years"; they now hear the same hedged claim the sighted reader sees, in five languages. W-9.5 (O-3) and W-9.6 (O-2) are still the asks that move the launch. **W-8.1 still applies:** committed, **not deployed**. Market data is `asOf 2026-09-25` (age 3 d, stale after 4), so Reference → Sectors goes dark on the live site if no push lands by 2026-09-30 (W-9.3).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. W-9.4 bars a short-string hand read, because the previous run was one. The previous run named no residual, so W-6.2 rule 1 does not arise. **The pick is item 167, which has been fully closed since 2026-09-06 but was still live, because its closure was in its last paragraph and not on its first line.** The 09-27 W-9.1 pass moved only items with a ✅ on the first line, so it kept this one) — **item 167 (24,991 b, 261 lines) moved verbatim to the archive; the floor is down 24,358 b.** It was the largest closed item still in the live backlog. It is replaced by a pointer that lists the seven swept classes, so a run can still see what not to re-run.
 
 **Step 3.5: the premise, re-measured with a control.** The claim is "item 167 is fully closed". I checked the shipped English content, not the item's text. The four old strings are at **0**: "nine times the size", "printed $2+ trillion in 2008", the lesson 36 "recession within 12-18 months" prompt, and "that's deflation". Their replacements are present: "ten times the size" ×1, "$1.75 trillion in QE1" ×1, and lesson 32's "discount" ×1. Each of es/ko/zh/ja carries 1.75 twice, once in the table and once in the prompt. **Control:** `kidsContent.js`'s "printed $2+ trillion", which the item kept on purpose, is still **1**, so the grep can see that string when it is there.

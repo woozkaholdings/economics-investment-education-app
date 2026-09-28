@@ -110,16 +110,20 @@ export const nestedCyclesCaption = {
 
 // The text alternative — the one string here that is written rather than
 // lifted, because the lesson contains no description of a picture it does not
-// know exists. It states the nesting and the two spans and nothing else: no
+// know exists. It states the nesting, the two spans, and — because the figure
+// draws the short cycles evenly and real ones are not — the same spread of
+// actual US recession gaps lesson 33 gives beside its "on average" (1.5 to
+// 12+ years; re-measured from FRED USREC 2026-09-28: 1.50 to 12.17, mean 6.48,
+// 11 gaps since 1948). Nothing else: no
 // count of small cycles (the lesson bounds it, it does not state it) and no
 // position in time (§10.1 — lesson 33 asks the reader whether today looks late
 // in the cycle, and this figure must not answer that question for them).
 export const nestedCyclesDescription = {
-  en: "One long rise in the debt burden, drawn as many short cycles riding a single much longer one: the short cycles repeat every 5-8 years, and the whole rise spans 75-100 years and ends at a peak.",
-  es: "Una única subida larga de la carga de la deuda, dibujada como muchos ciclos cortos montados sobre uno mucho más largo: los ciclos cortos se repiten cada 5 a 8 años y la subida completa abarca de 75 a 100 años y termina en un pico.",
-  ko: "부채 부담이 길게 한 번 상승하는 모습으로, 짧은 순환이 훨씬 긴 하나의 순환 위에 얹혀 있습니다. 짧은 순환은 5-8년마다 반복되고, 상승 전체는 75-100년에 걸쳐 이어지다가 정점에서 끝납니다.",
-  zh: "债务负担的一次长期上升，由许多短周期叠加在一个长得多的周期之上构成：短周期每5-8年重复一次，整段上升长达75-100年，最后在顶峰结束。",
-  ja: "債務負担が長く一度だけ上昇していく様子で、短いサイクルがはるかに長い一つのサイクルの上に重なっています。短いサイクルは5-8年ごとに繰り返し、上昇全体は75-100年に及んでピークで終わります。",
+  en: "One long rise in the debt burden, drawn as many short cycles riding a single much longer one: the short cycles come along every 5-8 years on average, though in the US the actual gap between recessions has run from a year and a half to more than twelve years. The whole rise spans 75-100 years and ends at a peak.",
+  es: "Una única subida larga de la carga de la deuda, dibujada como muchos ciclos cortos montados sobre uno mucho más largo: los ciclos cortos llegan cada 5 a 8 años en promedio, aunque en Estados Unidos la distancia real entre una recesión y la siguiente ha ido de un año y medio a más de doce años. La subida completa abarca de 75 a 100 años y termina en un pico.",
+  ko: "부채 부담이 길게 한 번 상승하는 모습으로, 짧은 순환이 훨씬 긴 하나의 순환 위에 얹혀 있습니다. 짧은 순환은 평균적으로 5-8년마다 찾아오지만, 미국의 실제 경기 침체 사이의 간격은 짧게는 1년 반, 길게는 12년이 넘었습니다. 상승 전체는 75-100년에 걸쳐 이어지다가 정점에서 끝납니다.",
+  zh: "债务负担的一次长期上升，由许多短周期叠加在一个长得多的周期之上构成：短周期平均每5-8年来一次，但在美国，两次衰退之间的实际间隔短则一年半，长则超过十二年。整段上升长达75-100年，最后在顶峰结束。",
+  ja: "債務負担が長く一度だけ上昇していく様子で、短いサイクルがはるかに長い一つのサイクルの上に重なっています。短いサイクルは平均すると5-8年ごとに巡ってきますが、米国の実際の景気後退どうしの間隔は短いときで1年半、長いときで12年を超えています。上昇全体は75-100年に及んでピークで終わります。",
 };
 
 // ── Lesson 30's spending chain, drawn as a closed loop ─────────────────────
