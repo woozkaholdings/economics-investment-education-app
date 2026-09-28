@@ -3205,6 +3205,43 @@ same journey.
 
 ## Run log
 
+### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run took the 09-27 archiving run's residuals and named none of its own, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (item 67's closure, the W-9.1 archiving pass) was one. **The pick is the one translated surface no run has hand-read in ko/zh/ja: the UI strings in `src/locales/`**, which appear on every screen) — **four defects fixed across seven strings: one ungrammatical Chinese rank label, one Japanese QT line with the wrong actor, three Chinese strings in a different register from the rest of the app, and two Korean strings using a different word for "lesson" than the rest of the UI.**
+- **zh `rankTemplate` (Reference → Sectors, every sector row):** `"{of} 中第 {rank}"` rendered as *相对强度：11 中第 3*, which is not grammatical Chinese (it needs a measure word and a noun). It now reads `"{of} 个中第 {rank} 名"` → *11 个中第 3 名*, which matches the ko `{of}개 중 {rank}위`.
+- **ja `qtNarrative` (Reference → Markets, the QT note):** *FRBが債券を満期償還* made the Fed the party that redeems the bonds. The issuer redeems them; the Fed lets them run off. It now reads *FRBが債券を満期償還**させる***, the causative that the ja glossary's QT entry already uses (保有債券を満期償還させて). The lesson 34 ja wording (そのまま満期にし…再投資しません) says the same thing. This is the mechanism `0a141d0` corrected in English.
+- **zh 您 → 你 in `appErrorBody`, `glossNoResults` and `storageBlockedBody`:** measured by a Node count, the zh corpus used 你 **332 times** (lessons 304, quiz 10, UI 18) and 您 **6 times, all in these three UI strings**. (My first draft said 331 and 5: it counted UI *lines* and miscounted 您. Re-counted from the pre-edit scratchpad copy before commit.) So the app switched to the formal register only on its error, empty-search and storage-warning screens. They now use 你. Meaning is unchanged.
+- **ko 수업 → 레슨 in `hookIntro` and `hookHeldBody` (the "Before you read" card):** the ko UI calls a lesson 레슨 **14 times** and 수업 only in these two strings, which point at the lesson right below the card. The 4 uses of 수업 in ko lesson bodies mean a school class, and I left them alone.
+
+**Step 3.5: the premise and its controls.** The premise was that no run had hand-read the ko/zh/ja UI strings. `git log -- src/locales/ko.js` shows only feature and copy commits (each writing new keys in five languages), and a grep of both log files for a hand read of `locales` found none. A Node dump imported `src/locales/index.js` itself: **180 keys in each of en/ko/zh/ja**. All 540 translated strings were read side by side with en.
+- **Candidates I checked and dropped:** zh/ja `quizStart` 开始/開始 drop "Quiz". It renders as the Review button under "{n} ready to review" (`Practice.jsx:518`), where "Start" is enough. ko `relativeStrengthNote` "{name}과": `BENCHMARK.name` is "S&P 500" (read 오백, which ends in a consonant), so 과 is correct. ko `howReviewStep2Body` 여드레/열엿새 are correct native counts. ko `illustrationNote` drops "your own" but keeps the meaning.
+- **Controls:** each wording choice was checked against that language's own content first. The ja causative is in the glossary; 332 你 against 0 您 outside these three strings; 레슨 ×14 in the ko UI. After the build, all 7 new strings were in the bundle (1 file each), all 5 old strings (including any 您) were at **0**, and a nonsense probe was at **0**.
+
+**The fix.** A patch script required each old string ×1 and each new one ×0 before writing. `git diff --stat`: **3 files, 7 lines in, 7 out**. No English, no key and no placeholder changed (§1b placeholder parity passes inside `npm test`). Every edited string was re-rendered and re-read after writing, and the zh rank label was rendered with its real call-site substitution.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged from baseline) |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, bundle `index-CSD6exZL.js` |
+| Built bundle | 7/7 new strings in 1 file each; 5/5 old strings at **0**; nonsense probe **0** |
+| Live render | **Not done, on purpose:** these are data strings rendered through the same text children as before, and the bundle probe shows they ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** the disclaimer, `illustrationNote`, `scenarioNote` and `policySimNote` are untouched in every language. No advice language, dates, live figures, Dalio or kids framing was added. `check-blindspot` passes inside `npm test`.
+- **The QT edit:** it only makes the ja agree with the English, the ja glossary and lesson 34 ja. It does not reopen `0a141d0`'s tapering/QT distinction.
+- **The register change:** the storage notice (`a2e5db9`) keeps all of its content. Only the pronoun changed.
+- **DECISIONS.md:** no conflict; strings stay in `.js` locale modules.
+- **My own claims:** a reviewer who re-runs the dump, the 你/您 and 레슨/수업 counts, `npm test`, the build and the bundle probes gets the same results. ⛔ All new wording is machine-written and has not been reviewed (O-3).
+- No conflict found.
+
+#### Seen, deliberately NOT fixed and NOT numbered (W-6.2 rule 2)
+- ko UI mixes 합니다 and 해요 endings (e.g. `continueTomorrowConfirmed` 좋아요 next to `appErrorBody` 유지됩니다). This is common in Korean apps, and changing it would be a style decision, not a fix.
+- **With this run, every short-string surface in ko/zh/ja has been hand-read: glossary names, quiz stems/options/explanations, section headings, lesson titles, and now the UI.** This run names no hand-read residual, and W-9.4 bars the next run from taking one anyway.
+- **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** seven interface strings in Korean, Chinese and Japanese were fixed, including an ungrammatical Chinese rank label on every sector row and a Japanese QT note that said the Fed redeems the bonds. That makes a sixth-for-sixth surface with defects, which is W-9.5's point: **please decide on O-3 (fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it).**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-27 (scheduled dev-agent; **the previous run's two named residuals**: its "Seen, not fixed" said *"Item 67 is probably stale … The next run can confirm this against `glossary.js` and close it"*, and its step 5 named `check-log-size.mjs`'s floor label as doc drift. The previous run was a W-9.1 pick that took no residual, so W-6.2 rule 1 allows this. W-9.4 does not arise: this is not a short-string hand read, and the previous two runs were an archiving pass and a quiz hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **item 67 is closed, and `check-log-size.mjs` no longer says the backlog can never be archived.**
 
 **Step 3.5: the premises, re-measured with controls.**
