@@ -1748,24 +1748,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     - **Honest priority: low.** Zero live instances, measured. Downstream of O-1 like everything
       else — but cheaper than it looks, since the sweep above is written down and reusable.
 
-144. **[Process/Tooling — filed 2026-08-29 by the run that built §59 (item 130), as its stated
-    residual.] A comment block that MENTIONS `us-english:allow` in prose is exempted by it, and
-    the first live instance was found by accident.**
-    - **What happened, 2026-08-29:** §55's own header stopped failing §59 partway through the
-      build, before any marker was placed in it. The cause: the header contains the sentence "see
-      the us-english:allow note at §31's duplicate-title check above" — a *reference* to the
-      convention, which the substring test reads as a *declaration* of it. The fix applied was to
-      make that block's exemption explicit and stop the sentence quoting the token, but the
-      mechanism is still there for the next comment that discusses the marker by name.
-    - **Why it was not "fixed" this run.** Every candidate is worse than the defect at today's
-      scale: requiring the marker at line start breaks the two Markdown markers already placed
-      mid-line; requiring a following em-dash clause is a style rule a checker cannot enforce
-      honestly; and a distinct "declaration" token means re-placing all 13. **One defect is not a
-      class** — the same reasoning item 126 records.
-    - **Carry a control if you pick it up:** the current tree is the positive fixture (13 real
-      declarations, all deliberate), and a comment that merely names the token is the negative —
-      write one, and the net must still flag its British spelling.
-    - **Honest priority: low.** Zero live instances after the fix above, measured.
+144. **✅ Closed 2026-09-29; archived verbatim 2026-09-29** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)". Premise was wrong: §59's own header was a live mention-only exemption. A marker now counts only when not in backticks (`declaresAllow`), guarded by §59 CONTROL D.
 
 145. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
@@ -2950,6 +2933,36 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-29 (scheduled dev-agent; **a free pick**. The previous run closed its predecessor's residual and named none of its own, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is a checker fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is backlog item 144**, an open, scoped tooling item that needs no owner input) — **item 144 is closed, and its premise was wrong: the defect it called "zero live instances" was live in §59's own header.** A `us-english:allow` marker now exempts a block only when it is not in backticks. A comment that quotes the token to discuss it no longer exempts itself.
+
+**Step 3.5: the premise, re-measured.** The item said the mention-exempts-itself defect had **"zero live instances after the fix above, measured"** (2026-08-29). I listed every comment block that carries the marker, with the British words it contains and the characters around each marker occurrence (probe in the scratchpad, reusing `us-english.mjs`'s own `commentBlocks`/`scan`). The probe read 1,744 blocks and found 10 with the marker. **Nine** carry a bare `marker —` declaration. **One is exempt only by a backticked mention**: §59's own header (`check-data.mjs`, the "THE MARKER IS NOW LOAD-BEARING" paragraph). It names "labour", "colour", "centre" and "cheque". The 08-29 fix repaired §55's header; §59's header had the same shape and nobody measured it. **The item's reasons for not fixing were also incomplete.** It rejected line-start markers, em-dash clauses and a new token. It did not consider backticks, and backticks separate the two cases in this tree exactly: every mention is backticked, and all 13 declarations (9 comment blocks + 4 Markdown lines) are bare.
+
+#### What changed
+- `scripts/us-english.mjs`: new `declaresAllow(text)`. The marker counts only where no backtick sits directly before or after it. Its comment states the limit: a mention written without backticks still counts as a declaration.
+- `scripts/check-data.mjs` §59: both exemption sites (comment blocks, Markdown lines) and CONTROL C use `declaresAllow`. **New CONTROL D** plants a comment that quotes the marker in backticks and says "honour"; it must stay guarded. The header now has a real declaration and a paragraph on item 144. The failure advice now says to add the marker "bare and not in backticks".
+
+#### Verification
+| check | result |
+|---|---|
+| New rule, **before** §59's header got a real declaration | `check-data` **exit 1**, exactly one §59 FAIL: `check-data.mjs:8920` ("labour", "colour", "centre", "cheque"). That is the injection test: the fix bites the live instance and nothing else |
+| After the declaration | §59 holds, **13 exempted** (the same 13 the item counted as the positive fixture), 1,746 blocks, 95 files |
+| **Mutation:** `declaresAllow` reverted to `text.includes(marker)` | **CONTROL D fires** ("a comment that only QUOTES … was treated as declaring it"). `us-english.mjs` restored from a scratchpad copy; `cmp` identical |
+| `npm test` (after) | **exit 0** (read directly, not through a pipe), 0 FAIL, 1 WARN (O-3's) |
+| Build / live render | **Not run:** no file under `src/` changed |
+| Archive move | item 144's block (1,596 b) appended verbatim to `AGENT_LOG.archive.md` under "Archived backlog (closed items)"; one-line pointer left under its number |
+
+#### Step 5: adversarial self-check
+- **Could the new rule hide a spelling the old one caught?** No. It is strictly narrower: every block it exempts, the old substring test also exempted. The only change in behavior is un-exempting, and the one block it un-exempted was fixed with a declaration, not whitelisted.
+- **Does control D prove anything?** Yes. It checks that its planted block really carries a British word (otherwise it FAILs as vacuous), and the mutation above makes it fire.
+- **§10.1/§10.2/§10.3, stale-date fix, DECISIONS.md, completed work:** only dev scripts and the log changed; nothing learner-visible. No conflict found.
+- **W-8.1 still applies:** earlier commits are committed, **not deployed**.
+
+**Seen, not fixed:** item 143's four British spellings in the log's own prose are still out of scope for §59 by design; nothing here changes that.
+
+**Owner-facing, one line:** tooling only; the US-English checker could be silenced by a comment that merely quoted its exemption marker, and one comment was silenced that way. W-9.5 (O-3: fund review, cap, or re-affirm the unreviewed translations) and W-9.6 (O-2: the analytics key) are still the asks that move the launch.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-29 (scheduled dev-agent; **the previous run's one named residual**: its "Seen, deliberately NOT fixed" said lesson 13's *"a few decades ago, when a single trade could cost $10-$30"* was *"not measured here, and I found no keyless source this run"*. The previous run was a free pick, so W-6.2 rule 1 allows this. W-9.4 does not arise: this is a fact check, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the claim holds, so nothing in `src/` changed. The residual is closed as measured.**
 

@@ -56935,3 +56935,22 @@ place in the order (between 168, still live, and 166).
     Developer Program membership is measured present, but `security find-identity` showed **one
     `Apple Development` identity and no `Apple Distribution`** — build-and-run on a device, not ship.
     A distribution certificate and provisioning profile are still real, undone steps.
+
+144. **[Process/Tooling — filed 2026-08-29 by the run that built §59 (item 130), as its stated
+    residual.] A comment block that MENTIONS `us-english:allow` in prose is exempted by it, and
+    the first live instance was found by accident.**
+    - **What happened, 2026-08-29:** §55's own header stopped failing §59 partway through the
+      build, before any marker was placed in it. The cause: the header contains the sentence "see
+      the us-english:allow note at §31's duplicate-title check above" — a *reference* to the
+      convention, which the substring test reads as a *declaration* of it. The fix applied was to
+      make that block's exemption explicit and stop the sentence quoting the token, but the
+      mechanism is still there for the next comment that discusses the marker by name.
+    - **Why it was not "fixed" this run.** Every candidate is worse than the defect at today's
+      scale: requiring the marker at line start breaks the two Markdown markers already placed
+      mid-line; requiring a following em-dash clause is a style rule a checker cannot enforce
+      honestly; and a distinct "declaration" token means re-placing all 13. **One defect is not a
+      class** — the same reasoning item 126 records.
+    - **Carry a control if you pick it up:** the current tree is the positive fixture (13 real
+      declarations, all deliberate), and a comment that merely names the token is the negative —
+      write one, and the net must still flag its British spelling.
+    - **Honest priority: low.** Zero live instances after the fix above, measured.

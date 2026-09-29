@@ -25,6 +25,18 @@
 
 export const ALLOW_MARKER = "us-english:allow";
 
+// A marker DECLARES an exemption only where it is not code-quoted. Prose that
+// discusses the convention writes the token in backticks, and until
+// 2026-09-29 that mention exempted its block exactly as a declaration did
+// (item 144). It was not hypothetical: §59's own header names four British
+// specimens and was exempt only because its sentence introducing the marker
+// quoted it. Every real declaration in the tree is bare (`// <marker> — why`,
+// `<!-- <marker>: why -->`), so this rule re-places none of them. Its limit:
+// a mention written WITHOUT backticks still counts as a declaration.
+export function declaresAllow(text) {
+  return new RegExp(`(?<!\`)${ALLOW_MARKER}(?!\`)`).test(text);
+}
+
 export const BRITISH = [
   [/\b(labour|colour|behaviour|favour|honour|neighbour|rumour|humour|endeavour|flavour|savour|harbour|vapour|armour|valour|odour|parlour|splendour)\w*/gi, "drop the u (labour → labor)"],
   // The suffix set is EXPLICIT, and that is the whole point of this line.

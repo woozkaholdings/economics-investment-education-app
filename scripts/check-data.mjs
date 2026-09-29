@@ -35,6 +35,7 @@ import {
   MUST_CATCH,
   MUST_NOT_CATCH,
   commentBlocks,
+  declaresAllow,
   scan as scanBritish,
 } from "./us-english.mjs";
 import { SPECIMENS as NUMERAL_SPECIMENS, amountsIn } from "./numerals.mjs";
@@ -8963,6 +8964,13 @@ if (keyedGroupsChecked < 4) {
 //   not line scope, because the marker belongs in the sentence that explains
 //   why the spelling is correct, which is rarely the line carrying it — the
 //   marker at §31 above sits 8 lines below the quotation it exempts.
+//
+//   A MENTION IS NOT A DECLARATION (item 144, 2026-09-29). The marker counts
+//   only where it is not code-quoted; see `declaresAllow`. Until then this
+//   very header was exempt only because the paragraph above quotes the
+//   token, and CONTROL D now plants that shape. us-english:allow — this
+//   header NAMES the specimens it guards against ("colour", "labour",
+//   "cheque", "dot centre"); it uses none of them.
 {
   const before59 = failures;
 
@@ -8995,7 +9003,7 @@ if (keyedGroupsChecked < 4) {
       blockCount++;
       const found = scanBritish(block.text);
       if (!found.length) continue;
-      if (block.text.includes(ALLOW_MARKER)) { exemptCount++; continue; }
+      if (declaresAllow(block.text)) { exemptCount++; continue; }
       hits.push({
         where: `${rel}:${block.line}`,
         words: [...new Set(found.flatMap((f) => f.words))],
@@ -9011,7 +9019,7 @@ if (keyedGroupsChecked < 4) {
     lines.forEach((line, i) => {
       const found = scanBritish(line);
       if (!found.length) return;
-      if (line.includes(ALLOW_MARKER)) { exemptCount++; return; }
+      if (declaresAllow(line)) { exemptCount++; return; }
       hits.push({
         where: `${md}:${i + 1}`,
         words: [...new Set(found.flatMap((f) => f.words))],
@@ -9075,7 +9083,7 @@ if (keyedGroupsChecked < 4) {
       "// an unrelated comment that says labour on its own",
     ].join("\n");
     const markedResults = commentBlocks(MARKED).map((b) => ({
-      exempt: b.text.includes(ALLOW_MARKER),
+      exempt: declaresAllow(b.text),
       words: scanBritish(b.text).flatMap((f) => f.words.map((w) => w.toLowerCase())),
     }));
     const marked = markedResults.find((r) => r.exempt);
@@ -9086,9 +9094,20 @@ if (keyedGroupsChecked < 4) {
       fail(`§59 CONTROL C: a marker in one comment block silenced the NEXT block too. Block scope has leaked into file scope — one marker would then exempt everything after it, silently.`);
     }
 
+    //  (D) A MENTION DOES NOT EXEMPT (item 144). A comment that discusses the
+    //      convention quotes the token in backticks; it must stay guarded, or
+    //      the next header about §59 silences itself — as this one did.
+    const MENTION = `// the \`${ALLOW_MARKER}\` convention is explained above; this line says honour`;
+    const mentionBlock = commentBlocks(MENTION)[0];
+    if (!mentionBlock || !scanBritish(mentionBlock.text).length) {
+      fail(`§59 CONTROL D: the planted mention block was not read or carried no British spelling, so this control proves nothing.`);
+    } else if (declaresAllow(mentionBlock.text)) {
+      fail(`§59 CONTROL D: a comment that only QUOTES \`${ALLOW_MARKER}\` in backticks was treated as declaring it. Prose about the marker would then exempt itself (item 144).`);
+    }
+
     if (failures === before59) {
       for (const h of hits.slice(0, 12)) {
-        fail(`§59: ${h.where} uses the British spelling ${h.words.map((w) => `"${w}"`).join(", ")} — ${h.advice}. The owner set US English as the house style on 2026-08-21 (item 91). If this is a verbatim quotation of deleted text, or the word is being NAMED rather than used, add \`${ALLOW_MARKER}\` to this comment block (or this Markdown line) with one clause saying why.`);
+        fail(`§59: ${h.where} uses the British spelling ${h.words.map((w) => `"${w}"`).join(", ")} — ${h.advice}. The owner set US English as the house style on 2026-08-21 (item 91). If this is a verbatim quotation of deleted text, or the word is being NAMED rather than used, add ${ALLOW_MARKER} to this comment block (or this Markdown line), bare and not in backticks, with one clause saying why.`);
       }
       if (hits.length > 12) {
         fail(`§59: ${hits.length - 12} further British spelling(s) not listed above.`);
@@ -9099,7 +9118,7 @@ if (keyedGroupsChecked < 4) {
             `and ${mdLines} lines of ${NORMATIVE_MD.length} normative Markdown documents ` +
             `(${exemptCount} exempted by an explicit ${ALLOW_MARKER} marker; control A the walk reaches real comment text, ` +
             `control B a planted string and regex literal stay invisible while a planted comment is caught, ` +
-            `control C the marker exempts its own block and not the next one). AGENT_LOG.md is deliberately out of scope — see the header.`,
+            `control C the marker exempts its own block and not the next one, control D a backticked mention of it exempts nothing). AGENT_LOG.md is deliberately out of scope — see the header.`,
         );
       }
     }
