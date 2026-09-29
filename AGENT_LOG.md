@@ -2934,6 +2934,43 @@ same journey.
 
 ## Run log
 
+### 2026-09-29 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (lesson 11's fee ranges) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (lesson 11's fee check, item 144) was one. **The pick is the one UI-string surface the 09-28 hand read left out: `es`.** That run read ko/zh/ja only) — **six Spanish strings fixed: one heading had dropped the concept it names, and five used a different word from the rest of the Spanish app.**
+- **`yieldCurveLabel` (Reference → Markets `<h2>`, and the `aria-label` of the lesson curve figure, `LessonVisual.jsx:161`):** *"Formas de la Curva"* did not say which curve. It is now *"Formas de la Curva de Rendimiento"*, the es glossary's own name for the term (`Yield Curve` → `Curva de Rendimiento`). The es lessons and quiz say *curva de rendimiento* ×4 and never anything else.
+- **`trackEconomyBlurb` and the es glossary `Bond` definition: *tipos de interés* → *tasas de interés*.** Measured over every es surface: *tasas de interés* ×25, *tipos* ×2, and those two were these strings. *Tipos* is the Spain form. The corpus is Latin American Spanish by every marker I measured: *auto* ×29 against *coche* ×1, *computadora* ×1 against *ordenador* ×0, and *vosotros* ×0.
+- **es glossary `Emergency Fund` example: *reparación del coche* → *reparación del auto*.** That one *coche* was the only one in the corpus. The built bundle already carried *reparación del auto* in the lessons before this edit.
+- **`refHubSub` (Reference hub subtitle): *camino* → *ruta*.** The es UI calls the learning path *ruta* 4 times (`returningTitle`, `pathDoneEyebrow`, `trackEconomyBlurb`, `linkMissLockedTemplate`). This was the one place it said *camino*, and it is the sentence that says Reference is not part of the path.
+- **`kidsParentIntro` (Parent Guide): *banda de edad* → *grupo de edad*.** *Banda de edad* is a calque of "age band". The control right below this sentence is labeled `kidsAgeGroupLabel` *"Seleccionar grupo de edad"*.
+
+**Step 3.5: the premise and its controls.** The premise was that no run had hand-read the es UI strings. The 09-28 entry says it read *"180 keys in each of en/ko/zh/ja"*. `git log -- src/locales/es.js` shows feature and copy commits. The one es-only fix, `5fdc79a`, was a plural sweep of the placeholder templates, not a read of every string. A Node dump imported `src/locales/en.js` and `es.js`: **180 keys each**, all 180 es strings read side by side with en. Every word-choice claim above is a Node count over all es surfaces: `locales/es.js`, the three `*.es.js` lesson files, `quizText.es.js`, and the multi-language `glossary.js`, `markets.js`, `lessons.js`, `policyScenarios.js`, `kidsContent.js`, `sectors.js` and `economicSignals.js`. **Positive control:** *Ciclos Económicos* counted exactly 4 in es.js (`appTitle`, `welcomeTitle`, `aboutBody`, `firstLaunchTitle`), which is what a read of the file finds. I did not use shell `grep` for the counts: zsh passed the file list as one argument, and ugrep aborted on `.{0,N}` (both are memory notes). Both returned an empty scan that looked like a clean result.
+
+**Checked and deliberately NOT changed:**
+- **The policy simulator speaks in *usted*** (`policySimTitle`, `policySimIntro`, and the es strings in `policyScenarios.js`: *"Usted preside el comité…"*, *"¿Qué hace?"*). Everything else in the es app uses *tú*. It is consistent within the component, and the formal address suits a role-play that seats the learner as Fed chair, so it may be deliberate. **A fluent reviewer's call, not a fix** (O-3).
+- **Fed's gender is mixed across the corpus:** *el/del/al Fed* ≈43 and *El Fed* 11, against *la Fed* 8 (4 in the glossary, 2 in economy lessons, 1 in `economicSignals.js`, and `policySimTitle`). Both are used in real Spanish. Picking one would be a corpus-wide style decision, not a UI fix.
+- **English title case in es strings and glossary names** (*"Punto Clave"*, *"Panel de Mercados"*, *"Cómo los Cambios de Tasas Empujan a los Activos…"*, glossary *"Curva de Rendimiento"*). Spanish writes titles in sentence case. About 17 UI strings and the es glossary names do this, and other es UI strings do not (*"Cómo funciona la economía"*). **This is an orthography decision across two surfaces**, so it is left for O-3's review. I kept the heading I edited in its existing case.
+- `asOfTemplate` *"A {date}"* with an ISO date. *"Al {date}"* is the more common Latin American form, but I had no corpus evidence, so I left it. `hookYourGuess` *"tu intento"* and `hookHeldBody` *"si es correcta"* read correctly in context (`Question.jsx:194`).
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | Node script required each old string ×1 and each new one ×0 before writing, then the reverse. `git diff --stat`: **2 files, 6 in, 6 out**. The word diff of `glossary.js` shows only `coche→auto` and `los tipos→las tasas`, so no other language on those lines changed |
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged from baseline). Read directly, not through a pipe |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, bundle `index-BhwBt0wD.js` |
+| Built bundle | 6/6 new strings present; 5/5 old strings at **0** (plus `"Formas de la Curva"` closed with a quote at **0**); nonsense probe **0** |
+| Live render | **Not done:** these are data strings rendered through the same text nodes as before. The only longer one is an `<h2>`, which wraps. The bundle probe shows they ship |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** the disclaimer, `illustrationNote`, `scenarioNote`, `policySimNote` and `aboutBody` are untouched. No advice language, dates, live figures, Dalio or kids framing was added. `kidsParentIntro` still addresses the parent (*"Una guía para padres … tu hijo"*), so §10.3's parent-facing framing holds. `check-blindspot` passes inside `npm test`.
+- **Am I imposing my own dialect?** Each change moves a string to the form the es corpus already uses most. The counts are above. Where the corpus is split (Fed's gender) or I had no count (`asOfTemplate`), I left the string alone.
+- **DECISIONS.md / completed work:** no conflict. Strings stay in `.js` modules, and no key or placeholder changed. §1b parity passes. `5fdc79a`'s two templates are untouched.
+- **My own claims:** a reviewer who re-runs the dump, the counts, `npm test`, the build and the bundle probes gets the same results. ⛔ All new wording is machine-written and has not been reviewed (O-3).
+- No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** the three items above (the *usted* register, Fed's gender, title case). With this run, **every short-string surface has now been hand-read in all four translated languages.** This run names no hand-read residual, and W-9.4 bars the next run from taking one anyway. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** six Spanish strings fixed. One heading said "Shapes of the Curve" without saying which curve, and five used a word the rest of the Spanish app does not (Spain's *tipos* against Latin America's *tasas*, for example). That makes seven surfaces out of seven with defects. **Please decide on O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.** A Spanish reviewer would also settle the three style questions above in minutes.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-29 (scheduled dev-agent; **a free pick**. The previous run (item 144) named no residual, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is a fact check, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from re-running the 09-28 figure scan** (every English sentence in money, essentials and the quiz that carries a year, `%` or `$`) and checking each hit against the log and archive. Nearly every hit was measured or is a worked example. **The two unmeasured factual ranges were lesson 11's fee ranges**: the archive quotes them five times, but only as numerals carried into translations, never against a source) — **both ranges hold, so nothing in `src/` changed. They are closed as measured.**
 
 **The claim (essentials lesson 11 §1, all five languages carry the same numerals, measured):** index funds *"commonly charge 0.03%-0.20% a year"*; an actively managed fund *"commonly charges 0.5%-1.5% a year"*.
