@@ -62,7 +62,7 @@ export const cycleChartDescription = {
 // translation). `check-data.mjs` §71 (a) holds it in both directions.
 export const nestedCyclesTitle = {
   en: "Why It's Hard to See From the Inside",
-  es: "Por Qué Es Difícil Verlo Desde Dentro",
+  es: "Por qué es difícil verlo desde dentro",
   ko: "왜 안에서는 보기 어려운가",
   zh: "为什么身处其中难以察觉",
   ja: "なぜ渦中では見えにくいのか",
@@ -147,7 +147,7 @@ export const nestedCyclesDescription = {
 // lesson that does.
 export const spendingLoopTitle = {
   en: "The Spending Chain",
-  es: "La Cadena de Gasto",
+  es: "La cadena de gasto",
   ko: "지출의 연쇄",
   zh: "支出链条",
   ja: "支出の連鎖",
@@ -207,7 +207,7 @@ export const spendingLoopDescription = {
 // where its ceiling is. §69 (c) pins it.
 export const deleveragingTitle = {
   en: "Beautiful vs Ugly Deleveraging",
-  es: "Desapalancamiento Hermoso vs Feo",
+  es: "Desapalancamiento hermoso vs feo",
   ko: "아름다운 vs 추한 디레버리징",
   zh: "漂亮 vs 丑陋的去杠杆",
   ja: "美しいvs醜いデレバレッジング",
@@ -393,7 +393,7 @@ export const rateEffects = [
   {
     key: "realEstate",
     responds: PRICE,
-    name: { en: "Real Estate", es: "Bienes Raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
+    name: { en: "Real Estate", es: "Bienes raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
     rising: "↓", falling: "↑",
     note: {
       en: "Yet home prices ended each of the last 5 hiking cycles higher",

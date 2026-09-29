@@ -57,7 +57,7 @@ export const policyScenarios = [
     },
     question: {
       en: "You chair the policy committee. Which way do you turn the dial?",
-      es: "Usted preside el comité de política monetaria. ¿Hacia dónde gira el dial?",
+      es: "Tú presides el comité de política monetaria. ¿Hacia dónde giras el dial?",
       ko: "당신이 통화정책 위원회 의장입니다. 다이얼을 어느 쪽으로 돌리시겠습니까?",
       zh: "你是货币政策委员会主席。这个旋钮，你要往哪边拧？",
       ja: "あなたが政策委員会の議長です。ダイヤルをどちらに回しますか。",
@@ -128,7 +128,7 @@ export const policyScenarios = [
     },
     question: {
       en: "Same chair, a very different room. What do you do?",
-      es: "La misma silla, una sala muy distinta. ¿Qué hace?",
+      es: "La misma silla, una sala muy distinta. ¿Qué haces?",
       ko: "같은 의장석이지만 방 안의 공기는 완전히 다릅니다. 어떻게 하시겠습니까?",
       zh: "还是那个位子，房间里的气氛却完全不同。你怎么做？",
       ja: "同じ議長席、まるで違う空気。どうしますか。",

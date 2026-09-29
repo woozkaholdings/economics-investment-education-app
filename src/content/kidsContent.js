@@ -32,7 +32,7 @@
 
 export const kidsContent = {
   "5-8": {
-    title: { en: "Money Adventures!", es: "¡Aventuras con Dinero!", ko: "돈의 모험!", zh: "金钱冒险！", ja: "お金の冒険！" },
+    title: { en: "Money Adventures!", es: "¡Aventuras con dinero!", ko: "돈의 모험!", zh: "金钱冒险！", ja: "お金の冒険！" },
     lessons: [
       {
         text: { en: "When you trade your toy for a friend's toy, that's a TRANSACTION! The economy is just millions of trades like this.", es: "Cuando cambias tu juguete por el de un amigo, ¡eso es una TRANSACCIÓN! La economía son solo millones de intercambios como este.", ko: "장난감을 친구의 장난감과 교환하면, 그것이 거래입니다! 경제는 이런 거래가 수백만 번 모인 것일 뿐이에요.", zh: "当你用玩具换朋友的玩具时，这就是交易！经济就是由几百万次这样的交易组成的。", ja: "おもちゃを友達のおもちゃと交換したら、それが「取引」！経済は、こんな取引が何百万回も集まったものなんだ。" },
@@ -67,7 +67,7 @@ export const kidsContent = {
     parentTip: { en: "Use allowance as a teaching tool: help them divide money into 'Spend,' 'Save,' and 'Give' jars.", es: "Usa la mesada como herramienta de enseñanza: ayúdales a repartir el dinero en frascos de 'Gastar', 'Ahorrar' y 'Compartir'.", ko: "용돈을 교육 도구로 활용하세요: '쓰기', '저축', '나누기' 통으로 나누기.", zh: "用零花钱作为教学工具：分成“花费”、“储蓄”、“捐赠”三个罐子。", ja: "お小遣いを教育ツールに：「使う」「貯める」「あげる」の瓶に分けよう。" },
   },
   "9-12": {
-    title: { en: "How Money Moves", es: "Cómo se Mueve el Dinero", ko: "돈의 움직임", zh: "钱如何流动", ja: "お金の動き" },
+    title: { en: "How Money Moves", es: "Cómo se mueve el dinero", ko: "돈의 움직임", zh: "钱如何流动", ja: "お金の動き" },
     lessons: [
       {
         text: { en: "When your parents borrow money for a house (mortgage), they're using CREDIT. They pay it back over years with INTEREST — that's the cost of borrowing.", es: "Cuando tus padres piden un préstamo para una casa (una hipoteca), usan CRÉDITO. Lo devuelven durante años con INTERESES — ese es el costo de pedir prestado.", ko: "부모님이 집을 사기 위해 돈을 빌리면(모기지), 신용을 사용하는 것입니다. 몇 년에 걸쳐 이자와 함께 갚아 나가는데, 그 이자가 바로 돈을 빌리는 비용이에요.", zh: "父母借钱买房（按揭）就是在用信贷。他们要用很多年连本带息还清——利息就是借钱的成本。", ja: "親が家を買うためにお金を借りる（住宅ローン）時、それが「信用」。何年もかけて利息とともに返していく——その利息が、お金を借りるコストだよ。" },
@@ -102,7 +102,7 @@ export const kidsContent = {
     parentTip: { en: "Open a savings account together. Show them interest earned — that's the bank paying to use their money!", es: "Abran una cuenta de ahorro juntos. Muéstrale los intereses ganados — ¡es el banco pagando por usar su dinero!", ko: "함께 저축 계좌를 개설하세요. 이자가 붙는 것을 보여주세요 — 은행이 아이의 돈을 쓰는 대가로 내는 돈이에요!", zh: "一起开个储蓄账户。让他们看到利息——银行付费使用他们的钱！", ja: "一緒に貯蓄口座を開こう。利息を見せて — 銀行がお金を借りた対価！" },
   },
   "13-17": {
-    title: { en: "Real-World Economics", es: "Economía del Mundo Real", ko: "현실 세계의 경제학", zh: "现实世界经济学", ja: "実社会の経済学" },
+    title: { en: "Real-World Economics", es: "Economía del mundo real", ko: "현실 세계의 경제학", zh: "现实世界经济学", ja: "実社会の経済学" },
     lessons: [
       {
         text: { en: "Economists have a saying: every dollar you spend is someone else's income. When you buy a coffee, you pay the barista, who pays rent, whose landlord pays a mortgage. It's all connected!", es: "Los economistas tienen un dicho: cada dólar que gastas es el ingreso de alguien más. Cuando compras un café, le pagas al barista, que paga su renta, y su casero paga una hipoteca. ¡Todo está conectado!", ko: "경제학자들이 흔히 하는 말이 있습니다: 당신이 쓰는 모든 달러는 다른 사람의 소득입니다. 커피를 사면 바리스타에게 돈이 가고, 그 사람이 월세를 내고, 집주인이 모기지를 갚습니다. 모두 연결되어 있습니다!", zh: "经济学家常说：你花的每一美元都是别人的收入。买咖啡时，你付钱给咖啡师，咖啡师付房租，房东付按揭。全都连在一起！", ja: "経済学者たちはこう言います：使った1ドルは誰かの収入になる。コーヒーを買えばバリスタに、バリスタは家賃を、大家はローンを。全部つながっている！" },

@@ -118,7 +118,7 @@ export const quizText = [
     "explain": "Las 4 herramientas son austeridad, reestructuración/impago de deuda, redistribución de riqueza (impuestos) e impresión de dinero. Subir más las tasas no es una de ellas: con tasas más altas, las deudas son más difíciles de pagar, no más fáciles. En un desapalancamiento, los bancos centrales las bajan, a menudo cerca del 0%, y ni siquiera eso basta por sí solo."
   },
   {
-    "q": "¿Qué es la Tasa de Fondos Federales?",
+    "q": "¿Qué es la tasa de fondos federales?",
     "opts": [
       "La tasa clave que influye en casi todas las demás tasas de interés",
       "Una tasa de impuesto sobre ganancias de capital",
@@ -265,7 +265,7 @@ export const quizText = [
       "El Fondo B rinde más automáticamente porque comisiones más altas financian mejor investigación",
       "La comisión solo aplica una vez, al comprar, así que no afecta los resultados a largo plazo"
     ],
-    "explain": "Como la comisión se deduce cada año — incluso sobre el crecimiento que ya se llevó en años anteriores — se compone en contra del saldo igual que el interés de la lección “Interés Compuesto” se compone a favor. Una diferencia de 1 punto porcentual, sostenida 30 años, consume aproximadamente una cuarta parte del saldo final."
+    "explain": "Como la comisión se deduce cada año — incluso sobre el crecimiento que ya se llevó en años anteriores — se compone en contra del saldo igual que el interés de la lección “Interés compuesto” se compone a favor. Una diferencia de 1 punto porcentual, sostenida 30 años, consume aproximadamente una cuarta parte del saldo final."
   },
   {
     "q": "Un propietario lleva 3 años de una hipoteca a 30 años. ¿Qué describe mejor la división de su pago mensual entre capital e interés?",
@@ -275,7 +275,7 @@ export const quizText = [
       "Sobre todo interés, porque el interés se cobra sobre el saldo restante",
       "Totalmente interés, ya que no se paga capital hasta refinanciar el préstamo"
     ],
-    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés. No es el interés compuesto de la lección “Interés Compuesto”: cada pago cubre por completo el interés de ese mes, así que nunca se cobra interés sobre interés. El momento en que la parte de capital supera a la de interés depende de la tasa: alrededor de dos tercios del plazo en un préstamo a 30 años al 7%, pero alrededor del año 7 de 30 al 3%."
+    "explain": "El interés se cobra sobre el saldo restante, que es mayor al inicio del préstamo, así que los primeros pagos son sobre todo interés. No es el interés compuesto de la lección “Interés compuesto”: cada pago cubre por completo el interés de ese mes, así que nunca se cobra interés sobre interés. El momento en que la parte de capital supera a la de interés depende de la tasa: alrededor de dos tercios del plazo en un préstamo a 30 años al 7%, pero alrededor del año 7 de 30 al 3%."
   },
   {
     "q": "Una cuenta de corretaje tiene $500 en efectivo sin invertir recién depositado. ¿Qué pasa generalmente con ese dinero si el dueño no hace nada más?",
@@ -295,7 +295,7 @@ export const quizText = [
       "El dinero se divide automáticamente en partes iguales entre el ex-cónyuge y el nuevo cónyuge",
       "El proveedor del 401(k) decide según quién contribuyó más"
     ],
-    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de Jubilación” y “Seguros”. Quien esté nombrado en el formulario de beneficiario de esa cuenta la recibe directamente, sin importar lo que diga un testamento más reciente."
+    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de jubilación” y “Seguros”. Quien esté nombrado en el formulario de beneficiario de esa cuenta la recibe directamente, sin importar lo que diga un testamento más reciente."
   },
   {
     "q": "Una persona ve un puntaje de crédito de 705 en una app y 680 en otra app distinta el mismo día. Según esta lección, ¿cuál es la explicación más probable?",
@@ -435,7 +435,7 @@ export const quizText = [
       "Sobreconfianza tras un resultado afortunado — atribuye la victoria a su propia habilidad en vez de considerar cuánta suerte hubo",
       "Aversión a la pérdida — está tratando de evitar el dolor de admitir una pérdida, que pesa más de lo que agradaría una ganancia igual"
     ],
-    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (“Tanta Gente No Puede Estar Equivocada, ¿Verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (“¿Por Qué Perder $50 Duele Más Que Encontrar $50 se Siente Bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
+    "explain": "Esto es sobreconfianza tras un resultado afortunado (sesgo de autoatribución): atribuir una victoria a la propia habilidad y aumentar la toma de riesgos como resultado, sin sopesar cuánto del resultado fue en realidad suerte. El FOMO (“Tanta gente no puede estar equivocada, ¿verdad?”) trata de copiar lo que hacen otras personas, que no es lo que está impulsando a María aquí — no se menciona el comportamiento de nadie más. El costo hundido trata de dejarse influir por dinero ya gastado, y la aversión a la pérdida (“¿Por qué perder $50 duele más que encontrar $50 se siente bien?”) trata del dolor asimétrico de una pérdida — ninguna encaja con una historia sobre una sola victoria que impulsa más toma de riesgos."
   },
   {
     "q": "¿Por qué las finanzas personales suelen quedar fuera de los planes de estudio escolares?",

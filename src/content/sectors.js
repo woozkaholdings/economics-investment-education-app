@@ -63,7 +63,7 @@ export const sectors = [
   },
   {
     symbol: "XLY",
-    name: { en: "Consumer Discretionary", es: "Consumo Discrecional", ko: "임의소비재", zh: "非必需消费", ja: "一般消費財" },
+    name: { en: "Consumer Discretionary", es: "Consumo discrecional", ko: "임의소비재", zh: "非必需消费", ja: "一般消費財" },
     what: {
       en: "Things people buy when they feel well off — shopping, cars, restaurants and travel.",
       es: "Lo que la gente compra cuando le va bien: compras, autos, restaurantes y viajes.",
@@ -74,7 +74,7 @@ export const sectors = [
   },
   {
     symbol: "XLP",
-    name: { en: "Consumer Staples", es: "Consumo Básico", ko: "필수소비재", zh: "必需消费", ja: "生活必需品" },
+    name: { en: "Consumer Staples", es: "Consumo básico", ko: "필수소비재", zh: "必需消费", ja: "生活必需品" },
     what: {
       en: "Things people buy no matter what — food, drinks, soap, toothpaste.",
       es: "Lo que la gente compra pase lo que pase: comida, bebidas, jabón, pasta de dientes.",
@@ -118,7 +118,7 @@ export const sectors = [
   },
   {
     symbol: "XLRE",
-    name: { en: "Real Estate", es: "Bienes Raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
+    name: { en: "Real Estate", es: "Bienes raíces", ko: "부동산", zh: "房地产", ja: "不動産" },
     what: {
       en: "Property owners and landlords, mostly via REITs.",
       es: "Propietarios y arrendadores, sobre todo mediante REITs.",
@@ -129,7 +129,7 @@ export const sectors = [
   },
   {
     symbol: "XLU",
-    name: { en: "Utilities", es: "Servicios Públicos", ko: "유틸리티", zh: "公用事业", ja: "公益事業" },
+    name: { en: "Utilities", es: "Servicios públicos", ko: "유틸리티", zh: "公用事业", ja: "公益事業" },
     what: {
       en: "Electricity, gas and water companies.",
       es: "Empresas de electricidad, gas y agua.",
@@ -140,7 +140,7 @@ export const sectors = [
   },
   {
     symbol: "XLC",
-    name: { en: "Communication Services", es: "Servicios de Comunicación", ko: "커뮤니케이션", zh: "通信服务", ja: "通信サービス" },
+    name: { en: "Communication Services", es: "Servicios de comunicación", ko: "커뮤니케이션", zh: "通信服务", ja: "通信サービス" },
     what: {
       en: "Telecom, media, streaming and social platforms.",
       es: "Telecomunicaciones, medios, streaming y redes sociales.",

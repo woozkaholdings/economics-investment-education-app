@@ -2934,6 +2934,34 @@ same journey.
 
 ## Run log
 
+### 2026-09-29 (owner-directed, interactive: *"you check and do it"*, in reply to the previous entry's three Spanish style questions, which it had left for a fluent reviewer) — **all three are settled and applied: the Spanish app now writes titles in sentence case, the Fed-chair simulator speaks *tú* like the rest of the app, and "Fed" is masculine everywhere.** I read "it" as those three questions. O-2 (creating an analytics account) and O-3 (paying for a review) are not things a run can do, and they are unchanged.
+
+**1. Sentence case (RAE: in a Spanish title, only the first word and proper nouns take a capital).** Measured before editing: English-style title case in **44/44** es lesson titles, **103/107** section headings (the 4 in sentence case showed the corpus was already mixed), **32** glossary names, **12** other labels (kids titles, market headings, sector names) and **17** UI strings.
+- **Instrument:** a Node converter lowercases each capitalized word after the first. It keeps acronyms, tokens with digits, words that follow a sentence end, and a list of proper nouns. **Before applying it, I printed every word it would lowercase and read the whole list for proper nouns.** That read found *María*, *Fed* and *Roth*, which I added to the list. I checked *Marco*, *Él*, *Feed* and *Seguro* in context: all are common words there. *Gran Depresión*, *Reserva Federal*, *EE. UU.* and other proper nouns are not in any converted string. The *M0 —*/*M1 —* chart labels were excluded; they already follow the label style.
+- **Titles are quoted in lesson prose** (*“El Ciclo de Deuda a Corto Plazo”* ×4, *“Interés Compuesto”* ×7). So each old string was replaced everywhere in the es corpus, longest first. A phrase's first letter was lowercased only mid-sentence (after a lowercase word or a comma), so quoted titles keep their capital. Result: 187 unique strings, **240 occurrences**. A second scan of every quoted phrase found three short-form references the pair list could not see (*“Cuentas de Jubilación”* ×6, *“Tasas de Interés”* ×3, *“Alquilar vs. Comprar”* ×1), and I fixed them. **§58 caught the last one**: it failed until that quote matched the new title.
+- UI (es.js) was edited by hand, not by the converter: *Punto clave*, *Panel de mercados*, *Formas de la curva de rendimiento*, *Normal (saludable)* and so on. The app name *Ciclos Económicos* and the tab name *Repaso* keep their capitals as proper names.
+
+**2. *usted* → *tú* in the simulator.** Measured: *usted* forms occur in exactly two places in the whole es corpus (`policySimTitle`/`policySimIntro` and two prompts in `policyScenarios.js`). *Puedes* ×17 and *elige* ×10 occur everywhere else. Now: *"Preside el Fed"*, *"decide tú. Elige una palanca… puedes probar las tres"*, *"Tú presides el comité… ¿Hacia dónde giras el dial?"*, *"¿Qué haces?"*. Each matches the English "you".
+
+**3. Fed → masculine.** *el/del/al/El Fed* ≈54 against *la Fed* 8, and all four es.js UI mentions other than the old title were already masculine. So 8 → masculine (glossary 4, economy lessons 2 *de la Fed* → *del Fed*, `economicSignals.js` 1, plus the title above). Both genders are real Spanish; this is a consistency fix, not a correctness fix.
+
+#### Verification
+| check | result |
+|---|---|
+| Other languages | Removed every `es` value from the HEAD and working copies of the 7 multi-language files and compared the rest: **all 7 identical** |
+| `npm test` | first run **FAIL §58** (the *Alquilar vs. Comprar* reference, fixed), then **FAIL readiness §10.4** (es character count 183,474 → 183,470 from the *usted*/Fed edits; regenerated with `npm run readiness -- --write`, a 1-line diff). Final run **exit 0**, 0 FAIL, 1 WARN (O-3's) |
+| Review ledger | not touched: `translation-review.mjs` hashes the **English** source, so es edits cannot mark a record stale |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, `index-D1F2cmKo.js` |
+| Bundle | all **191** converter pairs: old string present **0**, new string missing **0**. *usted*/*de la Fed* at 0, new sim strings ×1 each, nonsense probe 0 |
+| Live render | `dist/` served statically, language set to Español with the picker. Lesson 29 read *"Transacciones: el pilar fundamental"* / *"¿Qué es una transacción?"*. Reference hub read *"…forma parte de la ruta"*. The Markets headings read *"Panel de mercados \| Cómo los cambios de tasas empujan a los activos, con todo lo demás igual \| Formas de la curva de rendimiento \| QE, QT y el balance \| Oferta monetaria (M0, M1, M2) \| Principios clave"* |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** the disclaimer and the notes are unchanged except for case. No advice language or dates were added. `check-blindspot` passes.
+- **Did the converter lowercase a proper noun?** Every lowercased word was listed and read before the write. The residual risk is a proper noun I misread as a common word. Glossary names such as *Índice de precios al consumidor* are lowercased on purpose (Fundéu writes them lowercase).
+- **DECISIONS.md:** no conflict. ⛔ **O-3 unchanged:** these are still machine-made edits with no fluent review. This run changed the wording's case and register, not its meaning.
+
+**Owner-facing, one line:** the Spanish app now follows Spanish capitalization, and the simulator and "Fed" match the rest of the app. Two things still need you: O-2's analytics account, and O-3's review decision.
+
 ### 2026-09-29 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (lesson 11's fee ranges) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (lesson 11's fee check, item 144) was one. **The pick is the one UI-string surface the 09-28 hand read left out: `es`.** That run read ko/zh/ja only) — **six Spanish strings fixed: one heading had dropped the concept it names, and five used a different word from the rest of the Spanish app.**
 - **`yieldCurveLabel` (Reference → Markets `<h2>`, and the `aria-label` of the lesson curve figure, `LessonVisual.jsx:161`):** *"Formas de la Curva"* did not say which curve. It is now *"Formas de la Curva de Rendimiento"*, the es glossary's own name for the term (`Yield Curve` → `Curva de Rendimiento`). The es lessons and quiz say *curva de rendimiento* ×4 and never anything else.
 - **`trackEconomyBlurb` and the es glossary `Bond` definition: *tipos de interés* → *tasas de interés*.** Measured over every es surface: *tasas de interés* ×25, *tipos* ×2, and those two were these strings. *Tipos* is the Spain form. The corpus is Latin American Spanish by every marker I measured: *auto* ×29 against *coche* ×1, *computadora* ×1 against *ordenador* ×0, and *vosotros* ×0.
