@@ -2951,6 +2951,29 @@ same journey.
 
 ## Run log
 
+### 2026-09-29 (scheduled dev-agent; **the previous run's one named residual**: its "Seen, deliberately NOT fixed" said lesson 13's *"a few decades ago, when a single trade could cost $10-$30"* was *"not measured here, and I found no keyless source this run"*. The previous run was a free pick, so W-6.2 rule 1 allows this. W-9.4 does not arise: this is a fact check, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the claim holds, so nothing in `src/` changed. The residual is closed as measured.**
+
+**Step 3.5: the premise, re-measured.** WebSearch/WebFetch work here, so "no keyless source" meant nobody had tried the web.
+- **Online-broker flat fees, by source:** E*Trade about **$20/trade in 1996** and **$13 on average in 2001** (Net Interest, "Dotcom 2.0"). Schwab **$14 by 2006**, and discount fees about **$14.95 in the 1990s**, falling to about $4.95 later (search summaries of Fortune 2019-10-03 and Schwab's 50-year history). Fidelity cut from $7.95 to $4.95 in 2017, and Schwab went from $4.95 to $0 on 2019-10-01 (NPR 2019-10-01).
+- **Control, the other direction:** the same sources give prices well outside $10-$30. Datek/Ameritrade charged **$5-$10** to active traders in 1999, and a Schwab broker-assisted trade was **$60 in 1998** (and $70 in 1975). So the instrument can see figures that break the range; the lesson's range is not just whatever the sources say.
+- **Verdict:** for online trades about 20-30 years ago (roughly 1996-2006), $10-$30 is a fair summary. "Could cost" makes it a typical range, not a floor, so the $5-$10 outliers do not falsify it. The residual's worry was that the sentence skips the ~$5 era just before zero. That is true, but the sentence claims only the change "from a few decades ago", and it does not imply the drop went straight from $10 to zero. Adding the path would lengthen a sentence whose point is "free is not free", for no gain in accuracy.
+- **Translations:** es/ko/zh/ja all carry the same $10-$30 and "a few decades" (read directly from `lessonContent.essentials.*.js`). No parity gap.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` (before and after; only this log changed) | **exit 0**, 0 FAIL, 1 WARN (O-3's) |
+| Build / live render | **Not run:** no file under `src/` changed |
+
+#### Step 5: adversarial self-check
+- **Did I pass a claim on too little evidence?** The Washington Post 1998 archive returned HTTP 403, and Wikipedia's E*Trade page gives no historical prices. Two independent sources and the Schwab/Fidelity/NPR figures agree, and the control above shows they can report prices outside the range. I would not assert a precise figure from this. The lesson does not assert one either.
+- **§10.1 / DECISIONS.md / completed work:** nothing shipped changed. No conflict found.
+- **W-8.1 still applies:** earlier commits are committed, **not deployed**.
+
+**Owner-facing, one line:** lesson 13's "$10-$30 per trade a few decades ago" was checked against sources and holds; no change. W-9.5 (O-3: fund review, cap, or re-affirm the unreviewed translations) and W-9.6 (O-2: the analytics key) are still the asks that move the launch.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-28 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (lesson 33's figure text) named no residual, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is not a short-string hand read. **The pick came from a scan of every English sentence carrying a year, `%` or `$` figure (money, essentials, economy, glossary) for figures no log entry had measured.** Nearly all economy-track figures were already measured. Lesson 5's 2008 bond figure had been measured, but only on one fund) — **lesson 5 no longer gives one fund's 2008 return as the typical one.** It said *"a broad US bond fund returned about 8%"*. That is AGG, and AGG was the best of three broad bond funds that year. The index-tracking mutual fund returned 5%. It now says broad US bond funds **gained about 5%-8%, depending on the fund**, in all five languages.
 
 **Step 3.5: the premise, re-measured with controls.**
