@@ -2934,6 +2934,35 @@ same journey.
 
 ## Run log
 
+### 2026-09-29 (scheduled dev-agent; **a free pick**. The previous run (item 144) named no residual, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is a fact check, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from re-running the 09-28 figure scan** (every English sentence in money, essentials and the quiz that carries a year, `%` or `$`) and checking each hit against the log and archive. Nearly every hit was measured or is a worked example. **The two unmeasured factual ranges were lesson 11's fee ranges**: the archive quotes them five times, but only as numerals carried into translations, never against a source) — **both ranges hold, so nothing in `src/` changed. They are closed as measured.**
+
+**The claim (essentials lesson 11 §1, all five languages carry the same numerals, measured):** index funds *"commonly charge 0.03%-0.20% a year"*; an actively managed fund *"commonly charges 0.5%-1.5% a year"*.
+
+**Step 3.5: measured against ICI, with controls.**
+- **Averages (ICI, asset-weighted, i.e. what the average invested dollar pays):** actively managed equity mutual funds **0.64%**, index equity mutual funds **0.05%** (year-end 2024; ICI *Trends in the Expenses and Fees of Funds, 2024*, via search). Index equity ETFs **0.14%** in 2025 (ICI news release, 2026-03-25, fetched). Both index figures sit inside 0.03%-0.20%. The active figure sits inside 0.5%-1.5%.
+- **Spread (ICI 2025 Fact Book ch. 6, share classes weighted equally):** growth-stock equity funds, 10th percentile **0.59%**, 90th percentile **1.77%**. The simple average of all equity funds is **1.10%**. So 0.5%-1.5% covers the low end and the middle of active share classes. Its top is below the 90th percentile, which "commonly" allows: it does not say "at most".
+- **Instrument and controls.** WebFetch could not read either ICI PDF. I inflated the streams with Node (memory note: no PDF tools here). The Fact Book text uses a glyph substitution, so I decoded the digits from sentences whose values ICI publishes in HTML. The decoded sentence *"fell from 0.99 percent in 2000 to 0.40 percent in 2024, a 60 percent decline"*, the simple average 1.10 and the lowest-quartile share 81 all match ICI's HTML "Five Takeaways from the 2025 Fact Book" page. Those controls fix seven digits (0, 1, 2, 4, 6, 8, 9). **The other three (3, 5, 7) are inferred, not controlled**: I assigned them from plausibility (index share of long-term assets 19% in 2010 → 51% in 2024; index mutual funds 32% of mutual fund assets). **So 0.59 and 1.77 are the weakest figures here.** Any other assignment of 3/5/7 gives a 10th percentile of 0.39-0.79 and a 90th of 1.33-1.77. None of those makes the lesson's "commonly 0.5%-1.5%" false. The chart labels use other fonts and did not decode, so I did not use them.
+- **Was it wrong?** No. The lesson's worked example uses **0.05%** for the index fund, which is ICI's asset-weighted average exactly.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's, unchanged). Read directly, not through a pipe |
+| Numerals in all five `lessonContent.essentials.*.js` | `0.03`, `0.20`, `0.5`, `1.5` ×1 each and `1.05` ×1 in every language; `0.05` ×3 in every language |
+| Build / live render | **Not run:** no file under `src/` changed |
+
+#### Step 5: adversarial self-check
+- **Am I closing it on weak evidence?** The 0.64%/0.05% figures come from a search summary of ICI's 2024 report, not from text I read myself. The 2025 ETF figure and the Fact Book figures I did read. The conclusion does not depend on the 0.64% alone: the simple average (1.10%, which the control confirms) and the decoded percentiles put active funds inside the range too.
+- **§10.1:** nothing changed in the lesson. The ranges describe fund categories and name no fund.
+- **DECISIONS.md / completed work:** no conflict. This adds a source to the 09-18 fee work and does not change it.
+- **W-8.1 still applies:** earlier commits are committed, **not deployed**.
+
+**Seen, not fixed:** nothing new. The scan's other dated figures (the 2008 VIX sentence, the 2001 low, the 1929/1990/2007 rate levels, 300-850, the 2024 down-payment and commission figures) were already measured in the archive.
+
+**Owner-facing, one line:** lesson 11's fee ranges checked against ICI data (index 0.05%-0.14% on average, active 0.64% on average, most active share classes between about 0.6% and 1.8%); the lesson is accurate as written. W-9.5 (O-3) and W-9.6 (O-2) are still the asks that move the launch.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-29 (scheduled dev-agent; **a free pick**. The previous run closed its predecessor's residual and named none of its own, so W-6.2 rule 1 does not arise. W-9.4 does not arise: this is a checker fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is backlog item 144**, an open, scoped tooling item that needs no owner input) — **item 144 is closed, and its premise was wrong: the defect it called "zero live instances" was live in §59's own header.** A `us-english:allow` marker now exempts a block only when it is not in backticks. A comment that quotes the token to discuss it no longer exempts itself.
 
 **Step 3.5: the premise, re-measured.** The item said the mention-exempts-itself defect had **"zero live instances after the fix above, measured"** (2026-08-29). I listed every comment block that carries the marker, with the British words it contains and the characters around each marker occurrence (probe in the scratchpad, reusing `us-english.mjs`'s own `commentBlocks`/`scan`). The probe read 1,744 blocks and found 10 with the marker. **Nine** carry a bare `marker —` declaration. **One is exempt only by a backticked mention**: §59's own header (`check-data.mjs`, the "THE MARKER IS NOW LOAD-BEARING" paragraph). It names "labour", "colour", "centre" and "cheque". The 08-29 fix repaired §55's header; §59's header had the same shape and nobody measured it. **The item's reasons for not fixing were also incomplete.** It rejected line-start markers, em-dash clauses and a new token. It did not consider backticks, and backticks separate the two cases in this tree exactly: every mention is backticked, and all 13 declarations (9 comment blocks + 4 Markdown lines) are bare.
