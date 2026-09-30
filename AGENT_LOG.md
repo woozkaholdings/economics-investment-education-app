@@ -1912,9 +1912,18 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       five languages; **(a) is still open and still a judgment call**, but read its argument as "the
       rail explains how a question enters the queue", which is now true.
     - **Two seams noticed while measuring this, filed as notes and not as items (W-6.2 rule 2).**
-      (i) `showPracticeCoachMark` is `completedLessons.length > 0`, so the coach mark sends the
+      (i) ~~`showPracticeCoachMark` is `completedLessons.length > 0`, so the coach mark sends the
       learner to Review at exactly the moment Review is empty — harmless now that the card names the
-      right next action, but the trigger is still completion. (ii) ~~The `Steps` rail marks `done` with
+      right next action, but the trigger is still completion.~~ ⛔ **PREMISE WRONG — CLOSED
+      2026-09-30 (scheduled dev-agent); nothing in `src/` changed.** The *schedule* is empty then;
+      **Review is not**. `practicePool` counts every question of a completed lesson, and all 44
+      lessons own ≥1 question (Node over `quizMeta`: 46 questions, 0 lessons with none), so the pool
+      is ≥1 whenever the coach mark can show. Live on the built app, from cleared storage: complete
+      lesson 29 without answering its check (`completed [29]`, `ecycles_review` null), and the coach
+      mark shows. Tapping it lands on Review with **"Practice all questions (1)"** under the
+      not-started card. Control: with nothing completed, the same screen has no practice button.
+      **Completion is the right trigger.** What is left is (a)'s: the card says "Nothing to review
+      yet" right above a working practice button. (ii) ~~The `Steps` rail marks `done` with
       **color only** — measured, step 1's glyph stays the `book` path and only moves
       `--ink-accent` → `--ink-ok` — so the done state is carried by hue alone.~~
       ⛔ **PREMISE WRONG, and the half it got wrong is the half that mattered — corrected and CLOSED
@@ -2933,6 +2942,33 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the owner-directed Spanish style fix) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read**: both previous runs were es string work. **The pick is item 117's note (i)**, the one open seam in that item that is not an owner call: *"the coach mark sends the learner to Review at exactly the moment Review is empty"*) — **the premise is wrong, so nothing in `src/` changed. Note (i) is closed.**
+
+**Step 3.5: the premise and its controls.** The note conflated two things. The spaced-review *schedule* is empty after a lesson is completed with its check unanswered. The Review *screen* is not, because `practicePool` (`Practice.jsx`) takes every question of a completed lesson.
+- **Static:** a Node import of `quizMeta.js` and `lessons.js` gives 46 questions over 44 lessons, **0 lessons with no question** (32 and 34 own two). The smallest pool after completing any one lesson is **1**. Control: with nothing completed it is **0**.
+- **Live**, on `dist/` served statically with a fresh build: clear storage, open lesson 29, press Mark Complete, answer nothing. That gives `ecycles_completed_lessons` `[29]` and `ecycles_review` null, and the coach mark is on `#/learn`. Tapping it opens `#/practice` with *"Nothing to review yet"* and a **"Practice all questions (1)"** button. It also sets the seen flag. **Control:** with storage cleared and nothing completed, the same screen shows the same card and **no** practice button, so the probe can tell the two states apart.
+- **Storage blocked** (the 09-07 note): after a reload, `completedLessons` is empty too, so the coach mark does not show either. The two move together.
+
+**What is left belongs to (a), not (i):** the not-started card says "Nothing to review yet" right above a working practice button. The copy is accurate about the schedule, and a change to it is (a)'s judgment call in five languages, so I left it.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe. Only `AGENT_LOG.md` changed |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, `index-D1F2cmKo.js`, the same hash as the 09-29 entry, since `src/` is unchanged |
+| Live | as above, with both states and a control |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / DECISIONS.md / completed work:** nothing in `src/` changed, so there is no new copy, date, figure or advice language. The coach-mark comment in `useAppState.js` ("so there's actually something to review") was already true and is untouched.
+- **Is "not empty" true in every language and at every point on the path?** The pool is language-independent (`quizMeta`), and the minimum over all 44 single-lesson completions is 1, so yes.
+- **Would a reviewer get my result?** Yes, with the Node script and the four live steps above. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** none new. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the Review tip is fine as it is. Two things still need you: **O-2's analytics account** (about 20 minutes, and it is the only way to learn whether anyone finishes lesson 1), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-09-29 (owner-directed, interactive: *"you check and do it"*, in reply to the previous entry's three Spanish style questions, which it had left for a fluent reviewer) — **all three are settled and applied: the Spanish app now writes titles in sentence case, the Fed-chair simulator speaks *tú* like the rest of the app, and "Fed" is masculine everywhere.** I read "it" as those three questions. O-2 (creating an analytics account) and O-3 (paying for a review) are not things a run can do, and they are unchanged.
 
