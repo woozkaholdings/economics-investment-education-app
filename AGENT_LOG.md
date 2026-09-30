@@ -2943,6 +2943,38 @@ same journey.
 
 ## Run log
 
+### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (item 117 note (i)) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the owner-directed es style fix was one of the previous two runs), and this is not one: it is a fact check. **The pick came from extending the 09-28/09-29 figure scan to the modules it skipped** (`policyScenarios`, `economicSignals`, `sectors`, `kidsContent`, `markets`). Every hit was either a teaching number or already measured in the archive, with one exception: the 2026-09-17 ECB sentence had been measured against **one** recession dating, OECD's `EUROREC`) — **the Fed-chair simulator no longer says the euro area was "already in recession" when the ECB hiked in 2011.** That holds for 2008. By the euro area's own dating committee, it does not hold for 2011.
+
+**Step 3.5: the premise and its controls.** The claim is that the euro area was *"already in recession both times"*. The 09-17 run measured it with OECD `EUROREC`, a composite-leading-indicator series, and noted that *"Recession dating is OECD's, not the ECB's own."* The euro area's counterpart of NBER is the **CEPR-EABCN Euro Area Business Cycle Dating Committee**, and no run had checked it.
+- **CEPR** (web search plus bruegel.org's review of the committee's announcement; eabcn.org returned 403): peaks **2008Q1** and **2011Q3**, troughs 2009Q2 and 2013Q1. **Control:** the 2008Q1 peak matches the dating everyone cites. So CEPR puts the recessions at 2008Q2–2009Q2 and 2011Q4–2013Q1.
+- **Real GDP**, FRED `CLVMEURSCAB1GQEA19` (keyless; **control:** a nonexistent id returns **404**). QoQ: 2008Q2 **−0.51%**, Q3 −0.56%, so the July 2008 hike came while output was falling. 2011Q1 **+0.97%**, Q2 **0.00%**, Q3 **+0.01%**, Q4 **−0.30%**, then five more negative quarters.
+- **OECD `EUROREC`** re-read: 1 from 2008-03 and from **2011-06**. That is the only instrument under which the July 2011 hike was "in recession", and it runs about a quarter ahead of CEPR here.
+- **Verdict:** the 2008 half holds on all three instruments. For 2011, the April and July hikes came **as growth stalled, one quarter before** the recession that the authoritative dating recognizes. "Already in recession both times" overstates the 2011 half. The paragraph's point survives: the ECB tightened into weakness because inflation was above its target, and it reversed each round within months (cuts from 2008-10, and in 2011-11/12, both re-measured 09-17).
+
+#### What shipped
+`src/content/policyScenarios.js`, `policyScenarios.contraction` → option `hike`, one clause in each of five languages (`git diff --numstat` **5/5**). en: *"…the European Central Bank raised rates in 2008 with the euro area already in recession, and again in 2011 as growth stalled just before the next one, because inflation was above the target its own mandate puts first. It reversed both moves within months."* es/ko/zh/ja carry the same split. Each language keeps its own existing wording for "already in recession" and for the reason clause. A Node patcher asserted old=1/new=0 before the write and old=0/new=1 after, for all five. The original is in the scratchpad. The header comment ("an outcome … names 2008 and 2011") is still true, so it is unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `npm run check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, system Node v24.18.0 |
+| Bundle | the new en phrase is in `LessonReader-DlHAt5-S.js`, the old phrase is in **no file**, and the control ("Start QT") is in the same chunk |
+| Live walk | **not done.** This is a clause swap inside a card that the 09-17 run walked at 375 px in en and ja with no overflow. The new en clause is 20 characters longer |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §2.3, proven and not assumed. **Plant:** "in 2011" → "in July 2011" → `check-blindspot` **exit 1**. Restored from the scratchpad copy (`cmp` identical, not `git checkout --`) → **exit 0**. §10.1: this is central-bank history, not a buy/sell decision. There is no Dalio attribution and no kids surface.
+- **Does this undo completed work?** It narrows the 09-17 fix and does not reverse it. That fix's point (tightening into weakness can sit inside the mandate) and its 2008 evidence stand. NO SCORING is intact.
+- **Could the new text be wrong?** "Stalled" is 0.00% and +0.01% QoQ in the current vintage, and a later revision could move those by a tenth. "Just before the next one" is one quarter under CEPR, and OECD would say the July hike was already inside it. The new clause is true under both datings, which the old one was not. The CEPR dates come from a secondary source and a search snippet, because the committee's own page returned 403.
+- **Would a reviewer get my result?** Yes: the three FRED CSVs and the patcher's asserts. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** the 09-17 entry's other residual, the "12–24 month" lag, is no longer in the file. The hike outcome now reads *"a year or two is the usual rule of thumb, and the 2022–23 tightening beat it"*, so that residual has been handled. Nothing new. No fluent reader has seen the es/ko/zh/ja wording (**O-3**). **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the Fed-chair simulator overstated one historical example, and it is now accurate in five languages. Two things still need you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the owner-directed Spanish style fix) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read**: both previous runs were es string work. **The pick is item 117's note (i)**, the one open seam in that item that is not an owner call: *"the coach mark sends the learner to Review at exactly the moment Review is empty"*) — **the premise is wrong, so nothing in `src/` changed. Note (i) is closed.**
 
 **Step 3.5: the premise and its controls.** The note conflated two things. The spaced-review *schedule* is empty after a lesson is completed with its check unanswered. The Review *screen* is not, because `practicePool` (`Practice.jsx`) takes every question of a completed lesson.
