@@ -2943,6 +2943,41 @@ same journey.
 
 ## Run log
 
+### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the ECB fact check) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (item 117 note (i), the ECB fact check) was one. **The pick is the one learner-visible translated surface no run had hand-read in ko/zh/ja: the Fed-chair simulator's prose in `policyScenarios.js`.** The archive's 2026-08-2x note says it *"is not in the translation-review ledger"*, and the 09-10 entry's "read clean" was an English accuracy read) — **seven phrases fixed across ko/zh/ja: three Japanese calques, one Japanese phrase that said "weakness" with no subject, one Korean word that reads as a market term, one Korean label that dropped "toward", and one Chinese clause that overstated the policy lag.**
+
+**Step 3.5: the premise and its controls.** Premise: no hand read of this file's ko/zh/ja. `grep` of both logs for `policyScenarios` finds English accuracy work (09-10, 09-17, 09-30), the es *tú* fix (09-29), and the US-English sweep. None is a ko/zh/ja read. Every word-choice claim below is a Node count over all of `src/` (not shell grep). **Positive control:** `信用` counts **169** across 16 files, so the instrument hits.
+- **ja `安い信用` ("cheap credit")** appears **2** times in `src/`, both in this file. The ja lessons say `安いお金` and `借入コスト`. `信用` alone reads as "trust" or "creditworthiness", so "cheap trust" is the literal reading.
+- **ja `資金繰りが安くなり`**: `資金繰り` means cash-flow management, which does not "get cheaper". It has **1** hit, here.
+- **ja `弱さの中で`** ("in weakness") has **1** hit, here. It gives no subject. zh says `经济疲弱时` (when the economy is weak).
+- **ko `약세 국면`** has **1** hit, here. In Korean, `약세` is chiefly a market or currency word (a bear phase, a weak won), so "tightened in a 약세 phase" reads as markets, not the economy.
+- **ko label `제로까지 인하`** says "cut **all the way to** zero". en says "toward zero", zh says `至接近零` and ja says `ゼロに向けて`, and the outcome text says the dial stops at *roughly* zero.
+- **zh `要慢得多`** says spending, hiring and inflation are "**much** slower". en says they "take longer", and the next clause says the 2022–23 tightening beat the rule of thumb.
+- **Checked and deliberately NOT changed:** ja `時差` for the policy lag (2 hits here). It reads first as "time-zone difference", but lesson 35's own ja text uses it (*「時差は実在します」*), and this simulator sits inside lesson 35. Changing it only here would make the two disagree. ko `값싼 신용` in the zero-rate option: `신용` is the standard word for credit, the phrase is understood, and en also says "credit". Left as is.
+
+#### What shipped
+`src/content/policyScenarios.js`, **6 lines changed** (`git diff --numstat` 6/6; the ja zero-rate outcome has two of the seven phrases). ja: `安い信用は` → `安いお金は`; `住宅、自動車、給与の資金繰りが安くなり` → `住宅や自動車の購入、給与の支払いに充てるお金を安く借りられるようになり`; `安い信用を長く置きすぎると` → `お金を安いまま長く置きすぎると`; `弱さの中で` → `景気の弱い局面で`. ko: `약세 국면에서` → `경기가 약한 국면에서`; label `제로까지 인하` → `제로 근처까지 인하`. zh: `要慢得多，慢多少` → `则需要更长时间，长多少`. A Node patcher asserted old=1/new=0 before the write and old=0/new=1 after, for all seven. The original is in the scratchpad, and `cmp` confirmed the working file matched it before the patch. en and es are untouched.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `npm run check-blindspot` | **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, system Node v24.18.0, `index-Cu_e04Ve.js` |
+| Bundle | the new ja, ko and zh phrases are all in `LessonReader-BwKD8cs9.js`, and the three old phrases are in **0** files. **Control:** a string that is not in the source matches no file |
+| Live walk | **not done.** The ko label grows by three characters (`근처`) inside a lever button, and the 09-17 run walked this card at 375 px with no overflow. That is the one layout risk, and it is not measured here |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §2.3, proven and not assumed. **Plant:** an investment line (*「今こそ株を買う好機です。」*) plus "July 2011" appended to the new ja sentence → `check-blindspot` **exit 1** (§2.3 FAIL). Restored from the scratchpad copy (`cmp` identical, not `git checkout --`) → **exit 0**. The plant proves the date guard fires on this file; it does **not** prove that a Japanese advice sentence would be caught, since §10.1's patterns are English. The shipped text adds no advice language in any case: it is central-bank policy, and there is no Dalio attribution and no kids surface.
+- **DECISIONS.md / completed work:** nothing rules on this file's wording. This does not touch the 09-30 ECB fix or the 09-29 es fix. NO SCORING and the header's rules are intact.
+- **Could the new text be wrong?** `景気の弱い局面` and `경기가 약한 국면` say "a phase when the economy is weak", which is what en's "into weakness" means in context. `제로 근처까지` ("to near zero") matches zh and the outcome text. I am not a fluent reader. These are fixes of measured calques and inconsistencies, not a fluent review (**O-3**).
+- **Would a reviewer get my result?** Yes: the Node counts, the patcher's asserts and the bundle grep. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** ja `時差` is used for the policy lag in both lesson 35 and this simulator. If a fluent reviewer prefers `タイムラグ` (an economy lesson uses it for GDP's reporting lag), the change belongs in both places at once. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the Fed-chair simulator's Japanese, Korean and Chinese text had never been proofread, and the first read found seven wording errors. Like every other translated surface read for the first time, it had defects. Two things still need you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (item 117 note (i)) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the owner-directed es style fix was one of the previous two runs), and this is not one: it is a fact check. **The pick came from extending the 09-28/09-29 figure scan to the modules it skipped** (`policyScenarios`, `economicSignals`, `sectors`, `kidsContent`, `markets`). Every hit was either a teaching number or already measured in the archive, with one exception: the 2026-09-17 ECB sentence had been measured against **one** recession dating, OECD's `EUROREC`) — **the Fed-chair simulator no longer says the euro area was "already in recession" when the ECB hiked in 2011.** That holds for 2008. By the euro area's own dating committee, it does not hold for 2011.
 
 **Step 3.5: the premise and its controls.** The claim is that the euro area was *"already in recession both times"*. The 09-17 run measured it with OECD `EUROREC`, a composite-leading-indicator series, and noted that *"Recession dating is OECD's, not the ECB's own."* The euro area's counterpart of NBER is the **CEPR-EABCN Euro Area Business Cycle Dating Committee**, and no run had checked it.
