@@ -2943,6 +2943,43 @@ same journey.
 
 ## Run log
 
+### 2026-09-30 (scheduled dev-agent; **the previous run's one unmeasured risk**. Its Verification table said *"Live walk: **not done.** The ko label grows by three characters (`근처`) inside a lever button … That is the one layout risk, and it is not measured here"*. The previous run was a free pick, so W-6.2 rule 1 allows this. **W-9.4 bars a short-string hand read** (the previous run was one), and this is not one: it is a layout measurement. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the risk does not exist, so nothing in `src/` changed. All six levers fit on one line in all five languages, down to 320 px.**
+
+**Step 3.5: the premise and its controls.** Premise: the longer ko label `제로 근처까지 인하` might overflow its button at phone width. Re-reading `PolicySim.jsx:105-134` first: the lever group is `flex-wrap` and the buttons do not set `white-space: nowrap`, so a long label would wrap inside the button or push it to a new row rather than spill out. That lowers the risk; it does not measure it, so I measured it.
+**Instrument:** `dist/` from the out-of-tree build (`index-Cu_e04Ve.js`, the same hash the previous run shipped), served statically from a scratchpad server whose SPA fallback covers extensionless paths only (`/` 200, `/learn` 200, the real entry bundle 200, a bogus asset **404**). Browser pane, viewport forced to **375 px and then 320 px**, light scheme, and `innerWidth` read back each time (375 and 320, not 0). Lesson 35 is locked on a fresh profile, so I marked lessons complete in the pane's storage for the walk and restored it afterwards (`ecycles_completed_lessons` back to `[]`, `ecycles_lang` removed). For each lever I read its rect against its group and the viewport, and `scrollWidth` against `clientWidth`. Then I clicked it and applied the same checks to the outcome panel.
+**Controls, both of which fired:** (a) a planted `nowrap` button carrying the ko label four times, appended to a real group, read **461 px wide and past its group** (group 309 px). (b) A planted `nowrap` span in a real outcome panel read **overflowing**. Both were removed before any other reading.
+
+| lang | at 320 px (group 254 px): widest lever | all 6 levers 44 px tall (one line) | lever or panel overflow | page horizontal scroll |
+|---|---|---|---|---|
+| en | `Cut toward zero` 141 px | yes | none | none |
+| es | `Bajar hacia cero` 142 px | yes | none | none |
+| ko | `제로 근처까지 인하` 138 px | yes | none | none |
+| zh | `降息至接近零` 118 px | yes | none | none |
+| ja | `ゼロに向けて下げる` 154 px | yes | none | none |
+
+At 375 px, ko was also clean (group 309 px, the label 138 px). The new ko label is **narrower than the en and es labels for the same lever**, and 100 px short of the group. All 30 outcome panels (143-917 characters across the five languages, including the ja text the previous run lengthened) wrap inside the panel with no overflow.
+
+#### What shipped
+This entry only. `src/` is unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, system Node v24.18.0 (bootstrap-node.sh again flagged the synced `node_modules/` as x64-only, as expected) |
+| Live walk | the table above, 30 lever × panel readings plus two controls |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / DECISIONS.md / completed work:** nothing in the app changed, so no register item can regress, and no decision rules on this. This does not redo anything in the completed list. It closes a gap the previous entry named, and it does not edit that entry: its "not done" was true when written.
+- **Could the walk have measured the wrong thing?** The app's first-run disclaimer modal was open over the lesson in the closing screenshot, and probably for the whole walk. The readings are DOM geometry, and `.click()` bypasses hit-testing, so the modal cannot change them. It would matter for a real tap, which this does not claim to test. Light theme only; theme does not change label width. Font: whatever the pane renders, which is the same system-font stack a phone would fall back to; a device with a wider CJK face could differ by a few pixels, and there are 100 px of margin.
+- **Would a reviewer get my result?** Yes, from the same server, viewport and readings. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** none new. The ja `時差` question from the previous entry is unchanged and still belongs to a fluent reviewer. **W-8.1 still applies:** the previous run's fixes are committed, **not deployed**.
+
+**Owner-facing, one line:** the Fed-chair simulator's buttons fit phone screens in every language after yesterday's wording fixes; nothing needed changing. Two things still need you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-30 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the ECB fact check) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string hand read**: neither of the previous two runs (item 117 note (i), the ECB fact check) was one. **The pick is the one learner-visible translated surface no run had hand-read in ko/zh/ja: the Fed-chair simulator's prose in `policyScenarios.js`.** The archive's 2026-08-2x note says it *"is not in the translation-review ledger"*, and the 09-10 entry's "read clean" was an English accuracy read) — **seven phrases fixed across ko/zh/ja: three Japanese calques, one Japanese phrase that said "weakness" with no subject, one Korean word that reads as a market term, one Korean label that dropped "toward", and one Chinese clause that overstated the policy lag.**
 
 **Step 3.5: the premise and its controls.** Premise: no hand read of this file's ko/zh/ja. `grep` of both logs for `policyScenarios` finds English accuracy work (09-10, 09-17, 09-30), the es *tú* fix (09-29), and the US-English sweep. None is a ko/zh/ja read. Every word-choice claim below is a Node count over all of `src/` (not shell grep). **Positive control:** `信用` counts **169** across 16 files, so the instrument hits.
