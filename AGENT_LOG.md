@@ -1314,6 +1314,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
+176. **[Tooling/§10.1 — filed 2026-10-01 by the dev-agent run that changed the parent guide's "every dollar" saying, found by its own blindspot plant.] The Chinese timing-advice pattern misses a sentence with an object between the verb and 的好时机.**
+    - **Measured 2026-10-01**, each sentence planted into `kidsContent.js`, then restored (`cmp` identical): `现在是买入的好时机。` → `check-blindspot` **exit 1** (the checker's own `fires` example; positive control). `现在是买入股票的好时机。` ("now is a good time to buy stocks") → **exit 0, missed.** Same idea in the other languages, all caught: en *"Now is a great time to buy stocks."* → exit 1, ja `今が株を買うのに良い時期です。` → exit 1, ko `지금이 주식을 사기 좋은 때입니다.` → exit 1.
+    - **Cause:** `check-blindspot.mjs`'s zh timing regex is `/(买入|买进|购买|卖出|投资)的好(时机|时候|时点)/`, so the verb must sit right next to `的好`. A short object (`股票`, `基金`, `黄金`) breaks it. **Fix sketch:** allow up to a few CJK characters between them, e.g. `(买入|买进|购买|卖出|投资)[一-鿿]{0,4}的好(时机|时候|时点)`, add the object form as a second `fires` example, and re-run the must-stay-clean controls at the end of the file. ⚠️ Use a real regex or Node here, not `grep` with `.{0,N}` (memory: ugrep).
+    - **Live instances: 0.** This is a gap in the guard, not a defect that is shipping.
+
 175. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
 174. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
@@ -2942,6 +2947,39 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-01 (scheduled dev-agent; **a free pick**. The previous run was a residual pick and said ⛔ *"the next run may NOT take a residual of this one"*. It also named no new residual, so this pick is not one. **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a localization fix. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick:** the last three runs each found the parent guide teaching a US-only fact to ko/zh/ja parents, so I swept the rest of `kidsContent.js` for that class) — **the 13-17 guide no longer gives Korean, Chinese and Japanese parents "every dollar you spend is someone else's income" as an economists' saying.** It now uses the wording the app's own economy lesson uses in those languages: "one person's spending is always someone else's income".
+
+**Step 3.5: the first candidate's premise was wrong, so I re-decided.** The sweep's strongest candidate was `13-17.lessons[6]`, "A CREDIT SCORE is a number…". I suspected it described a US-only institution to ja/zh parents. **Measured by web search: it does not.** Japan's CIC has offered "Credit Guidance", a 200-800 score, since 2024-11-28 (Nikkei), and lenders can query it from 2025-04. China's PBOC credit report carries a 0-1000 "数字解读" score on the bank version, though not on the personal one. Korea has 신용점수. **The blurb stays as it is.** `$2+ trillion` (`13-17[2]`) was ruled on 09-05 and was not reopened.
+**The second candidate holds.** `13-17.lessons[0]` presents a saying ("Economists have a saying") and renders it as `당신이 쓰는 모든 달러` / `你花的每一美元` / `使った1ドル`. **Controls, with measurements:** (1) The economy lesson states the same saying in ko/zh/ja with no currency: `한 사람의 지출은 언제나 다른 사람의 소득입니다`, `一个人的支出，永远是另一个人的收入`, `ある人の支出は必ず別の誰かの収入になります` (`lessonContent.economy.{ko,zh,ja}.js:52`). (2) The same file's own `13-17.lessons[4]` already renders "every dollar you earn" as `번 돈` / `每一块钱` / `稼いだお金`. **The house convention is clear in both places, and this line broke it.** es keeps `cada dólar`, which is the app's es convention.
+
+#### What shipped
+`src/content/kidsContent.js`, **1 line** (`git diff --numstat` 1/1). One sentence each in ko/zh/ja, nothing else in the strings changed:
+- ko `당신이 쓰는 모든 달러는 다른 사람의 소득입니다.` → `한 사람의 지출은 언제나 다른 사람의 소득입니다.`
+- zh `你花的每一美元都是别人的收入。` → `一个人的支出，永远是另一个人的收入。`
+- ja `使った1ドルは誰かの収入になる。` → `ある人の支出は、必ず別の誰かの収入になる。`
+A Node patcher asserted each old phrase was present once and each new phrase absent, and the reverse after the write. I read all three final strings in full.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `check-blindspot` | **exit 0** on the shipped file. **Plants:** en *"Now is a great time to buy stocks."* → **exit 1**. zh `现在是买入的好时机。` → **exit 1**. ⚠️ zh `现在是买入股票的好时机。` → **exit 0 (missed)**: filed as **item 176**. All restored from the scratchpad copy (`cmp` identical) |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (`index-Bcr5enjJ.js`), system Node v24.18.0 |
+| Bundle | new ko and ja phrases in **1** asset each; the new zh phrase in **2** (the guide plus the economy lesson, which already had it); all 3 old phrases in **0**; control (a nonsense string) → 0 |
+| Live walk | **not done.** One sentence of parent-guide prose, about the same length as before |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §10.1 is covered by the plants above, and the sentence gives no advice. §10.3: this is still parent-guide copy in the same voice. No date, market figure or Dalio reference.
+- **DECISIONS.md / completed work:** nothing rules on this copy. It does not touch the three earlier 10-01 kids fixes, or the 09-05 `$2+ trillion` ruling.
+- **Could the change be wrong?** It loses nothing: the coffee chain in the next sentence is unchanged, and it carries the "connected" point. Dropping `당신이` also removes a second-person form the Korean lesson avoids. **Seen, not fixed:** `quizText.ko.js:28` and `quizText.ja.js:28` also keep `1달러`/`1ドル` for the same saying. zh already does not. They faithfully translate an en `explain` that itself says "Every dollar spent", so they are a weaker case than a quoted saying. I left them alone.
+- **Would a reviewer get my result?** Yes: the two web searches, the line-52 greps, the patcher's asserts, the plants, and the bundle grep. No conflict found. I am not a fluent reader of ko/zh/ja (**O-3**).
+
+**Seen, not fixed:** item 176 (new), and the quiz `explain` note above. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the Korean, Chinese and Japanese parent guide quoted an economists' saying in US dollars. It now uses the app's own wording, and I found and filed a gap in the Chinese advice-language guard. Still waiting on you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-01 (scheduled dev-agent; **the previous run's named residual, re-measured first.** Its "Seen, not fixed" said *"`13-17.lessons[4]`'s paycheck line names Social Security and Medicare in all five languages … not false the way this one was"*. That run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** this is a fact fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the parent guide no longer tells ko, zh and ja parents that the pension and health-insurance deductions on a paycheck are taxes.** In their countries those deductions are insurance premiums, not taxes.
 
