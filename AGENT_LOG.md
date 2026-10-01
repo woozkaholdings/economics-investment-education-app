@@ -2943,6 +2943,39 @@ same journey.
 
 ## Run log
 
+### 2026-10-01 (scheduled dev-agent; **the previous run's one named, open residual**: its "Seen, not fixed" said *"The 09-10 note that ko/ja `9-12.lessons[6]` teach a US-style checkout (sales tax added at the register) is still open"*. The previous run was a free pick, so W-6.2 rule 1 allows this. **W-9.4 does not bind**: neither of the previous two runs (the parent-guide superlatives, the 320 px lever measurement) was a short-string hand read, and this is a fact fix anyway. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the parent guide no longer tells ko, zh and ja parents that the shelf price usually isn't what you pay.** In their countries, it is.
+
+**Step 3.5: the premise and its controls.** The 09-10 note was "from knowledge, not measured", and it named ko/ja only. Measured by web search this run: **Japan** has required tax-inclusive price display (総額表示) since **2021-04-01**, under Article 63 of the Consumption Tax Act. The **EU**'s Price Indication Directive 98/6/EC defines the selling price as the final price *"including VAT and all other taxes"*. **China** and **Korea**: retail shelf prices include VAT (Wikivoyage *Shopping in China*; the US government's Korea pricing guide). **Control, the case the claim must keep:** the US adds sales tax at the register in most states, and Japan itself allowed tax-exclusive display from 2013 to 2021, so the sources do separate the two systems. **The premise was narrower than the truth:** the note named ko/ja, but **zh** said the same thing (`很多地方结账时会加一点销售税`), and so did **es**, whose readers in Spain or Mexico also see tax-inclusive prices. The English *"Many places add…"* was hedged. Read as "the stores near you", it was still false for most readers outside the US.
+**Term conventions, measured in `kidsContent.js` (the "US" word):** es `EE.UU.` (1), ko `미국` (1), zh `美国` (1), ja `米国` (1). Across `src/`, `부가가치세`/`增值税`/`消費税` had **0** uses each, so those three are chosen rather than measured. The control: `판매세`/`销售税`/`売上税` returned **1** each, the strings being replaced.
+
+#### What shipped
+`src/content/kidsContent.js`, **2 lines** (`git diff --numstat` 2/2), `9-12.lessons[6]` `text` and `why`, 10 strings. en:
+- `text` → *"Look at a store receipt sometime and ask: how much of what you paid was tax? In most of the US, a SALES TAX is added at checkout, so you pay a bit more than the shelf price. In many other countries, the tax is already built into the shelf price, so the shelf price is what you pay."*
+- `why` → *"…knowing whether tax is added at the register or already built into the price is a small habit that prevents real financial surprises, especially when traveling or shopping online from another country."*
+es follows the English. **ko/zh/ja lead with the reader's own system and name it** (`한국을 비롯한 많은 나라에서는 … 부가가치세`, `在中国和许多其他国家 … 增值税`, `日本をはじめ多くの国では … 消費税`), then give the US case. The meaning is the same as the English; only the order differs. The receipt line now asks a question instead of claiming the receipt shows the tax, because Chinese retail receipts often don't show it. A Node patcher checked that each target line was a single-line object, then checked that the old phrases were gone (en, ja `多くのお店ではレジで`, ko `많은 가게에서`, zh `很多地方结账时`). The original is in the scratchpad.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `npm run check-blindspot` | **exit 0**. **Plant:** *"Now is a great time to buy stocks."* appended to the new en `text` → **exit 1**; restored from the scratchpad copy (`cmp` identical) → **exit 0** |
+| Module | `import("./src/content/kidsContent.js")` loads |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (`index-BkVjkOiX.js`), system Node v24.18.0 |
+| Bundle | new en phrase in **1** asset, new ja phrase in **1**, old en phrase in **0**; control (a nonsense string) → 0 |
+| Live walk | **not done.** One blurb in the parent guide, a wrapping prose block. The ko/zh/ja `text` grew by about 40-60 characters |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §10.1 proven by the plant above, and the text gives no advice. §10.3: still parent-facing, in the blurb's existing voice. No date, no market figure, no Dalio. The only year in this entry (2021) is in the log, not in `src/`.
+- **DECISIONS.md / completed work:** nothing rules on this copy. The 09-10 archive note is the only prior mention, and it was "deliberately NOT fixed", so this is not a redo.
+- **Could the new text be wrong?** *"Most of the US"*: 45 states and DC levy a statewide sales tax. Alaska has local sales taxes only. *"Many other countries … built into the shelf price"*: holds for the EU, Japan, Korea and China by the sources above. The ko/zh/ja claim about their own country is the strongest claim here, and it is the one with a statute or source behind it. I am not a fluent reader of ko/zh/ja (**O-3**).
+- **Would a reviewer get my result?** Yes: the searches named above, the patcher's assertions, the plant, and the bundle grep. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** `13-17.lessons[4]`'s paycheck line names *Social Security and Medicare* in all five languages. That names a US example, so it is not false the way this one was, and it is left alone. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the parent guide told Japanese, Korean and Chinese parents that tax usually gets added at the register. In their countries the shelf price already includes it, and the guide now says so. Two things still need you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-01 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the 320 px lever measurement) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the run before last was one), and this is not one: it is an English accuracy fix carried into four languages, the same shape as the 09-28 lesson-33 fix. **The pick is a residual two runs named and neither took**: the 2026-09-10 entry's *"two unsourced superlatives in `why` lines"* and the 2026-09-20 entry's *"`parentTip` … 'the best teacher' is an unsupported superlative"* (both in the archive, "Seen, deliberately NOT fixed")) — **the parent guide no longer names two different habits as "the single habit" that keeps a bank account out of trouble, and no longer calls real-time trading "the best teacher".** Four fields, all five languages, in `kidsContent.js`.
 
 **Step 3.5: the premise and its controls.** Node over `kidsContent` (every band's `text`/`why`/`parentTip`/`activity`, en) for `single|biggest|best|most reliable|one habit|only|always|never`. **Control:** the scan also returns the hedged forms (`one of the most common`, `almost always`), so it fires. **Four unhedged claims are still live, and two of them contradict each other**:
