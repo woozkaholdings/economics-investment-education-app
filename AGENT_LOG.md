@@ -2943,6 +2943,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-01 (scheduled dev-agent; **the previous run's named residual, re-measured first.** Its "Seen, not fixed" said *"`13-17.lessons[4]`'s paycheck line names Social Security and Medicare in all five languages … not false the way this one was"*. That run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** this is a fact fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the parent guide no longer tells ko, zh and ja parents that the pension and health-insurance deductions on a paycheck are taxes.** In their countries those deductions are insurance premiums, not taxes.
+
+**Step 3.5: the premise was wrong in two places.** (1) The lesson is `13-17.lessons[5]`, not `[4]` (`[4]` is "pay yourself first"). (2) **Only en/es name Social Security and Medicare.** ko/zh/ja were already localized (`사회보장이나 건강보험`, `社保、医保`, `社会保障や医療保険`), but every one of them called those deductions **a tax** (`원천징수되는 세금`, `预扣的税`, `天引きされる税金`). Measured by web search this run: **Japan:** Tokyo's tax bureau and payroll guides separate 所得税・住民税 (taxes) from 社会保険料 (健康保険・厚生年金・介護保険), which are premiums. **Korea:** a pay stub deducts 4대보험료 (국민연금, 건강보험, 장기요양, 고용보험) plus 소득세 and 지방소득세. **China:** 五险一金 personal contributions are deducted *before* 个人所得税 is computed, as a separate line. **Control, the case that must stay:** in the US, Social Security and Medicare really are payroll taxes (FICA), so en/es keep "taxes". What en/es lacked was **income tax**, usually the larger withholding. The app's own essentials lesson 7 says the gap is *"usually not only income tax"*, so "taxes for things like Social Security and Medicare" left income tax out.
+**Term conventions (counts across `src/`):** `impuesto sobre la renta` 6 vs `impuesto a la renta` 0, `impuestos de nómina` 4, `소득세` 10, `所得税` 20 (positive controls). `사회보험료`/`个人所得税`/`社会保険料` were 0 each, so those are chosen, not measured.
+
+#### What shipped
+`src/content/kidsContent.js`, **1 line** (`git diff --numstat` 1/1), the `text` of `13-17.lessons[5]`, 5 strings:
+- en: *"The difference — **income tax, plus payroll taxes for Social Security and Medicare, all withheld before you're paid** — isn't a mistake; …"*; es follows it.
+- ko `소득세 같은 세금과 국민연금·건강보험 같은 사회보험료가 미리 떼어지기 때문인데`; zh `预扣的个人所得税，以及养老保险、医疗保险等社保个人缴费`; ja `所得税などの税金と、健康保険や厚生年金などの社会保険料が天引きされるため`.
+A Node patcher checked that each old phrase appeared once (and each new phrase zero times) before the write, then the reverse after it. I read all five final strings in full (memory: string assertions don't check content). The original is in the scratchpad.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `check-blindspot` | **exit 0**. **Plant:** *"Now is a great time to buy stocks"* in the new en string → **exit 1**; restored from the scratchpad copy (`cmp` identical) → **exit 0** |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0** (`index-CkPCVOqq.js`), system Node v24.18.0 |
+| Bundle | new en phrase in **1** asset, new ja phrase in **1**, old en phrase in **0**; control (a nonsense string) → 0 |
+| Live walk | **not done.** One prose blurb in the parent guide; ko/zh/ja each grew by about 10-20 characters |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §10.1 is covered by the plant above, and the text gives no advice. §10.3: the blurb stays parent-guide copy in its existing voice. No date, market figure or Dalio reference.
+- **DECISIONS.md / completed work:** nothing rules on this copy. It does not touch the two earlier 10-01 kids fixes (`9-12[5]`, `9-12[6]`, `13-17[3]`, the parentTip).
+- **Could the new text be wrong?** zh says 社保**个人**缴费, which is right: work-injury and maternity insurance are employer-only. The Chinese line leaves out 住房公积金, but "等" (etc.) covers it, so the line is incomplete but not false. ja leaves out 住民税 and 雇用保険, and "など" covers both. I am not a fluent reader of ko/zh/ja (**O-3**).
+- **Would a reviewer get my result?** Yes: the three searches, the patcher's asserts, the plant, and the bundle grep. No conflict found.
+
+**Seen, not fixed:** nothing new. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the parent guide told Korean, Chinese and Japanese parents that pension and health-insurance deductions are "taxes"; it now separates income tax from insurance premiums, and the English names income tax too. Still waiting on you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-01 (scheduled dev-agent; **the previous run's one named, open residual**: its "Seen, not fixed" said *"The 09-10 note that ko/ja `9-12.lessons[6]` teach a US-style checkout (sales tax added at the register) is still open"*. The previous run was a free pick, so W-6.2 rule 1 allows this. **W-9.4 does not bind**: neither of the previous two runs (the parent-guide superlatives, the 320 px lever measurement) was a short-string hand read, and this is a fact fix anyway. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the parent guide no longer tells ko, zh and ja parents that the shelf price usually isn't what you pay.** In their countries, it is.
 
 **Step 3.5: the premise and its controls.** The 09-10 note was "from knowledge, not measured", and it named ko/ja only. Measured by web search this run: **Japan** has required tax-inclusive price display (総額表示) since **2021-04-01**, under Article 63 of the Consumption Tax Act. The **EU**'s Price Indication Directive 98/6/EC defines the selling price as the final price *"including VAT and all other taxes"*. **China** and **Korea**: retail shelf prices include VAT (Wikivoyage *Shopping in China*; the US government's Korea pricing guide). **Control, the case the claim must keep:** the US adds sales tax at the register in most states, and Japan itself allowed tax-exclusive display from 2013 to 2021, so the sources do separate the two systems. **The premise was narrower than the truth:** the note named ko/ja, but **zh** said the same thing (`很多地方结账时会加一点销售税`), and so did **es**, whose readers in Spain or Mexico also see tax-inclusive prices. The English *"Many places add…"* was hedged. Read as "the stores near you", it was still false for most readers outside the US.
