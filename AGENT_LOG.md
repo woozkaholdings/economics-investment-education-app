@@ -2943,6 +2943,45 @@ same journey.
 
 ## Run log
 
+### 2026-10-01 (scheduled dev-agent; **a free pick**. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. The previous run (the 320 px lever measurement) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the run before last was one), and this is not one: it is an English accuracy fix carried into four languages, the same shape as the 09-28 lesson-33 fix. **The pick is a residual two runs named and neither took**: the 2026-09-10 entry's *"two unsourced superlatives in `why` lines"* and the 2026-09-20 entry's *"`parentTip` … 'the best teacher' is an unsupported superlative"* (both in the archive, "Seen, deliberately NOT fixed")) — **the parent guide no longer names two different habits as "the single habit" that keeps a bank account out of trouble, and no longer calls real-time trading "the best teacher".** Four fields, all five languages, in `kidsContent.js`.
+
+**Step 3.5: the premise and its controls.** Node over `kidsContent` (every band's `text`/`why`/`parentTip`/`activity`, en) for `single|biggest|best|most reliable|one habit|only|always|never`. **Control:** the scan also returns the hedged forms (`one of the most common`, `almost always`), so it fires. **Four unhedged claims are still live, and two of them contradict each other**:
+- `9-12.lessons[5].why`: planning before spending *"is **the single habit** that keeps adult budgets — and bank accounts — out of trouble."*
+- `13-17.lessons[3].text`: checking the balance before buying *"is **the one habit** that keeps a bank account out of trouble."* So a parent reading both bands is told two different habits are each the only one.
+- `13-17.lessons[3].why`: *"**the single biggest predictor** of whether a first bank account or debit card stays out of trouble."* That is an empirical claim. The nearest measurement is CFPB's 2017 *Data Point: Frequent Overdrafters* (web search; consumerfinance.gov). Its predictors are **low end-of-day balances (typically under $350 vs. over $1,550) and low credit scores**, not a habit, and it ranks no habit at all. Nothing in the corpus supports the claim either.
+- `13-17.parentTip`: *"Real-time experience is **the best teacher** for understanding market psychology."* It sits under the 09-20 activity, which teaches that short-run single-stock moves are mostly noise.
+- **Word-choice control for the rewrite:** "overdraft" appears **0** times in `src/` in any language (`sobregiro`, `초과인출`, `透支`, `残高不足` all 0; positive control `신용` **126**, `信用` **167**). So the new text does not introduce that term. Korean and Japanese debit cards usually just decline, so it says "**a declined card or a bank fee**", which is true in all three systems.
+
+#### What shipped
+`src/content/kidsContent.js`, **4 lines** (`git diff --numstat` 4/4; each field is one line holding five languages), 20 strings. en:
+- `9-12[5].why` → *"…is **a habit that helps keep** adult budgets — and bank accounts — out of trouble."*
+- `13-17[3].text` → *"…is **a simple habit that helps keep** a bank account out of trouble."*
+- `13-17[3].why` → *"Check first, spend second won't fix a budget on its own, but it catches one easily avoided mistake — spending money that isn't in the account — before it turns into a declined card or a bank fee."*
+- `13-17.parentTip` → *"Consider a practice investment account that uses pretend money. Watching real prices rise and fall with nothing at stake gives you a safe way to talk about how the ups and downs feel."*
+es/ko/zh/ja carry the same meaning. For the first two, each language keeps its own existing sentence and only the superlative clause changes. A Node patcher asserted old=1/new=0 before each of the 20 writes and old=0/new=1 after. The original is in the scratchpad.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `npm run check-blindspot` | **exit 0** |
+| Re-scan | `single habit|single biggest|the one habit|best teacher` over every en kids field → **0**. **Control:** the same patterns over the original file → **2** lines |
+| Build | `scripts/build-out-of-tree.sh` → **✓ built, exit 0**, system Node v24.18.0 |
+| Bundle | the new parentTip phrase is in `Reference-CmhXey1p.js`; *"best teacher for understanding"* is in **0** files; control (a string not in the source) → 0 files |
+| Live walk | **not done.** Four blurbs in the parent guide, each within ~30 characters of its old length, in a screen that wraps prose |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** §10.1, proven and not assumed. **Plant:** *"Now is a great time to buy stocks."* in the new en parentTip → `check-blindspot` **exit 1** (§10.1 FAIL). Restored from the scratchpad copy (`cmp` identical, not `git checkout --`) → **exit 0**. The new parentTip is weaker than the old one on advice adjacency: "Consider … pretend money" in place of "Set up a practice investment account". §10.3: the guide stays parent-facing; the parentTip addresses the parent, and the blurbs keep their existing voice. No date, no Dalio attribution.
+- **DECISIONS.md / completed work:** nothing rules on this copy. This does not touch the 09-20 activity rewrite, which is the line above the parentTip.
+- **Could the new text be wrong?** "Helps keep … out of trouble" is a modest claim, and true for both habits, so the two bands no longer contradict each other. "A declined card or a bank fee": with too little money, a debit purchase is either declined or paid with a fee, depending on the bank and country. I am not a fluent reader of ko/zh/ja. These are meaning-preserving edits of an English claim, not a fluent review (**O-3**).
+- **Would a reviewer get my result?** Yes: the scan with its control, the patcher's asserts, the plant, and the bundle grep. No conflict found.
+
+**Seen, not fixed and not numbered (W-6.2 rule 2):** `13-17.lessons[4].why` (*"one of the most reliable ways real people actually build savings"*) is hedged ("one of") and left alone. The 09-10 note that ko/ja `9-12.lessons[6]` teach a US-style checkout (sales tax added at the register) is still open; it is a localization call (O-3-shaped). **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the parent guide told parents that two *different* habits were each "the single habit" that keeps a bank account out of trouble, and called live trading "the best teacher". Both claims are now modest and consistent, in five languages. Two things still need you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-09-30 (scheduled dev-agent; **the previous run's one unmeasured risk**. Its Verification table said *"Live walk: **not done.** The ko label grows by three characters (`근처`) inside a lever button … That is the one layout risk, and it is not measured here"*. The previous run was a free pick, so W-6.2 rule 1 allows this. **W-9.4 bars a short-string hand read** (the previous run was one), and this is not one: it is a layout measurement. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the risk does not exist, so nothing in `src/` changed. All six levers fit on one line in all five languages, down to 320 px.**
 
 **Step 3.5: the premise and its controls.** Premise: the longer ko label `제로 근처까지 인하` might overflow its button at phone width. Re-reading `PolicySim.jsx:105-134` first: the lever group is `flex-wrap` and the buttons do not set `white-space: nowrap`, so a long label would wrap inside the button or push it to a new row rather than spill out. That lowers the risk; it does not measure it, so I measured it.
