@@ -2945,6 +2945,34 @@ same journey.
 
 ## Run log
 
+### 2026-10-02 (scheduled dev-agent; **the previous run's named residual, the second and last in this chain**. Its "Seen, not fixed" said *"I did not test es/en forms with an object between the frame and the verb"*. That run was itself a residual pick, so ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** this is a checker fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **`check-blindspot` now catches Spanish "es el momento ideal para invertir" and "a good time to start investing" in English and Spanish.** The object forms the residual asked about were never a gap.
+
+**Step 3.5: the residual's premise is wrong; a different gap was there.** Probed in Node against the live regexes: `Now is a good time to buy stocks.`, `…invest in gold.` and `Ahora es un buen momento para comprar acciones.` **already fire**, because the en pattern ends at the verb and the es pattern has no end anchor. What misses: **Spanish's usual word order, adjective after the noun** (`Es el momento ideal para invertir.`, `…adecuado para comprar acciones.`, `…oportuno para vender.`, `Es un momento perfecto para comprar.`), and **"start investing"** in both languages (`a good time to start investing`, `buen momento para empezar a invertir`). Also missed and NOT added: `a great time to be buying`, `a good time to get into stocks` (too loose to pattern without false positives).
+
+#### What shipped
+`scripts/check-blindspot.mjs` only. The en timing pattern allows `start/begin` before the verb and an `-ing` form. The es prenominal pattern adds `perfecto` and `empezar/comenzar a`. A new es pattern covers `momento ideal|adecuado|oportuno|perfecto|indicado|propicio|justo (de|para)` + verb. Each carries a `fires` list. Timing patterns 8 → **9**, advice patterns 33 → **34**.
+
+#### Verification
+| check | result |
+|---|---|
+| False-positive scan | widened en/es and two loose probes (`time to (start )?buy…`, `momento \S+ (de\|para)`) hit **0** of 21,137 lines in 74 files (`src/` + `index.html`). **Control:** the same scan finds `momento` 39×, `time to` 3×, and the shipped `momento de comprar` line 1×, so it is live |
+| `check-blindspot` clean | **exit 0**; timing control: 9 patterns fire, 2 must-stay-clean sentences stay clean against 34 patterns |
+| Plant | `Es el momento ideal para invertir.` appended to the live `lessonContent.money.es.js` sentence → **new checker exit 1, old checker exit 0**. Restored from the scratchpad copy, `cmp` identical |
+| Mutation control | non-advice `Hace buen tiempo.` added to the new es `fires` list → **exit 1**, `TIMING CONTROL` fires. Restored, `cmp` identical |
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-Bcr5enjJ.js`, unchanged (no `src/` change), system Node v24.18.0 |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / DECISIONS.md / completed work:** only widens a §10.1 guard, as item 164 and 176 did. No content, state or build change; no archived item touches these two regexes after 164.
+- **Could it fail correct copy?** A descriptive "nobody knows the ideal time to invest" would fire. That was already true of the en `right time to buy` pattern before this run, and it hits 0 times today. If it ever fires on teaching copy, add a must-stay-clean entry (item 164's method) rather than narrowing.
+- **Would a reviewer get my result?** Yes: probe, scan, plant and mutation are re-runnable as written. No conflict found.
+
+**Seen, not fixed:** a stray empty `probe.mjs` was created one level above `$TMPDIR` by a bad heredoc of mine and removed in the same run; nothing in the repo was touched. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the advice-language guard now catches the common Spanish "es el momento ideal para invertir"; no shipped text was affected. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-02 (scheduled dev-agent; **the previous run's named residual, item 176**. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a checker fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **item 176 is closed: `check-blindspot` now catches "now is a good time to buy stocks" in Chinese.** The zh timing pattern allows up to four Han characters between the verb and `的好`, and bare `买`/`卖` now count as verbs.
 
 **Step 3.5: the premise holds, and it was narrower than the gap.** Re-measured in Node (not grep): the old regex fires on `现在是买入的好时机。` (positive control) and misses `买入股票`, `投资黄金`, `卖出基金` + `的好时机`. **It also misses `现在是买股票的好时机。`**, the most natural phrasing, because bare `买` was not in the verb list. The item's fix sketch would still have missed that one. The widened regex fires on all six object forms. It stays silent on `现在是学习的好时机。` and on `买入，股票的好时机` (punctuation breaks the Han-only gap). **False-positive scan, with a control:** across 74 files in `src/` plus `index.html`, the new regex hits **0** lines, and a loose `好时机` scan also hits 0. The scan is live: it reads 1,952 CJK lines and finds `时机` 4 times and `时候` 29 times. All 4 `时机` uses are descriptive ("time beats timing"), and none has a buy/sell verb near it.

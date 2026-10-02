@@ -182,11 +182,16 @@ const readmePath = join(ROOT, "README.md");
 {
   const timing = [
     // English
-    { re: /\b(good|great|right|best|perfect|ideal) time to (buy|sell|invest)\b/i, fires: "Rates are low, so now is a good time to buy." },
+    // "start/begin investing" joined 2026-10-02: an object after the verb
+    // ("buy stocks") already fired, but "a good time to start investing" did not.
+    { re: /\b(good|great|right|best|perfect|ideal) time to ((start|begin) )?(buy|sell|invest)(ing)?\b/i, fires: ["Rates are low, so now is a good time to buy.", "Now is a good time to buy stocks.", "Now is a good time to start investing."] },
     { re: /\bnow is the time to (buy|sell|invest)\b/i, fires: "Now is the time to invest." },
     // Spanish — both forms require the evaluative or copular frame, so the
-    // descriptive "en el momento de comprar" stays clean.
-    { re: /\b(buen|mejor|ideal) momento (de|para) (comprar|vender|invertir)/i, fires: "Ahora es un buen momento para comprar." },
+    // descriptive "en el momento de comprar" stays clean. Widened 2026-10-02:
+    // Spanish usually puts the adjective AFTER the noun ("el momento ideal
+    // para invertir"), and that form, plus "empezar a invertir", passed.
+    { re: /\b(buen|mejor|ideal|perfecto) momento (de|para) ((empezar|comenzar) a )?(comprar|vender|invertir)/i, fires: ["Ahora es un buen momento para comprar.", "Es buen momento para empezar a invertir."] },
+    { re: /\bmomento (ideal|adecuado|oportuno|perfecto|indicado|propicio|justo) (de|para) ((empezar|comenzar) a )?(comprar|vender|invertir)/i, fires: ["Es el momento ideal para invertir.", "Es el momento adecuado para comprar acciones."] },
     { re: /\bes (el|un) momento (de|para) (comprar|vender|invertir)/i, fires: "Ahora es el momento de comprar." },
     // Korean — the `하` in `매수하기` is not optional here: the first draft of
     // this pattern omitted it and matched nothing at all.
