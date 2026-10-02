@@ -240,7 +240,7 @@ export const quizText = [
   {
     "q": "Una cuenta de ahorros crece 3% en un año donde los precios suben 5%. ¿Qué pasó con su poder adquisitivo real?",
     "opts": [
-      "Se redujo — el rendimiento real fue aproximadamente -2%, aunque el saldo creció",
+      "Se redujo, a pesar de que el saldo creció",
       "Creció 3%, igual que el rendimiento nominal",
       "Creció 8%, combinando ambas tasas",
       "Se mantuvo exactamente igual sin importar la inflación"

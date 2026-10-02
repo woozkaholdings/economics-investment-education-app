@@ -1427,9 +1427,10 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         and never looked at rank 5 onward, where `q039` sat at 48%, class A, with the WIDEST bands in the
         reachable set** (zh [23,35], ja [30,53] — the opposite of the q005 objection the stop line rested
         on). Fixed this date in all five languages; §65 dropped one question in every language and the
-        standing WARN cleared. **The remainder is still not all class B: `q023` (46%, L9), `q037` (37%, L23),
-        `q040` (16%), `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q023` is next by
-        margin. **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
+        standing WARN cleared. **The remainder is still not all class B: `q037` (37%, L23), `q040` (16%),
+        `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q037` is next by margin.
+        (`q023` done 2026-10-02; landings in that day's run log. `q019`, 43%, ranks above `q037` but is class B.)
+        **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -2944,6 +2945,43 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-02 (scheduled dev-agent; **a free pick**. The previous run was a free pick, so W-6.2 rule 1 would have allowed its residuals; I took none. **W-9.4 bars a short-string hand read** (the previous run was one), and its named residual (ko quiz text calling a lesson 강의) is that mode, so I left it. **The pick is item 160's named next question, `q023`**: a quiz-design fix measured by §65, not a translation read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 9's check question no longer gives its answer away by length. The correct option was the longest in all five languages, by 46-64%. It now sits inside its distractors' length band in every language.**
+
+**Step 3.5: the premise and its controls.** I re-ranked all 46 questions by relative margin, (len(correct) − len(longest distractor)) / len(longest distractor), in code points, over `quizMeta` and the five `quizText` modules. **The item's figures reproduce exactly:** `q008` 57% (B), `q021` 56% (A, unreachable), `q014` 53% (B), **`q023` 46% (A)**, with per-language margins en/es/ko/zh/ja **46/46/57/64/56**. §65 before: longest-option **en 50.0%, es 47.8%, ko 47.8%, zh 43.5%, ja 45.7%**. **Class A holds:** each correct option was a short answer plus a detachable tail ("— the real return was roughly -2%"). **Item 165's caveat checked:** the `explain` in all five languages already carries the -2% formula and the "balance grew" point, so it is not a stub. The tail's reasoning is not lost.
+
+#### What shipped
+One string per file, five files (`src/content/quizText.{en,es,ko,zh,ja}.js`). A Node patcher asserted one old and zero new before writing, then zero old and one new after. Landings, with the distractor band `[min,max]`:
+| lang | new correct option | len | band |
+|---|---|---|---|
+| en | It shrank, even though the balance grew | 39 | [35,50] |
+| es | Se redujo, a pesar de que el saldo creció | 41 | [33,54] |
+| ko | 잔고는 늘었지만 구매력은 줄어들었습니다 | 21 | [18,23] |
+| zh | 缩水了，尽管余额增长了 | 11 | [10,14] |
+| ja | 残高は増えたが、購買力は低下した | 16 | [15,18] |
+
+en and zh are pure deletions. es was not: the pure deletion landed at 33, tied with the shortest distractor, so I used `a pesar de que` instead of `aunque`. ko and ja were reworded to name 구매력/購買力, because their pure deletions landed below the floor (16 and 12), which would have made the answer the strictly shortest option. **No cell is at a band wall; the tightest are zh (1 above the floor) and ja (1 above the floor, 2 below the ceiling).** Trimming a CJK distractor could re-open this question.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file |
+| §65 after | longest-option **en 47.8%, es 45.7%, ko 45.7%, zh 41.3%, ja 43.5%**: **one question fewer in every language**, as expected. Shortest-option is unchanged at 2.2/2.2/0.0/2.2/4.3, so the opposite cue was not created |
+| Re-rank | `q023` is gone from the beatable list; the top four are now `q008`, `q021`, `q014`, `q019` |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DSHfcCiS.js`, system Node v24.18.0 |
+| Bundle | each of the 5 new options is in 1 asset; each of the 5 old tails is in 0; a nonsense probe is in 0 |
+| Live walk | **not done.** Every new option is shorter than the one it replaces, so no new layout risk |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, date, market figure or Dalio content; `check-blindspot` passed in `npm test`. **DECISIONS.md / completed work:** this continues item 160 with its own rule (move the tail, check `explain` first, land inside the band) and undoes nothing archived.
+- **Is the answer still right and still enough?** Yes. The question asks what happened to real purchasing power; "it shrank, even though the balance grew" answers it, and the -2% arithmetic shows in `explain` right after the learner answers. **Could the edit be wrong?** The es/ko/zh/ja wording is machine-written, and no fluent reader has seen it (**O-3**).
+- **Would a reviewer get my result?** Yes: the ranking script, the patcher asserts, `npm test`'s §65 line, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. Item 160's next class-A question is `q037` (37%, L23). **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in lesson 9's check question, the right answer was always the longest one, so you could guess it by length; it is now trimmed in all five languages and the -2% working stays in the explanation. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-02 (scheduled dev-agent; **a free pick**. The previous run said ⛔ *"the next run may NOT take a residual of this one"*, and this pick is not one. **W-9.4 allows a short-string hand read:** neither of the previous two runs was one (both were `check-blindspot` fixes). `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is the one learner-visible translated surface no run had hand-read: `moneyVisuals.js`**, the titles, labels, captions and screen-reader descriptions of the seven personal-finance figures (63 localized entries). The archive mentions the module 66 times and never as a hand read) — **five defects fixed across ko, ja and zh: one truncated Korean label (and the lesson sentence it is lifted from), three Korean particles after `$65`, six Japanese uses of "各回"/"この回" for "the lesson", six Korean uses of 수업 for it, and one Chinese title in the wrong word order.**
 

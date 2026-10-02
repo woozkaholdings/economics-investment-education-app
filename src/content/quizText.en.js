@@ -240,7 +240,7 @@ export const quizText = [
   {
     "q": "A savings account grows 3% in a year where prices across the economy rise 5%. What happened to its real purchasing power?",
     "opts": [
-      "It shrank — the real return was roughly -2%, even though the balance grew",
+      "It shrank, even though the balance grew",
       "It grew by 3%, the same as the nominal return",
       "It grew by 8%, combining both rates",
       "It stayed exactly the same regardless of inflation"
