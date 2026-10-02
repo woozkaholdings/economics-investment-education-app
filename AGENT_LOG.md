@@ -1314,10 +1314,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-176. **[Tooling/§10.1 — filed 2026-10-01 by the dev-agent run that changed the parent guide's "every dollar" saying, found by its own blindspot plant.] The Chinese timing-advice pattern misses a sentence with an object between the verb and 的好时机.**
-    - **Measured 2026-10-01**, each sentence planted into `kidsContent.js`, then restored (`cmp` identical): `现在是买入的好时机。` → `check-blindspot` **exit 1** (the checker's own `fires` example; positive control). `现在是买入股票的好时机。` ("now is a good time to buy stocks") → **exit 0, missed.** Same idea in the other languages, all caught: en *"Now is a great time to buy stocks."* → exit 1, ja `今が株を買うのに良い時期です。` → exit 1, ko `지금이 주식을 사기 좋은 때입니다.` → exit 1.
-    - **Cause:** `check-blindspot.mjs`'s zh timing regex is `/(买入|买进|购买|卖出|投资)的好(时机|时候|时点)/`, so the verb must sit right next to `的好`. A short object (`股票`, `基金`, `黄金`) breaks it. **Fix sketch:** allow up to a few CJK characters between them, e.g. `(买入|买进|购买|卖出|投资)[一-鿿]{0,4}的好(时机|时候|时点)`, add the object form as a second `fires` example, and re-run the must-stay-clean controls at the end of the file. ⚠️ Use a real regex or Node here, not `grep` with `.{0,N}` (memory: ugrep).
-    - **Live instances: 0.** This is a gap in the guard, not a defect that is shipping.
+176. **✅ Closed 2026-10-02 (dev-agent).** `check-blindspot.mjs`'s zh timing pattern now allows up to four Han characters between the verb and `的好`, and accepts bare `买`/`卖`. Its `fires` list (all must match) covers `买入的好时机`, `买入股票的好时机` and `买股票的好时机`. Live instances were 0 and are still 0. Details are in the 2026-10-02 run-log entry.
 
 175. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
@@ -2947,6 +2944,33 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-02 (scheduled dev-agent; **the previous run's named residual, item 176**. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a checker fix, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **item 176 is closed: `check-blindspot` now catches "now is a good time to buy stocks" in Chinese.** The zh timing pattern allows up to four Han characters between the verb and `的好`, and bare `买`/`卖` now count as verbs.
+
+**Step 3.5: the premise holds, and it was narrower than the gap.** Re-measured in Node (not grep): the old regex fires on `现在是买入的好时机。` (positive control) and misses `买入股票`, `投资黄金`, `卖出基金` + `的好时机`. **It also misses `现在是买股票的好时机。`**, the most natural phrasing, because bare `买` was not in the verb list. The item's fix sketch would still have missed that one. The widened regex fires on all six object forms. It stays silent on `现在是学习的好时机。` and on `买入，股票的好时机` (punctuation breaks the Han-only gap). **False-positive scan, with a control:** across 74 files in `src/` plus `index.html`, the new regex hits **0** lines, and a loose `好时机` scan also hits 0. The scan is live: it reads 1,952 CJK lines and finds `时机` 4 times and `时候` 29 times. All 4 `时机` uses are descriptive ("time beats timing"), and none has a buy/sell verb near it.
+
+#### What shipped
+`scripts/check-blindspot.mjs` only. The zh timing entry has the widened regex, and `fires` is now a list of three sentences (the original, `买入股票…`, `买股票…`). The timing control now requires **every** listed sentence to match (`[entry.fires].flat()`), and its failure message prints them all. The other seven entries keep their single-string `fires` unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file and not through a pipe |
+| `check-blindspot` clean | **exit 0**; timing control line: 8 patterns fire, 2 must-stay-clean sentences stay clean against 33 patterns |
+| Item 176's plant | `现在是买入股票的好时机。` appended to the live zh guide sentence in `kidsContent.js` → **exit 1** (was exit 0 on 10-01). Restored from the scratchpad copy, `cmp` identical |
+| Mutation control on the list check | added a non-advice sentence (`今天天气很好。`) to the zh `fires` list → **exit 1**, `TIMING CONTROL` names all four sentences. Restored, `cmp` identical |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-Bcr5enjJ.js`, the same hash as 10-01 (no `src/` change), system Node v24.18.0 |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / DECISIONS.md:** this only widens a §10.1 guard. No content, state, routing or build change. **Completed work:** item 176 was open, and nothing in the archive touches the zh timing regex after item 164 built it.
+- **Could the widening fail correct copy?** A `{0,4}` gap could in theory join a buy verb to an unrelated `的好时候`, for example a descriptive "when buying a house, the good time…". It hits 0 times in today's corpus. If one ever does, the right fix is a must-stay-clean entry, as item 164 did, and not narrowing the gap back.
+- **Would a reviewer get my result?** Yes: the probe script, the plant and the mutation are re-runnable as described. No conflict found.
+
+**Seen, not fixed:** ko/ja object forms were caught on 10-01, but I did not test es/en forms with an object between the frame and the verb. en `good time to buy` needs adjacency by design. Not filed: nothing has shown a miss. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** the advice-language guard missed "now is a good time to buy stocks" in Chinese; it now catches it, and no shipped text was affected. Still waiting on you: **O-2's analytics account** (about 20 minutes), and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-01 (scheduled dev-agent; **a free pick**. The previous run was a residual pick and said ⛔ *"the next run may NOT take a residual of this one"*. It also named no new residual, so this pick is not one. **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a localization fix. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick:** the last three runs each found the parent guide teaching a US-only fact to ko/zh/ja parents, so I swept the rest of `kidsContent.js` for that class) — **the 13-17 guide no longer gives Korean, Chinese and Japanese parents "every dollar you spend is someone else's income" as an economists' saying.** It now uses the wording the app's own economy lesson uses in those languages: "one person's spending is always someone else's income".
 

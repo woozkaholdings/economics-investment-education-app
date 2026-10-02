@@ -191,8 +191,12 @@ const readmePath = join(ROOT, "README.md");
     // Korean — the `하` in `매수하기` is not optional here: the first draft of
     // this pattern omitted it and matched nothing at all.
     { re: /((매수|매도|투자|구매)하|사|팔)기\s*좋은\s*(때|시기|시점|타이밍)/, fires: "지금이 매수하기 좋은 시기입니다." },
-    // Chinese
-    { re: /(买入|买进|购买|卖出|投资)的好(时机|时候|时点)/, fires: "现在是买入的好时机。" },
+    // Chinese — up to four Han characters may sit between the verb and 的好
+    // (backlog item 176): the first form required them to touch, so "now is a
+    // good time to buy stocks" (买入股票的好时机) passed while 买入的好时机 failed.
+    // Bare 买/卖 joined for the same reason (买股票的好时机). The gap is Han-only,
+    // so punctuation still breaks it.
+    { re: /(买入|买进|购买|卖出|投资|买|卖)[一-鿿]{0,4}的好(时机|时候|时点)/, fires: ["现在是买入的好时机。", "现在是买入股票的好时机。", "现在是买股票的好时机。"] },
     // Japanese — 買い時 / 売り時 are the idiom itself, not a description of one.
     { re: /買い時|売り時/, fires: "今が買い時です。" },
     { re: /(買う|売る|投資する)のに(良|よ)い(時期|タイミング)/, fires: "今は投資するのに良いタイミングです。" },
@@ -491,7 +495,8 @@ const readmePath = join(ROOT, "README.md");
     String.raw`"takeaway": "Needs are things you can't function without; wants are everything else, including plenty of things worth buying."`,
     String.raw`"body": "En el momento de comprar, ambas decisiones se sintieron iguales.\n\nTres años después no lo son."`,
   ];
-  const dead = timing.filter((entry) => !matchesLine(entry.fires, entry.re));
+  // `fires` is one sentence or a list; every listed sentence must match.
+  const dead = timing.filter((entry) => [entry.fires].flat().some((s) => !matchesLine(s, entry.re)));
   const falsePositives = LIVE_MUST_STAY_CLEAN.filter((line) => advice.some((p) => matchesLine(line, p)));
 
   if (!timing.length) {
@@ -499,7 +504,7 @@ const readmePath = join(ROOT, "README.md");
   } else if (dead.length) {
     fail(
       `§10.1 TIMING CONTROL: ${dead.length} timing pattern(s) did not match the advice sentence they exist to catch — ` +
-        `a pattern that fires on nothing reports a clean corpus forever:\n  ${dead.map((d) => `${d.re} vs "${d.fires}"`).join("\n  ")}`,
+        `a pattern that fires on nothing reports a clean corpus forever:\n  ${dead.map((d) => `${d.re} vs "${[d.fires].flat().join('" / "')}"`).join("\n  ")}`,
     );
   } else if (falsePositives.length) {
     fail(
