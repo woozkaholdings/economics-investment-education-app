@@ -63,7 +63,7 @@ export const budgetTitle = {
   en: "Maria's $3,000 month",
   es: "El mes de $3,000 de María",
   ko: "마리아의 한 달 $3,000",
-  zh: "玛丽亚的 $3,000 一个月",
+  zh: "玛丽亚一个月的 $3,000",
   ja: "マリアの1か月 $3,000",
 };
 
@@ -462,7 +462,7 @@ export const flipAxisLabels = {
 export const flipZoneLabels = {
   en: ["Here, the $65 feels worth more", "Here, the $50 feels worth more"],
   es: ["Aquí, los $65 parecen valer más", "Aquí, los $50 parecen valer más"],
-  ko: ["이 구간에서는 $65이 더 가치 있게 느껴집니다", "이 구간에서는 $50이 더 가치 있게 느껴집니다"],
+  ko: ["이 구간에서는 $65가 더 가치 있게 느껴집니다", "이 구간에서는 $50이 더 가치 있게 느껴집니다"],
   zh: ["在这一段，$65 感觉更值", "在这一段，$50 感觉更值"],
   ja: ["この区間では$65の方が価値が高く感じられます", "この区間では$50の方が価値が高く感じられます"],
 };
@@ -478,7 +478,7 @@ export const flipMarkerLabel = {
 export const flipCaption = {
   en: "Neither reward changes, and the extra month of waiting is the same extra month at every point on this line. Only the vantage point moves. For most of the year the $65 is simply the better deal — then the $50 comes close enough that the pull of 'now' overtakes it, and the same person answers the opposite way.",
   es: "Ninguna recompensa cambia, y el mes extra de espera es el mismo mes extra en cada punto de la línea. Lo único que se mueve es el punto de vista. Durante casi todo el año los $65 son sencillamente la mejor opción; luego los $50 se acercan lo suficiente como para que el tirón del «ahora» los supere, y la misma persona responde al revés.",
-  ko: "두 보상은 그대로이고, 한 달을 더 기다린다는 조건도 이 선 위의 모든 지점에서 똑같습니다. 움직이는 것은 바라보는 시점뿐입니다. 한 해의 대부분 동안은 $65이 그냥 더 나은 조건이지만, $50이 충분히 가까워지면 '지금'의 끌어당김이 그것을 앞지르고, 같은 사람이 반대로 답하게 됩니다.",
+  ko: "두 보상은 그대로이고, 한 달을 더 기다린다는 조건도 이 선 위의 모든 지점에서 똑같습니다. 움직이는 것은 바라보는 시점뿐입니다. 한 해의 대부분 동안은 $65가 그냥 더 나은 조건이지만, $50이 충분히 가까워지면 '지금'의 끌어당김이 그것을 앞지르고, 같은 사람이 반대로 답하게 됩니다.",
   zh: "两笔钱都没有变，多等的那一个月在这条线的每一点上也都是同样的一个月。变的只是观察的时点。一年里的大部分时间，$65 就是更划算的选择；等到这 $50 靠得够近，“现在”的拉力就会盖过它，同一个人便给出相反的答案。",
   ja: "どちらの報酬も変わらず、1か月余分に待つという条件もこの線上のどの点でも同じです。動くのは見ている時点だけです。1年の大半は$65が単純に有利ですが、$50が十分に近づくと「今」の引力がそれを追い越し、同じ人が逆の答えを出します。",
 };
@@ -486,7 +486,7 @@ export const flipCaption = {
 export const flipDescription = {
   en: "Two rising curves on one chart. For most of the span the $65 curve sits slightly above the $50 curve, and the panel behind them is tinted to mark that as the wait-for-the-$65 stretch. Near the right-hand end the $50 curve turns sharply upward, crosses above the $65 curve, and finishes well above it; the panel behind that last stretch is tinted differently and a dashed vertical line marks the crossing.",
   es: "Dos curvas ascendentes en un mismo gráfico. Durante casi todo el recorrido la curva de $65 queda algo por encima de la de $50, y el fondo de ese tramo está tintado para señalar que ahí se espera a los $65. Cerca del extremo derecho la curva de $50 se dispara hacia arriba, cruza por encima de la de $65 y termina muy por encima; ese último tramo tiene otro tinte y una línea vertical discontinua marca el cruce.",
-  ko: "한 그래프 위의 두 상승 곡선. 구간 대부분에서 $65 곡선이 $50 곡선보다 조금 위에 있고, 그 뒤 배경은 $65을 기다리는 구간임을 나타내는 색으로 칠해져 있습니다. 오른쪽 끝 가까이에서 $50 곡선이 가파르게 솟아 $65 곡선 위로 교차한 뒤 훨씬 높은 곳에서 끝나며, 그 마지막 구간의 배경은 다른 색이고 점선 세로선이 교차 지점을 표시합니다.",
+  ko: "한 그래프 위의 두 상승 곡선. 구간 대부분에서 $65 곡선이 $50 곡선보다 조금 위에 있고, 그 뒤 배경은 $65를 기다리는 구간임을 나타내는 색으로 칠해져 있습니다. 오른쪽 끝 가까이에서 $50 곡선이 가파르게 솟아 $65 곡선 위로 교차한 뒤 훨씬 높은 곳에서 끝나며, 그 마지막 구간의 배경은 다른 색이고 점선 세로선이 교차 지점을 표시합니다.",
   zh: "同一张图上的两条上升曲线。在大部分区间里，$65 的曲线略高于 $50 的曲线，其后的底色标示出这是等待 $65 的区段。接近右端时，$50 的曲线急剧上扬，越过 $65 的曲线，并在明显更高处结束；最后这一段的底色不同，一条竖直虚线标出交叉点。",
   ja: "1つのグラフ上の2本の上昇曲線。大半の区間では$65の曲線が$50の曲線をわずかに上回り、その背景はここが$65を待つ区間であることを示す色で塗られています。右端近くで$50の曲線が急に立ち上がって$65の曲線を越え、はるかに高い位置で終わります。その最後の区間の背景は別の色で、破線の縦線が交差点を示します。",
 };
@@ -648,17 +648,17 @@ export const tradeUpfrontLabel = {
 export const tradeCaption = {
   en: "Read the bottom line on its own and the four look like rungs — which is the ladder people reach for. The height is what each step to the right asks for first: years of saved wages, a deposit and a mortgage, a stretch of unpaid work with no guarantee. Only labor income sits on the line, because it is the one you can start with nothing but yourself. Positions show the order the lessons state, not measured amounts, and neither end of the line is the smart one to be at.",
   es: "Lee solo la línea inferior y los cuatro parecen peldaños: esa es la escalera a la que la gente recurre. La altura es lo que pide primero cada paso hacia la derecha: años de sueldo ahorrado, una entrada y una hipoteca, una temporada de trabajo sin cobrar y sin garantías. Solo el ingreso laboral se apoya en la línea, porque es el único que puedes empezar sin más que tú mismo. Las posiciones muestran el orden que enuncian las lecciones, no cantidades medidas, y ningún extremo de la línea es el lugar inteligente donde estar.",
-  ko: "아래 선만 따로 읽으면 넷은 사다리의 가로대처럼 보입니다 — 사람들이 흔히 떠올리는 그 사다리입니다. 높이는 오른쪽으로 한 칸 갈 때마다 먼저 요구되는 것입니다. 몇 년치 모은 임금, 보증금과 대출, 아무 보장 없이 일해야 하는 기간 같은 것들이죠. 선 위에 놓인 것은 노동소득뿐인데, 오직 자기 자신만 가지고 시작할 수 있는 유일한 것이기 때문입니다. 위치는 수업이 말한 순서를 나타낼 뿐 측정된 양이 아니며, 선의 어느 쪽 끝도 더 똑똑한 자리가 아닙니다.",
+  ko: "아래 선만 따로 읽으면 넷은 사다리의 가로대처럼 보입니다 — 사람들이 흔히 떠올리는 그 사다리입니다. 높이는 오른쪽으로 한 칸 갈 때마다 먼저 요구되는 것입니다. 몇 년치 모은 임금, 보증금과 대출, 아무 보장 없이 일해야 하는 기간 같은 것들이죠. 선 위에 놓인 것은 노동소득뿐인데, 오직 자기 자신만 가지고 시작할 수 있는 유일한 것이기 때문입니다. 위치는 레슨이 말한 순서를 나타낼 뿐 측정된 양이 아니며, 선의 어느 쪽 끝도 더 똑똑한 자리가 아닙니다.",
   zh: "单看底下那条线，这四种就像梯子的四级横档——这正是人们习惯想到的那架梯子。高度是每向右一步，它先要你付出的东西：攒了好几年的工资、一笔首付和一笔房贷、一段没有任何保证的无薪投入。只有劳动收入落在线上，因为它是唯一一种仅凭你自己就能开始的收入。这些位置表示的是课程讲到的先后次序，不是量出来的数值；而且这条线的两端，没有哪一端是更聪明的位置。",
-  ja: "下の線だけを読むと、4つは梯子の段のように見えます——人々が思い浮かべる、あの梯子です。高さは、右へ一歩進むごとに先に求められるものです。何年分もの貯めた賃金、頭金と住宅ローン、保証のないまま働き続ける期間。線の上に乗っているのは労働所得だけで、それが自分自身以外に何も持たずに始められる唯一のものだからです。位置は各回が述べた順序を示すもので、測られた量ではありません。そして線のどちらの端も、賢い居場所というわけではありません。",
+  ja: "下の線だけを読むと、4つは梯子の段のように見えます——人々が思い浮かべる、あの梯子です。高さは、右へ一歩進むごとに先に求められるものです。何年分もの貯めた賃金、頭金と住宅ローン、保証のないまま働き続ける期間。線の上に乗っているのは労働所得だけで、それが自分自身以外に何も持たずに始められる唯一のものだからです。位置は各レッスンが述べた順序を示すもので、測られた量ではありません。そして線のどちらの端も、賢い居場所というわけではありません。",
 };
 
 export const tradeDescription = {
   en: "A plot with four dots. Left to right they are labor income, business income, passive income and investment income — the order in which the lessons rank how tightly each is tied to your hours. A horizontal line runs along the bottom. The labor income dot sits directly on that line; the other three are lifted above it by dashed stems that get taller from left to right, showing what each asks for before it pays anything. Height marks rank, not an amount, and the axis carries no scale.",
   es: "Un gráfico con cuatro puntos. De izquierda a derecha son ingreso laboral, ingreso empresarial, ingreso pasivo e ingreso de inversión: el orden en que las lecciones clasifican lo atados que están a tus horas. Una línea horizontal recorre la base. El punto del ingreso laboral se apoya justo en esa línea; los otros tres se elevan sobre ella mediante tallos discontinuos cada vez más altos hacia la derecha, que muestran lo que cada uno pide antes de devolver nada. La altura marca un orden, no una cantidad, y el eje no lleva escala.",
-  ko: "점 네 개가 찍힌 그림입니다. 왼쪽에서 오른쪽으로 노동소득, 사업소득, 수동소득, 투자소득이며, 각각이 당신의 근무 시간에 얼마나 단단히 묶여 있는지를 수업이 매긴 순서입니다. 아래쪽에는 수평선이 그어져 있습니다. 노동소득 점은 그 선 위에 바로 놓여 있고, 나머지 셋은 점선 줄기에 의해 선 위로 들려 있으며 그 줄기는 오른쪽으로 갈수록 길어져 각각이 돌려주기 전에 먼저 요구하는 것을 나타냅니다. 높이는 양이 아니라 순서를 나타내며, 축에는 눈금이 없습니다.",
+  ko: "점 네 개가 찍힌 그림입니다. 왼쪽에서 오른쪽으로 노동소득, 사업소득, 수동소득, 투자소득이며, 각각이 당신의 근무 시간에 얼마나 단단히 묶여 있는지를 레슨이 매긴 순서입니다. 아래쪽에는 수평선이 그어져 있습니다. 노동소득 점은 그 선 위에 바로 놓여 있고, 나머지 셋은 점선 줄기에 의해 선 위로 들려 있으며 그 줄기는 오른쪽으로 갈수록 길어져 각각이 돌려주기 전에 먼저 요구하는 것을 나타냅니다. 높이는 양이 아니라 순서를 나타내며, 축에는 눈금이 없습니다.",
   zh: "一幅有四个圆点的图。从左到右依次是劳动收入、经营收入、被动收入和投资收入，这是课程按照各自与你工时绑定紧密程度排出的次序。底部有一条水平线。劳动收入的点正好落在这条线上；另外三个由虚线支柱托起在线的上方，支柱自左向右越来越高，表示每一种在回报你之前先要你付出的东西。高度表示的是次序而非数量，这条轴上没有刻度。",
-  ja: "点が4つある図です。左から右へ、労働所得、事業所得、不労所得、投資所得——各回が、それぞれをあなたの労働時間にどれだけ強く結びついているかで並べた順序です。下部には水平線が引かれています。労働所得の点はその線の上に直接乗っており、他の3つは破線の支柱によって線の上に持ち上げられ、その支柱は右へ行くほど高くなって、それぞれが何かを返す前に求めてくるものを表しています。高さは量ではなく順序を示し、この軸に目盛りはありません。",
+  ja: "点が4つある図です。左から右へ、労働所得、事業所得、不労所得、投資所得——各レッスンが、それぞれをあなたの労働時間にどれだけ強く結びついているかで並べた順序です。下部には水平線が引かれています。労働所得の点はその線の上に直接乗っており、他の3つは破線の支柱によって線の上に持ち上げられ、その支柱は右へ行くほど高くなって、それぞれが何かを返す前に求めてくるものを表しています。高さは量ではなく順序を示し、この軸に目盛りはありません。",
 };
 
 // ── Lesson 28: the two axes a win collapses into one ───────────────────────
@@ -750,17 +750,17 @@ export const outcomeHereLabel = {
 export const outcomeCaption = {
   en: "The outcome is the column; the decision behind it is the row. A win puts you somewhere in the right-hand column and stops there, because both of its cells are real — a good decision can still lose, and a bad or lucky decision can still win. Maria read a row off a column: the price moved, so she filed her hunch under the top one. The grid says nothing about how often each cell happens, because the lesson doesn't either.",
   es: "El resultado es la columna; la decisión que hay detrás es la fila. Una victoria te sitúa en algún punto de la columna derecha y ahí se detiene, porque sus dos celdas son reales: una buena decisión puede aun así perder, y una decisión mala o afortunada puede aun así ganar. María leyó una fila a partir de una columna: el precio se movió, así que archivó su corazonada en la de arriba. La cuadrícula no dice nada sobre con qué frecuencia ocurre cada celda, porque la lección tampoco lo dice.",
-  ko: "결과는 열이고, 그 뒤에 있는 결정은 행입니다. 승리는 당신을 오른쪽 열 어딘가에 놓아둘 뿐 거기서 멈춥니다. 그 열의 두 칸이 모두 실재하기 때문입니다 — 좋은 결정도 질 수 있고, 나쁘거나 운이 좋았던 결정도 이길 수 있습니다. 마리아는 열을 보고 행을 읽어냈습니다. 가격이 올랐으니 자신의 직감을 위쪽 칸에 넣어버린 것입니다. 이 표는 각 칸이 얼마나 자주 일어나는지에 대해서는 아무 말도 하지 않는데, 수업도 그렇게 하지 않기 때문입니다.",
+  ko: "결과는 열이고, 그 뒤에 있는 결정은 행입니다. 승리는 당신을 오른쪽 열 어딘가에 놓아둘 뿐 거기서 멈춥니다. 그 열의 두 칸이 모두 실재하기 때문입니다 — 좋은 결정도 질 수 있고, 나쁘거나 운이 좋았던 결정도 이길 수 있습니다. 마리아는 열을 보고 행을 읽어냈습니다. 가격이 올랐으니 자신의 직감을 위쪽 칸에 넣어버린 것입니다. 이 표는 각 칸이 얼마나 자주 일어나는지에 대해서는 아무 말도 하지 않는데, 레슨도 그렇게 하지 않기 때문입니다.",
   zh: "结果是列，结果背后的决策是行。一次成功只把你放在右边这一列的某个位置，然后就到此为止了，因为这一列的两个格子都是真实存在的——一个好的决策仍然可能亏钱，一个糟糕的或纯属侥幸的决策也仍然可能赚钱。玛丽亚是从一列反推出一行的：价格涨了，于是她就把自己的直觉归进了上面那一格。这张表完全没有说每个格子发生得有多频繁，因为这一课本身也没有说。",
-  ja: "結果は列であり、その背後にある決断は行です。勝利はあなたを右の列のどこかに置くだけで、そこで止まります。その列の2つのマスはどちらも現実に起こるからです——良い決断でも負けることはあり、悪い、あるいは運が良かっただけの決断でも勝つことはあります。マリアは列から行を読み取りました。価格が動いたので、自分の直感を上のマスに分類したのです。この図は、それぞれのマスがどのくらいの頻度で起こるかについては何も述べていません。この回自体が述べていないからです。",
+  ja: "結果は列であり、その背後にある決断は行です。勝利はあなたを右の列のどこかに置くだけで、そこで止まります。その列の2つのマスはどちらも現実に起こるからです——良い決断でも負けることはあり、悪い、あるいは運が良かっただけの決断でも勝つことはあります。マリアは列から行を読み取りました。価格が動いたので、自分の直感を上のマスに分類したのです。この図は、それぞれのマスがどのくらいの頻度で起こるかについては何も述べていません。このレッスン自体が述べていないからです。",
 };
 
 export const outcomeDescription = {
   en: "A two-by-two grid. The columns are the outcome: it lost on the left, it won on the right. The rows are the decision behind it: a good decision on top, a bad or lucky decision below. All four cells are the same size and carry the same mark, because the lesson says all four happen and says nothing about how often. A bracket spans the right-hand column and is labeled as everything a win tells you — it narrows the answer to that column of two cells and no further. A highlighted mark sits in the lower right cell, Maria's hunch that rose 40 percent.",
   es: "Una cuadrícula de dos por dos. Las columnas son el resultado: perdió a la izquierda, ganó a la derecha. Las filas son la decisión que hay detrás: una buena decisión arriba, una decisión mala o afortunada abajo. Las cuatro celdas tienen el mismo tamaño y llevan la misma marca, porque la lección dice que las cuatro ocurren y no dice nada sobre con qué frecuencia. Un corchete abarca la columna derecha y está etiquetado como todo lo que te dice una victoria: acota la respuesta a esa columna de dos celdas y no más. Una marca destacada se sitúa en la celda inferior derecha, la corazonada de María que subió un 40 por ciento.",
-  ko: "가로 2칸, 세로 2칸의 표입니다. 열은 결과로, 왼쪽이 졌다, 오른쪽이 이겼다입니다. 행은 그 뒤에 있는 결정으로, 위가 좋은 결정, 아래가 나쁘거나 운이 좋았던 결정입니다. 네 칸은 모두 같은 크기이고 같은 표시를 달고 있는데, 수업이 네 경우 모두 일어난다고 말할 뿐 얼마나 자주인지는 말하지 않기 때문입니다. 오른쪽 열 위에는 괄호가 걸쳐져 있고 승리가 말해주는 전부라고 적혀 있습니다. 그것은 답을 두 칸짜리 그 열까지만 좁혀줄 뿐 그 이상은 좁혀주지 못합니다. 오른쪽 아래 칸에는 강조된 표시가 있는데, 40퍼센트 오른 마리아의 직감입니다.",
+  ko: "가로 2칸, 세로 2칸의 표입니다. 열은 결과로, 왼쪽이 졌다, 오른쪽이 이겼다입니다. 행은 그 뒤에 있는 결정으로, 위가 좋은 결정, 아래가 나쁘거나 운이 좋았던 결정입니다. 네 칸은 모두 같은 크기이고 같은 표시를 달고 있는데, 레슨이 네 경우 모두 일어난다고 말할 뿐 얼마나 자주인지는 말하지 않기 때문입니다. 오른쪽 열 위에는 괄호가 걸쳐져 있고 승리가 말해주는 전부라고 적혀 있습니다. 그것은 답을 두 칸짜리 그 열까지만 좁혀줄 뿐 그 이상은 좁혀주지 못합니다. 오른쪽 아래 칸에는 강조된 표시가 있는데, 40퍼센트 오른 마리아의 직감입니다.",
   zh: "一张二乘二的表格。列表示结果：左边是亏钱了，右边是赚钱了。行表示背后的决策：上面是好的决策，下面是糟糕的或纯属侥幸的决策。四个格子大小相同、标记相同，因为这一课只说这四种情况都会发生，并没有说各自有多频繁。右边这一列上方有一个括号，标注为一次成功能告诉你的全部——它只能把答案缩小到这个包含两个格子的列，再往下就缩不动了。右下角的格子里有一个突出显示的标记，那是玛丽亚上涨了40%的直觉。",
-  ja: "2行2列の図です。列は結果を表し、左が負けた、右が勝ったです。行はその背後にある決断を表し、上が良い決断、下が悪い、あるいは運が良かっただけの決断です。4つのマスはすべて同じ大きさで同じ印がついています。この回は4つとも起こると述べるだけで、どのくらいの頻度かについては何も述べていないからです。右の列の上には括弧がかかっており、勝利が教えてくれるすべて、と記されています。それは答えを2マスからなるその列までしか絞り込めません。右下のマスには強調された印があり、40%上昇したマリアの直感です。",
+  ja: "2行2列の図です。列は結果を表し、左が負けた、右が勝ったです。行はその背後にある決断を表し、上が良い決断、下が悪い、あるいは運が良かっただけの決断です。4つのマスはすべて同じ大きさで同じ印がついています。このレッスンは4つとも起こると述べるだけで、どのくらいの頻度かについては何も述べていないからです。右の列の上には括弧がかかっており、勝利が教えてくれるすべて、と記されています。それは答えを2マスからなるその列までしか絞り込めません。右下のマスには強調された印があり、40%上昇したマリアの直感です。",
 };
 
 // ── Lesson 12: the split that inverts while the total does not ─────────────
@@ -936,7 +936,7 @@ export const matchTitle = {
 export const matchColumnLabels = {
   en: ["Possibly any day", "Not for years"],
   es: ["Posiblemente cualquier día", "No en años"],
-  ko: ["아마도 언제든지", "몇 년 동안은 아니"],
+  ko: ["아마도 언제든지", "몇 년은 필요 없음"],
   zh: ["说不定哪天就要用", "好多年都用不到"],
   ja: ["もしかしたらいつでも", "何年も先まで不要"],
 };
@@ -965,15 +965,15 @@ export const matchKeyLabels = {
 export const matchCaption = {
   en: "Two of the four disagree, and they are the same size here because the lesson says they are the same mistake seen from two sides. One is loud: a drop of 15% the week before the rent is due, and the one job that money had has failed. The other is quiet, because nothing ever visibly breaks — money not needed for twenty years, sitting the whole time in an account earning less than inflation, losing purchasing power. Neither 'always keep it safe' nor 'always chase growth' is automatically the wise move; no cell carries an amount and none is marked correct.",
   es: "Dos de los cuatro no coinciden, y aquí tienen el mismo tamaño porque la lección dice que son el mismo error visto desde dos lados. Uno es ruidoso: una caída del 15% la semana antes de pagar el alquiler, y el único trabajo que tenía ese dinero falló. El otro es silencioso, porque nada se rompe visiblemente — dinero que no se necesitará en veinte años, sentado todo ese tiempo en una cuenta que rinde menos que la inflación, perdiendo poder adquisitivo. Ni 'siempre mantenlo seguro' ni 'siempre persigue el crecimiento' es automáticamente la decisión sabia; ninguna celda lleva una cantidad y ninguna está marcada como correcta.",
-  ko: "넷 중 둘은 맞아떨어지지 않으며, 여기서 같은 크기로 그린 것은 그 둘이 한 가지 잘못을 양쪽에서 본 것이라고 수업이 말하기 때문입니다. 하나는 요란합니다. 월세 내기 일주일 전에 가치가 15% 떨어지면, 그 돈이 맡았던 단 하나의 일은 실패한 것입니다. 다른 하나는 조용합니다. 눈에 띄게 무언가가 망가지지 않기 때문입니다 — 20년 동안 필요 없을 돈이 그 내내 인플레이션보다 낮은 이자를 주는 계좌에 앉아 구매력을 잃어갑니다. '항상 안전하게 두라'도 '항상 성장을 좇으라'도 자동으로 현명한 선택은 아닙니다. 어느 칸에도 금액은 없고, 정답으로 표시된 칸도 없습니다.",
+  ko: "넷 중 둘은 맞아떨어지지 않으며, 여기서 같은 크기로 그린 것은 그 둘이 한 가지 잘못을 양쪽에서 본 것이라고 레슨이 말하기 때문입니다. 하나는 요란합니다. 월세 내기 일주일 전에 가치가 15% 떨어지면, 그 돈이 맡았던 단 하나의 일은 실패한 것입니다. 다른 하나는 조용합니다. 눈에 띄게 무언가가 망가지지 않기 때문입니다 — 20년 동안 필요 없을 돈이 그 내내 인플레이션보다 낮은 이자를 주는 계좌에 앉아 구매력을 잃어갑니다. '항상 안전하게 두라'도 '항상 성장을 좇으라'도 자동으로 현명한 선택은 아닙니다. 어느 칸에도 금액은 없고, 정답으로 표시된 칸도 없습니다.",
   zh: "四格中有两格并不相符，这里把它们画成同样大小，是因为课程说它们是同一个错误的两个侧面。一个很响：交房租前一周价值跌掉15%，这笔钱本该承担的唯一任务就失败了。另一个很安静，因为没有什么会明显“坏掉”——一笔二十年内都用不到的钱，整段时间放在收益跑不赢通胀的账户里，悄悄流失购买力。“永远求安全”和“永远追求增长”都不是自动就明智的选择；没有哪一格标着金额，也没有哪一格被标为正确答案。",
-  ja: "4つのうち2つは噛み合っておらず、ここで同じ大きさに描いているのは、その2つが一つの誤りを両側から見たものだと各回が述べているからです。一方は騒がしい——家賃の支払い一週間前に価値が15%下がれば、そのお金が担っていたたった一つの仕事は果たされなかったことになります。もう一方は静かです。目に見えて何かが壊れるわけではないからです——二十年間必要ないお金が、その間ずっとインフレ率より低い利率の口座に置かれ、購買力を失っていきます。「常に安全に保て」も「常に成長を追え」も、自動的に賢明な選択とは限りません。どのマスにも金額はなく、正解と記されたマスもありません。",
+  ja: "4つのうち2つは噛み合っておらず、ここで同じ大きさに描いているのは、その2つが一つの誤りを両側から見たものだとレッスンが述べているからです。一方は騒がしい——家賃の支払い一週間前に価値が15%下がれば、そのお金が担っていたたった一つの仕事は果たされなかったことになります。もう一方は静かです。目に見えて何かが壊れるわけではないからです——二十年間必要ないお金が、その間ずっとインフレ率より低い利率の口座に置かれ、購買力を失っていきます。「常に安全に保て」も「常に成長を追え」も、自動的に賢明な選択とは限りません。どのマスにも金額はなく、正解と記されたマスもありません。",
 };
 
 export const matchDescription = {
   en: "A two-by-two grid. The columns are when this money might be needed — possibly any day, or not for years. The rows are where it is sitting — a savings account or an investment account. The savings-and-soon cell and the investing-and-years cell carry a filled disc; the other two carry an open ring of the same size. Every cell is the same size and none carries a number.",
   es: "Una cuadrícula de dos por dos. Las columnas son cuándo podría necesitarse este dinero: posiblemente cualquier día, o no en años. Las filas son dónde está sentado: una cuenta de ahorros o una cuenta de inversión. La celda de ahorros y pronto y la celda de inversión y años llevan un disco relleno; las otras dos llevan un anillo abierto del mismo tamaño. Todas las celdas tienen el mismo tamaño y ninguna lleva un número.",
-  ko: "2×2 격자입니다. 열은 이 돈이 언제 필요할 수 있는지 — 아마도 언제든지, 아니면 몇 년 동안은 아니 — 를 나타냅니다. 행은 그 돈이 어디에 있는지 — 저축 계좌인지 투자 계좌인지 — 를 나타냅니다. 저축과 '언제든지'가 만나는 칸, 그리고 투자와 '몇 년'이 만나는 칸에는 속이 찬 원이 있고, 나머지 두 칸에는 같은 크기의 빈 고리가 있습니다. 모든 칸의 크기는 같고, 어느 칸에도 숫자는 없습니다.",
+  ko: "2×2 격자입니다. 열은 이 돈이 언제 필요할 수 있는지 — 아마도 언제든지, 아니면 몇 년은 필요 없음 — 을 나타냅니다. 행은 그 돈이 어디에 있는지 — 저축 계좌인지 투자 계좌인지 — 를 나타냅니다. 저축과 '언제든지'가 만나는 칸, 그리고 투자와 '몇 년'이 만나는 칸에는 속이 찬 원이 있고, 나머지 두 칸에는 같은 크기의 빈 고리가 있습니다. 모든 칸의 크기는 같고, 어느 칸에도 숫자는 없습니다.",
   zh: "一个二乘二的格子。列表示这笔钱可能什么时候要用——说不定哪天就要用，还是好多年都用不到。行表示它放在哪里——储蓄账户还是投资账户。储蓄与“随时”相交的格子、投资与“多年”相交的格子里是一个实心圆点；另外两格里是同样大小的空心圆环。每一格大小相同，没有哪一格带有数字。",
   ja: "2×2の格子です。列は、このお金がいつ必要になるかもしれないか——もしかしたらいつでも、あるいは何年も先まで不要か。行は、それがどこに置かれているか——貯金口座か投資口座か。貯金と「いつでも」が交わるマスと、投資と「何年も」が交わるマスには塗りつぶされた円があり、残る2つには同じ大きさの中空の輪があります。すべてのマスは同じ大きさで、数字が入っているマスはありません。",
 };
@@ -1031,9 +1031,9 @@ export const sunkBranchLabels = {
 export const sunkCaption = {
   en: "The $120 is on the stem, not on either branch — it left the account two months ago, and no choice made tonight reaches back to it. That is what makes it cancel: it is the same on both paths, so it cannot tell the two apart. What is left after the fork is the only thing the decision is actually between. Neither branch is marked correct, because the lesson does not mark one — a fresh look sometimes still says go.",
   es: "Los $120 están en el tronco, no en ninguna de las ramas: salieron de la cuenta hace dos meses, y ninguna decisión tomada esta noche los alcanza. Eso es lo que hace que se cancelen: son idénticos en ambos caminos, así que no pueden distinguirlos. Lo que queda después de la bifurcación es lo único entre lo que la decisión realmente elige. Ninguna rama está marcada como correcta, porque la lección no marca ninguna: una mirada fresca a veces sigue diciendo que vayas.",
-  ko: "120달러는 가지가 아니라 줄기 위에 있습니다 — 두 달 전에 이미 계좌를 떠났고, 오늘 밤의 어떤 선택도 거기까지 닿지 않습니다. 그래서 이 돈은 상쇄됩니다. 두 갈래 모두에서 똑같으니, 둘을 구별해 주지 못하는 것입니다. 갈림길 이후에 남는 것만이 이 결정이 실제로 고르는 대상입니다. 어느 가지에도 정답 표시는 없습니다. 수업이 표시하지 않기 때문입니다 — 새로 따져 봐도 가는 쪽이 맞을 때가 있습니다.",
+  ko: "120달러는 가지가 아니라 줄기 위에 있습니다 — 두 달 전에 이미 계좌를 떠났고, 오늘 밤의 어떤 선택도 거기까지 닿지 않습니다. 그래서 이 돈은 상쇄됩니다. 두 갈래 모두에서 똑같으니, 둘을 구별해 주지 못하는 것입니다. 갈림길 이후에 남는 것만이 이 결정이 실제로 고르는 대상입니다. 어느 가지에도 정답 표시는 없습니다. 레슨이 표시하지 않기 때문입니다 — 새로 따져 봐도 가는 쪽이 맞을 때가 있습니다.",
   zh: "这120美元在主干上，不在任何一根分支上——它两个月前就离开了账户，今晚做的任何选择都够不着它。这正是它会被抵消的原因：它在两条路上完全一样，所以分不出两者的高下。分岔之后剩下的部分，才是这个决定真正要在其中做选择的东西。两根分支都没有被标为正确，因为课程本身就没有标——重新掂量一遍，有时答案仍然是去。",
-  ja: "120ドルは幹の上にあり、どちらの枝にも乗っていません——2か月前に口座を離れており、今夜下すどの選択もそこには届きません。だからこそ相殺されるのです。両方の道でまったく同じである以上、二つを区別する材料にはなりません。分岐の先に残るものだけが、この決断が実際に選んでいる対象です。どちらの枝にも正解の印はついていません。各回自身が印をつけていないからです——改めて見直しても、行くほうが正しいことはあります。",
+  ja: "120ドルは幹の上にあり、どちらの枝にも乗っていません——2か月前に口座を離れており、今夜下すどの選択もそこには届きません。だからこそ相殺されるのです。両方の道でまったく同じである以上、二つを区別する材料にはなりません。分岐の先に残るものだけが、この決断が実際に選んでいる対象です。どちらの枝にも正解の印はついていません。レッスン自身が印をつけていないからです——改めて見直しても、行くほうが正しいことはあります。",
 };
 
 export const sunkDescription = {
