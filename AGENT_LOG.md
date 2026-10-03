@@ -2946,6 +2946,43 @@ same journey.
 
 ## Run log
 
+### 2026-10-03 (scheduled dev-agent; **the previous run's named next question, `q037`** (item 160, class A). The previous run was a free pick, so W-6.2 rule 1 allows this; ⛔ **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 23's check question no longer gives its answer away by length. The correct option ("Present bias") was the longest in all five languages, by 37-74%. It now sits inside its distractors' length band in every language.**
+
+**Step 3.5: the premise and its controls.** I re-ranked all 46 questions by relative margin over `quizMeta` + the five `quizText` modules, in code points. **The figures reproduce:** `q037` min margin **37%**, per-language en/es/ko/zh/ja **58/37/49/41/74**, behind `q008` 57, `q021` 56, `q014` 53 and `q019` 43, as the previous entry's ranking said. §65 before: longest-option **en 47.8%, es 45.7%, ko 45.7%, zh 41.3%, ja 43.5%** (matches the previous entry's "after"). **Class A holds, with one correction to its shape:** every option here is "Term — description", so the tail is not unique to the answer. What made the answer long was a parenthetical (`hyperbolic discounting`) plus a wordier description. **The lesson keeps the parenthetical:** `lessonContent.money.*` names it in all five languages (hyperbolic, hiperbólico, 쌍곡선, 双曲贴现, 双曲割引), so the term is still taught. `explain` already defines present bias, so it is not a stub.
+
+#### What shipped
+One string per file, five files (`src/content/quizText.{en,es,ko,zh,ja}.js`). A Node patcher asserted old ×1 and new ×0 before writing, then old ×0 and new ×1 after. Landings, with the distractor band `[min,max]`:
+| lang | new correct option | len | band |
+|---|---|---|---|
+| en | Present bias — an immediate reward outweighs the same reward slightly delayed | 77 | [64,81] |
+| es | Sesgo del presente — una recompensa inmediata pesa más que la misma algo retrasada | 82 | [78,91] |
+| ko | 현재 편향 — 즉각적인 보상이 조금 미뤄진 같은 보상을 압도한다 | 35 | [33,37] |
+| zh | 现时偏见——即时奖励的权重远高于稍后的同一份奖励 | 24 | [21,27] |
+| ja | 現在バイアス——即時の報酬は少し先の同じ報酬より重く扱われる | 30 | [29,31] |
+
+**Load-bearing cell: ja.** Its distractor band is only 2 wide, so the answer is 1 from each wall. Trimming one ja distractor could re-open this question. en is 4 below its ceiling; the rest have ≥2 on both sides.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file |
+| §65 after | longest-option **en 45.7%, es 43.5%, ko 43.5%, zh 39.1%, ja 41.3%**: one question fewer in every language. Shortest-option unchanged at 2.2/2.2/0.0/2.2/4.3, so the opposite cue was not created |
+| Re-rank | `q037` is gone from the beatable list; the top is now `q008`, `q021`, `q014`, `q019`, `q004` |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-C2IfJgHq.js`, system Node v24.18.0 |
+| Bundle | each new option is in 1 asset; the full old en option is in 0; a nonsense probe is in 0. Two old description fragments (en, ja) still match 1 asset each, **because the lesson body uses the same wording**, and `grep -rlF` over `src/` puts them in `lessonContent.money.{en,ja}.js` only |
+| Live walk | **not done.** Every new option is shorter than the one it replaces, so no new layout risk |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, date, market figure or Dalio content; `check-blindspot` passed in `npm test`. **DECISIONS.md / completed work:** this continues item 160 with its own rule (move the excess out, check `explain` and the lesson first, land inside the band) and undoes nothing archived.
+- **Is the answer still right?** Yes: present bias is over-weighting of an immediate reward against the same reward slightly later, which is what the option says. "Outweighs" is weaker than "far more heavily"; the disproportion is in `explain` ("out of proportion"). **Could the edit be wrong?** The es/ko/zh/ja wording is machine-written and no fluent reader has seen it (**O-3**). The es "la misma algo retrasada" elides the noun, and ko "압도한다" is a new verb choice; both are flagged for that reader.
+- **Would a reviewer get my result?** Yes: the ranking script, the patcher asserts, §65, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. Of item 160's class A, the next measurable one is `q040` (16%, L26); `q021` stays unreachable. Everything above it in the ranking is class B (O-3's). **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in lesson 23's check question, the right answer was always the longest one; it is now trimmed in all five languages. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-02 (scheduled dev-agent; **a free pick**. The previous run was a free pick, so W-6.2 rule 1 would have allowed its residuals; I took none. **W-9.4 bars a short-string hand read** (the previous run was one), and its named residual (ko quiz text calling a lesson 강의) is that mode, so I left it. **The pick is item 160's named next question, `q023`**: a quiz-design fix measured by §65, not a translation read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 9's check question no longer gives its answer away by length. The correct option was the longest in all five languages, by 46-64%. It now sits inside its distractors' length band in every language.**
 
 **Step 3.5: the premise and its controls.** I re-ranked all 46 questions by relative margin, (len(correct) − len(longest distractor)) / len(longest distractor), in code points, over `quizMeta` and the five `quizText` modules. **The item's figures reproduce exactly:** `q008` 57% (B), `q021` 56% (A, unreachable), `q014` 53% (B), **`q023` 46% (A)**, with per-language margins en/es/ko/zh/ja **46/46/57/64/56**. §65 before: longest-option **en 50.0%, es 47.8%, ko 47.8%, zh 43.5%, ja 45.7%**. **Class A holds:** each correct option was a short answer plus a detachable tail ("— the real return was roughly -2%"). **Item 165's caveat checked:** the `explain` in all five languages already carries the -2% formula and the "balance grew" point, so it is not a stub. The tail's reasoning is not lost.

@@ -381,7 +381,7 @@ export const quizText = [
     "q": "Priya dice que preferiría tener $50 hoy en vez de $65 en un mes, pero cuando le piden elegir entre $50 en doce meses y $65 en trece meses, elige los $65. Ambas elecciones implican esperar un mes extra por $15 más. ¿Cómo llama la lección a este patrón?",
     "opts": [
       "Anclaje — Priya está juzgando los $65 contra el punto de referencia equivocado",
-      "Sesgo del presente (descuento hiperbólico) — una recompensa inmediata pesa mucho más que la misma recompensa apenas retrasada",
+      "Sesgo del presente — una recompensa inmediata pesa más que la misma algo retrasada",
       "Aversión a la pérdida — Priya siente los $15 como una pérdida en vez de una ganancia",
       "Diversificación — Priya está repartiendo su elección entre dos períodos de tiempo distintos"
     ],

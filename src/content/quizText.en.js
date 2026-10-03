@@ -381,7 +381,7 @@ export const quizText = [
     "q": "Priya says she'd rather have $50 today than $65 in a month, but when asked to choose between $50 in twelve months and $65 in thirteen months, she picks the $65. Both choices involve waiting one extra month for $15 more. What does the lesson call this pattern?",
     "opts": [
       "Anchoring — Priya is judging the $65 against the wrong reference point",
-      "Present bias (hyperbolic discounting) — an immediate reward gets weighted far more heavily than the same reward slightly delayed",
+      "Present bias — an immediate reward outweighs the same reward slightly delayed",
       "Loss aversion — Priya feels the $15 as a loss rather than a gain",
       "Diversification — Priya is spreading her choice across two different time periods"
     ],
