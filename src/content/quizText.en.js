@@ -353,7 +353,7 @@ export const quizText = [
       "That the price will keep tripling",
       "That Marcus did enough research to buy confidently",
       "That the asset's fundamentals must have improved",
-      "That other people are buying it — not that it's a good value"
+      "That other people are buying it — nothing more"
     ],
     "explain": "A crowd's size and enthusiasm are evidence that a lot of people are doing the same thing — not evidence about the asset's actual value. A rising price can just as easily mean the same future gains now cost more, since it reflects everyone who already bought, not what's still ahead."
   },

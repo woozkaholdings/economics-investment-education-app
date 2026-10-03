@@ -353,7 +353,7 @@ export const quizText = [
       "De que el precio seguirá triplicándose",
       "De que Marcus investigó lo suficiente para comprar con confianza",
       "De que los fundamentos del activo deben haber mejorado",
-      "De que otra gente lo está comprando — no de que sea una buena inversión"
+      "De que otra gente lo está comprando — nada más"
     ],
     "explain": "El tamaño y el entusiasmo de una multitud son evidencia de que mucha gente está haciendo lo mismo — no evidencia sobre el valor real del activo. Un precio que sube puede significar igual de fácil que las mismas ganancias futuras ahora cuestan más, ya que refleja a todos los que ya compraron, no lo que aún está por venir."
   },

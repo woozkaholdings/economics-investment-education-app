@@ -1429,8 +1429,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         on). Fixed this date in all five languages; §65 dropped one question in every language and the
         standing WARN cleared. **The remainder is still not all class B: `q037` (37%, L23), `q040` (16%),
         `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q034` is next by margin.
-        (`q023` done 2026-10-02, `q037` and `q040` done 2026-10-03; landings in those days' run logs.
-        Everything ranked above `q034` is class B, except `q021`, which is unreachable.)
+        (`q023` done 2026-10-02, `q037`, `q040` and `q034` done 2026-10-03; landings in those days' run logs.
+        **Only `q027` (6%, L13) is left in class A**, near the 3% "no human eye can resolve" corollary
+        below; everything ranked above it is class B, except `q021`, which is unreachable.)
         **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
@@ -2946,6 +2947,43 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-03 (scheduled dev-agent; **a free pick**. The previous run was W-5.3's archiving pass, which named `q034` as *"no longer a residual chain, so it is a legal free pick"*. **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 20's check question no longer gives its answer away by length. The correct option ("That other people are buying it — not that it's a good value") was the longest in all five languages, by 11-41%. It now sits inside its distractors' length band in every language.**
+
+**Step 3.5: the premise and its controls.** I re-ranked all 46 questions by relative margin over `quizMeta` + the five `quizText` modules, in code points; scorer controls fired (2x runner-up 1.000, +1-of-100 0.010). **The figures reproduce:** `q034` min margin **11%**, per-language en/es/ko/zh/ja **20/11/41/33/27**. §65 before: longest-option **en 43.5%, es 41.3%, ko 41.3%, zh 37.0%, ja 39.1%** (matches the q040 entry's "after"). **Class A holds:** the excess was the contrast tail ("— not that it's a good value"), and `explain` already says it in all five languages ("not evidence about the asset's actual value" and its translations), so the learner still sees it right after answering.
+
+#### What shipped
+One string per file, five files (`src/content/quizText.{en,es,ko,zh,ja}.js`). A Node patcher asserted old ×1 and new ×0 before writing, then old ×0 and new ×1 after. The tail is replaced by a short "nothing more" so the option still says the crowd is evidence of buying **only**. Landings, with the distractor band `[min,max]`:
+| lang | new correct option | len | band |
+|---|---|---|---|
+| en | That other people are buying it — nothing more | 46 | [33,50] |
+| es | De que otra gente lo está comprando — nada más | 46 | [38,64] |
+| ko | 다른 사람들이 그것을 사고 있다는 증거일 뿐 | 24 | [21,29] |
+| zh | 证明其他人在买它，仅此而已 | 13 | [10,18] |
+| ja | 他の人たちがそれを買っているという証拠にすぎない | 24 | [20,30] |
+
+**Tightest cells: ko and zh, 3 above the floor.** en is 4 below its ceiling. The zh option now starts with 证明 like its three distractors (the old one alone started 只能证明), which removes a second, smaller form cue.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's), read from a file |
+| §65 after | longest-option **en 41.3%, es 39.1%, ko 39.1%, zh 34.8%, ja 37.0%**: one question fewer in every language. Shortest-option unchanged at 2.2/2.2/0.0/2.2/4.3, so the opposite cue was not created |
+| Re-rank | `q034` is gone from the beatable list. Class A left: `q027` (6%) and `q021` (unreachable) |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DSBJkgaX.js`, system Node v24.18.0 |
+| Bundle | each new option (full string per language) is in 1 asset; the old en tail "not that it's a good value" is in 0; a nonsense probe is in 0 |
+| Live walk | **not done.** Every new option is shorter than the one it replaces, so no new layout risk |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, date, market figure or Dalio content; `check-blindspot` passed in `npm test`. **DECISIONS.md / completed work:** this continues item 160 with its own rule (move the excess out, check `explain` first, land inside the band) and undoes nothing archived.
+- **Is the answer still right?** Yes. The question asks what the crowd is *actually evidence of*; "other people are buying it, nothing more" is the lesson's claim, and "nothing more" keeps the point that it says nothing about value. **Could the edit be wrong?** The es/ko/zh/ja wording is machine-written and no fluent reader has seen it (**O-3**). The ko option ends on 뿐 with no copula, and the zh uses 仅此而已 (also used once in `lessonContent.money.zh.js`); both are flagged for that reader.
+- **Would a reviewer get my result?** Yes: the ranking script, the patcher asserts, §65, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. Item 160's class A is down to `q027` (6%, L13), which is close to the corollary's "no human eye can resolve" floor; a run should weigh that before taking it. ⛔ It is a residual of this run; W-6.2 rule 1 allows one. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in lesson 20's check question, the right answer was always the longest one; it is now trimmed in all five languages. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-03 (scheduled dev-agent; **the previous run's named handoff**: its entry set off `check-log-size`'s headroom WARN and said *"The next run should be W-5.3's archiving pass"*. That is a separate pick, not a residual, so W-6.2 rule 1 does not arise. `npm test` showed **0 FAIL, 2 WARN** (O-3's and the headroom WARN) before any edit) — W-5.3's **twenty-first** firing: 2026-09-21, 09-22, 09-25 and 09-26 (**13 entries, 102,758 b**) moved verbatim to `AGENT_LOG.archive.md` under `## Archived 2026-09-21 → 2026-09-26`. Run log **248,364 → 145,606 b** (99.3% → **58.2%** of budget; 0.30 → **19.3 runs** of headroom), headroom WARN cleared.
 
