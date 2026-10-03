@@ -410,7 +410,7 @@ export const quizText = [
   {
     "q": "Elena recibe un reembolso de impuestos de $600 y lo gasta en un viaje de fin de semana espontáneo que nunca habría reservado con $600 de su sueldo — dinero que presupuesta cuidadosamente cada mes. ¿Cómo llama la lección a este patrón de tratar el reembolso de forma distinta al dinero del sueldo por la misma cantidad?",
     "opts": [
-      "Contabilidad mental — dividir el dinero en compartimentos mentales y aplicar una regla más laxa al dinero que se siente 'encontrado' en vez de ganado",
+      "Contabilidad mental — aplicar una regla más laxa al dinero que parece 'encontrado' y no ganado",
       "Diversificación — repartir el gasto entre varias compras distintas en vez de una sola",
       "Sesgo del presente — valorar mucho más una recompensa disponible hoy que la misma recompensa retrasada",
       "Anclaje — juzgar el precio del viaje contra un número de referencia arbitrario"

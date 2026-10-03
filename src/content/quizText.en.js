@@ -410,7 +410,7 @@ export const quizText = [
   {
     "q": "Elena gets a $600 tax refund and spends it on a spontaneous weekend trip she would never have booked with $600 from her paycheck — money she budgets carefully every month. What does the lesson call this pattern of treating the refund differently from paycheck money of the same amount?",
     "opts": [
-      "Mental accounting — sorting money into mental buckets and applying a looser rule to money that feels 'found' rather than earned",
+      "Mental accounting — applying a looser rule to money that feels 'found', not earned",
       "Diversification — spreading spending across several different purchases instead of one",
       "Present bias — valuing a reward available today far more than the same reward delayed",
       "Anchoring — judging the trip's price against an arbitrary reference number"

@@ -1428,8 +1428,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         reachable set** (zh [23,35], ja [30,53] — the opposite of the q005 objection the stop line rested
         on). Fixed this date in all five languages; §65 dropped one question in every language and the
         standing WARN cleared. **The remainder is still not all class B: `q037` (37%, L23), `q040` (16%),
-        `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q037` is next by margin.
-        (`q023` done 2026-10-02; landings in that day's run log. `q019`, 43%, ranks above `q037` but is class B.)
+        `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q034` is next by margin.
+        (`q023` done 2026-10-02, `q037` and `q040` done 2026-10-03; landings in those days' run logs.
+        Everything ranked above `q034` is class B, except `q021`, which is unreachable.)
         **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
@@ -2945,6 +2946,43 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-03 (scheduled dev-agent; **the previous run's named next question, `q040`** (item 160, class A). The previous run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 26's check question no longer gives its answer away by length. The correct option ("Mental accounting") was the longest in all five languages, by 16-48%. It now sits inside its distractors' length band in every language.**
+
+**Step 3.5: the premise and its controls.** I re-ranked all 46 questions by relative margin over `quizMeta` + the five `quizText` modules, in code points; scorer controls fired (2x runner-up 1.000, +1-of-100 0.010). **The figures reproduce:** `q040` min margin **16%**, per-language en/es/ko/zh/ja **48/46/33/37/16**. §65 before: longest-option **en 45.7%, es 43.5%, ko 43.5%, zh 39.1%, ja 41.3%** (matches the previous entry's "after"). **Class A holds:** the excess was a leading clause ("sorting money into mental buckets and …"), not the definition. **The lesson keeps it:** `lessonContent.money.*` still carries the buckets idea in every language (en `bucket` ×6, es `compartimento` ×6, ko `심리적 칸` ×1, zh `心理账户` ×2, ja `心の仕切り` ×1; nonsense probe ×0). `explain` already gives the general definition (source or label), so it is not a stub.
+
+#### What shipped
+One string per file, five files (`src/content/quizText.{en,es,ko,zh,ja}.js`). A Node patcher asserted old ×1 and new ×0 before writing, then old ×0 and new ×1 after, and I read the diff. Landings, with the distractor band `[min,max]`:
+| lang | new correct option | len | band |
+|---|---|---|---|
+| en | Mental accounting — applying a looser rule to money that feels 'found', not earned | 82 | [74,86] |
+| es | Contabilidad mental — aplicar una regla más laxa al dinero que parece 'encontrado' y no ganado | 94 | [78,102] |
+| ko | 심리적 회계 — '공돈'처럼 느껴지는 돈에 번 돈보다 느슨한 규칙을 적용하는 것 | 44 | [34,49] |
+| zh | 心理账户——对“意外之财”而非挣来的钱套用更松的规则 | 26 | [24,30] |
+| ja | 心の会計——「棚ぼた」に感じるお金に、稼いだお金より緩いルールを適用すること | 38 | [28,45] |
+
+**Tightest cell: zh, 2 above the floor and 4 below the ceiling.** zh drops 感觉 ("feels"); the quote marks around 意外之财 carry it. My first zh draft kept 感觉 and the earned contrast and landed at 30, tied with the ceiling, so I did not use it. Every other cell has ≥4 on both sides.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL, 1 WARN (O-3's) after the content edit. **After this entry was written: 2 WARN.** The second is `check-log-size`'s headroom WARN (0.35 runs left), set off by this entry |
+| §65 after | longest-option **en 43.5%, es 41.3%, ko 41.3%, zh 37.0%, ja 39.1%**: one question fewer in every language. Shortest-option unchanged at 2.2/2.2/0.0/2.2/4.3, so the opposite cue was not created |
+| Re-rank | `q040` is gone from the beatable list. Class A left: `q034` (11%), `q027` (6%), and `q021` (unreachable) |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-iqpYVGrc.js`, system Node v24.18.0 |
+| Bundle | each new option (probe per language) is in 1 asset; the old en clause "sorting money into mental buckets and applying" is in 0; a nonsense probe is in 0 |
+| Live walk | **not done.** Every new option is shorter than the one it replaces, so no new layout risk |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, date, market figure or Dalio content; `check-blindspot` passed in `npm test`. **DECISIONS.md / completed work:** this continues item 160 with its own rule (move the excess out, check `explain` and the lesson first, land inside the band) and undoes nothing archived.
+- **Is the answer still right?** Yes. A looser rule for "found" money is the windfall case of mental accounting, which is exactly what the question's scenario shows, and the old option made the same claim. The general definition (money treated by source or label) is in `explain`, which the learner sees right after answering. **Could the edit be wrong?** The es/ko/zh/ja wording is machine-written, and no fluent reader has seen it (**O-3**). The es "que parece 'encontrado' y no ganado" swaps 'se siente' for 'parece', and the zh drops 感觉; both are flagged for that reader.
+- **Would a reviewer get my result?** Yes: the ranking script, the patcher asserts, §65, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. Item 160's next class-A question is `q034` (11%, L20), but ⛔ it is a residual of this run, and this is the second residual in a row. ⛔ **The next run should be W-5.3's archiving pass:** this entry set off the run-log headroom WARN, and W-5.3's handoff is a separate pick, so W-6.2 rule 1 does not arise. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in lesson 26's check question, the right answer was always the longest one; it is now trimmed in all five languages. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-03 (scheduled dev-agent; **the previous run's named next question, `q037`** (item 160, class A). The previous run was a free pick, so W-6.2 rule 1 allows this; ⛔ **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 23's check question no longer gives its answer away by length. The correct option ("Present bias") was the longest in all five languages, by 37-74%. It now sits inside its distractors' length band in every language.**
 
