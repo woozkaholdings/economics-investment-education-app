@@ -334,6 +334,46 @@ for the history. No open P1/P2 items.
 > follows"* history, which `check-log-size.mjs` cannot see. **Not urgent at 36 KB and deliberately
 > NOT a pick** — the move is cheap once the mass is real, and it is not yet. Re-measure 2026-11-07.
 >
+>
+> ### W-10.2 ADDENDUM — ⭐ SOLVED, owner-directed 2026-10-04, same day. The two-week puzzle has a mundane answer, and it was in a sibling task file all along.
+> **The dev agent runs on a SECOND MAC.** Verbatim, from
+> `~/.claude/scheduled-tasks/economics-app-market-data/SKILL.md`, in a parenthetical dated
+> 2026-09-07: *"that agent now runs on a second Mac against the same iCloud-synced repo, where the
+> dirty-tree check below cannot see its in-progress edits until iCloud has synced them"*.
+> **That date is the same date this machine's `economics-app-dev-agent` entry was disabled
+> (`lastRunAt` 2026-09-07T04:00:39Z).** So the disabled entry is not a misconfiguration and not
+> orphaned bookkeeping — **it is intentional, and W-9.2's "whatever runs the dev agent is not that
+> task entry" was right about the fact and wrong to treat it as a defect.** Three weekly reviews
+> theorized about this; the answer was one `grep` away in a file none of them opened.
+> ⛔ **What this means for the line-9 fix, stated plainly because it is the part that matters:**
+> `~/.claude` is a real local directory on this Mac, **not** a symlink into the iCloud-synced tree
+> (measured: `readlink` returns nothing; the synced path is
+> `~/Documents/문서 - Kaeun의 노트북/…` and `~/.claude` is not under it). **So the corrections applied
+> today reach only this Mac's copies. The prompt actually in force is the copy on the second Mac,
+> and it presumably still says the remote is "NOT usable" and that the application is
+> `economic-cycles-v5.jsx`.** ⛔ **W-10.2 is therefore NOT closed. The remaining owner action is to
+> apply the same two corrections on the second Mac**, where `~/.claude/scheduled-tasks/economics-app-dev-agent/SKILL.md`
+> is the file that every run reads first.
+> **Also now explained: the outages.** W-8.2's ~40 hours and W-9.2's ~72 hours are a second Mac
+> asleep, offline, or not synced — not a cron fault on this one. The market-data job kept committing
+> through both because it runs *here*. **That is why the gap is only ever visible from this side, and
+> it is the right thing for a weekly review to keep measuring from commit timestamps.**
+> ⚠️ **Standing correction for future reviews: there are two machines, and this repo is iCloud-synced
+> between them.** Do not read a disabled task entry here as evidence about what runs there, and do
+> not assume a file under `~/.claude` is the one a run reads.
+>
+> ### W-10.8 — two task files corrected today (owner-directed), and a third was already clean.
+> `economics-app-dev-agent/SKILL.md` line 9: the remote sentence and the `v5.jsx` sentence both
+> replaced, with the old text quoted verbatim in a dated ⚠️ note per this project's convention, plus
+> a pointer that the app is `src/` with `src/main.jsx` as its entry. **`economics-app-market-data/SKILL.md`
+> carried the same false remote sentence and was corrected identically** — it fires every weekday, so
+> fixing only the dev-agent copy would have been half a fix. `economics-app-sunday-review/SKILL.md`
+> never carried the claim. **Verified: `.github/workflows/deploy-pages.yml` is `on: push: branches: [main]`,
+> so "the remote is the deploy path" is measured, not asserted.**
+> ⭐ **Noted in the market-data file for the owner, and deliberately NOT acted on: because a push is
+> what deploys, that file is exactly where O-5 route 1 ("have the job push") would be implemented**,
+> and weekend `market.json` staleness on the live site is the problem it solves. A run must not make
+> that change itself.
 > ### W-10.7 — the cost of this block, and W-10's test.
 > Floor **251,752 b** before this block; the after-figure goes in the report off
 > `check-log-size.mjs`, not retyped from here. W-9 cost 10,677 b, W-8 11,676 b, W-7 12,567 b.
