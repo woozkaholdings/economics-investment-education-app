@@ -221,6 +221,127 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-10 — set by the weekly review 2026-10-04. Supersedes W-9's *active* clauses below. The standing rules are UNCHANGED and still binding: W-9.4's two-run bar on short-string hand reads (it WORKED — see W-10.0), W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week shipped 31 dev-agent commits, build green, `npm test` 0 FAIL / 1 WARN, and the two
+> things that pulled last week's grade down both fixed themselves without an owner touching them.**
+> ⭐ **First clean week in three: 4 runs/day on all seven full days, 31 run-log entries against 31
+> non-market commits, no mismatch in either direction, no outage.** Grade **A−**; the only reason it
+> is not higher is that the critical path has not moved for a third week and is still owner-held.
+>
+> ### W-10.0 — W-9's test, taken first, as it required. It passes by a wide margin.
+> Measured 2026-10-04 off `check-log-size.mjs`'s MEASURED line before this block was written:
+> floor **251,752 b** (50.4% of the 500,000 b budget), backlog **213,346 b**, run log **164,355 b**
+> (65.7% of warn, 8 live days). **W-9's test was "W-9.1 has landed and the floor is below
+> 300,000 b" — it passes with 48,248 b to spare.** The 09-27 pass's byte accounting was verified
+> independently this review rather than taken on trust: W-5.3 pass 21 moved **−98,482 b** out of
+> `AGENT_LOG.md` and **+102,797 b** into the archive — the claimed 102,758 b plus a 39 b heading,
+> with 4,276 b of pointers written back.
+> ⭐ **W-9.4 WORKED, and that is worth recording because it was one line against an unbounded mode.**
+> Short-string hand reads of a translated surface: **6 of the last 7 runs last week, 1 of 31 this
+> week** (`moneyVisuals.js`, 10-02, which correctly cited the rule as *allowing* it). Every other run
+> states its W-9.4 position explicitly and three declined a residual *because* of it. **Keep the
+> rule. It cost nothing and it bought the week back.**
+>
+> ### W-10.1 ⛔ PRIORITY — the one content pick, reviewer-found, never looked at before.
+> **The essentials brokerage lesson teaches, in four places, that uninvested cash in a brokerage
+> account does not grow.** `lessonContent.essentials.en.js` body (*"the account only starts
+> working…"*), its `takeaway` (*"money inside it only grows once it's used to buy something"*),
+> `q027`'s correct option (*"stays as uninvested cash and generally doesn't grow until the owner buys
+> something with it"*) and `q027`'s `explain`. **Most major US brokerages sweep uninvested cash into
+> an interest-bearing bank-sweep or money-market position**, so a learner who opens a real account
+> and watches that cash earn interest has been told the opposite of what they see.
+> **Measured, so this is filed rather than assumed: `money market` returns 0 matches across
+> `AGENT_LOG.md`, the archive and `CLAIMS.md`; every `sweep` hit is the verb. Never examined.**
+> ⚠️ **The teaching point is sound and must survive the fix** — a brokerage account is a container,
+> not an investment; opening one commits nothing. What is wrong is the absolute form of the second
+> clause, so the fix is a hedge, not a rewrite: *doesn't grow the way an investment would* / *any
+> interest it earns is not the account working as an investment*. **English first, then carried into
+> four languages — the shape the 09-28 lesson-5 and lesson-33 fixes already proved this week.** Check
+> `explain` is not a stub in es/ko/zh/ja first (item 160's own rule).
+> **Filed as a content pick deliberately: it needs no owner input, it is bounded at four sites, and
+> O-6's complaint is that runs spend their budget on log mechanics instead of on the app.**
+>
+> ### W-10.2 — W-9.2 re-measured, and it is WORSE than last week's reading. Still owner-only.
+> `economics-app-dev-agent` is **still `enabled: false`, `lastRunAt` 2026-09-07**, cron every
+> 2 hours, while 31 commits landed this week on a clean 6-hour cadence. Unchanged. **What is new is
+> the second false claim in the same sentence, and it is the dangerous one.** Line 9 of that
+> `SKILL.md`: *"the GitHub remote 'origin' is NOT usable — never push, never fetch … The main
+> application is economic-cycles-v5.jsx, a single-file React app."*
+> **Both halves are false, measured today.** The remote half stopped being true at O-4. The second
+> half points every run at a **13,207 b legacy prototype last touched 2026-08-16 by `d7b7153`
+> "Stop both prototypes appearing in the project (owner decision)"** — `index.html:63` loads
+> `/src/main.jsx`, `src/App.jsx:9` says *"This app is authored here … deliberately not imported"*,
+> and neither `v5.jsx` nor `v6.jsx` is imported anywhere under `src/`.
+> ⛔ **Owner action: fix line 9 in whichever task definition actually runs.** The never-push rule
+> stays; *"NOT usable"* and the `v5.jsx` sentence both go. **Every run has so far ignored it — all 31
+> commits touched `src/` — but it is the first thing each one reads, and that same file's own Node
+> note was false for 15 days for exactly this reason.** A false first line survives because nobody
+> re-measures the sentence they have already read twenty times.
+>
+> ### W-10.3 — item 160's class A is EXHAUSTED, and the result is this week's headline.
+> Five runs closed `q023`, `q037`, `q040`, `q034` and `q027`. **Measured independently this review by
+> running `check-data.mjs` §65 in a worktree at last week's HEAD (`deb8cdf`) and at `91557e0` — both
+> figures off the instrument, neither retyped from a run entry:**
+>
+> | longest-option strategy | 2026-09-27 | 2026-10-04 | chance |
+> |---|---|---|---|
+> | en | 50.0% | **39.1%** | 25.0% |
+> | es | 47.8% | **37.0%** | 25.0% |
+> | ko | 47.8% | **37.0%** | 25.0% |
+> | ja | 45.7% | **34.8%** | 25.0% |
+> | zh | 43.5% | **32.6%** | 25.0% |
+>
+> **The edge over chance fell from 25.0 points to 14.1 in English — a 44% cut in one week — and the
+> shortest-option inverse tell did NOT move (2.2/2.2/0.0/4.3/2.2), so no run bought the forward tell
+> by creating the backward one.** That is the trap this item warns about twice; none of the five hit it.
+> ⛔ **Class A is now empty except `q021` (unreachable — its tail leaves the option at 87 against a
+> ceiling of 54). Do not re-open item 160 as a trimming item.** What remains is class B, distractor
+> prose in four unreviewed languages, and that is **O-3's**, exactly as the item says.
+> ⚠️ **If a future run does re-rank it, rank per language, not by the minimum:** `q027`'s "6%" was the
+> en minimum while ko/zh/ja were 100/61/53%, so the minimum ranking had been hiding the loudest CJK
+> tell in the corpus. The 10-04 run found that itself and wrote it down.
+>
+> ### W-10.4 — the deploy gap is the same shape for the third week, and the margin is still one day.
+> **Measured with `check-deployed --identify`, which rebuilt 7 candidates and found a byte-identical
+> match: the live bundle is `f4928ff` (Friday 2026-10-02 19:51).** Four commits behind, and all four
+> are W-10.3's quiz fixes — **the learner is missing precisely this week's best work.** Live
+> `market.json` `asOf` 2026-10-02, age 2 d; `STALE_AFTER_DAYS` is 4, so **Sectors goes to the
+> unavailable state on 2026-10-06** and a Monday push clears it with one day in hand.
+> **Not a regression and not a surprise — W-9.3's weekday-push cycle, confirmed a third time.** O-5's
+> two routes are unchanged. ⚠️ **A Sunday review will ALWAYS see this; do not re-raise it as
+> alarming.** The only thing to watch is the one-day margin.
+>
+> ### W-10.5 — O-2 and O-3, unchanged, third week. Asked as questions, not restated as blockers.
+> **O-2 is still the entire critical path.** Four steps, ~20 minutes, and §4.3's Phase-0 completion
+> gate becomes measurable for the first time. The code half shipped 2026-09-05 and the 10-04 claims
+> audit re-proved it: the live bundle ships `provider:"none"` once and `posthog`/`plausible`/`phc_`
+> zero times, with the PostHog host string appearing twice as the control that the scan read the file.
+> **O-3 is unchanged and its evidence only got stronger.** Human-reviewed share is **0% in all four
+> non-English languages** — the one standing `npm test` WARN, every run, all week. This week added
+> five more hand-found defects in `moneyVisuals.js` and seven in the Fed-chair simulator.
+> ⭐ **Per O-1's own lesson, both are written as asks:** *"Fund a fluent review of one language, cap
+> what ships under (Beta), or re-affirm the decision now that the error rate is known."*
+>
+> ### W-10.6 — two notes that are NOT this week's work, filed so no run manufactures them.
+> **(a) The run-log archiving treadmill is now ~4 days, not weekly, and the lever is entry size.**
+> Measured: 31 entries, **mean 5,300 b each**, ≈21,200 b/day at 4 runs/day; headroom to the
+> 250,000 b warn is **85,645 b ≈ 16 entries ≈ 4.0 days**, so W-5.3's 22nd firing is due around
+> **2026-10-08**. Two of this week's 31 runs went to log mechanics (6%). **That is acceptable and no
+> run should "fix" it this week** — but a reviewer should notice if it reaches one run in eight.
+> **(b) `CLAIMS.md` has no size guard and its rows have begun to accrete.** 36,713 b; 17 rows
+> totalling 22,403 b; **A1's status cell alone is 2,957 b / 462 words** of chained *"Earlier record
+> follows"* history, which `check-log-size.mjs` cannot see. **Not urgent at 36 KB and deliberately
+> NOT a pick** — the move is cheap once the mass is real, and it is not yet. Re-measure 2026-11-07.
+>
+> ### W-10.7 — the cost of this block, and W-10's test.
+> Floor **251,752 b** before this block; the after-figure goes in the report off
+> `check-log-size.mjs`, not retyped from here. W-9 cost 10,677 b, W-8 11,676 b, W-7 12,567 b.
+> **The test of W-10 is not whether the next run agrees with it. It is two measurements:**
+> **(i) W-10.1 has landed**, and **(ii) §65's longest-option rate has not risen above the 2026-10-04
+> reading in any language (en 39.1 / es 37.0 / ko 37.0 / ja 34.8 / zh 32.6)** — i.e. no distractor
+> edit quietly gave the tell back. **Run the instrument; do not retype either figure from this block.**
+
 > ## PRIORITY BLOCK W-9 — set by the weekly review 2026-09-27. Supersedes W-8's *active* clauses below. The standing rules are UNCHANGED and still binding: W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule (but read W-9.4, which bounds it differently), W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week shipped 30 commits, build green, and `npm test` went 2 WARN → 1.** Item 94 closed
