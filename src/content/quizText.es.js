@@ -288,14 +288,14 @@ export const quizText = [
     "explain": "Una cuenta de corretaje es un contenedor, no una inversión en sí misma. El efectivo sin invertir dentro de ella sigue siendo efectivo — muchas plataformas lo trasladan a un depósito bancario o a un fondo del mercado monetario que paga algo de interés, pero comprar acciones, bonos o fondos es un paso separado que el dueño debe tomar deliberadamente."
   },
   {
-    "q": "Alguien reescribe su testamento después de un divorcio para dejarle todo a su nuevo cónyuge, pero nunca actualiza el formulario de beneficiario de un 401(k) que abrió años antes — todavía figura su ex-cónyuge. ¿Quién recibe realmente ese 401(k) cuando esa persona muere?",
+    "q": "Alguien que nunca se casó nombró hace años a su padre como beneficiario de su 401(k). Más tarde escribió un testamento que deja todo a sus dos hijos, pero nunca actualizó ese formulario. ¿Quién recibe realmente ese 401(k) cuando esa persona muere?",
     "opts": [
-      "El ex-cónyuge, porque la designación de beneficiario de la cuenta anula lo que dice el testamento",
-      "El nuevo cónyuge, porque el testamento se escribió más recientemente",
-      "El dinero se divide automáticamente en partes iguales entre el ex-cónyuge y el nuevo cónyuge",
-      "El proveedor del 401(k) decide según quién contribuyó más"
+      "Su padre, porque el formulario de beneficiario del 401(k) anula el testamento",
+      "Sus hijos, porque el testamento se escribió más recientemente que el formulario",
+      "Su padre y sus hijos, a partes iguales y de forma automática",
+      "Quien el proveedor del 401(k) decida que es el familiar más cercano"
     ],
-    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de jubilación” y “Seguros”. Quien esté nombrado en el formulario de beneficiario de esa cuenta la recibe directamente, sin importar lo que diga un testamento más reciente."
+    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de jubilación” y “Seguros”. Su padre figura en el formulario, así que recibe el 401(k) directamente, sin importar lo que diga un testamento más reciente. Las normas que pueden anular un formulario, como el derecho de un cónyuge actual a un 401(k) o una ley estatal que anula la designación de un ex-cónyuge tras un divorcio, no se aplican aquí: nunca hubo cónyuge."
   },
   {
     "q": "Una persona ve un puntaje de crédito de 705 en una app y 680 en otra app distinta el mismo día. Según esta lección, ¿cuál es la explicación más probable?",

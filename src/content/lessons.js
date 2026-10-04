@@ -290,7 +290,7 @@ export const lessons = [
     subtitle: {"en":"A brokerage account is a container, not an investment by itself","es":"Una cuenta de corretaje es un contenedor, no una inversión en sí misma","ko":"증권 계좌는 그 자체로 투자가 아니라 담는 그릇일 뿐입니다","zh":"券商账户只是一个容器，本身并不是投资","ja":"証券口座はそれ自体が投資ではなく、あくまで入れ物です"},
   },
   {
-    id: 14, track: "essentials", icon: "📜", color: "#4c1d95", minutes: 3,
+    id: 14, track: "essentials", icon: "📜", color: "#4c1d95", minutes: 4,
     title: {"en":"Estate Planning Basics: Wills and Beneficiary Designations","es":"Fundamentos de planificación patrimonial: testamentos y designaciones de beneficiario","ko":"상속 계획의 기초: 유언장과 수익자 지정","zh":"遗产规划基础：遗嘱与受益人指定","ja":"遺産計画の基本：遺言書と受取人指定"},
     subtitle: {"en":"A will decides less than most people think — beneficiary forms often decide more","es":"Un testamento decide menos de lo que la mayoría piensa — los formularios de beneficiario suelen decidir más","ko":"유언장이 결정하는 것은 생각보다 적고, 수익자 양식이 더 많이 결정합니다","zh":"遗嘱能决定的比大多数人想的要少——受益人表格往往决定得更多","ja":"遺言書が決めることは多くの人が思うより少なく、受取人フォームの方が決めることが多い"},
   },

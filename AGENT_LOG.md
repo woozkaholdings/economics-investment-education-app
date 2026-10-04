@@ -3110,6 +3110,46 @@ same journey.
 
 ## Run log
 
+### 2026-10-04 (scheduled dev-agent; **a free pick**. The previous run (W-10.1) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** this is a legal-accuracy fix carried into four languages, the same shape as W-10.1, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from extending W-10.1's question ("which absolute claims in essentials are false in practice?") to the rest of the track.** A scan of `lessonContent.essentials.en.js` for `always|never|every|guarantee|can't…` turned up lesson 14's *"The account's own beneficiary designation wins, every time"*) — **the estate-planning lesson's quiz marked the wrong person as the answer. q028 asked who gets a 401(k) when someone divorced, remarried and left the old form naming the ex-spouse, and its key said "the ex-spouse". Under federal law the current spouse usually gets it.** The lesson's think-about prompt asked the same question.
+
+**Step 3.5: the premise held, and it was bigger than the sentence.**
+- **The law, from primary sources:** 26 U.S.C. §401(a)(11)(B)(iii) lets a 401(k) skip the survivor-annuity rules only if it pays the full balance to the **surviving spouse**, unless that spouse consents under §417(a)(2) (in writing, witnessed by a plan representative or notary). §417(d) lets a plan exclude a spouse married under one year. A form naming the ex, signed before the remarriage, carries no consent from the new spouse. **So in q028's scenario the new spouse usually takes the 401(k), which was distractor 1.** Separately, *Sveen v. Melin* (2018) records **26 states** with UPC §2-804-style statutes that revoke an ex-spouse's designation on divorce. Those apply to life insurance and IRAs, not to ERISA 401(k)s (*Egelhoff*, 2001).
+- **The sites:** `beneficiar` across `src/` hits lesson 14 (5 langs), `quizText.*` q028 and `lessons.js` (title only). Control: the same grep returns the lesson title, a known hit. **Never examined:** `AGENT_LOG.md`, the archive and `CLAIMS.md` contain 0 matches for `ERISA|spousal consent|revocation|Egelhoff|2-804|Sveen`. The 08-06 run that wrote the lesson and the 09-22 run that finished its translation both took the precedence rule as given.
+- **What survives:** the teaching point is right. A will can't redirect an account that has its own beneficiary form, and the forms don't update themselves. Only the absolute claim "the form wins, every time" and the remarriage scenario were wrong.
+
+#### What shipped (15 files, 5 languages)
+- **Lesson 14 ¶1:** "wins, every time…" → "A more recently written will that says something different doesn't change that." The will-can't-override claim is true, so it stays.
+- **Lesson 14 ¶2:** names the two backstops: federal law usually gives a 401(k) to a current spouse unless they gave up the right in writing, and about half of US states cancel an ex-spouse's designation after divorce for some accounts. It then says they vary and don't cover every case, so in most situations the form still decides.
+- **Takeaway:** "gets it" → "usually gets it".
+- **thinkAbout:** a never-married person, life insurance naming their mother, and a will leaving everything to a long-term partner. That echoes §0's unmarried-couple point, and no backstop applies: there is no spouse and no divorce.
+- **q028:** a never-married person, a 401(k) naming their father, and a will leaving everything to two children. The answer index stays 0, so `quizMeta.js` is untouched. The new `explain` names both backstops and says why neither applies. es `explain` had no "which is why" clause before, so none was added.
+- Generated, not hand-typed: lesson 14 `minutes` 3 → 4 (`check-data` §2 FAIL). Ledger re-marked (ai) for es/ko/zh/ja. `npm run readiness -- --write`: 174 → 175 min, plus 164,634 → 165,070 chars and words ~28,700 → ~28,800 in LAUNCH_PLAN, LAUNCH_READINESS and the CLAIMS A6 cell, all numeric.
+- Patcher: 50 old/new pairs split/join, each asserted old ×1 / new ×0 before writing and old ×0 / new ×1 after, dry run first.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate: 2 FAIL (minutes; §10.4 ledger drift), both cleared by the generated steps above |
+| §65 (W-10.7 test ii) | longest-option **en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6%** (was 39.1/37.0/37.0/34.8/32.6). **None rose, en and es fell**: the old correct option was the longest in en. Shortest 2.2/2.2/0.0/4.3/2.2, unchanged |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-Brh6EhLs.js`, system Node v24.18.0 |
+| Bundle | "wins, every time" and "The ex-spouse, because" in **0** assets. The new en/es/ko/zh/ja phrases are in **1** asset each. Nonsense probe returned 0 |
+| Live walk | **not done.** Text only; the q028 options are shorter than before in every language |
+
+#### Step 5: adversarial self-check
+- **§10.1 advice:** the lesson's own "isn't a specific instruction" paragraph is untouched. The new text describes what the law does and tells no one whom to name or what to sign. **Dates / figures:** "about half of US states" is the one count. Its source is 26 as of 2018; a few states either way would not make "about half" wrong.
+- **Is the new key right?** Never married means no §401(a)(11) spouse. No divorce means no revocation statute. Children have no forced share of a 401(k) or of a life insurance payout. So the form governs, and the father (q028) and the mother (thinkAbout) are correct.
+- **Is a distractor now true?** "The children, because the will is newer" is false: the will doesn't control the account. Split evenly and the provider choosing are false.
+- **¶2's ex-spouse example:** for a 401(k) with no remarriage, *Egelhoff* means the ex usually still takes it, so the lesson's "common mistake" framing stays accurate.
+- **DECISIONS.md / completed work:** this keeps the 09-22 item-94 restoration (§0¶2) and the will-vs-form sentence it protected. No archived item is undone.
+- **Translations:** machine-written, **O-3**. ko keeps 강의 and ja keeps この講 in thinkAbout; those are the existing wording and out of scope here.
+- **Would a reviewer get my result?** Yes. The patcher's assertions, the grep scan and its control, `npm test`, §65, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** `scripts/fix-agent-skill.mjs` appeared **untracked** during this run. I did not create it, and I did not touch it or commit it; it is probably the owner's W-10.2 follow-up. This run's own task prompt still says the remote is "NOT usable" and that `economic-cycles-v5.jsx` is the main application. **That is W-10.2's predicted state on this machine**, so its remaining owner action is still open. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 14's check question used to say that after a divorce and remarriage, an old 401(k) form still sends the money to the ex. Federal law usually gives it to the current spouse, so the lesson now says so and the question uses a case where the form really does decide. Still waiting on you: **O-2** (analytics account) and **O-3** (fluent review, or cap/re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-04 (scheduled dev-agent; **W-10.1, the weekly review's one priority content pick**. That is a named pick, not a residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** this is a fact fix carried into four languages, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the brokerage lesson no longer says uninvested cash doesn't grow. It now says many brokerages sweep that cash into a bank deposit or money market fund that pays interest, at rates from near zero to near a savings account, and that it is still cash, not an investment.**
 
 **Step 3.5: the premise held, and it was one site short.**

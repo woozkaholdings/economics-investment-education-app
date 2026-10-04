@@ -288,14 +288,14 @@ export const quizText = [
     "explain": "A brokerage account is a container, not an investment itself. Uninvested cash sitting inside it stays cash — many brokerages sweep it into a bank deposit or money market fund that pays some interest, but buying stocks, bonds, or funds is a separate step the account owner has to take deliberately."
   },
   {
-    "q": "Someone rewrites their will after a divorce to leave everything to their new spouse, but never updates the beneficiary form on a 401(k) they opened years earlier — it still lists their ex-spouse. Who actually receives that 401(k) when they die?",
+    "q": "Someone who never married named their father as the beneficiary on their 401(k) years ago. Later they wrote a will leaving everything to their two children, but never updated that form. Who actually receives that 401(k) when they die?",
     "opts": [
-      "The ex-spouse, because the account's own beneficiary designation overrides what the will says",
-      "The new spouse, because the will was written more recently",
-      "The money is split evenly between the ex-spouse and new spouse automatically",
-      "The 401(k) provider decides based on which spouse contributed more"
+      "Their father, because the 401(k)'s beneficiary form overrides the will",
+      "Their children, because the will was written more recently than the form",
+      "Their father and children, split evenly between them automatically",
+      "Whoever the 401(k) provider decides is the closest family member"
     ],
-    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from “Retirement Accounts” and “Insurance”. Whoever is named on that account's beneficiary form receives it directly, regardless of what a more recent will says — which is why beneficiary forms need to be updated separately after major life changes."
+    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from “Retirement Accounts” and “Insurance”. Their father is named on the form, so he receives it directly, regardless of what a more recent will says. Rules that can override a form, like a current spouse's right to a 401(k) or a state law canceling an ex-spouse's designation after a divorce, don't apply here: there was never a spouse. That is why beneficiary forms need to be updated separately after major life changes."
   },
   {
     "q": "A person sees a credit score of 705 in one app and 680 in a different app on the same day. Based on this lesson, what's the most likely explanation?",
