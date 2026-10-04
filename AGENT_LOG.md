@@ -2949,6 +2949,48 @@ same journey.
 
 ## Run log
 
+### 2026-10-04 (scheduled dev-agent; **a free pick**: the previous run's "Seen, not fixed" called the 16 past-due §9.1 rows *"a whole run of its own and a separate pick, not a residual of this one"*. **W-9.4 does not bind:** this is a register audit, not a short-string hand read. `npm test` showed **0 FAIL, 17 WARN** before any edit (O-3's + 16 past-due claim rows)) — **§9.3 audit question 4, a day late: all 16 rows re-measured and re-dated to 2026-11-07. Two rows had cited a blocker that closed on 2026-09-05, so they were wrong for 29 days.**
+
+**Step 3.5: the premise broke.** The rows' shared premise was "blocked on item 18: `analytics.js` sends nothing anywhere", and C1 said "no web deploy". Re-measured: `analytics.js` has 1 `fetch(` and 5 `sendBeacon` (A1 recorded **0**). Item 18's transport shipped on 2026-09-05 (`9e00f95`), and O-1's deploy closed the same day. The rows still cannot be measured, but the reason is now **O-2** (an owner account and key), not missing code. Checked in the bundle the live site serves: `provider:"none"` appears ×1, `provider:"posthog"` / `"plausible"` / `phc_` ×0. Control: the PostHog host string appears ×2 in that file. So no event leaves any device today.
+
+#### What shipped (1 file, no source change)
+`CLAIMS.md`:
+- A new *The 2026-10-04 review* section, written once, with the shared reason for the date.
+- The "How to read a row" blocker sentence now says O-2.
+- Five `Measurable today` cells now read "No — O-2 …", and C2's names O-2 and the existing deploy.
+- 16 Check cells moved 2026-10-03 → **2026-11-07** (the next first Saturday). A3's 2026-10-16 is untouched.
+- Each of the 16 rows starts with a row-specific "Reviewed 2026-10-04" finding. Earlier text is kept, and A1's stale measurement is labeled out of date rather than deleted.
+
+The row-specific findings:
+- **A6:** recounted 44 lessons and 174 min.
+- **A7:** the simulator's host set is still `[35]`, with 2 scenarios. Control: `(29)` returns 0.
+- **B1–B4:** no payment code. "paywall", "stripe" and the other payment terms appear only in comments, and `PAYWALL_VIEWED` is fired nowhere. Control: `lesson_started`'s call site was found.
+- **C1:** "no web deploy" corrected. Clips: none recorded, and that comes from a local search only.
+- **D2:** new instance (4). Both checks passed while A1 and C1 were stale.
+- **D3:** since 2026-09-05, 22 entries say a premise broke and 38 say one held. Both are floors. Controls: 236/236 and 0.
+- **D1:** I counted no new instances. My pattern found 0 and had no positive control, so the 0 is reported as meaning nothing.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, **0 FAIL, 1 WARN** (O-3's only; was 17). One intermediate FAIL: §26 flagged a deployed-bundle filename I had cited as if it were a repo path. I removed the filename and re-ran |
+| `check-claims` control | `CLAIMS_TODAY=2026-11-08` → 17 past-due WARNs (16 + A3); `=2026-10-17` → A3 only. The warning still fires |
+| Patcher | each edit asserted ×1, the date pass asserted 16 cells, the item-18 cells 5, "Not yet live" 4 |
+| `refresh-readiness --check` | 13 generated figures agree, CLAIMS.md included |
+| `check-deployed` | live site reached, 404 control fired. **DIVERGED** (the live bundle is older than HEAD), which W-8.1 already tracks |
+| Build | **not run:** no file under `src/` changed |
+
+#### Step 5: adversarial self-check
+- **Is moving 16 dates the "soft restatement" §9.1 forbids?** No. No threshold or claim text changed. Every row records what was measured and why its date moved. The two refuted-adjacent rows (D1, D2) stay REFUTED.
+- **Blindspot register / DECISIONS.md / completed work:** no content, advice, date or market figure touched. I did not change A1's locked-link decision (option (a)). Nothing archived is undone.
+- **Would a reviewer get my result?** Yes: the greps, the live-bundle curl, `m.mjs`'s lesson and scenario count, `npm test` and both `CLAIMS_TODAY` controls all re-run. One soft spot is stated in the row: the D3 counts are pattern floors.
+
+**Seen, not fixed:** the backlog's own item-18 / O-2 text was not audited here. `LAUNCH_PLAN.md` §9.1 says the register holds "17 claims". There are 17 rows, so that figure holds. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** every claim the app is trying to test is still waiting on **O-2**, one analytics account and one pasted key. The code to send events has been live since 2026-09-05. Also still open: **O-3**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-04 (scheduled dev-agent; **the previous run's named residual, `q027`** (item 160, class A). The previous run was a free pick, so W-6.2 rule 1 allows this; **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 17 WARN** before any edit: O-3's, plus **16 new §9.1 claim rows past their 2026-10-03 check date** (not caused by this run; see "Seen, not fixed")) — **lesson 13's check question no longer gives its answer away by length. In Korean the correct option was twice as long as any distractor.**
 
 **Step 3.5: the premise broke, and in the direction that mattered.** The previous run called `q027` "6%, near the 3% no-human-eye corollary" and said a run should weigh that before taking it. Re-measured per language in code points: **en 6%, es 7%, ko 100%, zh 61%, ja 53%.** The 6% was the **minimum** across languages, so the ranking item 160 uses put the **loudest remaining CJK tell** at the bottom of the queue. Control: the same script on `q034` reproduces the previous run's landings exactly (en 46 in [33,50], ko 24 in [21,29], …). **Class A holds:** the excess was the tail "— buying an actual investment is a separate, deliberate step", which `explain` already says in all five languages, and lesson 13's body says it word for word in en.
