@@ -1430,8 +1430,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         standing WARN cleared. **The remainder is still not all class B: `q037` (37%, L23), `q040` (16%),
         `q034` (11%) and `q027` (6%) are class A and beatable in all five.** `q034` is next by margin.
         (`q023` done 2026-10-02, `q037`, `q040` and `q034` done 2026-10-03; landings in those days' run logs.
-        **Only `q027` (6%, L13) is left in class A**, near the 3% "no human eye can resolve" corollary
-        below; everything ranked above it is class B, except `q021`, which is unreachable.)
+        `q027` done 2026-10-04: its "6%" was the **en minimum**; ko/zh/ja were **100/61/53%**, so the
+        min-margin ranking hid the loudest CJK tell left. **Class A is now empty except `q021`
+        (unreachable).** Rank per language, not by the minimum.)
         **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
@@ -2947,6 +2948,43 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-04 (scheduled dev-agent; **the previous run's named residual, `q027`** (item 160, class A). The previous run was a free pick, so W-6.2 rule 1 allows this; **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 17 WARN** before any edit: O-3's, plus **16 new §9.1 claim rows past their 2026-10-03 check date** (not caused by this run; see "Seen, not fixed")) — **lesson 13's check question no longer gives its answer away by length. In Korean the correct option was twice as long as any distractor.**
+
+**Step 3.5: the premise broke, and in the direction that mattered.** The previous run called `q027` "6%, near the 3% no-human-eye corollary" and said a run should weigh that before taking it. Re-measured per language in code points: **en 6%, es 7%, ko 100%, zh 61%, ja 53%.** The 6% was the **minimum** across languages, so the ranking item 160 uses put the **loudest remaining CJK tell** at the bottom of the queue. Control: the same script on `q034` reproduces the previous run's landings exactly (en 46 in [33,50], ko 24 in [21,29], …). **Class A holds:** the excess was the tail "— buying an actual investment is a separate, deliberate step", which `explain` already says in all five languages, and lesson 13's body says it word for word in en.
+
+#### What shipped
+One string per file, five files (`src/content/quizText.{en,es,ko,zh,ja}.js`). A Node patcher asserted old ×1 / new ×0 before writing and old ×0 / new ×1 after. Deleting the tail alone would have made the en option **40 chars against a floor of 64**, strictly shortest (the inverse tell), so each option was re-worded to say *what* the cash stays as instead of *why*:
+| lang | new correct option | len | band |
+|---|---|---|---|
+| en | It stays as uninvested cash and generally doesn't grow until the owner buys something with it | 93 | [64,95] |
+| es | Se queda como efectivo sin invertir y generalmente no crece hasta que el dueño compre algo con él | 97 | [66,99] |
+| ko | 투자하지 않은 현금으로 남아 보통 불어나지 않는다 | 27 | [26,28] |
+| zh | 它作为未投资的现金留在那里，通常不会增长 | 20 | [19,23] |
+| ja | 何かを買うまで未投資の現金のまま置かれ、通常は増えない | 27 | [26,30] |
+
+**Tightest cells: en and es, 2 below the ceiling; ko ties one distractor at 27**, which is not strictly longest.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0**, 0 FAIL; WARN set identical before and after (O-3's + 16 §9.1 date rows), read from files |
+| §65 after | longest-option **en 39.1%, es 37.0%, ko 37.0%, zh 32.6%, ja 34.8%** (before 41.3/39.1/39.1/34.8/37.0): one question fewer in every language. Shortest-option unchanged at 2.2/2.2/0.0/2.2/4.3 |
+| Per-language margin after | en −2%, es −2%, ko −4%, zh −13%, ja −10% |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-BtfZ4zWt.js`, system Node v24.18.0 |
+| Bundle | each old option (en/es/zh/ja by its opening, ko by its tail) in **0** assets; new en/es/zh/ja/ko options in **1**; a nonsense probe in 0. "separate, deliberate step" survives in 1 asset: lesson 13's body (`lessonContent.essentials.en`), as intended |
+| Live walk | **not done.** Every new option is shorter than the one it replaces |
+
+#### Step 5: adversarial self-check
+- **Blindspot register:** no advice, date, market figure or Dalio content; `check-blindspot` passed in `npm test`. **DECISIONS.md / completed work:** continues item 160 under its own rule (check `explain` first, land inside the band, mind both walls) and undoes nothing archived.
+- **Is the answer still right?** Yes, and no less hedged: "generally" is kept, so it does not claim uninvested cash never earns anything (some brokers sweep it into interest-bearing accounts). "Until the owner buys something" keeps the deliberate-step point. **Could the edit be wrong?** es/ko/zh/ja wording is machine-written and no fluent reader has seen it (**O-3**).
+- **Would a reviewer get my result?** Yes: the margin script, patcher asserts, §65, build and bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** ⚠️ **16 §9.1 claim rows (A1, A2, A4–A8, B1–B4, C1, C2, D1–D3) passed their check date yesterday**, each WARN saying "look at it, then either record the result or move the date WITH a reason". That is a whole run of its own and a separate pick, not a residual of this one. **Owner-relevant:** item 160's min-margin ranking under-ranks CJK-only tells; a per-language re-rank is the next honest look at class B. **W-8.1 still applies:** committed, **not deployed**.
+
+**Owner-facing, one line:** in lesson 13's check question, the right answer was always the longest one (twice the length in Korean); it is now trimmed in all five languages. Still waiting on you: **O-2's analytics account**, and **O-3: fund a fluent review of one language, cap what ships under "(Beta)", or re-affirm it.**
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-03 (scheduled dev-agent; **a free pick**. The previous run was W-5.3's archiving pass, which named `q034` as *"no longer a residual chain, so it is a legal free pick"*. **W-9.4 does not bind:** this is a quiz-design fix measured by §65, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 20's check question no longer gives its answer away by length. The correct option ("That other people are buying it — not that it's a good value") was the longest in all five languages, by 11-41%. It now sits inside its distractors' length band in every language.**
 

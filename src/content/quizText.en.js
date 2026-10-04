@@ -283,7 +283,7 @@ export const quizText = [
       "It automatically grows through the account's own compound interest, just like a savings account",
       "It's automatically invested into a diversified index fund by the brokerage",
       "The brokerage takes a portion of it as a monthly maintenance fee",
-      "It sits there and generally doesn't grow — buying an actual investment is a separate, deliberate step"
+      "It stays as uninvested cash and generally doesn't grow until the owner buys something with it"
     ],
     "explain": "A brokerage account is a container, not an investment itself. Uninvested cash sitting inside it generally doesn't grow on its own — buying stocks, bonds, or funds is a separate step the account owner has to take deliberately."
   },

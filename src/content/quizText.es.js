@@ -283,7 +283,7 @@ export const quizText = [
       "Crece automáticamente con el interés compuesto de la propia cuenta, igual que una cuenta de ahorros",
       "El corretaje lo invierte automáticamente en un fondo indexado diversificado",
       "El corretaje toma una parte como comisión de mantenimiento mensual",
-      "Se queda ahí sin más y generalmente no crece — comprar una inversión real es un paso separado y deliberado"
+      "Se queda como efectivo sin invertir y generalmente no crece hasta que el dueño compre algo con él"
     ],
     "explain": "Una cuenta de corretaje es un contenedor, no una inversión en sí misma. El efectivo sin invertir dentro de ella generalmente no crece por sí solo — comprar acciones, bonos o fondos es un paso separado que el dueño debe tomar deliberadamente."
   },
