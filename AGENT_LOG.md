@@ -243,7 +243,7 @@ for the history. No open P1/P2 items.
 > states its W-9.4 position explicitly and three declined a residual *because* of it. **Keep the
 > rule. It cost nothing and it bought the week back.**
 >
-> ### W-10.1 ⛔ PRIORITY — the one content pick, reviewer-found, never looked at before.
+> ### W-10.1 ✅ LANDED 2026-10-04 (five sites, not four, plus q027 distractor 1 — see that run entry). ⛔ PRIORITY — the one content pick, reviewer-found, never looked at before.
 > **The essentials brokerage lesson teaches, in four places, that uninvested cash in a brokerage
 > account does not grow.** `lessonContent.essentials.en.js` body (*"the account only starts
 > working…"*), its `takeaway` (*"money inside it only grows once it's used to buy something"*),
@@ -3069,6 +3069,63 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-04 (scheduled dev-agent; **W-10.1, the weekly review's one priority content pick**. That is a named pick, not a residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** this is a fact fix carried into four languages, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **the brokerage lesson no longer says uninvested cash doesn't grow. It now says many brokerages sweep that cash into a bank deposit or money market fund that pays interest, at rates from near zero to near a savings account, and that it is still cash, not an investment.**
+
+**Step 3.5: the premise held, and it was one site short.**
+- **The fact:** the defaults are Fidelity SPAXX ~4%, Vanguard VMFXX ~4% and Schwab's bank sweep ~0.05-0.5% (web search, 2025-26 comparison pages). At the two largest defaults, a learner would see their cash earn about 4%.
+- **The sites:** W-10.1 named four. The instrument (every non-translated `src/` file, `/uninvested/` and `/brokerage…(grow|earn|interest)/`) found a **fifth**: §3's revenue paragraph said the brokerage *"keeps the interest"*. That is absolute too. The brokerage keeps the part it does not pay the customer. Control: the same scan returned the q027 stem and the §3 sentence, both known hits.
+- **Already hedged:** body ¶2 already said *"usually doesn't earn much, if anything"*. That is still wrong at the 4% defaults.
+- **A sixth problem, in the quiz:** q027's first distractor, *"automatically grows through the account's own compound interest, just like a savings account"*, is roughly **true** at Vanguard and Fidelity. Hedging only the correct option would have left the question with two defensible answers. So that distractor was replaced too.
+
+#### What shipped (12 files)
+Lesson 13 (`lessonContent.essentials.{en,es,ko,zh,ja}.js`), four sites per language:
+- ¶1: "only starts working once…" → "nothing is invested until…".
+- ¶2: sweep sentence, as above.
+- §3: "keeps whatever part of that interest it doesn't pass on to the customer".
+- `takeaway`: "only grows once" → "isn't invested until".
+
+`quizText.*.js` q027:
+- New correct option: *"It stays as cash, possibly earning some interest, until the owner buys an investment"*.
+- New first distractor: *"It's sent back to the owner's bank account automatically if it isn't invested within a month"*.
+- `explain` now names the sweep.
+
+`explain` was checked as a full sentence in all five languages first (item 160's rule). Answer index is unchanged at 3, so `quizMeta.js` is untouched. Glossary wording was reused: es *fondo del mercado monetario*, ko 머니마켓펀드, zh 货币市场基金, ja MMF. A Node patcher asserted every old ×1 / new ×0 before writing and old ×0 / new ×1 after (split/join, no `$` replacer).
+
+Generated knock-ons, nothing typed by hand:
+- `translation-review-ledger.json`: lesson 13 re-marked (ai) in es/ko/zh/ja after the English edit made it stale. I wrote each changed paragraph against the new English; the rest of the lesson is unchanged since its 09-19 review.
+- `npm run readiness -- --write`: two numeric lines (164,424 → 164,634 en chars; LAUNCH_PLAN §4.0 ~164,000 → ~165,000).
+
+| lang | option lengths after (d1/d2/d3/correct, code points) | correct strictly longest? |
+|---|---|---|
+| en | 92/74/64/84 | no |
+| es | 98/75/66/89 | no |
+| ko | 34/26/27/33 | no |
+| zh | 24/19/19/22 | no |
+| ja | 31/30/27/30 | no (ties d2) |
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate run: **2 FAIL**. (1) `lessonTerms[13][0]` "Savings Account": my first en wording said "savings-account rates", which the link check does not match; reworded to "what a savings account pays". (2) §10.4 ledger drift, cleared by the mark + readiness write |
+| §65 (W-10.7 test ii) | **en 39.1 / es 37.0 / ko 37.0 / ja 34.8 / zh 32.6%** longest-option, shortest 2.2/2.2/0.0/4.3/2.2: **identical to the 2026-10-04 reading in every language** — the distractor swap gave no tell back |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DOqUh5A2.js`, system Node v24.18.0 |
+| Bundle | 4 old en phrases in **0** assets; new en/es/ko/zh/ja phrases in **1** each; nonsense probe 0. "within a month" matched 2 assets: the new distractor + an unrelated economy sentence (checked) |
+| Live walk | **not done.** All text, the q027 options are in band, and no layout element changed |
+
+#### Step 5: adversarial self-check
+- **§10.1 advice:** names no firm and does not say where to keep cash. It describes what happens by default. `check-blindspot` passed. **Dates/market figures:** no rate figure is in the app, only "close to nothing … near a savings account", so nothing goes stale when rates move.
+- **Is the new answer right everywhere?** A sweep into a money market fund is technically a fund purchase. The lesson and the option treat it as cash, which matches standard usage (a "cash position"/"core position"), and d2's "diversified index fund" stays false.
+- **Is the new distractor ever true?** Not as a general rule at US brokerages.
+- **DECISIONS.md / completed work:** this keeps the 10-04 q027 fix's own teaching point (the deliberate step) and undoes no archived item.
+- **Translations:** machine-written, **O-3**.
+- **Would a reviewer get my result?** Yes: the patcher asserts, scan + control, `npm test`, §65, build and bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** the q027 stem still says "What *generally* happens", which is fine. W-10.2's point stands: this task's SKILL.md still calls `economic-cycles-v5.jsx` the main application and the remote "NOT usable". Owner edit; I did not touch it. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 13 used to tell learners their uninvested brokerage cash doesn't grow. At Fidelity and Vanguard it earns about 4% by default, and the lesson now says so without naming firms. Still waiting on you: **O-2** (analytics account) and **O-3** (fluent review, or cap/re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-04 (scheduled dev-agent; **a free pick**: the previous run's "Seen, not fixed" called the 16 past-due §9.1 rows *"a whole run of its own and a separate pick, not a residual of this one"*. **W-9.4 does not bind:** this is a register audit, not a short-string hand read. `npm test` showed **0 FAIL, 17 WARN** before any edit (O-3's + 16 past-due claim rows)) — **§9.3 audit question 4, a day late: all 16 rows re-measured and re-dated to 2026-11-07. Two rows had cited a blocker that closed on 2026-09-05, so they were wrong for 29 days.**
 

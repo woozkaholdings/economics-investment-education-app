@@ -280,12 +280,12 @@ export const quizText = [
   {
     "q": "Una cuenta de corretaje tiene $500 en efectivo sin invertir recién depositado. ¿Qué pasa generalmente con ese dinero si el dueño no hace nada más?",
     "opts": [
-      "Crece automáticamente con el interés compuesto de la propia cuenta, igual que una cuenta de ahorros",
+      "Se devuelve automáticamente a la cuenta bancaria del dueño si no se invierte en un plazo de un mes",
       "El corretaje lo invierte automáticamente en un fondo indexado diversificado",
       "El corretaje toma una parte como comisión de mantenimiento mensual",
-      "Se queda como efectivo sin invertir y generalmente no crece hasta que el dueño compre algo con él"
+      "Sigue siendo efectivo, quizá con algo de interés, hasta que el dueño compre una inversión"
     ],
-    "explain": "Una cuenta de corretaje es un contenedor, no una inversión en sí misma. El efectivo sin invertir dentro de ella generalmente no crece por sí solo — comprar acciones, bonos o fondos es un paso separado que el dueño debe tomar deliberadamente."
+    "explain": "Una cuenta de corretaje es un contenedor, no una inversión en sí misma. El efectivo sin invertir dentro de ella sigue siendo efectivo — muchas plataformas lo trasladan a un depósito bancario o a un fondo del mercado monetario que paga algo de interés, pero comprar acciones, bonos o fondos es un paso separado que el dueño debe tomar deliberadamente."
   },
   {
     "q": "Alguien reescribe su testamento después de un divorcio para dejarle todo a su nuevo cónyuge, pero nunca actualiza el formulario de beneficiario de un 401(k) que abrió años antes — todavía figura su ex-cónyuge. ¿Quién recibe realmente ese 401(k) cuando esa persona muere?",

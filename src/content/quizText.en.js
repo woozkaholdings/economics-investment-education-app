@@ -280,12 +280,12 @@ export const quizText = [
   {
     "q": "A brokerage account holds $500 in uninvested cash that was just deposited. What generally happens to it if the owner does nothing else?",
     "opts": [
-      "It automatically grows through the account's own compound interest, just like a savings account",
+      "It's sent back to the owner's bank account automatically if it isn't invested within a month",
       "It's automatically invested into a diversified index fund by the brokerage",
       "The brokerage takes a portion of it as a monthly maintenance fee",
-      "It stays as uninvested cash and generally doesn't grow until the owner buys something with it"
+      "It stays as cash, possibly earning some interest, until the owner buys an investment"
     ],
-    "explain": "A brokerage account is a container, not an investment itself. Uninvested cash sitting inside it generally doesn't grow on its own — buying stocks, bonds, or funds is a separate step the account owner has to take deliberately."
+    "explain": "A brokerage account is a container, not an investment itself. Uninvested cash sitting inside it stays cash — many brokerages sweep it into a bank deposit or money market fund that pays some interest, but buying stocks, bonds, or funds is a separate step the account owner has to take deliberately."
   },
   {
     "q": "Someone rewrites their will after a divorce to leave everything to their new spouse, but never updates the beneficiary form on a 401(k) they opened years earlier — it still lists their ex-spouse. Who actually receives that 401(k) when they die?",
