@@ -3110,6 +3110,46 @@ same journey.
 
 ## Run log
 
+### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual of its own, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string pass:** neither of the previous two runs (W-10.1, lesson 14) was one. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is a residual named twice and never taken:** the 10-02 `moneyVisuals.js` entry's *"ko quiz text calls a lesson 강의 (14 uses), while the UI says 레슨"*, declined that day under W-9.4, and the 10-04 entry's *"ko keeps 강의 and ja keeps この講 in thinkAbout"*) — **Korean and Japanese now use one word for "lesson" everywhere the app refers to its own lessons: 레슨 and レッスン, the words the UI, the economy track and the figures already use.** 47 sites across 7 files. No meaning changed.
+
+**How the pick was reached.** I first extended the 10-04 run's question ("which absolute claims are false in practice?") from essentials to money, economy, the quiz and the glossary. It found nothing new. Every hit was a worked example, already hedged, or already measured: the glossary's "more than four years later" (measured 09-19 and worded so a later recession cannot falsify it), the raise/take-home claim (it says take-home pay, and the Taxes lesson carries the benefits-cliff hedge), and lesson 40's three rules (unattributed and ruled on under §10.2; q008 is class B, O-3's). I also re-derived lesson 9's amortization crossover from the annuity formula: about month 242 at 7% and month 83 at 3%, which matches "around year 20" and "around year 7". **That scan is a negative result and is recorded so the next run does not repeat it.**
+
+**Step 3.5: the premise held, and it was larger than named.**
+- **The standard, measured:** `src/locales/ko.js` uses 레슨 16 times and 강의/수업 0 times. `ja.js` uses レッスン 14 times. The economy track, `moneyVisuals.js` (fixed 10-02) and `policyScenarios.js` agree.
+- **The sites (all of `src/`):** ko **강의 ×24** (quiz 14, essentials 6, money 3, economy 1) and **수업 ×2** that mean this app's lesson (essentials *"What that lesson didn't say"*, money *"This is not a lesson about blame"*). ja **この講 ×18** (quiz 14, essentials 4), **本講 ×1**, and **の講 ×2** in money. The named residual said "14 uses". That was the quiz alone; it is 47 in total.
+- **Kept on purpose:** two money-track 수업 and two ja 授業 mean a *school* class ("the class that taught you what a paycheck's deductions were"). That is the right word there. ja `この回復` ("this recovery") and `前回` ("last time") were regex hits only. zh uses 课/本课 consistently, which is idiomatic, so it is not touched.
+- **Control:** the same scan finds the 16 known 레슨 in `ko.js` and the 2 school-class 수업, so it reads the files.
+
+#### What shipped
+- **Korean:** 강의 ends in a vowel and 레슨 ends in a consonant, so the particles change: 는→은, 가→이, 를→을. 에/의/들 do not. Pairs were split by particle, and every changed phrase was read by hand afterwards. One quiz stem, *"패턴을 강의는 무엇이라고"*, had no 이 before it and now reads *"이 레슨은"*, like the other thirteen.
+- **Japanese:** no particle changes. 本講では → このレッスンでは.
+- **Generated:** `npm run readiness -- --write` changed one figure, ja 77,614 → 77,636 chars in LAUNCH_READINESS §10.4. That +22 matches the arithmetic (4 × +3, +4, +3, +3). Korean is length-neutral, and quiz text is not counted.
+- **Ledger:** not touched. `translation-review.mjs` hashes the English source, so ko/ja edits cannot make a record stale.
+- **Patcher:** 16 old/new pairs, each asserted old ×k before writing and old ×0 / new +k after, dry run first.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate: 1 FAIL (§10.4 translation-volume sentence), cleared by the generator above |
+| §65 (W-10.7 test ii) | **en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6%** longest, shortest 2.2/2.2/0.0/4.3/2.2: **identical to the 10-04 reading.** Only stems changed, never options |
+| Leftovers | `강의\|この講\|本講\|の講` across `src/`: **0**. Wrong particles `레슨[는가를로]`: **0**. The same grep finds the 5 known `이 레슨은` in `quizText.ko.js` |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DlvL7_R9.js`, system Node v24.18.0 |
+| Bundle | この講, 本講, 강의 in **0** assets. このレッスンによると, 이 레슨에 따르면, 탓하려는 레슨이, 責めるためのレッスン in ≥1 each. Nonsense probe 0 |
+| Live walk | **not done.** It is a same-length noun swap in running text; no label or button changed |
+
+#### Step 5: adversarial self-check
+- **§10.1 / §10.2 / §10.3 / dates:** a noun swap. No claim, figure, date or advice wording was added or changed.
+- **Did a swap change meaning?** 강의 also means "lecture". Each of the 24 refers to this app's lesson (이 강의에 따르면 = "according to this lesson"), so 레슨 is a straight synonym swap. The two 수업 that mean a school class were checked against the English and left alone.
+- **Completed work:** this extends the 09-28 `src/locales/` fix and the 10-02 `moneyVisuals.js` fix to the same class on the remaining surfaces. It undoes neither.
+- **DECISIONS.md:** nothing touched.
+- **Would a reviewer get my result?** Yes. The patcher assertions, the leftover and particle scans with their control, `npm test`, §65, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** `scripts/fix-agent-skill.mjs` (dated 2026-10-04 18:05) and `Migration/` and `UIUX/` are still untracked. They are not mine, and I did not touch or commit them. A mid-run `git status | head -10` cut the script from view, and I nearly logged it as gone; the full listing shows it is still there. This run's prompt still calls the remote "NOT usable" and `economic-cycles-v5.jsx` the main application, so **W-10.2's second-Mac action looks still open from here.** The 10-02 entry's numeral-particle style note (`$10,000를`) is still a style call, not an error. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** in Korean and Japanese, the quiz and some lessons called a lesson by a different word ("lecture") from the rest of the app. All 47 now match the app's own word. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-04 (scheduled dev-agent; **a free pick**. The previous run (W-10.1) named no residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** this is a legal-accuracy fix carried into four languages, the same shape as W-10.1, not a short-string hand read. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from extending W-10.1's question ("which absolute claims in essentials are false in practice?") to the rest of the track.** A scan of `lessonContent.essentials.en.js` for `always|never|every|guarantee|can't…` turned up lesson 14's *"The account's own beneficiary designation wins, every time"*) — **the estate-planning lesson's quiz marked the wrong person as the answer. q028 asked who gets a 401(k) when someone divorced, remarried and left the old form naming the ex-spouse, and its key said "the ex-spouse". Under federal law the current spouse usually gets it.** The lesson's think-about prompt asked the same question.
 
 **Step 3.5: the premise held, and it was bigger than the sentence.**
