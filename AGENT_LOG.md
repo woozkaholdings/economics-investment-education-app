@@ -3110,6 +3110,39 @@ same journey.
 
 ## Run log
 
+### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** neither of the previous two runs (lesson 33's prompt, lesson 36's title) was a short-string hand read, and this is a glossary accuracy fix carried into four languages, the shape of the 09-18 Deflation fix. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is an archived residual named three times and never taken:** the 09-18 entry's *"Glossary `Inflation`: 'When prices rise because spending grows faster than production.' … not wrong, just narrow. Arguable, and not measured this run"* (archive l.52657, repeated at l.52697 and l.52767). I found it by reading all 43 English glossary entries for a definition no run had measured) — **the glossary's Inflation entry now says what inflation is (a rise in the general price level, not a few things getting dearer) and that the spending-outruns-production gap can open from either side: spending surging or production falling.** It gives 1974 as the dated case of the second.
+
+**Step 3.5: the premise, measured with FRED's keyless CSV.** Controls: `NOSUCHSERIESXYZ` → **404** (200 for every real id); `CPIAUCNS` year on year 1980-03 **14.76%** (BLS 14.8) and 2009-07 **−2.10%** (BLS −2.1).
+- **The narrowness is real, and it is about which side moves.** 1974 Q4 vs 1973 Q4: real GDP (`GDPC1`) **−1.95%**, nominal GDP **+8.36%**, CPI (Oct/Oct) **+12.06%**. Output *fell* and prices rose 12%. The old sentence covers that only if the reader takes "spending grows faster than production" to include production shrinking, which is the reading the 09-18 note had to supply.
+- **Not a broken premise:** 2022 Q2 reads real GDP **+2.34%**, nominal **+10.29%**, CPI **+8.26%**, so the old frame was right as far as it went. I did not use 2021-22 in the text, because how much of it was supply and how much demand is disputed.
+- **The definitional half is a textual measurement:** since 09-18, Deflation opens *"A fall in the general price level: prices dropping on average, not just a few things getting cheaper"*, and Inflation had no such clause, so the pair was asymmetric. Nothing elsewhere defines inflation as a general-level rise: `faster than production` hits only this entry and quiz q004's correct option.
+- **Kept on purpose:** q004 (*"What causes inflation?"* → *"Spending growing faster than production"*) and its `explain`. The new definition keeps that mechanism, so the quiz key still holds. "Fed targets ~2%." is unchanged (the CPI entry already says the target is set on PCE).
+
+#### What shipped
+- `glossary.js` `Inflation.f`, en/es/ko/zh/ja (5 strings). The general-price-level clause reuses each language's own Deflation wording (`nivel general de precios`, `전반적인 물가 수준`, `整体物价水平`, `物価全体の水準`). The `ex` sentence is unchanged.
+- en: *"A rise in the general price level: prices going up on average, not just a few things getting more expensive. It happens when total spending grows faster than what the economy produces, whether because spending surges or because production falls: in the year to late 1974, US output shrank about 2% while consumer prices rose about 12%. Fed targets ~2%."* **The figures are Q4/Q4 and Oct/Oct, so the text says "the year to late 1974", not "in 1974":** calendar-1974 average real GDP fell only about 0.5%.
+- Patcher (node, UTF-8): dry run, then old ×1 / new ×0 asserted before writing and 0 / 1 after, 5/5. All five read back from the module (en 352 chars, about Deflation's length). Original in the scratchpad.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's), before and after |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DJQfXktw.js`, system Node v24.18.0 |
+| Bundle | new 1974 clause in **1** asset in each of 5 languages. Old en and zh definitions in **0**. Control: the unchanged Deflation `ex` in 1. Nonsense probe 0 |
+| Live walk | **not done.** Text-only; the entry grows to about Deflation's length, which already renders in the same list |
+
+#### Step 5: adversarial self-check
+- **§10.1:** a definition and a dated historical case. No advice, no action. `check-blindspot` passed inside `npm test`. **§2.3 / dates:** one dated figure added (1974), nothing present-tense or live-looking. **§10.2:** no attribution added.
+- **Completed work:** the 09-18 Deflation fix is untouched, and this mirrors it rather than redoing it. q004 is not changed, and its key still matches the new definition. **DECISIONS.md:** nothing on glossary wording.
+- **Is 1974 cherry-picked?** It is the textbook supply-shock year (the 1973-74 oil embargo), and it is the case the 09-18 note itself named. The sentence presents it as one example of "production falls", not as the usual cause.
+- **Would a reviewer get my result?** Yes. The FRED pulls with both controls, the patch assertions, `npm test`, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** **the 43 English glossary definitions now read clean for accuracy to me**; the only other narrow ones are simplifications for beginners (Bond's "same fixed payments" ignores floating-rate bonds and TIPS; Dividend's "paid out in cash" ignores stock dividends). Both are arguable and **not picked by default**. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked; not mine, not touched. **W-10.2's second-Mac action still looks open from here** (this run's prompt still calls the remote "NOT usable" and `economic-cycles-v5.jsx` the main application). The translations are machine-written (**O-3**). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the glossary defined inflation only as "prices rise because spending grows faster than production". It now says inflation is a rise in prices on average, and that this can come from spending surging or from production falling, as in 1974, when US output shrank about 2% while prices rose about 12%. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the run before last was one), and this is not one: it is a §10.1/§2.3 content fix carried into four languages. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is an archived residual never taken**: the 2026-09-1x entry's *"L33's thinkAbout … is a leading question sitting against §3's hedge … Not picked by default"* (archive l.48601). Its sibling note, lesson 31's "only way an economy grows", was already fixed on 09-17, so I checked first) — **lesson 33's think-about prompt no longer tells the reader that "assets keep going up" and then asks whether that sounds like the late stage of a debt cycle.** It now names the lesson's own two warning signs. It asks which numbers the reader would look up to check them, and whether households' debt-to-GDP ratio tells the same story as the government's.
 
 **Step 3.5: the premise, measured with FRED's keyless CSV.** Control: a nonsense series id returns **404**, and federal debt in 2007 Q4 reads **62.7%**, which matches the known ~63%.
