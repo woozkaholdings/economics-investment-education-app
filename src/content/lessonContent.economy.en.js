@@ -103,7 +103,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "The long-term debt cycle builds over 75-100 years. When it peaks, normal rate cuts can't fix it. This is fundamentally different from a regular recession.",
-    "thinkAbout": "The US debt-to-GDP ratio has climbed well past 100% in recent decades. People feel wealthy because assets keep going up. Does this sound like the late stage of a long-term debt cycle to you?"
+    "thinkAbout": "This lesson names two warning signs: rising debt relative to income, and borrowing to buy assets purely because prices are rising. If you wanted to check whether either one is building today, what numbers would you look up? And would the debt-to-GDP ratio for households tell you the same story as the one for the government?"
   },
   "34": {
     "sections": [

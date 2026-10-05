@@ -103,7 +103,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "El ciclo de deuda a largo plazo se construye a lo largo de 75 a 100 años. Cuando alcanza su pico, los recortes de tasas normales no pueden arreglarlo. Esto es fundamentalmente distinto de una recesión corriente.",
-    "thinkAbout": "La ratio de deuda sobre PIB de EE.UU. ha superado con creces el 100% en las últimas décadas. La gente se siente rica porque los activos no dejan de subir. ¿Te suena eso a la etapa tardía de un ciclo de deuda a largo plazo?"
+    "thinkAbout": "Esta lección nombra dos señales de alerta: deuda que crece respecto al ingreso, y endeudarse para comprar activos solo porque los precios suben. Si quisieras comprobar si alguna de las dos se está acumulando hoy, ¿qué datos buscarías? ¿Y la ratio de deuda sobre PIB de los hogares te contaría la misma historia que la del gobierno?"
   },
   "34": {
     "sections": [

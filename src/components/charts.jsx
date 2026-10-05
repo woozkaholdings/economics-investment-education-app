@@ -1631,8 +1631,8 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
 //
 // ⚠️ AND THERE IS NO TIME ORIGIN AND NO "YOU ARE HERE". The horizontal axis is
 // a SPAN — the bracket says "75-100 years", not a set of dates — and nothing
-// marks a present moment. Lesson 33's closing question asks the reader whether
-// today looks like the late stage of a long-term cycle; §10.1 is why this
+// marks a present moment. Lesson 33's closing question asks the reader how they
+// would check whether its warning signs are building today; §10.1 is why this
 // figure must leave that question open rather than answer it with a marker.
 // A future run must not add a date, a "today" line, or a shaded "we are here"
 // region: that converts a pattern into a call.

@@ -11142,12 +11142,12 @@ function trendDirection(src) {
       if (/<line\b[^>]*stroke=\{line\./.test(nestSlice)) {
         fail("§71 (d): NestedCycles draws a baseline rule again. It was removed deliberately: the curve comes within about 5px of the floor at its first trough, so a rule there reads as zero on an axis lesson 33 gives no value for — and separately, no `line.*` token clears WCAG 1.4.11's 3:1 (§51b). The full-span bracket already frames the plot in a `graph` token.");
       }
-      // §10.1: lesson 33 closes by ASKING the reader whether today looks like
-      // the late stage of a long-term cycle. A marker answering that question
+      // §10.1: lesson 33 closes by ASKING the reader how they would check
+      // whether its warning signs are building today. A marker answering that question
       // turns a pattern into a call. There is no time origin in this figure and
       // there must not be one.
       if (/\b(today|now|hoy|현재|今天|現在)\b/i.test(nestSlice) || /\b(19|20)\d{2}\b/.test(nestSlice)) {
-        fail("§71 (d): NestedCycles' source now contains a year or a present-tense position word. This figure has no time origin on purpose — lesson 33 asks the reader whether today looks like the late stage of a long-term cycle, and a \"you are here\" marker answers that question for them (§10.1).");
+        fail("§71 (d): NestedCycles' source now contains a year or a present-tense position word. This figure has no time origin on purpose — lesson 33 asks the reader how they would check whether its warning signs are building today, and a \"you are here\" marker answers that question for them (§10.1).");
       }
     }
   }

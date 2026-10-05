@@ -3110,6 +3110,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the run before last was one), and this is not one: it is a §10.1/§2.3 content fix carried into four languages. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is an archived residual never taken**: the 2026-09-1x entry's *"L33's thinkAbout … is a leading question sitting against §3's hedge … Not picked by default"* (archive l.48601). Its sibling note, lesson 31's "only way an economy grows", was already fixed on 09-17, so I checked first) — **lesson 33's think-about prompt no longer tells the reader that "assets keep going up" and then asks whether that sounds like the late stage of a debt cycle.** It now names the lesson's own two warning signs. It asks which numbers the reader would look up to check them, and whether households' debt-to-GDP ratio tells the same story as the government's.
+
+**Step 3.5: the premise, measured with FRED's keyless CSV.** Control: a nonsense series id returns **404**, and federal debt in 2007 Q4 reads **62.7%**, which matches the known ~63%.
+- **The old prompt's "well past 100%" fits only government debt.** `GFDEGDQ188S` (federal debt/GDP) first crossed 100% in **2012 Q4** and is **122.6%** at 2026 Q1.
+- **The household series, which is what lesson 33 actually describes (a family stretching for a mortgage), went the other way.** `HDTGPDUSQ163N` (household debt/GDP) peaked at **100.2% in 2007 Q4** and is **66.6%** now. Lesson 34 already says private debt fell after 2008 while government debt rose.
+- So the prompt paired a government-debt figure with a household-borrowing mechanism, and then led toward "late stage". That ran against §3's *"nobody can time it"*. Its middle sentence, *"People feel wealthy because assets keep going up"*, is an undated present-tense market claim, which §2.3's standing rule forbids. It is false in any down year.
+- **What survives:** a reflection that applies the lesson to the present. The §71 (d) guard (no "you are here" marker on the figure) still has its reason: the reader is still asked about today, and the figure must not answer for them.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js` lesson 33 `thinkAbout`. The warning signs reuse each language's own §3 wording. The debt-ratio terms reuse each file's existing term (`ratio de deuda sobre PIB`, `GDP 대비 부채 비율`, `债务/GDP比率`, `債務対GDP比率`). es uses tú, ko 레슨, zh 本课, ja このレッスン, which are the files' existing conventions. **No figure in the new text**, so nothing can go stale.
+- **First draft failed `npm test` and that was useful:** the old prompt was §17b's positive control, and it carried `lessonTerms[33]`'s "GDP" and "Debt-to-GDP Ratio" links. The final wording keeps "debt-to-GDP ratio", which is the better question anyway. Each patch asserted old ×1 / new ×0 before writing and the reverse after, with a dry run first. Originals are in the scratchpad.
+- `charts.jsx` and `check-data.mjs` §71 (d): two comments and one failure message described the old question. They now describe the new one, and the logic is unchanged.
+- Generated: ledger re-marked (ai) for 33 × es/ko/zh/ja; `npm run readiness -- --write` changed en chars 165,070 → 165,205 and words ~28,800 → ~28,900. Minutes did not change.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate: 4 FAIL (§17b control, two lessonTerms links, §10.4), then 1, then 3 generated-figure FAILs, all cleared as above |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-DcIF2e2t.js`, system Node v24.18.0 |
+| Bundle | old prompt's distinctive clause in **0** assets in all 5 languages. New clause in **1** each. Control "The Master Signal" 1, nonsense probe 0 |
+| `late stage` over `src scripts` | **0** after the edit (was 3: the prompt and the two comments) |
+| Live walk | **not done.** Text-only. The prompt grows 76-149 bytes per language, and longer thinkAbouts already render |
+
+#### Step 5: adversarial self-check
+- **§10.1:** the new prompt asks what to look up and recommends no action. It answers no "where are we" question, which the old one steered toward. `check-blindspot` passed inside `npm test`. **§2.3 / dates:** one live-looking claim removed, no figure or date added. **§10.2:** "beautiful deleveraging" in lesson 34 is untouched, and so is item 158 (the Buffett quote).
+- **Completed work:** the 2026-08 fix that replaced "about 120% in 2026" with "well past 100% in recent decades" is not undone. This change goes further in the same direction (no figure at all). §71's guard is kept, and only its prose changed.
+- **DECISIONS.md:** its thinkAbout mentions (l.287, 492, 503) are about translation scope and term chips. The chips still resolve, which `npm test` proves.
+- **Would a reviewer get my result?** Yes. The FRED pulls with both controls, the patch assertions, `npm test`, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked. They are not mine, and I did not touch or commit them. This run's prompt still calls the remote "NOT usable" and `economic-cycles-v5.jsx` the main application, so **W-10.2's second-Mac action still looks open from here.** The translations are machine-written (**O-3**). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 33's closing question said "assets keep going up" and asked whether that sounds like the late stage of a debt cycle. It mixed government debt with the household borrowing the lesson describes, and household debt has actually fallen since 2008. It now asks which numbers you'd check, and whether households and the government tell the same story. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the previous run was one), and this is not one: it is an English accuracy fix carried into four languages, the shape of W-10.1 and lesson 14. The 0 FAIL / 1 WARN baseline is the previous entry's reading; **I did not re-run `npm test` before editing**, only after) — **lesson 36 is no longer titled "The Yield Curve: Crystal Ball". It is now "The Yield Curve: A Warning Light", in all five languages.** The old title promised foresight that the lesson itself disclaims.
 
 **How the pick was reached: an English audit of all 46 quiz answer keys, which came back clean.** Lesson 14's q028 had a wrong key for two months, and no log entry records a pass over every key, so I dumped `quizMeta` × `quizText.en` (correct option marked) and read each question for a wrong key or a defensibly true distractor. **None found.** Re-derived arithmetic: q025 (0.05% vs 1.05% fee, 30 y at 7% gross): **24.5%** of the ending balance lost, "roughly a quarter" holds. q032: 2,000 × 1.06¹⁰ = **3,581.7**, so "$1,580 / $3,580" holds. The car-loan gap in essentials (6% vs 14%, $20,000, 5 y) is **$4,722**, "about $4,700" holds. Priya/Tom at 6% are **$398,298 / $401,808**, "within about 1%" holds. The q003 "5-8 years" key and the q007 "prints money" wording are recorded in the archive as arguable (09-13, 09-18), so I left both. **This scan is a negative result, recorded so the next run does not repeat it.** I then read the 44 lesson titles and subtitles, and the one that overclaims is lesson 36's title.
