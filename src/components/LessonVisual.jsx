@@ -90,7 +90,7 @@ export const LESSON_VISUALS = {
   34: "deleveragingMix", // Deleveraging: The 4 Tools (its "Beautiful vs Ugly Deleveraging" section)
   32: "cycle",         // The Short-Term Debt Cycle
   33: "nestedCycles",  // The Long-Term Debt Cycle — NOT "cycle"; see charts.jsx's NestedCycles header
-  36: "yieldCurve",    // The Yield Curve: Crystal Ball
+  36: "yieldCurve",    // The Yield Curve: A Warning Light
   37: "balanceSheet",  // QE & QT: The Fed's Power Tools
   38: "cycle",        // The 4 Phases of Economic Cycles
 };

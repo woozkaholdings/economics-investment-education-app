@@ -201,7 +201,7 @@ export const lessons = [
   },
   {
     id: 36, track: "economy", icon: "📐", color: "#9333ea", minutes: 5,
-    title: {"en":"The Yield Curve: Crystal Ball","es":"La curva de rendimiento: bola de cristal","ko":"수익률 곡선: 수정 구슬","zh":"收益率曲线：水晶球","ja":"イールドカーブ：水晶玉"},
+    title: {"en":"The Yield Curve: A Warning Light","es":"La curva de rendimiento: una luz de advertencia","ko":"수익률 곡선: 경고등","zh":"收益率曲线：警示灯","ja":"イールドカーブ：警告灯"},
     subtitle: {"en":"A historically reliable recession predictor since 1955","es":"Un predictor de recesión históricamente fiable desde 1955","ko":"1955년 이후 역사적으로 신뢰할 수 있는 경기침체 예측 지표","zh":"自1955年以来历史上较为可靠的衰退预测指标","ja":"1955年以来、歴史的に信頼性の高い景気後退予測指標"},
   },
   {

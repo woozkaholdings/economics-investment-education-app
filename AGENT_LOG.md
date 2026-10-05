@@ -3110,6 +3110,36 @@ same journey.
 
 ## Run log
 
+### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 bars a short-string hand read** (the previous run was one), and this is not one: it is an English accuracy fix carried into four languages, the shape of W-10.1 and lesson 14. The 0 FAIL / 1 WARN baseline is the previous entry's reading; **I did not re-run `npm test` before editing**, only after) — **lesson 36 is no longer titled "The Yield Curve: Crystal Ball". It is now "The Yield Curve: A Warning Light", in all five languages.** The old title promised foresight that the lesson itself disclaims.
+
+**How the pick was reached: an English audit of all 46 quiz answer keys, which came back clean.** Lesson 14's q028 had a wrong key for two months, and no log entry records a pass over every key, so I dumped `quizMeta` × `quizText.en` (correct option marked) and read each question for a wrong key or a defensibly true distractor. **None found.** Re-derived arithmetic: q025 (0.05% vs 1.05% fee, 30 y at 7% gross): **24.5%** of the ending balance lost, "roughly a quarter" holds. q032: 2,000 × 1.06¹⁰ = **3,581.7**, so "$1,580 / $3,580" holds. The car-loan gap in essentials (6% vs 14%, $20,000, 5 y) is **$4,722**, "about $4,700" holds. Priya/Tom at 6% are **$398,298 / $401,808**, "within about 1%" holds. The q003 "5-8 years" key and the q007 "prints money" wording are recorded in the archive as arguable (09-13, 09-18), so I left both. **This scan is a negative result, recorded so the next run does not repeat it.** I then read the 44 lesson titles and subtitles, and the one that overclaims is lesson 36's title.
+
+**Step 3.5: the premise, against the lesson's own text.** The lesson body says the signal works through "expectations, not magic", calls it "one input, not a standalone forecast", says it "isn't infallible", and its thinkAbout points out the 2022 inversion with no recession after it. The glossary and q006 say the same: every recession since 1955 was preceded by an inversion, but not every inversion was followed by one. **A crystal ball is the one thing all of that says the curve is not.** Search: `Crystal Ball|bola de cristal|수정 구슬|水晶球|水晶玉` over `src scripts public *.md index.html` found **2 sites**: the `lessons.js` title (5 languages, the known hit and the control) and a comment in `LessonVisual.jsx`. Cross-references cite only the title head before the colon (`check-data` §16b, l.1891), and "The Yield Curve" is unchanged. **The subtitle, "A historically reliable recession predictor since 1955", stays.** The 09-12 lesson-36 run ruled it the lesson's thesis and asked that no run hedge it.
+
+#### What shipped
+- `lessons.js` lesson 36 title: en **"A Warning Light"**, es **"una luz de advertencia"** (es lesson 39 already uses *luz de advertencia*, and sentence case per 09-29), ko **경고등**, zh **警示灯**, ja **警告灯**. `LessonVisual.jsx`'s comment now matches.
+- Patcher: 2 old/new pairs, old ×1 / new ×0 asserted before writing, old ×0 / new ×1 after, dry run first. Originals are in the scratchpad.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` (after the edit) | **exit 0, 0 FAIL, 1 WARN** (O-3's). The title gains one word in en; `minutes` and the readiness figures did not move |
+| Build | `scripts/build-out-of-tree.sh` **exit 0**, `index-BrxUv9Ai.js`, system Node v24.18.0 |
+| Bundle | 5 old titles in **0** assets. 5 new titles in ≥1 each (es in 2, because lesson 39's es chunk already says *luz de advertencia*). Control: "The Master Signal" in 1. Nonsense probe 0 |
+| Live walk | **not done.** A title 3-11 characters longer per language. Lesson 8's title (85 chars) already renders in the same list |
+
+#### Step 5: adversarial self-check
+- **§10.1 / §10.2 / §10.3 / dates:** a title noun swap. No advice, attribution, figure or date was added. `check-blindspot` runs inside `npm test` and passed.
+- **Is "warning light" an overclaim too?** A warning light says "check this", not "this will fail", and the body says "a real warning sign" twice. That is the claim the lesson makes.
+- **Completed work / DECISIONS.md:** this keeps the protected subtitle and changes no ruled-on text. DECISIONS.md does not mention lesson titles.
+- **Would a reviewer get my result?** Yes. The patcher assertions, the site search with its control, `npm test`, the build and the bundle probes all re-run. The one limit is the missing pre-edit `npm test`, stated above. No conflict found.
+
+**Seen, not fixed:** `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked. They are not mine, and I did not touch or commit them. This run's prompt still calls the remote "NOT usable" and `economic-cycles-v5.jsx` the main application, so **W-10.2's second-Mac action still looks open from here.** The ko/zh/ja/es titles are machine-written (**O-3**). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the yield-curve lesson was titled "Crystal Ball", while the lesson itself says the signal is not a sure forecast. It is now "A Warning Light" in all five languages. A check of every English quiz answer found no other wrong answers. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual of its own, so W-6.2 rule 1 does not arise. **W-9.4 allows a short-string pass:** neither of the previous two runs (W-10.1, lesson 14) was one. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is a residual named twice and never taken:** the 10-02 `moneyVisuals.js` entry's *"ko quiz text calls a lesson 강의 (14 uses), while the UI says 레슨"*, declined that day under W-9.4, and the 10-04 entry's *"ko keeps 강의 and ja keeps この講 in thinkAbout"*) — **Korean and Japanese now use one word for "lesson" everywhere the app refers to its own lessons: 레슨 and レッスン, the words the UI, the economy track and the figures already use.** 47 sites across 7 files. No meaning changed.
 
 **How the pick was reached.** I first extended the 10-04 run's question ("which absolute claims are false in practice?") from essentials to money, economy, the quiz and the glossary. It found nothing new. Every hit was a worked example, already hedged, or already measured: the glossary's "more than four years later" (measured 09-19 and worded so a later recession cannot falsify it), the raise/take-home claim (it says take-home pay, and the Taxes lesson carries the benefits-cliff hedge), and lesson 40's three rules (unattributed and ruled on under §10.2; q008 is class B, O-3's). I also re-derived lesson 9's amortization crossover from the annuity formula: about month 242 at 7% and month 83 at 3%, which matches "around year 20" and "around year 7". **That scan is a negative result and is recorded so the next run does not repeat it.**
