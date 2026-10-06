@@ -455,7 +455,7 @@ export const quizText = [
       "They arrived by different mechanisms",
       "Only Priya's counts as real income"
     ],
-    "explain": "The amounts are the same and neither is worth more per dollar. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, while a shift always pays."
+    "explain": "The amounts are the same and neither is worth more per dollar. What differs is the mechanism: Priya's is paid for hours she worked, Tom's is produced by an asset he had to buy first, and each carries its own demands and its own ways of failing — an empty apartment pays nothing, and neither does a shift Priya can't work or isn't given."
   },
   {
     "q": "Alina owns a small cleaning company with one employee and works in it herself. If she stopped working for three months, what would most likely happen to her business income?",

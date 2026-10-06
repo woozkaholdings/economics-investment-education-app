@@ -455,7 +455,7 @@ export const quizText = [
       "Llegaron por mecanismos distintos",
       "Solo el de Priya cuenta como ingreso real"
     ],
-    "explain": "Las cantidades son iguales y ninguna vale más por dólar. Lo que difiere es el mecanismo: el de Priya se paga por las horas que trabajó, el de Tom lo produce un activo que tuvo que comprar primero, y cada uno tiene sus propias exigencias y sus propias formas de fallar — un departamento vacío no paga nada, mientras que un turno siempre paga."
+    "explain": "Las cantidades son iguales y ninguna vale más por dólar. Lo que difiere es el mecanismo: el de Priya se paga por las horas que trabajó, el de Tom lo produce un activo que tuvo que comprar primero, y cada uno tiene sus propias exigencias y sus propias formas de fallar — un departamento vacío no paga nada, y tampoco un turno que Priya no puede trabajar o que no le asignan."
   },
   {
     "q": "Alina es dueña de una pequeña empresa de limpieza con una empleada y también trabaja en ella. Si dejara de trabajar durante tres meses, ¿qué le pasaría más probablemente a su ingreso empresarial?",

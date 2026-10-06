@@ -3110,6 +3110,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-06 (scheduled dev-agent; **the previous run's named residual, `q044`**. Its "Seen, not fixed" called it *"arguable, and not picked by default"*. The previous run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an accuracy fix carried into four languages. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit) — **quiz q044's explanation no longer says *"a shift always pays"*. It now gives the wage its own way of failing, as the sentence promised: *"an empty apartment pays nothing, and neither does a shift Priya can't work or isn't given."*** The old clause said that "each carries its own ways of failing" and then gave one of the two none.
+
+**Step 3.5: the premise, measured. It is less arguable than the residual said.**
+- **The next lesson already contradicts it.** Lesson 43 says *"Priya's shifts stop the day she does; her income goes to zero in lockstep with her hours"*, and lesson 44's takeaway says labor income *"stops or drops sharply when you stop"*. So the quiz feedback for lesson 42 taught the opposite of what the learner reads one lesson later.
+- **Hours get cut, measured with FRED's keyless CSV.** Control: `NOSUCHSERIESXYZ` → **404**. `LNS12032194` (part time for economic reasons) reads **10,880k in 2020-04**, matching BLS's published 10.9 million (second control). `LNS12032195` (the slack work or business conditions subset) reads **2,793k in 2020-02 → 9,987k in 2020-04**. "Isn't given" names that failure.
+- **The languages disagreed.** en/es/ko said a shift *always* pays (`siempre paga`, `언제나 대가를 지급`). zh/ja said a shift *you work* is certainly paid (`只要上了班…一定有报酬`, `シフトに入れば必ず支払われます`). The zh/ja claim is true, and q046 and lesson 44 already teach it as the wage's protection. The en/es/ko claim is false. All five now make the same claim.
+- **Siblings:** a Node scan of `src/**/*.{js,jsx}` for the five languages' "always pays" forms returns exactly the 5 q044 strings (this is its own control: each known string is found) and nothing else.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js`, `q044.explain` only (index 43), the last clause. The options are untouched, so §65 cannot move. es `y tampoco un turno que Priya no puede trabajar o que no le asignan`, ko `프리야가 일할 수 없거나 배정받지 못한 근무도 마찬가지입니다`, zh `普里娅上不了的班、或者没排给她的班，也一样拿不到报酬`, ja `プリヤが入れないシフトや、割り当てられないシフトも何も払いません`. Each reuses its own lesson 43 word for shift (`turno`, `근무`, `班`, `シフト`).
+- Patcher (node, UTF-8, function replacer): dry run, then old ×1 / new ×0 asserted before writing and 0 / 1 after, 5/5. The array length reads back as 46 in all five. Originals are in the scratchpad. No generated file changed; quiz text is outside the ledger and readiness figures, and `npm test` asked for neither.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's), before and after |
+| §65 (W-10.7 test ii) | longest-option rates en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6%, identical before and after, all at or below the 10-04 reading. Read off the instrument |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-CSsM49J1.js`, system Node v24.18.0 |
+| Bundle | new clause in **1** asset in each of 5 languages. Old clause in **0** in all 5. Control: the unchanged q046 "legal minimums, notice periods, and being paid regardless" in 1. Nonsense probe 0 |
+| Live walk | **not done.** Feedback text after an answer, +10 to +32 chars, in the card that already renders q028's longer explanation |
+
+#### Step 5: adversarial self-check
+- **§10.1:** a description of how wage income can stop. No advice. `check-blindspot` passed inside `npm test`. **§2.3 / dates:** nothing dated or live-looking added. **§10.2:** no attribution.
+- **Does "isn't given" contradict q046 / lesson 44's *"being paid regardless of how the business did"*?** No. That protection covers hours already worked, and the new clause says nothing against it. A shift that is never scheduled is never owed. The 2020 slack-work series is that case at scale.
+- **Did zh/ja lose a true statement?** Yes, the "a worked shift is paid" half. It is still taught in q046's explanation and lesson 44's takeaway in all five languages, so nothing is lost from the course. Keeping it in two languages only would have left the five disagreeing.
+- **Completed work / DECISIONS.md:** no archived item touched q044's explanation (`always pays` has 0 archive hits). Nothing in DECISIONS.md covers it. The judgment-track framing (§ real product definition) is kept, because the sentence still says the two incomes differ by mechanism, not by worth.
+- **Would a reviewer get my result?** Yes. The FRED pulls with both controls, the patch assertions, `npm test`, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. q007's *"When rates are at 0%"* is a conditional the 09-18 run ruled broadly right (archive l.52245), and *"prints money"* was ruled a wording choice (archive l.52425), so it is not a residual. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked. They are not mine, and I did not touch them. **W-10.2 still looks open from here:** this run's prompt still calls the remote "NOT usable". The translations are machine-written (**O-3**). **W-8.1:** committed, not deployed. The run log was at 215,698 b before this entry, below the 250,000 b warn.
+
+**Owner-facing, one line:** a quiz explanation said extra shifts "always pay", right after saying both kinds of income have their own ways of failing, and the next lesson says shifts stop when you do. It now says a shift you can't work or aren't given pays nothing, in all five languages (zh and ja had been saying something different from the other three). Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-06 (scheduled dev-agent; **the previous run's named "Not checked" residual**: *"the money and essentials quiz text and the glossary against the same pattern"*. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an accuracy fix carried into four languages. **I did not re-run `npm test` before editing**; the 0 FAIL / 1 WARN baseline is the previous entry's reading) — **quiz q003's explanation no longer says flatly that "the short-term debt cycle lasts 5-8 years". It now says 5-8 years *on average*, and adds the real US spread since World War II: a year and a half to more than twelve years.** Lesson 33's prose (09-13) and its chart's alt text (09-28) already say this. The quiz feedback was the one place still teaching the range as a fixed length.
 
 **How the pick was reached, and a correction to the residual itself.** The residual was already done: the 10-05 lesson-36 entry records that same absolute-claim scan over the quiz and glossary as *"a negative result … recorded so the next run does not repeat it"*. So I did not re-run the word scan. **I read all 46 English questions with their keyed answer and `explain` instead.** That catches claims with no trigger word. q003's *"lasts 5-8 years"* contains no `always`/`never`, which is why the scan could not see it.
