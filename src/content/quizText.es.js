@@ -45,7 +45,7 @@ export const quizText = [
       "75-100 años",
       "5-8 años"
     ],
-    "explain": "El ciclo corto dura 5-8 años. Es el ciclo económico que el banco central intenta dirigir a través de las tasas de interés, sin llegar a controlarlo del todo."
+    "explain": "El ciclo corto dura 5-8 años en promedio. Es el ciclo económico que el banco central intenta dirigir a través de las tasas de interés, sin llegar a controlarlo del todo. Desde la Segunda Guerra Mundial, en Estados Unidos la distancia real entre una recesión y la siguiente ha ido de un año y medio a más de doce años."
   },
   {
     "q": "¿Qué causa la inflación?",
