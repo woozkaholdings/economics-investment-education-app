@@ -3110,6 +3110,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-06 (scheduled dev-agent; **a free pick**. The previous run named two glossary simplifications (Bond, Dividend) as *"not picked by default"* and I left them, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an English accuracy fix carried into four languages. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from extending the 10-04 absolute-claim scan (`always|never|guarantee|can't|only way|…`) from essentials to the money and economy tracks.** Money returned 56 hits. All were hedged, rhetorical, or already measured: lesson 7's "a raise can never reduce your take-home pay" already carries the benefits-cliff caveat, and archive l.49587 looked at it. Economy returned 28 hits, and one had never been measured) — **lesson 37 (QE) no longer says "the Fed never lends to either one directly", meaning small businesses and home-buying families. It now says that *in QE* the Fed doesn't lend to either one directly.** The old sentence was false as history.
+
+**Step 3.5: the premise, measured.**
+- **Never examined:** `never lends`, `13(b)` and `Main Street Lending` return **0** in `AGENT_LOG.md`, the archive and `CLAIMS.md`. Control: `Baa`, a claim from the same lesson set that I know was measured, returns 9 hits in the archive.
+- **The fact:** Section 13(b) of the Federal Reserve Act (signed June 1934, repealed 1958, Pub. L. 85-699) let Reserve Banks lend working capital to established businesses **directly or alongside a commercial bank**. The Minneapolis Fed's own history describes Reserve Banks taking the applications, investigating the borrowers and servicing the loans themselves. About 2,000 loans worth about $124.5M were approved through 1935 (Cato, citing Fed records). In 2020 the Main Street Lending Program bought 95% participations in bank-originated loans to small and mid-sized firms ($16.6B, closed 2021-01-08). That was not direct lending, but it was the Fed funding business loans.
+- **What survives:** the lesson's point is right. QE buys Treasuries and agency MBS, and its effect reaches borrowers only through prices. Only the absolute "never" was wrong, so the fix scopes the claim to QE instead of adding history.
+- **Siblings:** an `-i -E` grep for `lends? … directly|directly lend|doesn't lend|never lend` across `src/` returns only the edited line. Control: it returns the new line.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js` lesson 37 §3, one clause each. en: *"— in QE, the Fed doesn't lend to either one directly."* es `con el QE, el Fed no le presta…` (the module already writes `el QE`), ko `QE에서는 연준이…`, zh `在QE中，美联储并不直接…` (`从不` = "never" removed), ja `QEでは、FRBは…`. ko and ja never said "never", only "doesn't". They are scoped too, so that all five languages make the same claim.
+- Patcher (node, UTF-8): dry run, then old ×1 / new ×0 asserted before writing and 0 / 1 after, 5/5. Originals in the scratchpad.
+- Generated, not hand-typed: ledger re-marked (ai) for lesson 37 in es/ko/zh/ja, and `npm run readiness -- --write` changed only numbers: en chars 165,205 → 165,213, plus the four translation volumes. Minutes unchanged (175).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate: 1 FAIL (ledger stale ×4), then 2 FAIL (readiness char counts), both cleared by the generated steps above |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-CkdcC3wE.js`, system Node v24.18.0 |
+| Bundle | new clause in **1** asset in each of 5 languages. Old en/es/ko/zh/ja clauses in **0**. Control: the unchanged "The Fed has never taken it below zero." in 1. Nonsense probe 0 |
+| Live walk | **not done.** One clause in running prose, +8 en chars |
+
+#### Step 5: adversarial self-check
+- **§10.1:** a description of how a policy tool works. No advice. `check-blindspot` passed inside `npm test`. **§2.3 / dates:** nothing added. **§10.2:** no attribution added.
+- **Is the new sentence true?** QE is purchases of Treasuries and agency MBS (lesson 37 §1 says so). It makes no loans to households or firms. The 2020 business facilities (Main Street, PMCCF) were 13(3) credit facilities, not QE. So the scoped claim holds even in 2020.
+- **Did I swap one overstatement for another?** "doesn't lend … directly" is present tense and scoped to QE, so it says nothing about 1934-58.
+- **Completed work / DECISIONS.md:** no archived item touched lesson 37's §3 opening. Nothing in DECISIONS.md covers it.
+- **Would a reviewer get my result?** Yes. The archive greps with their control, the patch assertions, `npm test`, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** the economy scan's other hits read as true or already measured to me ("The Fed has never taken it below zero", the Baa spread, the 2021-23 hikes, the 1929 → 2008 generation arithmetic). **Not checked:** the money and essentials quiz text and the glossary against the same pattern. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked; they are not mine and I did not touch them. My first scan command hung on a stray `cat >` with no input. It left an empty `scan.mjs` in the system temp parent dir; I removed it, and nothing in the repo was affected. **W-10.2 still looks open from here:** this run's prompt still calls the remote "NOT usable". The translations are machine-written (**O-3**). **W-8.1:** committed, not deployed. Run log is at 202,015 b before this entry, below the 250,000 b warn, so W-5.3 does not fire yet.
+
+**Owner-facing, one line:** the QE lesson said the Fed "never" lends directly to small businesses or families. It did lend to businesses directly from 1934 to 1958, so the lesson now says that QE doesn't lend to them directly, which is the point it was making. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-05 (scheduled dev-agent; **a free pick**. The previous run named no residual, so W-6.2 rule 1 does not arise. **W-9.4 does not bind:** neither of the previous two runs (lesson 33's prompt, lesson 36's title) was a short-string hand read, and this is a glossary accuracy fix carried into four languages, the shape of the 09-18 Deflation fix. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick is an archived residual named three times and never taken:** the 09-18 entry's *"Glossary `Inflation`: 'When prices rise because spending grows faster than production.' … not wrong, just narrow. Arguable, and not measured this run"* (archive l.52657, repeated at l.52697 and l.52767). I found it by reading all 43 English glossary entries for a definition no run had measured) — **the glossary's Inflation entry now says what inflation is (a rise in the general price level, not a few things getting dearer) and that the spending-outruns-production gap can open from either side: spending surging or production falling.** It gives 1974 as the dated case of the second.
 
 **Step 3.5: the premise, measured with FRED's keyless CSV.** Controls: `NOSUCHSERIESXYZ` → **404** (200 for every real id); `CPIAUCNS` year on year 1980-03 **14.76%** (BLS 14.8) and 2009-07 **−2.10%** (BLS −2.1).

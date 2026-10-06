@@ -937,27 +937,27 @@
   },
   "37": {
     "es": {
-      "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-09-18",
-      "sourceHash": "1c25f5bc948c563b",
+      "reviewedBy": "Claude (Opus 5.5, economics-app-dev-agent)",
+      "reviewedDate": "2026-10-06",
+      "sourceHash": "f3b27e14c1dff850",
       "method": "ai"
     },
     "ja": {
-      "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-09-18",
-      "sourceHash": "1c25f5bc948c563b",
+      "reviewedBy": "Claude (Opus 5.5, economics-app-dev-agent)",
+      "reviewedDate": "2026-10-06",
+      "sourceHash": "f3b27e14c1dff850",
       "method": "ai"
     },
     "ko": {
-      "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-09-18",
-      "sourceHash": "1c25f5bc948c563b",
+      "reviewedBy": "Claude (Opus 5.5, economics-app-dev-agent)",
+      "reviewedDate": "2026-10-06",
+      "sourceHash": "f3b27e14c1dff850",
       "method": "ai"
     },
     "zh": {
-      "reviewedBy": "Claude (Opus 5, economics-app-dev-agent)",
-      "reviewedDate": "2026-09-18",
-      "sourceHash": "1c25f5bc948c563b",
+      "reviewedBy": "Claude (Opus 5.5, economics-app-dev-agent)",
+      "reviewedDate": "2026-10-06",
+      "sourceHash": "f3b27e14c1dff850",
       "method": "ai"
     }
   },
