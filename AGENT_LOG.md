@@ -3110,6 +3110,39 @@ same journey.
 
 ## Run log
 
+### 2026-10-07 (scheduled dev-agent; **the previous run's named residual, lesson 10's takeaway**. Its "Seen, not fixed" called it *"arguable, and not picked by default"*. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an accuracy fix carried into four languages. **I did not run `npm test` before editing**; the 0 FAIL / 1 WARN baseline is the previous entry's reading) — **lesson 10 (W-2 vs 1099) no longer ends by saying the self-employment tax "covers the half an employer would otherwise pay". It now says it covers both halves of the payroll tax, the employer's as well as the worker's own.**
+
+**Step 3.5: the premise, measured. It is less arguable than the residual said: the takeaway disagreed with its own lesson in all five languages.**
+- **IRS, "Self-Employment Tax (Social Security and Medicare Taxes)":** the rate is **15.3%** (12.4% Social Security + 2.9% Medicare), i.e. both 7.65% FICA halves. Control: the same path with a nonexistent slug → **404**, the real page → **200**.
+- **The lesson already says both halves, three times:** §1's heading (*"Paying Both Halves"*), §1's body (*"a self-employed person owes both halves themselves"*), and q024's (index 23) correct option and `explain` in `quizText.en.js` (*"owes both halves of the payroll tax"*). The takeaway was the only place that named one half, and a reader keeping only that sentence would take the tax to be the employer's 7.65%. The previous run had not read the body; it settles the question against the takeaway.
+- **All five languages carried the one-half form** (es *"cubre la mitad que normalmente paga el empleador"*, ko *"고용주가 원래 부담했을 절반을 대신 내는"*, zh *"覆盖雇主本应承担那一半"*, ja *"本来雇用主が負担するはずの半分をカバーする"*). Each language's own heading says both halves.
+- **Siblings:** `grep -i 'self-employment|both halves|half an employer'` over `src/content/*.en.js`, the glossary and `lessonTerms.js` returns the heading, the takeaway and the q024 pair only. The one `lessonContent.money.en.js` hit is lesson 43's wage-protection paragraph, unrelated.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, lesson 10's `takeaway` only, last clause. Each language reuses its own §1 word for payroll tax (`impuesto de nómina`, `급여세`, `工资税`, `給与税`). en: *"…— including a self-employment tax that covers both halves of the payroll tax, the employer's as well as the worker's own."*
+- Patcher (node, UTF-8, function replacer): dry run, then old ×1 / new ×0 asserted before writing and 0 / 1 after, 5/5. One follow-up ja patch (same assertions) removed a doubled `含めて` from my first draft. Originals are in the scratchpad.
+- Generated, not hand-typed: ledger re-marked (ai) for lesson 10 in es/ko/zh/ja; `npm run readiness -- --write` changed only character counts (en 165,381 → 165,415). Minutes unchanged (175).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's). Intermediate: 1 FAIL (§10.4 ledger figure), cleared by the generated steps above |
+| §65 (W-10.7 test ii) | en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6%, read off the instrument; no quiz text touched |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-BdKBrb4I.js`, system Node v24.18.0 |
+| Bundle | new clause in **1** asset in each of 5 languages; old clause in **0** in all 5. Control: the unchanged heading *"The Self-Employment Tax: Paying Both Halves"* in 1. Nonsense probe 0 |
+| Live walk | **not done.** One clause in a takeaway that already renders, +20 to +34 chars |
+
+#### Step 5: adversarial self-check
+- **§10.1:** a description of how the tax works; no advice, and the lesson's "set aside a quarter to a third" sentence is untouched. `check-blindspot` passed inside `npm test`. **§2.3 / dates:** no figure or date added to the app; 15.3% is in this entry only, so no `CLAIMS.md` row. **§10.2:** no attribution.
+- **Did I overstate the other way?** "Both halves" is the lesson's own framing and the IRS's 15.3%. The half-deductibility and the 92.35% base are details the lesson never claimed to cover, and the takeaway still makes no rate claim.
+- **Completed work / DECISIONS.md:** this aligns the takeaway with the 2026-08 lesson 10 body (archive l.2742) rather than changing it. Nothing in DECISIONS.md covers it. **Would a reviewer get my result?** Yes: the IRS fetch with its 404 control, the patch assertions, `npm test`, the build and the bundle probes all re-run. No conflict found.
+
+**Seen, not fixed:** nothing new. Lesson 34's *"not so much you cause hyperinflation"* remains the previous run's wording call, not re-read here. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked; not mine, not touched. **Run log at 230,934 b before this entry (92.4% of the 250,000 b warn, ~3 runs of headroom)**, so W-5.3's archiving pass is due within a day, as W-10.6(a) predicted. The translations are machine-written (**O-3**). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the W-2 vs 1099 lesson ended by saying self-employment tax covers "the half an employer would otherwise pay", while its own heading, body and quiz say the self-employed pay both halves (15.3%, per the IRS). The takeaway now says both halves, in all five languages. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-06 (scheduled dev-agent; **a free pick**. The previous run said ⛔ *"the next run may NOT take a residual of this one"*, and it named none ("Seen, not fixed: nothing new"), so this is not one. **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an accuracy fix carried into four languages. `npm test` showed **0 FAIL, 1 WARN** (O-3's) before any edit. **The pick came from reading all 44 English `takeaway`s for claims with no trigger word**, the method that found q003. I chose a read over another `always|never` scan because the takeaway is the one sentence each lesson asks the learner to keep) — **lesson 6 (retirement accounts) no longer says that "the account type doesn't change what you can invest in". It now says the account type *mainly* changes when the tax bill comes due, and that a 401(k) usually limits you to the funds its plan offers.** §0's matching sentence, *"not by changing what you're allowed to invest in"*, is fixed too.
 
 **Step 3.5: the premise, measured.**
