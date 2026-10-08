@@ -95,7 +95,7 @@ export const quizText = [
       "Save 50% of income",
       "Don't have debt rise faster than income"
     ],
-    "explain": "If debt rises faster than income, your debt burdens will eventually crush you. This applies to individuals AND nations."
+    "explain": "Debt that keeps rising faster than income takes up more and more of it. Falling interest rates can keep the payments bearable for years, as they did for US households until 2008, but rates can only fall so far. The rule applies to households and countries alike, though a country that borrows in its own currency has more room, as Japan shows."
   },
   {
     "q": "What matters most for economic growth in the long run?",

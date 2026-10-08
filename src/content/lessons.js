@@ -220,7 +220,7 @@ export const lessons = [
     subtitle: {"en":"The dashboard of the economic machine","es":"El tablero de la máquina económica","ko":"경제 기계의 대시보드","zh":"经济机器的仪表板","ja":"経済マシンのダッシュボード"},
   },
   {
-    id: 40, track: "economy", icon: "🎯", color: "#15803d", minutes: 2,
+    id: 40, track: "economy", icon: "🎯", color: "#15803d", minutes: 3,
     title: {"en":"Three Rules of Thumb","es":"Tres reglas de oro","ko":"세 가지 경험 법칙","zh":"三条经验法则","ja":"3つの経験則"},
     subtitle: {"en":"A classic summary — simple but powerful","es":"Un resumen clásico — simple pero poderoso","ko":"고전적인 요약 — 간단하지만 강력합니다","zh":"经典总结——简单但强大","ja":"古典的な要約 — シンプルだが強力"},
   },

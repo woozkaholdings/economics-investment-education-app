@@ -206,7 +206,8 @@ export const lessonTerms = {
   // (see deliberatelyUnlinked below) — but it does not define "stock", which is
   // why the one term it does chip is the one it merely uses in passing.
   39: { 0: ["Stock"] },
-  40: { 1: ["Credit", "Productivity Growth"] },
+  // 40's Rule 1 has named falling interest rates since 2026-10-08 (section 0).
+  40: { 0: ["Interest Rate"], 1: ["Credit", "Productivity Growth"] },
 };
 
 // Terms for one section, or an empty array. Keeps LessonReader from having to

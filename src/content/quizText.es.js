@@ -95,7 +95,7 @@ export const quizText = [
       "Ahorrar 50%",
       "No dejes que la deuda crezca más rápido que los ingresos"
     ],
-    "explain": "Si la deuda crece más rápido que los ingresos, la carga de la deuda terminará por aplastarte. Esto vale tanto para las personas como para los países."
+    "explain": "Una deuda que sigue creciendo más rápido que los ingresos ocupa una parte cada vez mayor de ellos. La caída de las tasas de interés puede mantener los pagos soportables durante años, como pasó con los hogares de EE.UU. hasta 2008, pero las tasas solo pueden bajar hasta cierto punto. La regla vale tanto para los hogares como para los países, aunque un país que se endeuda en su propia moneda tiene más margen, como muestra Japón."
   },
   {
     "q": "¿Qué es lo más importante para el crecimiento económico a largo plazo?",
