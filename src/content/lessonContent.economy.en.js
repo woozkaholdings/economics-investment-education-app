@@ -175,7 +175,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "QE creates money to buy bonds, pushing yields down and tending to lift asset prices; QT runs it in reverse. Neither decides consumer prices on its own: inflation stayed mostly below 2% through QE1-3 (2008-14), yet hit 9% in 2022 after the 2020 round, which came with huge government spending and supply shortages. Through both rounds of QT, prices kept rising, and stocks ended each round higher than they began. The Fed balance sheet is the scoreboard.",
-    "thinkAbout": "The Fed printed $1.75 trillion in QE1 starting in 2008, and in 2020 it pledged to buy in whatever amounts were needed — about $4.6 trillion over the next two years. Who benefits most from QE? Those who own financial assets. Does this help explain growing wealth inequality?"
+    "thinkAbout": "The Fed printed $1.75 trillion in QE1 starting in 2008, and in 2020 it pledged to buy in whatever amounts were needed — about $4.6 trillion over the next two years. Rising stock and bond prices help the people who already own them most, while the jobs that cheaper borrowing helps create matter most to households that live on a paycheck. And in the US, the richest 1% held a growing share of household wealth before QE began: about 23% in 1989 and 29% in 2007. Which effect would you expect to be bigger, and what would you look up to check?"
   },
   "38": {
     "sections": [

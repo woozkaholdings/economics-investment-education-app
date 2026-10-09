@@ -175,7 +175,7 @@ export const lessonContent = {
       }
     ],
     "takeaway": "El QE crea dinero para comprar bonos: baja los rendimientos y suele impulsar el precio de los activos; el QT hace lo contrario. Ninguno decide por sí solo los precios al consumidor: la inflación estuvo mayormente por debajo del 2% durante QE1-3 (2008-14), pero llegó al 9% en 2022, tras la ronda de 2020, que coincidió con un enorme gasto público y escasez de suministros. Durante las dos rondas de QT los precios siguieron subiendo, y las acciones terminaron cada ronda más altas que al empezar. El balance del Fed es el marcador.",
-    "thinkAbout": "El Fed imprimió $1.75 billones en el QE1 a partir de 2008, y en 2020 se comprometió a comprar en las cantidades que hicieran falta — unos $4.6 billones en los dos años siguientes. ¿Quién se beneficia más del QE? Quienes poseen activos financieros. ¿Ayuda esto a explicar la creciente desigualdad de riqueza?"
+    "thinkAbout": "El Fed imprimió $1.75 billones en el QE1 a partir de 2008, y en 2020 se comprometió a comprar en las cantidades que hicieran falta — unos $4.6 billones en los dos años siguientes. La subida de las acciones y los bonos beneficia sobre todo a quienes ya los poseen, mientras que los empleos que el crédito más barato ayuda a crear importan más a los hogares que viven de un sueldo. Y en EE.UU., el 1% más rico ya tenía una parte creciente de la riqueza de los hogares antes de que empezara el QE: cerca del 23% en 1989 y del 29% en 2007. ¿Qué efecto esperarías que fuera mayor, y qué buscarías para comprobarlo?"
   },
   "38": {
     "sections": [
