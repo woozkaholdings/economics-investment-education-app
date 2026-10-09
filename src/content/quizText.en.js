@@ -28,14 +28,14 @@ export const quizText = [
     "explain": "Total spending drives the economy. Spending = money + credit. Every dollar spent becomes someone else's income."
   },
   {
-    "q": "What is the most important part of the economy?",
+    "q": "Which of these lets a household or business spend now what it expects to earn later?",
     "opts": [
       "Credit",
       "Gold",
       "Government",
       "Technology"
     ],
-    "explain": "Credit is the most important part of the economy, and the amount of new borrowing swings more than any kind of spending: US households and businesses took on about $2.1 trillion of new debt a year in 2006, then their debt shrank by about $0.7 trillion a year in 2009-10. Total credit outstanding in the US is many times larger than the monetary base (M0)."
+    "explain": "Credit is a promise to pay later, so it lets a buyer spend now what they expect to earn later, and that spending becomes someone else's income right away. The loop runs both ways, and the amount of new borrowing swings more than any kind of spending: US households and businesses took on about $2.1 trillion of new debt a year in 2006, then their debt shrank by about $0.7 trillion a year in 2009-10. Total credit outstanding in the US is many times larger than the monetary base (M0)."
   },
   {
     "q": "How long is the short-term debt cycle?",

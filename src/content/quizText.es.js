@@ -28,14 +28,14 @@ export const quizText = [
     "explain": "El gasto total impulsa la economía. Gasto = dinero + crédito. Cada dólar gastado se convierte en el ingreso de otra persona."
   },
   {
-    "q": "¿Cuál es la parte más importante de la economía?",
+    "q": "¿Cuál de estos permite a un hogar o una empresa gastar ahora lo que espera ganar más adelante?",
     "opts": [
       "Crédito",
       "Oro",
       "Gobierno",
       "Tecnología"
     ],
-    "explain": "El crédito es la parte más importante de la economía, y el monto de los nuevos préstamos oscila más que cualquier tipo de gasto: en EE.UU., hogares y empresas contrajeron unos $2.1 billones de deuda nueva al año en 2006 y luego esa deuda se redujo en unos $0.7 billones al año en 2009-10. En Estados Unidos, el crédito total pendiente es muchas veces mayor que la base monetaria (M0)."
+    "explain": "El crédito es una promesa de pagar después: permite a un comprador gastar ahora lo que espera ganar más adelante, y ese gasto se convierte de inmediato en el ingreso de otra persona. El ciclo funciona en ambos sentidos, y el monto de los nuevos préstamos oscila más que cualquier tipo de gasto: en EE.UU., hogares y empresas contrajeron unos $2.1 billones de deuda nueva al año en 2006 y luego esa deuda se redujo en unos $0.7 billones al año en 2009-10. En Estados Unidos, el crédito total pendiente es muchas veces mayor que la base monetaria (M0)."
   },
   {
     "q": "¿Cuánto dura el ciclo de deuda a corto plazo?",
