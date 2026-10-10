@@ -341,6 +341,17 @@ for the history. No open P1/P2 items.
 > NOT a pick** — the move is cheap once the mass is real, and it is not yet. Re-measure 2026-11-07.
 >
 >
+> ### W-10.2 ✅ CLOSED 2026-10-10 on the dev-agent Mac (`Kaeunui-noteubug.local`), by the owner running `node scripts/fix-agent-skill.mjs` interactively.
+> Output: remote sentence, application sentence and cadence aside replaced; 10,079 → 11,462 b; backup
+> `SKILL.md.bak-2026-10-04`; `economics-app-market-data` is not on this machine and was skipped. **Verified
+> independently afterwards:** `diff` against the backup shows only line 9 replaced plus the dated note
+> and the `src/` paragraph inserted. `NOT usable` now appears only inside the dated note, and
+> `never push` appears twice (line 9 and the HARD RULES). Line 46's `economic-cycles-v5.jsx` is the
+> rule to preserve that file's content, which is still true. ⚠️ A session could not run the script
+> itself: the auto-mode classifier denies edits to `~/.claude/scheduled-tasks/` as self-modification,
+> so a future fix of this kind is the owner's to run. ⛔ **Runs stop writing "W-10.2 still looks open
+> from here."**
+>
 > ### W-10.2 ADDENDUM — ⭐ SOLVED, owner-directed 2026-10-04, same day. The two-week puzzle has a mundane answer, and it was in a sibling task file all along.
 > **The dev agent runs on a SECOND MAC.** Verbatim, from
 > `~/.claude/scheduled-tasks/economics-app-market-data/SKILL.md`, in a parenthetical dated
