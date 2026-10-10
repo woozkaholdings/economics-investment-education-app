@@ -229,6 +229,6 @@ export const lessonContent = {
       }
     ],
     "takeaway": "The economy is a machine. Transactions, credit, and human nature drive it. Once you see the patterns, you can make better decisions about your money, career, and life.",
-    "thinkAbout": "You now understand more about how the economy works than most people. How will you apply these three rules to your own financial decisions?"
+    "thinkAbout": "This lesson says the three rules apply to a household as well as to a government. Which of them could you check against your own finances, and what numbers would tell you whether you're keeping it?"
   }
 };

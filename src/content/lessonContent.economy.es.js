@@ -229,6 +229,6 @@ export const lessonContent = {
       }
     ],
     "takeaway": "La economía es una máquina. Las transacciones, el crédito y la naturaleza humana la impulsan. Una vez que ves los patrones, puedes tomar mejores decisiones sobre tu dinero, tu carrera y tu vida.",
-    "thinkAbout": "Ahora entiendes más sobre cómo funciona la economía que la mayoría de la gente. ¿Cómo aplicarás estas tres reglas a tus propias decisiones financieras?"
+    "thinkAbout": "Esta lección dice que las tres reglas valen para un hogar igual que para un gobierno. ¿Cuál de ellas podrías comprobar en tus propias finanzas, y qué cifras te dirían si la estás cumpliendo?"
   }
 };
