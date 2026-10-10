@@ -738,6 +738,18 @@ Add a new entry when a run makes a choice future work should be able to look up 
   type where an unreviewed translation is *least* visible, because a wrong label still renders as a
   correctly-shaped chart. The `check-data.mjs` locale-parity checks catch a **missing** language, never a
   wrong one.
+- **Re-affirmed 2026-10-10 (interactive session, owner instruction "you do", answering O-3's ask to
+  fund a review, cap the Beta languages, or re-affirm).** Option (a) stands at the current scale:
+  es/ko/zh/ja keep shipping, AI-reviewed, under the "(Beta)" label. Funding a fluent review is not
+  something a session can do, and capping would remove working languages to address a risk the label
+  already discloses. **Measured before deciding, not assumed:** the label is live. `src/App.jsx`
+  appends " (Beta)" to every non-English option in the language picker, and the built main
+  bundle carries it. The non-English lesson corpus is es 186,315 / ko 89,604 / zh 56,130 /
+  ja 78,592 characters (`LAUNCH_READINESS.md` §10.4). All 44 lessons × 4 languages are `method: "ai"`,
+  and the human share is 0%. **What would reopen this:** a human reviewer becoming available (option
+  (b) supersedes `ai` records through the `method` field, as designed), or a user report of a
+  mistranslation. `npm test`'s standing review-coverage WARN is kept deliberately, so the 0% stays
+  visible. It is the disclosure, not an open question.
 - **Revisit when:** review coverage is meaningfully non-zero and the actual quality of the shipped
   translations is known, or before any paid/committed use of the app in a market where one of these
   four languages is the primary language.

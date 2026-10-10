@@ -157,6 +157,12 @@ for the history. No open P1/P2 items.
 > log only") and told a reviewer to expect `grep -rn "posthog" src/ package.json` to return nothing,
 > which stopped being true on 2026-09-05. Nothing about O-2 changed — **the scorecard did.**
 >
+> **O-3 ✅ CLOSED 2026-10-10 (owner instruction "you do"): option (a) re-affirmed.** es/ko/zh/ja keep
+> shipping, AI-reviewed, under "(Beta)", with the label measured live first. The record and what would
+> reopen it are in `DECISIONS.md` § Machine-translated lesson content, "Re-affirmed 2026-10-10". ⛔ **Runs
+> stop listing O-3 as "still waiting on you".** The review-coverage WARN stays, as the disclosure.
+> The original text follows.
+>
 > **O-3 (new, decision not action). A large volume of unreviewed machine translation is now shipping
 > every day, and the "(Beta)" decision was made about a smaller, static surface.** `DECISIONS.md`
 > accepted option (a) on 2026-08-11 — ship the existing AI translations under "(Beta)" labeling — for
