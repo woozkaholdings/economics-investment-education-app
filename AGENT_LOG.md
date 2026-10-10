@@ -1576,7 +1576,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     swept and CLOSED — do not re-run any without reading the archived item first:** research-authority
     citations; checkable arithmetic; English↔translation numeric drift; question answerability;
     glossary↔lesson agreement, attributed cross-references and typography; `explain` vs keyed answer;
-    answer key vs translated option order. `kidsContent.js`'s "$2+ trillion" was kept on purpose.
+    answer key vs translated option order. `kidsContent.js`'s "$2+ trillion" was kept on purpose;
+    ✏️ **re-decided 2026-10-10 on measurement** (FRED `WALCL`: net growth ~$1.4T before QE2, so
+    the ruling's QE1+QE2 rescue failed). It now gives the balance-sheet doubling. See that run entry.
 
 166. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
@@ -3126,6 +3128,36 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-10 (scheduled dev-agent; **a free pick**. I did not take the previous run's one residual, L40's comparative closers, which it called *"arguable, not picked by default"*. So W-6.2 rule 1 does not arise. **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is an accuracy fix carried into four languages. `npm test` showed **exit 0, 0 FAIL, 1 WARN** (the review-coverage WARN, which O-3's closure keeps as the disclosure) before any edit. **The pick is two archived residuals in one sentence group, each named and never measured:** the 09-18 kids entry's *"'In 2008, banks lent too much' … not measured this run"* and *"`$2+ trillion … to stop the collapse` … it was not re-measured this run. Arguable"* (archive l.52543-44). I found it with a Node scan of year-bearing sentences in the English lesson and quiz files: 75 of 78 matched log text and the other 3 were already measured. Then I read `kidsContent.js`, which that scan did not cover) — **the parent guide's teen card on 2008 (Reference → For parents → 13-17, `lessons[2].text`) no longer says the Fed "printed $2+ trillion to stop the collapse", or that banks over-lent "in 2008". It now says the over-lending came in the years before 2008, and that the Fed lent to banks and bought bonds on a huge scale. It adds that in the last four months of 2008 alone, the total value of what the Fed held more than doubled, from under $1 trillion to over $2 trillion.** All five languages.
+
+**Step 3.5: the premise, measured with a control. ⚠️ It overturns a standing ruling, so here is the evidence.** Item 167(d) (09-05) said ⛔ *"do not re-derive this"*. Its rescue was *"QE1+QE2 = $2.35T makes '$2+ trillion' fair"*. The 09-18 run noted that QE2 began 17 months after the recession ended. Keyless FRED CSVs (`scratchpad/fred/an.mjs`). **Controls:** a nonexistent series id → **404**, and `WALCL`'s all-time high reads **$8.965T on 2022-04-13**, the peak L37 cites.
+- **`WALCL` (Fed total assets):** **$0.926T (2008-09-10) → $2.239T (2008-12-31)**. The pre-QE2 peak is **$2.351T (2010-05-19)**. So net growth across the whole crisis response was **about $1.3-1.4T**, and QE1's gross $1.75T came in while the emergency loans ran off. Only the balance sheet's **size** passes $2T, and the 09-05 ruling itself said that size *"is not a quantity that was 'printed'"*. **The figure fails under the reading the sentence gives it.** What does hold, and is what L37 already says (*"roughly $900 billion before 2008"*), is "more than doubled, under $1T to over $2T".
+- **`HHMSDODNS` (household mortgage debt), year-on-year change at Q4:** **+$945B (2004), +$1,062B (2005), +$996B (2006), +$678B (2007), −$37B (2008)**. The over-lending peaked in 2005-06, and in 2008 mortgage debt shrank. "In the years before 2008" says what the data shows.
+
+#### What shipped
+- `kidsContent.js` 13-17 `lessons[2].text`, en/es/ko/zh/ja (**5 strings**). The deleveraging clause (09-18) is byte-identical in each. "Printed" is dropped. Each translation keeps that file's register and figure form: es *el Fed* and *$1 billón / $2 billones*, ko 습니다 and *$1조 / $2조* (L37's form), zh *万亿美元*, ja plain form and *FRB*.
+- Patcher `scratchpad/kids/patch.mjs` (node, `split/join`): old ×1 / new ×0 / no `"` asserted per string before writing, and old 0 / new 1 after. A second dry run refuses (exit 1). The original is in `scratchpad/kids/orig/`. All five strings were read back in full.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (the same one). §66, the parent-guide translation-completeness check, passes on the longer strings |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* before the new en sentence (anchor ×1) → **exit 1, §10.1 FAIL**. Restored from `scratchpad/kids/post.js`, `cmp`-identical → **exit 0** |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-Bvw6Xmlb.js`, system Node v24.18.0 |
+| Bundle | each of the 5 new probes is in **1** asset. The 4 old probes (`Fed printed $2+ trillion`, `In 2008, banks lent`, `印了2万亿+美元`, `2兆ドル以上を印刷`) are in **0**. Control: the untouched 5-8 card's *"Every trade in a real economy works the same way"* is in 1. Nonsense probe: 0 |
+| Live walk | **Not done.** This is a text substitution in a wrapping paragraph. The bundle probe shows the text shipped, but I did not watch it render |
+
+#### Step 5: adversarial self-check
+- **Is the new text true, clause by clause?** "Lent to banks" simplifies: late-2008 lending also went to AIG, to primary dealers and, through swap lines, to foreign central banks. Bond buying was mostly 2009 (QE1's MBS began in January). The dated sentence's claim, though, is about the *total* held, which counts every one of those, so its truth does not depend on the mix. "Last four months": `WALCL` 2008-08-27 is **$0.910T**, and 2.239 / 0.910 = **2.46x** (2.42x from 09-10), so "more than doubled" holds either way.
+- **§10.3:** the guide stays parent-facing. The card is written in the third person, and I changed no framing. **§10.1:** no action is suggested, and the plant proves the guard reads this file. **§10.2:** `dalio` in the diff → 0. "Deleveraging" is unchanged. **§2.3:** no "Month YYYY". "The last four months of 2008" is closed history.
+- **Completed work:** this **reverses item 167(d)'s "kept on purpose"**, and I say so in that item's backlog line (✏️). The reversal stands on the measurement above, not on a reading. It does not touch 167(d)'s actual fix (L37's prompt, still `$1.75 trillion in QE1`), and it does not undo the 09-18 clause. **DECISIONS.md / CLAIMS.md:** nothing rules on kids-content figures. **Would a reviewer get my result?** Yes, by re-fetching the two CSVs and re-running `an.mjs`, the patcher's dry run, `npm test`, the plant, the build and the probes. **No conflict found.**
+
+**Seen, not fixed:** the 13-17 `activity` says that of a stock and a savings account's rate, *"One follows the Fed closely; the other mostly doesn't"*. The national average savings rate barely moved in 2022-23 while high-yield accounts tracked the Fed, so the expected answer depends on the account. **Arguable, not measured, not picked by default.** L40's comparative closers stand as the previous run left them. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked; none of them are mine and I touched none. The translations are machine-written, under O-3's re-affirmed (Beta). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide's teen card said the Fed "printed $2+ trillion to stop the collapse" in 2008. Its balance sheet actually grew by about $1.3-1.4 trillion, from under $1 trillion to over $2 trillion, so the card now says that. It also no longer puts the over-lending in 2008, when mortgage debt was already shrinking. All five languages. Still waiting on you: **O-2** (analytics account).
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
 
 ### 2026-10-10 (scheduled dev-agent; **the previous run's named residual, L40's thinkAbout *"more than most people"***. Its "Seen, not fixed" called it *"not picked by default"*. It was first named on 09-14 (archive l.51697) and has been named in at least six run entries since, and no run ever took it. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a content fix carried into four languages. `npm test` showed **exit 0, 0 FAIL, 1 WARN** (O-3's) before any edit) — **lesson 40's closing think-about prompt no longer tells the learner *"You now understand more about how the economy works than most people"* and then asks how they will apply the three rules to their own financial decisions. It now repeats what the lesson says (the three rules apply to a household as well as to a government) and asks which rule the reader could check against their own finances, and what numbers would show whether they're keeping it.** This matches the shape of the 10-05 (L33) and 10-09 (L37) prompt fixes: a question with something to look up, not a verdict on the reader.
 
