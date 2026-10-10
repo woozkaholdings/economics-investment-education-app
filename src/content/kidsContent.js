@@ -27,6 +27,12 @@
 //     target in 95.2% of the same windows — so the ~49% above is a real
 //     result and not a dead instrument.
 //
+// Re-measured 2026-10-10: the savings rate follows the Fed's DIRECTION, not
+// its SIZE, so "follows the Fed closely" became "moves the same way, often by
+// much less". FDIC national savings rate (SNDR) 0.06% (2021-04) -> 0.47%
+// (2024-01, its high) while the target's upper bound went 0.25% -> 5.50%:
+// about 8% of the hikes passed through. Cuts to 3.75% took it to 0.38%.
+//
 // These figures drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -133,7 +139,7 @@ export const kidsContent = {
         why: { en: "The habits that build a good credit score later — paying on time, not overborrowing — are worth understanding before they're actually being tested.", es: "Los hábitos que construyen un buen puntaje de crédito después — pagar a tiempo, no pedir prestado de más — vale la pena entenderlos antes de que realmente se pongan a prueba.", ko: "나중에 좋은 신용 점수를 만드는 습관들 — 제때 갚기, 과도하게 빌리지 않기 — 은 실제로 시험대에 오르기 전에 이해해둘 가치가 있어요.", zh: "以后建立良好信用分数的那些习惯——按时还款、不过度借贷——值得在真正被考验之前就先弄明白。", ja: "後で良いクレジットスコアを築く習慣——期日どおりに払う、借りすぎない——は、実際に試される前に理解しておく価値がある。" },
       },
     ],
-    activity: { en: "For 3 months, track a stock and a savings account's rate next to what the Fed does. One follows the Fed closely; the other mostly doesn't. Which is which?", es: "Durante 3 meses, sigue una acción y la tasa de una cuenta de ahorro junto a lo que hace el Fed. Una sigue de cerca al Fed; la otra casi nunca. ¿Cuál es cuál?", ko: "3개월 동안 주식 하나와 저축 계좌 금리를 연준의 움직임과 나란히 추적해보세요. 하나는 연준을 바짝 따라가고, 다른 하나는 대체로 그렇지 않습니다. 어느 쪽이 어느 쪽일까요?", zh: "用3个月时间，把一只股票和一个储蓄账户的利率，与美联储的动作并排追踪。其中一个紧跟美联储，另一个大多数时候不跟。哪个是哪个？", ja: "3ヶ月間、株を1つと貯蓄口座の金利を、FRBの動きと並べて追跡しよう。片方はFRBにぴったりついていき、もう片方はたいてい違う動きをする。どっちがどっち？" },
+    activity: { en: "For 3 months, track a stock and a savings account's rate next to what the Fed does. One usually moves the same way as the Fed, though often by much less; the other mostly doesn't. Which is which?", es: "Durante 3 meses, sigue una acción y la tasa de una cuenta de ahorro junto a lo que hace el Fed. Una suele moverse en la misma dirección que el Fed, aunque a menudo mucho menos; la otra, por lo general, no. ¿Cuál es cuál?", ko: "3개월 동안 주식 하나와 저축 계좌 금리를 연준의 움직임과 나란히 추적해보세요. 하나는 대개 연준과 같은 방향으로 움직이지만 그 폭이 훨씬 작은 경우가 많고, 다른 하나는 대체로 그렇지 않습니다. 어느 쪽이 어느 쪽일까요?", zh: "用3个月时间，把一只股票和一个储蓄账户的利率，与美联储的动作并排追踪。其中一个通常与美联储同向变动，但幅度往往小得多；另一个大多数时候不跟。哪个是哪个？", ja: "3ヶ月間、株を1つと貯蓄口座の金利を、FRBの動きと並べて追跡しよう。片方はふつうFRBと同じ向きに動くが、その幅はずっと小さいことが多い。もう片方はたいてい違う動きをする。どっちがどっち？" },
     parentTip: { en: "Consider a practice investment account that uses pretend money. Watching real prices rise and fall with nothing at stake gives you a safe way to talk about how the ups and downs feel.", es: "Considera abrir una cuenta de inversión de práctica que use dinero ficticio. Ver subir y bajar precios reales sin nada en juego les da una forma segura de hablar de cómo se sienten las subidas y bajadas.", ko: "가상 자금을 쓰는 연습용 투자 계좌를 고려해 보세요. 잃을 것 없이 실제 가격이 오르내리는 것을 지켜보면, 그 오르내림이 어떤 기분인지 함께 이야기할 안전한 기회가 됩니다.", zh: "可以考虑开设一个使用虚拟资金的模拟投资账户。在没有任何损失风险的情况下看着真实价格涨涨跌跌，可以让你们安全地聊一聊涨跌带来的感受。", ja: "仮想のお金を使う練習用の投資口座を検討してみよう。何も失うものがない状態で実際の価格の上下を見ていれば、その浮き沈みがどんな気持ちになるかを安全に話し合える。" },
   },
 };
