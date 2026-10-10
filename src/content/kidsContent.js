@@ -33,6 +33,14 @@
 // (2024-01, its high) while the target's upper bound went 0.25% -> 5.50%:
 // about 8% of the hikes passed through. Cuts to 3.75% took it to 0.38%.
 //
+// The 9-12 `activity` was measured 2026-10-10. Until then it ended "You're
+// measuring inflation!" after a month of 5 grocery prices. Monthly, 2010-,
+// BLS average prices (8 items) vs CPI food at home (CUUR0000SAF11, NSA): an
+// item moved the same direction as the index in 55.9% of months, a 5-item
+// basket in 59.3%, and a typical item moved 1-4% a month to the index's 0.26%.
+// Over 12 months the basket agreed in 79.8%. Positive control: CPI food
+// (CPIUFDNS) agrees with food at home in 84.5% of months.
+//
 // These figures drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -104,7 +112,7 @@ export const kidsContent = {
         why: { en: "Sticker shock at checkout catches plenty of adults off guard too — knowing whether tax is added at the register or already built into the price is a small habit that prevents real financial surprises, especially when traveling or shopping online from another country.", es: "El precio final sorprende a muchos adultos también — saber si el impuesto se agrega al pagar o ya está incluido en el precio es un pequeño hábito que evita sorpresas financieras reales, sobre todo al viajar o al comprar en línea desde otro país.", ko: "계산할 때의 가격 차이는 어른들도 자주 당황하게 만들어요 — 세금이 계산할 때 더해지는지, 이미 가격에 포함돼 있는지 아는 작은 습관이 진짜 재정적 놀라움을 막아줘요. 특히 해외여행이나 해외 직구를 할 때요.", zh: "结账时的价格出入也常常让大人措手不及——弄清楚税是结账时另加，还是已经包含在价格里，是避免真正财务意外的一个小习惯，出国旅行或跨境网购时尤其有用。", ja: "レジでの値段の違いは大人でもよく驚かされること——税金がレジで加算されるのか、すでに価格に含まれているのかを知っておく小さな習慣が、本当の金銭的なびっくりを防いでくれる。特に海外旅行や海外通販のときにね。" },
       },
     ],
-    activity: { en: "Track prices of 5 items at the grocery store for a month. Did they go up or down? You're measuring inflation!", es: "Rastrea los precios de 5 artículos del súper durante un mes. ¿Subieron o bajaron? ¡Estás midiendo la inflación!", ko: "한 달 동안 마트에서 5가지 품목의 가격을 추적해보세요. 올랐나요, 내렸나요? 인플레이션을 측정하고 있는 겁니다!", zh: "跟踪超市5件商品一个月的价格变化。它们涨了还是跌了？你在测量通胀！", ja: "スーパーで5品目の価格を1ヶ月追跡。上がった？下がった？インフレを測定してるよ！" },
+    activity: { en: "Track prices of 5 items at the grocery store for a month. Did they go up or down? Expect a mix: one item's price often moves for its own reasons. Inflation is the average change across thousands of items, usually reported as the change over a full year. So check the same 5 again a year later, and compare how much your total changed with the official figure for grocery prices.", es: "Rastrea los precios de 5 artículos del súper durante un mes. ¿Subieron o bajaron? Espera una mezcla: el precio de un solo artículo suele moverse por sus propias razones. La inflación es el cambio promedio de miles de artículos, y normalmente se informa como el cambio en un año completo. Así que revisa los mismos 5 un año después y compara cuánto cambió tu total con la cifra oficial de los precios de los alimentos.", ko: "한 달 동안 마트에서 5가지 품목의 가격을 추적해보세요. 올랐나요, 내렸나요? 오른 것과 내린 것이 섞여 있어도 놀라지 마세요. 품목 하나의 가격은 그 품목만의 이유로 움직이는 경우가 많습니다. 인플레이션은 수천 가지 품목의 평균 변화이고, 보통 1년 동안의 변화로 발표됩니다. 그러니 1년 뒤에 같은 5가지를 다시 확인하고, 합계가 얼마나 변했는지 공식 식료품 물가 통계와 비교해보세요.", zh: "跟踪超市5件商品一个月的价格变化。它们涨了还是跌了？有涨有跌很正常：单件商品的价格常常因为它自己的原因而变动。通胀是几千种商品的平均变化，通常按整整一年的变化来公布。所以一年后再查一次这5件商品，看看总价变了多少，再和官方公布的食品价格涨幅比一比。", ja: "スーパーで5品目の価格を1ヶ月追跡。上がった？下がった？上がる物と下がる物が混ざっていても大丈夫。ひとつの品物の値段は、その品物だけの理由で動くことが多いんだ。インフレは何千もの品目の平均的な変化で、ふつうは1年間の変化として発表される。だから1年後に同じ5品目をもう一度調べて、合計がどれだけ変わったかを、食料品の値段の公式な数字と比べてみよう。" },
     parentTip: { en: "Open a savings account together. Show them interest earned — that's the bank paying to use their money!", es: "Abran una cuenta de ahorro juntos. Muéstrale los intereses ganados — ¡es el banco pagando por usar su dinero!", ko: "함께 저축 계좌를 개설하세요. 이자가 붙는 것을 보여주세요 — 은행이 아이의 돈을 쓰는 대가로 내는 돈이에요!", zh: "一起开个储蓄账户。让他们看到利息——银行付费使用他们的钱！", ja: "一緒に貯蓄口座を開こう。利息を見せて — 銀行がお金を借りた対価！" },
   },
   "13-17": {
