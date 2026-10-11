@@ -621,6 +621,14 @@ export const ratePrinciples = [
 // this note is what makes it read correctly today. Two of the five languages
 // (ko 본원통화, zh 基础货币) were already using the standard term and only
 // gained the "(M0)" tag; es and ja were not (see AGENT_LOG.md item 114).
+//
+// 2026-10-11: the M0 note (and glossary "M0") no longer call the base "the
+// only tier a central bank sets directly". Measured on FRED (BOGMBASE, WALCL,
+// RRPONTSYD): in 18 of the 40 months that QT shrank the Fed's assets from
+// 2022-06, the base ROSE, peaking 2024-02 at $5.90T against $5.51T when QT
+// began, as money left the reverse-repo facility. QE and QT push the base;
+// they do not set it. Control: 2008-08 -> 2014-10 the base and assets both
+// rose by over $3T.
 export const moneyAggregates = [
   {
     key: "m0",
@@ -633,11 +641,11 @@ export const moneyAggregates = [
       ja: "流通している現金 ＋ 銀行が中央銀行に預ける準備預金",
     },
     note: {
-      en: "The only tier a central bank sets directly. QE expands it, QT shrinks it.",
-      es: "El único nivel que el banco central fija directamente. La QE lo expande; la QT lo reduce.",
-      ko: "중앙은행이 직접 조절하는 유일한 단계. 양적완화는 늘리고 양적긴축은 줄입니다.",
-      zh: "唯一由央行直接决定的层级。量化宽松使其扩大，量化紧缩使其收缩。",
-      ja: "中央銀行が直接決められる唯一の層。量的緩和で拡大し、量的引き締めで縮小します。",
+      en: "The tier a central bank creates. QE expands it and QT shrinks it, but other flows move it too.",
+      es: "El nivel que crea el banco central. La QE lo expande y la QT lo reduce, pero otros flujos también lo mueven.",
+      ko: "중앙은행이 만들어내는 단계. 양적완화는 늘리고 양적긴축은 줄이지만, 다른 자금 흐름도 이를 움직입니다.",
+      zh: "由央行创造的层级。量化宽松使其扩大，量化紧缩使其收缩，但其他资金流动也会影响它。",
+      ja: "中央銀行が生み出す層。量的緩和で拡大し、量的引き締めで縮小しますが、ほかの資金の流れでも動きます。",
     },
   },
   {

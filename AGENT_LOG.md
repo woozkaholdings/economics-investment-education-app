@@ -3206,6 +3206,43 @@ same journey.
 
 ## Run log
 
+### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep) — M0 is no longer "the only tier a central bank sets directly": the base rose during much of QT2. Market Dashboard note + glossary "M0", five languages.
+
+Rules: W-6.2 ok (free pick); W-9.4 n/a. The glossary was declared clean 10-05, and this is not a re-read: the claim was found on the Dashboard, and the glossary carries the same sentence.
+
+**Step 3.5: the premise, measured with a control.** The Market Dashboard's money-supply card said the monetary base is *"The only tier a central bank sets directly. QE expands it, QT shrinks it."* Glossary "M0" said *"the only one the central bank controls directly"*. FRED, keyless CSV (`BOGMBASE`, `WALCL`, `WRESBAL`, `RRPONTSYD`, `WTREGEN`), script `scratchpad/m0/an.mjs`:
+- **QT2 (runoff from 2022-06):** the Fed's assets fell in **40** months, and the base **rose in 18 of them**. It went from **$5.51T** at QT's start to a high of **$5.90T (2024-02)** while assets fell 8.92 → ~7.6T. The offset was the reverse-repo facility draining **$2.16T (2023-06) → $0.44T (2024-06)** into reserves. Over all of QT2, assets fell $2.33T and the base fell only $0.21T.
+- **QT1 (2017-10 → 2019-08):** the base fell with assets (−$0.56T vs −$0.68T).
+- **Control (QE):** 2008-08 → 2014-10, assets +$3.5T and base +$3.15T. The script also throws on any non-numeric value.
+- **Disposition (W-11.2):** QE and QT push the base, but the TGA, the reverse repo and cash demand move it too, and the Fed sets none of those. So the edit deletes "only … directly", keeps the direction and adds "but other flows move it too". The figures stay in the source comment.
+
+#### What shipped
+- `markets.js` M0 `note`, all five languages: en *"The tier a central bank creates. QE expands it and QT shrinks it, but other flows move it too."* es/ko/zh/ja carry the same three clauses (es `lo`, which agrees with `nivel`).
+- `glossary.js` "M0" `f`, all five languages: the same deletion and clause (es `la`, agreeing with `medida`). The edited en sentence went 149 → 128 chars.
+- A 9-line dated comment above `moneyAggregates`. It does not ship.
+- Patcher `scratchpad/m0/patch.mjs`: old ×1 / new ×0 asserted before writing and the reverse after. A second dry run refuses (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before | exit 0, 0 FAIL, 1 WARN (O-3 review coverage) |
+| `npm test` after | first run **exit 1**: §2.3 caught "June 2022" in *my comment* (the guard scans comments in `markets.js`). Reworded to `2022-06`; then **exit 0, 0 FAIL, 1 WARN** |
+| `check-blindspot` sees the glossary edit | planted *"You should buy stocks now."* → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-YjTsRbZj.js`, system Node v24.18.0 |
+| Bundle | en/ko/ja new clause → **2** occurrences each (note + glossary), in `markets-*.js`. Old en note, old en glossary clause, old zh note → **0**. Comment's `RRPONTSYD` → **0**. Control: the untouched M0 `contains` → 1. Nonsense probe → 0 |
+| Live walk | static `dist/`, Browser pane. Market Dashboard: new note in `innerText` in **all five languages**, old absent. Glossary (en): new present, old absent. **DOM control:** injected `PROBE_ZQX` read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** The base is currency plus reserves, both of them Fed liabilities. The QE/QT direction is measured (QE1-3, QT1), and so is "other flows" (QT2, 18 of 40 months). "Shrinks" stays as the direction of the push, and the new clause keeps it from reading as a guaranteed outcome.
+- **§10.1:** the plant proves the guard reads the edit. **§10.2:** `dalio` in the added lines → 0. **§10.3:** n/a. **§2.3:** no level, rate or date ships.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `controls directly`, `sets directly`, `monetary base`, `M0` → 0 hits. Item 114's M0 naming and `contains` are unchanged (diff 1/1 glossary, 13/5 markets). A reviewer re-running the fetch, `an.mjs`, `npm test`, the plant, the build, the probes and the walk gets the same result. **No conflict found.**
+
+**Seen, not fixed:** (1) The balance-sheet caption says each expansion *"came from buying bonds"*. Fall 2008's jump (0.9 → 2.2T) was mostly emergency lending, before QE1's purchases began. Arguable, not measured. (2) *"Beautiful vs Ugly Deleveraging"* on the Dashboard is Dalio's coinage. Item 158 may cover it; not checked. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the app said the Fed "sets the monetary base directly", but the base grew through most of 2023 while QT ran. Both places now say other flows move it too, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
 ### 2026-10-11 (scheduled dev-agent; **the previous run's named residual (3), the 9-12 seasons card's `why`**, first named by the 10-10 grocery entry as *"Arguable, not measured, not picked by default"*. The previous run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a measured accuracy fix carried into four languages. `npm test` was **not** run before editing; the exit 0 / 0 FAIL / 1 WARN baseline is the previous entry's reading, and the post-edit run reproduces it) — **the parent guide's 9-12 seasons card (Reference → Kids → Ages 9-12, `lessons[1].why`) no longer follows its spring → summer → fall → winter metaphor with *"The economy really does move in cycles like this"*. It now says the economy really does move through these phases, but unlike the seasons, no one knows how long each will last: in the US since World War II, growth has lasted anywhere from 1 year to more than 10, and downturns from 2 months to a year and a half.** The card's `text` (the metaphor itself) and the closing "recognizing the pattern…" clause are unchanged. All five languages, plus a dated paragraph in the file's header comment.
 
 **Step 3.5: the premise, measured with a control. It holds.** The residual's claim was that seasons are regular and business cycles are not. "Like this", right after a metaphor whose every phase lasts about three months, tells a parent the cycle keeps a schedule.
