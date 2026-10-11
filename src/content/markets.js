@@ -629,6 +629,15 @@ export const ratePrinciples = [
 // began, as money left the reverse-repo facility. QE and QT push the base;
 // they do not set it. Control: 2008-08 -> 2014-10 the base and assets both
 // rose by over $3T.
+//
+// 2026-10-11 (later run): the M2 note (and glossary "M2") no longer say M2 is
+// "mostly created when banks lend, not by the central bank". Measured on FRED
+// (M2SL, TOTLL, WSHOSHO): from 2020-02 to 2021-12 M2 rose $6.0T while bank
+// loans rose $0.6T and the Fed's securities $4.4T; from 2008 to 2025 loans
+// grew by 46% of M2's growth. QE that buys from non-banks creates deposits
+// directly, as the QE lesson already says ("from banks and investors").
+// Control: 1973-2007, loans grew by 91% of M2's growth, so the old note
+// described that era, not this one.
 export const moneyAggregates = [
   {
     key: "m0",
@@ -677,11 +686,11 @@ export const moneyAggregates = [
       ja: "M1 ＋ 小口の定期預金 ＋ 個人向けMMF",
     },
     note: {
-      en: "Mostly created when banks lend, not by the central bank.",
-      es: "Se crea sobre todo cuando los bancos prestan, no por el banco central.",
-      ko: "대부분 중앙은행이 아니라 은행이 대출할 때 만들어집니다.",
-      zh: "其中大部分是银行放贷时创造的，而非央行创造。",
-      ja: "その大部分は中央銀行ではなく、銀行が融資するときに生まれます。",
+      en: "Banks create it when they lend, and QE can add to it too.",
+      es: "Los bancos lo crean cuando prestan, y la QE también puede aumentarlo.",
+      ko: "은행이 대출할 때 만들어지며, 양적완화로 늘어날 수도 있습니다.",
+      zh: "银行放贷时会创造它，量化宽松也可能使其增加。",
+      ja: "銀行が融資するときに生まれ、量的緩和で増えることもあります。",
     },
   },
 ];

@@ -1874,6 +1874,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     Dalio, or general?** If general, the Buffett quotation goes and `check-blindspot.mjs` gains a
     pattern; if Dalio-scoped, §10.2's body should say so, because as written it reads as a standing
     rule the app violates on lesson 38.
+    **Possibly in scope too (noted 2026-10-11, not decided):** *"beautiful / ugly deleveraging"* is Dalio's
+    coinage, used unattributed in lesson 34's heading and the Dashboard's dial, label and anchors, in five
+    languages. The same one-word answer decides it; a run should not rename it first.
 
 157. **✅ DONE 2026-08-30 (scheduled dev-agent, self-picked; the owner independently asked for
     this item the same day — see the attribution correction below), the same day it was filed —
@@ -3205,6 +3208,45 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep, after the previous run's two residuals broke) — M2 is no longer "mostly created when banks lend, not by the central bank". Dashboard M2 note + glossary "M2", five languages.
+
+Rules: W-6.2 ok (residuals measured, neither taken; then a free pick); W-9.4 n/a. **Judgment call under W-11.2:** it says to take an open numbered item when residuals turn up nothing. Every open one (117, 140, 143, 149, 76) says not to pick it over content, so I continued the Dashboard sweep.
+
+**Step 3.5, the residuals first.** (1) Balance-sheet caption *"each expansion came from buying bonds"*: **premise broke.** FRED `WALCL` vs `WSHOSHO` between the five bar endpoints: securities moved **105% / 87% / 94% / 93%** of total assets. The fall-2008 lending spike is real (assets 0.93 → 2.26T while securities stayed at 0.48 → 0.49T), but it unwound before QE3's end, and the caption describes bar-to-bar change. Control: `WSHOSHO` at 2014-10 = $4.22T, the known SOMA level. No edit. (2) *"Beautiful vs Ugly Deleveraging"*: lesson 34 heading, Dashboard dial and anchors in five languages. Whether a Dalio coinage counts as "name-brand framing" is item 158's §10.2 scope question, the owner's. Not a run's call.
+
+**Step 3.5, the pick.** The Dashboard M2 note said *"Mostly created when banks lend, not by the central bank."* Glossary "M2" said the same as the premise of its last sentence. `when banks lend` / `Mostly created` → **0** hits across both logs, `CLAIMS.md` and `DECISIONS.md`: never measured. FRED keyless CSV (`M2SL`, `TOTLL`, `TOTBKCR`, `WSHOSHO`), script `scratchpad/bs/m2.mjs`, which throws on any non-numeric value:
+- **2020-02 → 2021-12:** M2 **+$6.0T**, bank loans **+$0.6T** (10%), Fed securities **+$4.4T**.
+- **2008 → 2025:** loans grew by **46%** of M2's growth (bank credit including securities: 70%).
+- **Control, 1973-2007:** loans **91%** of M2's growth (1990-2007: 104%). The old note described that era.
+- The QE lesson already says the Fed buys *"from banks and investors"*; buying from investors creates deposits.
+- **Disposition (W-11.2, narrow, no figure):** delete "mostly … not by the central bank". The note says QE can add to M2. The glossary keeps only the true premise.
+
+#### What shipped
+- `markets.js` M2 `note`, five languages: en *"Banks create it when they lend, and QE can add to it too."* es `la QE` / ko 양적완화 / zh 量化宽松 / ja 量的緩和, matching the M0 note's terms.
+- `glossary.js` "M2" `f`, five languages: en *"Because banks create it when they lend, M2 can grow or shrink even while the monetary base is unchanged."* The sentence is 46 chars shorter.
+- A 9-line dated comment under the 10-11 M0 paragraph. It does not ship.
+- Patcher `scratchpad/bs/patch.mjs`: old ×1 / new ×0 before, reverse after. A repeat run refuses 11/11.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3) both times |
+| `check-blindspot` sees the glossary edit | planted *"You should buy stocks now."* → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-DgWcCfsV.js`, system Node v24.18.0 |
+| Bundle | 6 new-string probes (en/ko/ja note, en/zh/es glossary) → **1** each. Old en note, old en glossary clause, old zh note → **0**. Comment's `TOTLL` → **0**. Control: untouched M2 `contains` → 1. Nonsense probe → 0 |
+| Live walk | static `dist/`, Browser pane. Dashboard: new note present, old absent, in **all five languages**. Glossary: en and ja new present, old absent, untouched `ex` present. **DOM control:** injected `PROBE_ZQX` read true, then false |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** Bank lending creates deposits, and QE purchases from non-banks create deposits directly. "Can" keeps it from claiming every QE dollar lands in M2. The glossary's conclusion still follows from its narrowed premise.
+- **§10.1:** the plant proves the guard reads the edit. **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** no level, rate or date ships, and the comment uses `YYYY-MM` (the guard scans comments here).
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `when banks lend`, `money supply`, `M2`, `not by the central bank` → 0 hits. **No conflict found.**
+
+**Seen, not fixed:** nothing new beyond the two residuals above. Untracked `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` are not mine and were left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the app said M2 is created "mostly by banks, not the central bank", but in 2020-21 M2 rose $6T while bank loans rose $0.6T. It now says QE can add to it too, in five languages. One question for you, under item 158: does "beautiful/ugly deleveraging" (a Dalio coinage, used in lesson 34 and the Dashboard) fall under §10.2? Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
 
 ### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep) — M0 is no longer "the only tier a central bank sets directly": the base rose during much of QT2. Market Dashboard note + glossary "M0", five languages.
 
