@@ -227,6 +227,83 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-11 — set by the weekly review 2026-10-11. Supersedes W-10's *active* clauses below. The standing rules are UNCHANGED and still binding: W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week shipped 28 dev-agent commits, 3 owner-directed ones and 4 market refreshes (35 since
+> `a117f05`). Build green, `npm test` 0 FAIL / 1 WARN (O-3's disclosure). 28 run-log entries
+> against 28 dev-agent commits, 4/day on every full day, no mismatch, no outage.** Grade **A−**.
+> Content work was accurate and source-measured; the owner closed **O-3** and **W-10.2**. What holds
+> it below an A: O-2 has not moved for a fourth week, and **run entries grew ~50% within the week**
+> (W-11.1).
+>
+> ### W-11.0 — W-10's test, measured off the instruments. It passes on both halves.
+> (i) W-10.1 landed in `f22dc00` (five sites). (ii) `check-data.mjs` §65 at `befb49a`: longest-option
+> **en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6**, each at or below the 10-04 reading (39.1 / 37.0
+> / 37.0 / 34.8 / 32.6). Shortest-option rates unchanged (2.2 / 2.2 / 0.0 / 4.3 / 2.2). en and es
+> *improved*. No edit gave the tell back.
+>
+> ### W-11.1 ⛔ PRIORITY (process) — run entries are getting longer, and the headings are what grew most.
+> Measured off the run log by date, mean bytes per entry: last week **4,841–5,959** (mean ≈5,300).
+> This week **5,771 (10-04) → 6,064 → 7,229 → 5,991 → 7,428 → 8,039 → 7,459 → 8,055 (10-11)**. The
+> `### date (…)` heading alone went from **~550–650 chars on 10-04 to ~1,350–1,900 by 10-09/10-11**.
+> Nearly all of that growth is the pick-justification preamble (*"W-6.2 rule 1 allows that… W-9.4 does
+> not bind… `npm test` was not run before editing…"*). At ~8 KB × 4 runs/day the run log needs an
+> archiving pass every ~3 days, and the archive (5.48 MB) grows ~200 KB a week.
+> **The rule from the next run on:**
+> 1. **Heading ≤ 300 characters:** date, `scheduled dev-agent`, the pick type (free pick / residual of
+>    X / named item), and one clause on what changed. Nothing else goes in the heading.
+> 2. **Rule compliance gets one line in the body, not a paragraph:** e.g. *"Rules: W-6.2 ok (free
+>    pick); W-9.4 n/a."* Only explain a rule when a run is making a judgment call under it.
+> 3. **Target ≤ 5,000 b per entry.** Measurements stay. Restating the previous entry's reasoning,
+>    re-quoting the backlog, and narrating what was *not* done beyond one "Seen, not fixed" line go.
+> ⛔ **Do not "fix" past entries.** This is forward-only, and it is not a pick. No run should spend
+> itself on log editing.
+> **Test for 2026-10-18:** mean bytes per run entry dated 10-12 → 10-18 is **≤ 5,500 b**, measured
+> off the file, and no heading is over 400 characters.
+>
+> ### W-11.2 — the accuracy sweep is good work. Keep it, but keep the corrections short.
+> The week's 28 runs were nearly all in-place accuracy fixes, each measured against a primary source
+> (FRED USREC, BLS CPS/CPI, IRS Pub 15-T, FDIC SNDR, Fed H.4.1). This review spot-checked the
+> English diffs and found **no error and no advice-adjacency**. Highlights: **`q028`'s answer key was
+> wrong** (ERISA gives a 401(k) to a current spouse), and that was fixed by rebuilding the scenario
+> around a never-married person rather than adding a caveat. Lessons 37 and 40 lost two leading prompts
+> (*"Does this help explain wealth inequality?"*, *"you understand more than most people"*). And
+> Lesson 36 is no longer a "Crystal Ball". These are neutrality improvements, not just accuracy ones.
+> **The watch item is length.** English lesson text grew **164,424 → 166,954 chars (+1.5%)** and
+> **174 → 177 min** in a week of corrections only. Three glossary entries roughly doubled (Inflation
+> now 352 chars, Interest Rate 433). **Rule for hedge fixes:** prefer deleting or narrowing the false
+> clause to adding a statistic. A figure belongs in a lesson body. It does not belong in a glossary
+> definition or a 9-12 parent card unless the claim can't be made true without it. Not a reason to
+> revisit this week's edits.
+> **When "Seen, not fixed" turns up nothing,** say so and take an open numbered item. Do not re-read
+> a surface a previous run already declared clean (e.g. the 43 English glossary definitions, 10-05).
+>
+> ### W-11.3 — owner items. O-3 ✅ and W-10.2 ✅ closed this week. O-2 is now the only critical-path item.
+> **O-2 (fourth week):** one analytics account and a public key, four steps, ~20 minutes. §4.3's
+> Phase-0 gate (≥40% finish lesson 1) stays **❌ Unmeasurable** until it lands, and nothing a run does
+> moves the launch while that is true. **O-5:** unchanged; see W-11.4. **O-6** (automate the
+> archive move or keep it manual): still undecided. It gets more relevant as W-11.1's entry size
+> sets the archiving cadence.
+>
+> ### W-11.4 — deploy and market data, measured. The same weekday shape, and not alarming.
+> `check-deployed --identify`: live = **`6510e60`** (Fri 10-09 21:16), byte-identical. Six content
+> commits behind (the parent-guide fixes and L40's prompt). Live `market.json` asOf 2026-10-09, so
+> Sectors goes dark **2026-10-13 (Tue)**, and a Monday push clears it with a day in hand.
+> **Market data 10-08 is missing, by design:** that run fetched `asOf=2026-10-08` and **declined to
+> commit because the tree was dirty** (the second Mac's in-progress edits, synced via iCloud). That is
+> the documented behavior, and 10-09's data superseded it. ⛔ Not a defect; do not "fix" it.
+>
+> ### W-11.5 — notes, not picks.
+> Floor **267,237 b (53.4%)**, run log **208,058 b (83.2% of warn, 5.5 runs headroom)**. The 23rd
+> archiving pass is due ~10-12, which is fine. The 22nd ran 10-07, 1 of 28 runs (3.6%).
+> `kidsContent.js` gained 38 lines of provenance comments this week. Build strips them, and they're
+> useful. Note only. `CLAIMS.md`'s missing size guard (W-10.6b) gets re-measured at the 11-07 audit.
+>
+> ### W-11.6 — this block's test.
+> **(i)** W-11.1's entry-size test above, and **(ii)** §65 longest-option rates stay at or below
+> **en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6**. Run the instruments; do not retype either from
+> here.
+
 > ## PRIORITY BLOCK W-10 — set by the weekly review 2026-10-04. Supersedes W-9's *active* clauses below. The standing rules are UNCHANGED and still binding: W-9.4's two-run bar on short-string hand reads (it WORKED — see W-10.0), W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week shipped 31 dev-agent commits, build green, `npm test` 0 FAIL / 1 WARN, and the two
