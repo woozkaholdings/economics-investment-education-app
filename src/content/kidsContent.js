@@ -41,6 +41,22 @@
 // Over 12 months the basket agreed in 79.8%. Positive control: CPI food
 // (CPIUFDNS) agrees with food at home in 84.5% of months.
 //
+// The 13-17 paycheck card was measured 2026-10-11 against IRS Pub 15-T
+// (2026), Worksheet 1A, Single, standard W-4: no federal income tax is
+// withheld below $16,100 a year annualized, about $310 a week (line 1g
+// $8,600 + a $7,500 zero bracket = the 2026 standard deduction, IR-2025-103).
+// Median part-time weekly pay at 16-24 was $284-289 in 2024 (BLS CPS table
+// 38), just over that year's $281 ceiling: just under half have none withheld,
+// and at the median it is under $1 a week. Social Security + Medicare (7.65%) stays
+// larger than federal income tax withholding until about $50,200 a year, so
+// "income tax, plus payroll taxes" had the order backward for a teen.
+// ko/zh/ja describe their own countries' systems, so they carry only the
+// hedge that small part-time pay often has no income tax withheld, with no
+// figure: KR simplified withholding table, 0 for a single earner at or under
+// KRW 1.06M a month; JP monthly table, column 甲, 0 under JPY 88,000; CN
+// cumulative method, 0 while cumulative wages stay under CNY 5,000 a month
+// (a 劳务报酬 payment over CNY 800 IS withheld). Web-checked, not fluent-read.
+//
 // These figures drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -139,7 +155,7 @@ export const kidsContent = {
         why: { en: "Starting this habit with a first paycheck, even with a tiny amount, is one of the most reliable ways real people actually build savings over a lifetime.", es: "Empezar este hábito desde el primer sueldo, aunque sea con una cantidad pequeña, es una de las formas más confiables en que la gente realmente construye ahorros durante toda la vida.", ko: "첫 월급부터 이 습관을 작은 금액으로라도 시작하는 것은 사람들이 평생에 걸쳐 실제로 저축을 쌓는 가장 확실한 방법 중 하나예요.", zh: "从第一份工资起就开始这个习惯，哪怕金额很小，也是人们一辈子真正积累储蓄最可靠的方式之一。", ja: "初めての給料からこの習慣をたとえ小さな金額でも始めることは、実際の人々が一生をかけて貯蓄を築く最も確実な方法の一つなんだ。" },
       },
       {
-        text: { en: "A first paycheck almost always shows two numbers: what you earned (gross pay) and what actually lands in your account (net pay). The difference — income tax, plus payroll taxes for Social Security and Medicare, all withheld before you're paid — isn't a mistake; it's normal, and worth understanding before your first job surprises you.", es: "Un primer sueldo casi siempre muestra dos números: lo que ganaste (pago bruto) y lo que realmente llega a tu cuenta (pago neto). La diferencia — el impuesto sobre la renta, más los impuestos de nómina del Seguro Social y Medicare, todo retenido antes de que te paguen — no es un error; es normal, y vale la pena entenderlo antes de que tu primer trabajo te sorprenda.", ko: "첫 월급에는 거의 항상 두 가지 숫자가 나와요: 번 돈(총급여)과 실제로 계좌에 들어오는 돈(순급여)이에요. 그 차이는 소득세 같은 세금과 국민연금·건강보험 같은 사회보험료가 미리 떼어지기 때문인데, 실수가 아니라 정상이에요 — 첫 직장에서 놀라기 전에 미리 알아두면 좋아요.", zh: "第一份工资单几乎总会显示两个数字：你赚到的钱（税前工资）和实际到账的钱（税后工资）。两者之间的差额是预扣的个人所得税，以及养老保险、医疗保险等社保个人缴费——这不是出错，是正常的，最好在第一份工作让你意外之前就了解清楚。", ja: "初めての給料明細には、たいてい2つの数字が書いてある。稼いだ金額（額面給与）と、実際に口座に振り込まれる金額（手取り）だ。その差は、所得税などの税金と、健康保険や厚生年金などの社会保険料が天引きされるためで、間違いじゃなく普通のこと。初めての仕事で驚く前に知っておくといいよ。" },
+        text: { en: "A first paycheck almost always shows two numbers: what you earned (gross pay) and what actually lands in your account (net pay). The difference is taxes withheld before you're paid. On a small part-time paycheck, most of it is usually payroll taxes for Social Security and Medicare; the federal income tax withheld is often zero, because the withholding tables don't take income tax from pay that low. It isn't a mistake; it's normal, and worth understanding before your first job surprises you.", es: "Un primer sueldo casi siempre muestra dos números: lo que ganaste (pago bruto) y lo que realmente llega a tu cuenta (pago neto). La diferencia son los impuestos retenidos antes de que te paguen. En un sueldo pequeño de medio tiempo, la mayor parte suele ser de impuestos de nómina del Seguro Social y Medicare; el impuesto federal sobre la renta retenido a menudo es cero, porque las tablas de retención no lo cobran sobre un sueldo tan bajo. No es un error; es normal, y vale la pena entenderlo antes de que tu primer trabajo te sorprenda.", ko: "첫 월급에는 거의 항상 두 가지 숫자가 나와요: 번 돈(총급여)과 실제로 계좌에 들어오는 돈(순급여)이에요. 그 차이는 소득세 같은 세금과 국민연금·건강보험 같은 사회보험료가 미리 떼어지기 때문인데, 실수가 아니라 정상이에요. 다만 적은 아르바이트 급여라면 소득세는 0원인 경우가 많아요. 급여가 그만큼 적으면 원천징수 세액표에서 뗄 소득세가 없기 때문이에요. 첫 직장에서 놀라기 전에 미리 알아두면 좋아요.", zh: "第一份工资单几乎总会显示两个数字：你赚到的钱（税前工资）和实际到账的钱（税后工资）。两者之间的差额是预扣的个人所得税，以及养老保险、医疗保险等社保个人缴费——这不是出错，是正常的。不过，如果只是一份收入不多的兼职，个人所得税往往一分都不用预扣，因为收入这么低时，按预扣规则算出的税额就是零。最好在第一份工作让你意外之前就了解清楚。", ja: "初めての給料明細には、たいてい2つの数字が書いてある。稼いだ金額（額面給与）と、実際に口座に振り込まれる金額（手取り）だ。その差は、所得税などの税金と、健康保険や厚生年金などの社会保険料が天引きされるためで、間違いじゃなく普通のこと。ただし、少額のアルバイト代なら、所得税はまったく引かれないことも多い。給料がそれくらい少ないと、源泉徴収税額表で引く税額がゼロになるからだ。初めての仕事で驚く前に知っておくといいよ。" },
         why: { en: "Not knowing this difference is one of the most common shocks of a first real paycheck — knowing it ahead of time turns a surprise into just a fact.", es: "No conocer esta diferencia es una de las sorpresas más comunes del primer sueldo real — saberlo de antemano convierte una sorpresa en solo un hecho.", ko: "이 차이를 모르는 것은 첫 정식 월급에서 가장 흔히 받는 충격 중 하나예요 — 미리 알아두면 놀라움이 그냥 사실이 돼요.", zh: "不知道这个差异是第一份正式工资最常见的冲击之一——提前了解，就能把意外变成一个平常的事实。", ja: "この違いを知らないことは、初めての本当の給料でよくある衝撃の一つ——前もって知っておけば、驚きはただの事実に変わる。" },
       },
       {
