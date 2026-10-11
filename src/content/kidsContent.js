@@ -57,6 +57,14 @@
 // cumulative method, 0 while cumulative wages stay under CNY 5,000 a month
 // (a 劳务报酬 payment over CNY 800 IS withheld). Web-checked, not fluent-read.
 //
+// The 9-12 seasons card's `why` was measured 2026-10-11. Until then it said
+// "The economy really does move in cycles like this" right after a seasons
+// metaphor, but seasons are regular and business cycles are not. FRED USREC
+// (NBER dates, monthly), 1945-: 12 expansions of 12-128 months, 13
+// recessions of 2-18 months, recession start to start 18-146 months (the
+// span L32/L33 give). Controls: the 2009-20 expansion reads 128, the 2020
+// recession 2 and the 2008-09 recession 18, NBER's own published counts.
+//
 // These figures drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -105,7 +113,7 @@ export const kidsContent = {
       },
       {
         text: { en: "The economy goes through seasons like nature: Growth (spring) → Peak (summer) → Slowdown (fall) → Bottom (winter) → Growth again!", es: "La economía tiene estaciones como la naturaleza: Crecimiento (primavera) → Pico (verano) → Desaceleración (otoño) → Fondo (invierno) → ¡Crecimiento otra vez!", ko: "경제도 자연처럼 계절이 있습니다: 성장(봄) → 정점(여름) → 둔화(가을) → 바닥(겨울) → 다시 성장!", zh: "经济像自然一样有四季：增长（春）→ 顶峰（夏）→ 放缓（秋）→ 低谷（冬）→ 再次增长！", ja: "経済にも自然のような季節がある：成長（春）→ ピーク（夏）→ 減速（秋）→ 底（冬）→ また成長！" },
-        why: { en: "The economy really does move in cycles like this — recognizing the pattern makes sense of news about recessions and booms later in life.", es: "La economía realmente se mueve en ciclos así — reconocer el patrón ayuda a entender las noticias sobre recesiones y auges más adelante.", ko: "경제는 실제로 이런 순환을 겪어요 — 이 패턴을 알아두면 나중에 경기 침체나 호황에 관한 뉴스를 이해하는 데 도움이 돼요.", zh: "经济确实会像这样循环变化——认清这个规律，以后看到关于衰退和繁荣的新闻时就更容易理解。", ja: "経済は実際にこんなふうに循環している——このパターンを知っておくと、将来ニュースで景気後退や好景気の話を聞いたときに理解しやすくなる。" },
+        why: { en: "The economy really does move through these phases — but unlike the seasons, no one knows how long each one will last. In the US since World War II, growth has lasted anywhere from 1 year to more than 10, and downturns from 2 months to a year and a half. Recognizing the pattern makes sense of news about recessions and booms later in life.", es: "La economía realmente pasa por estas fases — pero, a diferencia de las estaciones, nadie sabe cuánto durará cada una. En EE. UU., desde la Segunda Guerra Mundial, el crecimiento ha durado desde 1 año hasta más de 10, y las caídas desde 2 meses hasta un año y medio. Reconocer el patrón ayuda a entender las noticias sobre recesiones y auges más adelante.", ko: "경제는 실제로 이런 단계를 거쳐요 — 하지만 계절과 달리 각 단계가 얼마나 이어질지는 아무도 몰라요. 제2차 세계대전 이후 미국에서 성장기는 짧게는 1년, 길게는 10년 넘게 이어졌고, 침체기는 2개월에서 1년 반까지 이어졌어요. 이 패턴을 알아두면 나중에 경기 침체나 호황에 관한 뉴스를 이해하는 데 도움이 돼요.", zh: "经济确实会经历这些阶段——但和四季不同，没有人知道每个阶段会持续多久。二战以来的美国，增长期短则1年，长则超过10年；衰退期则从2个月到一年半不等。认清这个规律，以后看到关于衰退和繁荣的新闻时就更容易理解。", ja: "経済は実際にこうした段階をたどる——でも季節と違って、それぞれがどれくらい続くかは誰にもわからない。第二次世界大戦後のアメリカでは、成長期は短くて1年、長くて10年以上、後退期は2か月から1年半ほど続いた。このパターンを知っておくと、将来ニュースで景気後退や好景気の話を聞いたときに理解しやすくなる。" },
       },
       {
         text: { en: "When your lemonade stand does well, you might borrow money to buy a bigger stand. If you earn more than the loan costs, that's GOOD debt!", es: "Si tu puesto de limonada va bien, podrías pedir prestado para comprar uno más grande. Si ganas más de lo que te cuesta el préstamo, ¡eso es deuda BUENA!", ko: "레모네이드 가판대가 잘 되면 더 큰 것을 사기 위해 빌릴 수 있습니다. 대출 비용보다 더 많이 벌면 좋은 부채입니다!", zh: "如果你的柠檬水摊生意好，借钱买更大的摊位，赚的比借的多，这就是好的债务！", ja: "レモネードスタンドが好調なら、大きな店を買うために借金。ローンより多く稼げば良い借金！" },
