@@ -568,6 +568,13 @@ export const balanceSheetCaption = {
 // the Fed"); it now reports what the S&P 500 did over the hiking cycles, dated
 // as the rate-effects notes above date them (AGENT_LOG 2026-09-18). It states
 // history, never a directive (LAUNCH_PLAN §10.1).
+//
+// 2026-10-12: the last item said "Where tightening stops shapes how gentle or
+// harsh the slowdown is". Measured on FRED (FEDFUNDS, UNRATE, CPILFESL), 12
+// completed hiking cycles 1957-2007: rank correlation of the peak funds rate
+// with the rise in unemployment over the next 3 years is 0.17 (0.22 for the
+// peak less core inflation). 2007's 5.26% peak preceded the largest rise
+// (+5.6 pts); 1984's 11.64% preceded almost none (+0.2). It now says that.
 export const ratePrinciples = [
   {
     en: "Policy changes work with lags — often a year or more.",
@@ -605,11 +612,11 @@ export const ratePrinciples = [
     ja: "株価が利上げ局面全体を通じて下落することは多くありませんでした。直近5回の利上げ局面では、S&P 500は1994-95年にはほぼ横ばいで、残る4回は途中で最大23%下落しながらも、いずれも開始時より高く終わりました。はっきりした例外は、株価が大きく下落した1973-74年です。",
   },
   {
-    en: "Where tightening stops shapes how gentle or harsh the slowdown is.",
-    es: "Dónde se detiene el endurecimiento define qué tan suave o severa es la desaceleración.",
-    ko: "긴축이 어디서 멈추는지가 경기 둔화의 강도를 좌우합니다.",
-    zh: "紧缩在何处停止，决定了放缓是温和还是剧烈。",
-    ja: "引き締めがどこで止まるかが、減速の穏やかさ・厳しさを左右します。",
+    en: "A higher peak rate hasn't reliably meant a harsher slowdown — other forces matter too.",
+    es: "Una tasa máxima más alta no ha traído de forma fiable una desaceleración más dura; también pesan otros factores.",
+    ko: "금리가 더 높이 올라갔다고 해서 경기 둔화가 꼭 더 심했던 것은 아닙니다. 다른 요인도 함께 작용합니다.",
+    zh: "利率峰值更高，并不一定意味着放缓更剧烈；其他因素也在起作用。",
+    ja: "金利のピークが高いほど減速が厳しくなる、とは限りませんでした。ほかの要因も影響します。",
   },
 ];
 

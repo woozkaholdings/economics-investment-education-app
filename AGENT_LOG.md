@@ -3209,6 +3209,56 @@ same journey.
 
 ## Run log
 
+### 2026-10-12 (scheduled dev-agent; residual of the Bonds run, W-11.2 Dashboard sweep) — the last rate principle no longer says "Where tightening stops shapes how gentle or harsh the slowdown is": a higher peak rate hasn't reliably meant a harsher one. Five languages.
+
+Rules: W-6.2 ok (the previous run was a free pick, so its residual may be taken; the next run may take a residual of this one only once more); W-9.4 n/a. `check-log-size` before: run log 233,655 b, 93.5% of warn, 2.5 runs of headroom, no WARN. W-5.3's pass waits for the WARN (as on 10-07), likely next run.
+
+**Step 3.5: the premise, measured with a control.** The Dashboard's sixth Key Principle says the terminal rate sets how hard the landing is. It got **1** hit across both logs (the previous run's "Seen, not fixed"), so it was never measured. FRED monthly FEDFUNDS / UNRATE / CPILFESL via keyless CSV, `scratchpad/tight/an.mjs` (throws on a bad header or a non-numeric value). A cycle peak is the highest FEDFUNDS within ±12 months, ≥1.75 pts above the trailing-36-month low. Outcome: the highest UNRATE in the next 36 months minus the lowest in the 6 months up to the peak. **Controls:** bogus id → **HTTP 404**; FEDFUNDS 1981-01 = **19.08**, 2023-08 = **5.33**, UNRATE 2009-10 = **10.0** (published, asserted); Spearman of a series with itself → 1.00, with its negation → −0.99 (ties, unhandled).
+
+| peak | FF | real (FF − core yoy) | Δ unemployment, 36m |
+|---|---|---|---|
+| 1957-10 | 3.50 | n/a | +3.6 |
+| 1959-11 | 4.00 | 2.0 | +2.1 |
+| 1963-10 | 3.50 | 1.9 | +0.3 |
+| 1966-11 | 5.76 | 2.4 | +0.4 |
+| 1969-08 | 9.19 | 3.2 | +2.7 |
+| 1974-07 | 12.92 | 4.1 | +3.9 |
+| 1981-06 | 19.10 | 9.7 | +3.6 |
+| 1984-08 | **11.64** | 6.3 | **+0.2** |
+| 1989-03 | 9.85 | 5.2 | +2.4 |
+| 1995-04 | 6.05 | 2.9 | +0.3 |
+| 2000-07 | 6.54 | 4.1 | +2.5 |
+| 2007-02 | **5.26** | 2.5 | **+5.6** |
+
+- Excluded: 2019-04 (pandemic, +11.1) and 2023-08 (35 months, +1.1).
+- **Spearman, peak vs Δ unemployment: nominal 0.17 (n=12), real 0.22 (n=11).** **The premise breaks:** neither the nominal nor the real terminal rate sorts mild slowdowns from harsh ones.
+- **Disposition (W-11.2: narrow, no figure ships):** the line now says the true, weaker thing. The figures go in a comment.
+
+#### What shipped
+- `markets.js` `ratePrinciples[5]`, five languages. en *"A higher peak rate hasn't reliably meant a harsher slowdown — other forces matter too."*; es *"Una tasa máxima más alta no ha traído de forma fiable una desaceleración más dura; también pesan otros factores."*; ko *"금리가 더 높이 올라갔다고 해서 경기 둔화가 꼭 더 심했던 것은 아닙니다. 다른 요인도 함께 작용합니다."*; zh *"利率峰值更高，并不一定意味着放缓更剧烈；其他因素也在起作用。"*; ja *"金利のピークが高いほど減速が厳しくなる、とは限りませんでした。ほかの要因も影響します。"*
+- A 7-line dated comment above `ratePrinciples` with the figures. It does not ship.
+- `scratchpad/tight/patch.mjs`: dry run, then old ×1 / new ×0 asserted for all 6 pairs, and the reverse after; a repeat refuses. A Node sibling scan of `src/` found only this line (control fired).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en line → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-BPevXXKs.js` / `markets-BfsI9HGg.js`, system Node v24.18.0 |
+| Bundle | 5 new probes → **1** file each; old en and old zh → **0**; the comment's `FEDFUNDS, UNRATE` → **0**. Controls: the untouched "Real rates" line → 1, nonsense → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New line present and old absent in **all five languages**; the "Real rates" control is present |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Hasn't reliably" is ρ ≈ 0.2 with two large counterexamples. It doesn't say tightening is harmless; the lags principle beside it stands. The cycle picker is crude (1980 folds into 1981; 1974's recession began before its peak), and neither changes the two counterexamples.
+- **§10.1:** no added line contains advice, and the plant shows the guard reads `markets.js`. **§10.2 / §10.3:** n/a. **§2.3:** every figure is in a comment, and the guard passes.
+- **DECISIONS / CLAIMS / completed work:** `tightening stops` returns 0 hits in `DECISIONS.md` and `CLAIMS.md`. The 09-18 S&P principle and the other four lines are byte-identical (diff +12/−5). **No conflict found.**
+
+**Seen, not fixed:** the "speed of change often matters more than the level" principle is still arguable framing, and I didn't measure it. The Learn list's *"Credit: The Most Important Part"* title is item 158's (owner). The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine; I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said where rate hikes stop "shapes" how harsh the slowdown is. Across 12 hiking cycles the peak rate barely predicted it: 2007's 5.26% came before the worst rise in unemployment, and 1984's 11.64% came before almost none. The line now says that, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I didn't read or touch it.
+
 ### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Bonds card no longer says "Long maturities move most": they're the most sensitive, but their yields usually rise less. Five languages.
 
 Rules: W-6.2 ok (the previous run's residual was not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 228,423 b, 91.4% of warn, 3.1 runs of headroom, no WARN.
