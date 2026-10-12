@@ -3209,6 +3209,47 @@ same journey.
 
 ## Run log
 
+### 2026-10-12 (scheduled dev-agent; free pick, after the previous run's residual held) — loss aversion is no longer "consistently roughly twice": that is the classic estimate, and later meta-analyses range from about that down to near 1. L19, L27 + its figure, one quiz explain; five languages.
+
+Rules: W-6.2 ok (residual measured and not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 223,314 b, 3.7 runs of headroom, no WARN.
+
+**The residual first: the Stocks card's *"Growth names most sensitive"*. It holds, so no edit.** Ken French VW monthly (`6_Portfolios_2x3`, `12_Industry`), first hike → last hike for the last 5 cycles: growth beat value **3/5** (big-cap legs 4/5), tech beat utilities **4/5**, market up **5/5**. But over the **first 12 months** after the first hike, growth trailed value **4/5** and tech trailed utilities 3/5. Under the card's "all else equal" heading the push claim stands. Controls: 1999 / 2022 growth-value and 2008 market reproduce the 09-18 run's figures exactly; a bogus French URL → 404.
+
+**Step 3.5, the pick.** L27 said research *"consistently finds that losses feel roughly twice as painful"*. So did its takeaway, L19, a quiz explain and the figure (*"felt twice over"*, drawn 1 : −2). The archive only asserted it (l.3794). Measured against the abstracts:
+- **Tversky & Kahneman 1992: λ 2.25** (the control: the classic figure comes back).
+- **Brown, Imai, Vieider & Camerer, JEL 2024** (607 estimates): mean **1.955** [1.82, 2.10], median **1.69**.
+- **Walasek, Mullett & Stewart, J Econ Psych 2024:** **1.31** [1.10, 1.53].
+- **Yechiam & Zeif, J Econ Psych 2025**, re-analyzing Brown's data: about **1.07**, not significantly above 1, in symmetric, unordered designs.
+- **Premise holds:** "about twice" is one end of the range, and "consistently" is false.
+- **Disposition (W-11.2):** short surfaces drop the number ("often … more"); only L27's body gives the range. The figure keeps its 2x drawing, captioned as the classic estimate.
+
+#### What shipped (31 + 5 strings, 11 files)
+- **L27 §1:** "usually sharper and lasts longer" → "often sharper". Research sentence: *"…put the gap at about twice in its classic estimate; later reviews of many studies range from about that to well below it, and in some designs close to none."*
+- **L27 takeaway:** "often aren't felt equally — a loss can hurt more". **L19:** "often finds that losing something feels worse". **Quiz explain:** "feel more painful than". The answer key and options are unchanged.
+- **Figure:** title → *"The same $50, weighed unequally"*. Caption → *"In the classic estimate, the loss registers about twice as strongly"*. Its source comment now cites all four papers.
+- es/ko/zh/ja carry the same clauses; L19/L27 ledger re-marked `ai` ×4 after reading each against the new English. `readiness --write`: en 166,954 → **166,991**, still 177 min.
+- **Step 5 caught an error before commit:** the draft said later reviews "find it smaller", but Brown's 1.955 *is* about twice. Patch 2 fixed that clause ×5.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3); an intermediate §10.4 ledger FAIL cleared by the re-mark |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in L27 en → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-4PjajpAk.js`, system Node v24.18.0 |
+| Bundle | final-text probes ×5 languages, title, caption, quiz → **1** each. Old strings and draft "find it smaller" → **0**; comment's `Yechiam` → 0. Controls: untouched L27 sentence → 1, nonsense → 0 |
+| Live walk | static `dist/` (first-pass build), lesson 27: new body, takeaway, caption, title present and old absent in **all five languages**. DOM probe true → false. Patch 2's clause: bundle probe only |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** Classic ≈ 2.25; "about that to well below it" spans 1.955 / 1.69 / 1.31 / 1.07; "close to none" is Yechiam & Zeif.
+- **§10.1:** the plant fired, and no added line contains advice (0 hits). **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** the years are in a comment, and the guard passes.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** no loss-aversion ratio recorded (0 hits). **No conflict found.**
+
+**Seen, not fixed:** (1) L27's title *"Why Does Losing $50 Hurt More…"* and the quiz's correct option *"feels far heavier"*. Harinck et al. 2007 report it reverses for *small* amounts; stake sizes not found. Arguable. (2) Untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the loss-aversion lesson said research "consistently" finds losses hurt "twice" as much. That is the 1992 estimate; 2024-25 meta-analyses range from about 2 down to about 1. Five surfaces now say so, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
 ### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Cash card no longer says its yield "tracks the policy rate": it moves with it, often by less. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous run's two residuals were measured and closed by it); W-9.4 n/a. `check-log-size` before editing: run log 218,022 b, 87.2% of warn, 4.4 runs of headroom, no WARN, so W-5.3's archiving pass is not due yet.

@@ -425,7 +425,7 @@ export const quizText = [
       "Anclaje — está juzgando el precio actual de la acción contra un número de referencia arbitrario",
       "Diversificación — repartir el dinero entre más de una inversión en vez de concentrarlo en una sola"
     ],
-    "explain": "La aversión a la pérdida es la tendencia a que una pérdida se sienta aproximadamente el doble de dolorosa de lo que una ganancia equivalente se siente placentera, lo cual empuja a la gente a evitar hacer oficial una pérdida incluso cuando el dinero se usaría mejor en otro lugar. El costo hundido es un patrón relacionado pero distinto sobre dejarse influir por el dinero ya gastado; aquí, lo que decide es el dolor asimétrico de admitir que la pérdida es real, no la cantidad ya invertida."
+    "explain": "La aversión a la pérdida es la tendencia a que una pérdida se sienta más dolorosa de lo que una ganancia equivalente se siente placentera, lo cual empuja a la gente a evitar hacer oficial una pérdida incluso cuando el dinero se usaría mejor en otro lugar. El costo hundido es un patrón relacionado pero distinto sobre dejarse influir por el dinero ya gastado; aquí, lo que decide es el dolor asimétrico de admitir que la pérdida es real, no la cantidad ya invertida."
   },
   {
     "q": "Después de que María elige una acción por corazonada y esta sube un 40% en dos meses, empieza a hacer tres veces más operaciones, cada una con menos investigación que antes, porque ahora siente que tiene un don para elegir acciones. ¿Qué patrón explica mejor su comportamiento?",

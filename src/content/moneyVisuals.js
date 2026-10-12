@@ -246,17 +246,21 @@ export const bracketDescription = {
 };
 
 // ── Lesson 27: Loss Aversion ──────────────────────────────────────────────
-// Equal money, unequal weight. The 2x figure is the lesson's own ("a loss
-// typically hurts roughly twice as much as an equivalent gain feels good"),
-// which is the standard finding in the literature, not a number invented here.
+// Equal money, unequal weight. The 2x drawn here is the CLASSIC estimate
+// (Tversky & Kahneman 1992: 2.25), and the caption says so. Re-measured
+// 2026-10-12: it is not what research "consistently finds". Meta-analyses put
+// the ratio at 1.96 (Brown et al., JEL 2024; median 1.69), 1.31 (Walasek et al.,
+// J Econ Psych 2024) and ~1.07, not significantly above 1, in symmetric,
+// unordered designs (Yechiam & Zeif, J Econ Psych 2025). Lessons 19 and 27 say
+// "often ... more", and give the range in lesson 27's body only.
 export const lossFelt = { gain: 1, loss: -2 };
 
 export const lossTitle = {
-  en: "The same $50, felt twice over",
-  es: "Los mismos $50, sentidos el doble",
-  ko: "같은 $50, 두 배로 느껴지는 무게",
-  zh: "同样的 $50，感受却是两倍",
-  ja: "同じ$50、重さは2倍",
+  en: "The same $50, weighed unequally",
+  es: "Los mismos $50, con distinto peso",
+  ko: "같은 $50, 다르게 느껴지는 무게",
+  zh: "同样的 $50，分量却不同",
+  ja: "同じ$50、重さは同じではない",
 };
 
 export const lossLabels = {
@@ -276,11 +280,11 @@ export const lossAxisLabel = {
 };
 
 export const lossCaption = {
-  en: "The money is identical in size and the effect on the balance is identical too. The loss simply registers about twice as strongly — and it is that gap, not the $50, that ends up driving the decision.",
-  es: "La cantidad es idéntica y el efecto sobre el saldo también. Lo que cambia es que la pérdida se siente unas dos veces más fuerte — y es esa diferencia, no los $50, la que acaba decidiendo.",
-  ko: "금액도 같고 잔고에 미치는 영향도 같습니다. 다만 손실이 약 두 배로 크게 느껴질 뿐이며, 결정을 좌우하는 것은 $50이 아니라 바로 그 차이입니다.",
-  zh: "金额完全相同，对余额的影响也相同。区别只在于损失的感受约为两倍——真正左右决定的是这个差距，而不是这 $50。",
-  ja: "金額は同じで、残高への影響も同じです。違うのは損失がおよそ2倍強く感じられることだけで、決断を左右するのはその差であって$50ではありません。",
+  en: "The money is identical in size and the effect on the balance is identical too. In the classic estimate, the loss registers about twice as strongly — and it is that gap, not the $50, that ends up driving the decision.",
+  es: "La cantidad es idéntica y el efecto sobre el saldo también. Lo que cambia es que, en la estimación clásica, la pérdida se siente unas dos veces más fuerte — y es esa diferencia, no los $50, la que acaba decidiendo.",
+  ko: "금액도 같고 잔고에 미치는 영향도 같습니다. 다만 고전적인 추정치에 따르면 손실이 약 두 배로 크게 느껴지며, 결정을 좌우하는 것은 $50이 아니라 바로 그 차이입니다.",
+  zh: "金额完全相同，对余额的影响也相同。区别在于，按经典估计，损失的感受约为两倍——真正左右决定的是这个差距，而不是这 $50。",
+  ja: "金額は同じで、残高への影響も同じです。違うのは、古典的な推定では損失がおよそ2倍強く感じられることで、決断を左右するのはその差であって$50ではありません。",
 };
 
 export const lossDescription = {

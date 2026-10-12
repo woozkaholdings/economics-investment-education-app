@@ -425,7 +425,7 @@ export const quizText = [
       "Anchoring — he's judging the stock's current price against an arbitrary reference number",
       "Diversification — spreading money across more than one holding instead of concentrating it in one"
     ],
-    "explain": "Loss aversion is the tendency for a loss to feel roughly twice as painful as an equivalent gain feels good, which pushes people to avoid officially realizing a loss even when the money would be better used elsewhere. Sunk cost is a related but distinct pattern about being influenced by money already spent; here, the deciding factor is the asymmetric pain of admitting the loss is real, not the amount already invested."
+    "explain": "Loss aversion is the tendency for a loss to feel more painful than an equivalent gain feels good, which pushes people to avoid officially realizing a loss even when the money would be better used elsewhere. Sunk cost is a related but distinct pattern about being influenced by money already spent; here, the deciding factor is the asymmetric pain of admitting the loss is real, not the amount already invested."
   },
   {
     "q": "After Maria picks a stock on a hunch and it rises 40% in two months, she starts making three times as many trades, each with less research than before, because she now feels like she has a knack for picking stocks. Which pattern best explains her behavior?",
