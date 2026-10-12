@@ -369,6 +369,13 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // (FDIC SNDR 0.06 -> 0.43, 7% of 2022-23's +5.25; 6% of the cuts since 2024-09),
 // which the parent guide's 13-17 activity already says. "Moves with … often by
 // less" is true of both.
+// Bonds, re-measured 2026-10-12: its note said "Long maturities move most". Per
+// unit of yield change that is duration, and true. But over the last 5 hiking
+// cycles (first hike -> last hike, FRED DGS2/5/10/20/30, constant-maturity par
+// bond) the 30-year fell most only in 1994-95 (-16.7%) and 2022-23 (-25.4%);
+// in 1999-2000 (-0.7%), 2004-06 (+2.7%) and 2015-18 (0.0%) it moved least,
+// because its yield rose less than the 2-year's in all 5 cycles
+// (+1.44/+0.05/-0.18/0.00/+1.45 vs +3.05/+1.21/+2.38/+1.65/+2.97 points).
 export const rateEffects = [
   {
     key: "stocks",
@@ -389,11 +396,11 @@ export const rateEffects = [
     name: { en: "Bonds", es: "Bonos", ko: "채권", zh: "债券", ja: "債券" },
     rising: "↓", falling: "↑",
     note: {
-      en: "Long maturities move most",
-      es: "Los de largo plazo se mueven más",
-      ko: "장기채가 가장 크게 움직임",
-      zh: "长期债券波动最大",
-      ja: "長期債の変動が最大",
+      en: "Long maturities most sensitive, but their yields usually rise less",
+      es: "Los de largo plazo, más sensibles, pero su rendimiento suele subir menos",
+      ko: "장기채가 가장 민감하지만, 장기 금리는 대개 덜 오름",
+      zh: "长期债券最敏感，但其收益率通常涨得更少",
+      ja: "長期債が最も敏感だが、その利回りはたいてい上昇幅が小さい",
     },
   },
   {

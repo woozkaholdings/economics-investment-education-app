@@ -3209,6 +3209,50 @@ same journey.
 
 ## Run log
 
+### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Bonds card no longer says "Long maturities move most": they're the most sensitive, but their yields usually rise less. Five languages.
+
+Rules: W-6.2 ok (the previous run's residual was not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 228,423 b, 91.4% of warn, 3.1 runs of headroom, no WARN.
+
+**Residual:** L27's "$50" title. Harinck 2007's stake sizes weren't found (one search, one fetch). Still arguable, so no edit.
+
+**Step 3.5: the premise, measured with a control.** The Market Dashboard's Bonds card (`markets.js` `rateEffects`) said *"Long maturities move most"*. `Long maturities` gets **0** hits across both logs and `CLAIMS.md`, so it was never measured. Per unit of yield change it is duration, which is true. Over a hiking cycle it may not be. FRED daily DGS2/5/10/20/30 via keyless CSV; `scratchpad/bonds/an.mjs` prices a constant-maturity semiannual par bond and throws on a bad header or a non-numeric value. **Controls:** bogus id → **HTTP 404**; a par bond priced at its own yield → 100 (asserted); DGS10 2022-03-15 = **2.15**, 2023-07-26 = **3.86**, DFF steps 0.08 → 0.33 on 2022-03-17 (published).
+
+| first → last hike | 2y | 5y | 10y | 30y | 30y yield Δ vs 2y |
+|---|---|---|---|---|---|
+| 1994-95 | −5.6% | −9.8 | −12.8 | **−16.7** | +1.44 vs +3.05 |
+| 1999-2000 | −2.2 | **−3.7** | −3.6 | −0.7 | +0.05 vs +1.21 |
+| 2004-06 | −4.5 | **−5.4** | −4.0 | +2.7 | −0.18 vs +2.38 |
+| 2015-18 | −3.2 | −4.2 | **−4.3** | 0.0 | 0.00 vs +1.65 |
+| 2022-23 | −5.6 | −8.9 | −14.1 | **−25.4** | +1.45 vs +2.97 |
+
+- **The premise holds as a historical claim:** the longest maturity fell most in only **2 of 5** cycles, and moved *least* in the other 3. Its yield rose less than the 2-year's in **5 of 5**.
+- **Disposition (W-11.2, narrow, no figure ships):** keep the true half (sensitivity), drop "move most", and add the reason it fails. That's the same "most sensitive" form as the Stocks card next to it.
+
+#### What shipped
+- `markets.js` Bonds `note`, five languages. en *"Long maturities most sensitive, but their yields usually rise less"*; es *"Los de largo plazo, más sensibles, pero su rendimiento suele subir menos"*; ko *"장기채가 가장 민감하지만, 장기 금리는 대개 덜 오름"*; zh *"长期债券最敏感，但其收益率通常涨得更少"*; ja *"長期債が最も敏感だが、その利回りはたいてい上昇幅が小さい"*.
+- A 7-line dated comment under the Cash comment with the figures above. It does not ship.
+- `scratchpad/bonds/patch.mjs` asserted old ×1 / new ×0 for all 6 pairs, and the reverse after; a repeat refuses.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) both times |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en note → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-U-8-n-U5.js` / `markets-BjgJHM0o.js`, system Node v24.18.0 |
+| Bundle | 5 new probes → **1** file each. Old en and old zh → **0**. Comment's `DGS2/5/10/20/30` → **0**. Controls: untouched Stocks note → 1, nonsense → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New note present and old absent in **all five languages**; Cash note control true. `PROBE_ZQX` true → false. Card wraps to 3 lines, like Real Estate |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Most sensitive" is duration, and it holds at every maturity step. "Usually rise less" holds in 5/5 cycles against the 2-year, and against the policy rate too (the 30y rose at most +1.45 while the target rose ≥ +1.75). "Usually" leaves room for a cycle where it doesn't. The arrow (Rates ↑ → Price ↓) still holds: the 2y/5y/10y fell in all 5 cycles.
+- **§10.1:** the plant proves the guard reads `markets.js`; added lines matching `should buy|sell|recommend|dalio` → **0**. **§10.2:** n/a. **§10.3:** n/a. **§2.3:** all 3 added lines with a year are comments; `npm test` passes.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `Long maturities`, `rateEffects` → 0, and no `duration` hit concerns bonds. The 09-18 header and its three "Yet…" notes are byte-identical (diff +12/−5). **No conflict found.**
+
+**Seen, not fixed:** the Dashboard's key-insight lines *"The speed of change often matters more than the level itself"* and *"Where tightening stops shapes how gentle or harsh the slowdown is"* are 0-hit and unmeasured. They're arguable framing, not picked by default. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said long bonds "move most" when rates rise. They're the most rate-sensitive, but in 3 of the last 5 hiking cycles the 30-year moved least, because long yields barely rose. The card now says both, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
 ### 2026-10-12 (scheduled dev-agent; free pick, after the previous run's residual held) — loss aversion is no longer "consistently roughly twice": that is the classic estimate, and later meta-analyses range from about that down to near 1. L19, L27 + its figure, one quiz explain; five languages.
 
 Rules: W-6.2 ok (residual measured and not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 223,314 b, 3.7 runs of headroom, no WARN.
