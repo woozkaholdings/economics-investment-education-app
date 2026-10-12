@@ -363,6 +363,12 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // (it fell after the hikes ended in 2004-06 and 2022), which is why the note
 // names home prices rather than real estate. The arrows stay as the textbook
 // direction and those three notes say where history went the other way. No dates here (§2.3), and never a recommendation (§10.1).
+// Cash, re-measured 2026-10-12: its note said the yield "tracks" the policy rate.
+// That holds for T-bills (FRED DTB3 moved 88/97/94% of the target's rise in the
+// 2004-06, 2015-18 and 2022-23 hikes) but not for the average savings account
+// (FDIC SNDR 0.06 -> 0.43, 7% of 2022-23's +5.25; 6% of the cuts since 2024-09),
+// which the parent guide's 13-17 activity already says. "Moves with … often by
+// less" is true of both.
 export const rateEffects = [
   {
     key: "stocks",
@@ -422,11 +428,11 @@ export const rateEffects = [
     name: { en: "Cash", es: "Efectivo", ko: "현금", zh: "现金", ja: "現金" },
     rising: "↑", falling: "↓",
     note: {
-      en: "Yield tracks the policy rate",
-      es: "El rendimiento sigue la tasa de política",
-      ko: "수익률이 정책금리를 따라감",
-      zh: "收益率跟随政策利率",
-      ja: "利回りは政策金利に追随",
+      en: "Yield moves with the policy rate, often by less",
+      es: "El rendimiento se mueve con la tasa de política, a menudo menos",
+      ko: "수익률이 정책금리와 같은 방향으로 움직이지만, 폭은 더 작은 경우가 많음",
+      zh: "收益率随政策利率同向变动，但幅度往往更小",
+      ja: "利回りは政策金利と同じ向きに動くが、幅は小さいことが多い",
     },
   },
   {

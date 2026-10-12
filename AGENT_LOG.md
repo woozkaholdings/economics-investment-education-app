@@ -3209,6 +3209,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Cash card no longer says its yield "tracks the policy rate": it moves with it, often by less. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous run's two residuals were measured and closed by it); W-9.4 n/a. `check-log-size` before editing: run log 218,022 b, 87.2% of warn, 4.4 runs of headroom, no WARN, so W-5.3's archiving pass is not due yet.
+
+**Step 3.5: the premise, measured with a control. It holds.** The Market Dashboard's rate-effects grid (`markets.js` `rateEffects`, Cash card) said *"Yield tracks the policy rate"*. "Tracks" is a claim about size. `Yield tracks` has 1 hit across both logs, and it is the 09-18 run using the string as a bundle *control* (archive l.52457), so it was never measured. It also sat beside the parent guide's 13-17 activity, which 10-10 measured to *"usually moves the same way as the Fed, though often by much less"*. Keyless FRED CSV, `scratchpad/cash/an.mjs`, which throws on a non-numeric value or a header that isn't the requested id. **Controls:** a bogus id → **HTTP 404**; the spliced target reads **5.50** on 2023-08-01 and **0.25** on 2022-03-01 (published); `DTB3` 2023-08-01 = 5.27.
+- **3-month T-bill (`DTB3`) share of the target's move:** 2004-06 hikes **88%**, 2015-18 **97%**, 2022-23 **94%**. Cuts since 2024-09: **63%**, because bills move ahead of the target.
+- **National average savings rate (`SNDR`, from 2021-04):** 2022-23 **0.06 → 0.43, 7%** of +5.25. Cuts since 2024-09: **6%**.
+- **Disposition (W-11.2, narrow, no figure ships):** "tracks" is true for one kind of cash and false for the kind most learners hold, and the card just says "Cash". So "tracks" becomes "moves with … often by less", which is true for both. I did not name T-bills or money-market funds: §10.1, and 10-10 made the same choice when it left out "high-yield".
+
+#### What shipped
+- `markets.js` Cash `note`, five languages. en *"Yield moves with the policy rate, often by less"*; es *"…se mueve con la tasa de política, a menudo menos"*; ko *"…같은 방향으로 움직이지만, 폭은 더 작은 경우가 많음"*; zh *"…同向变动，但幅度往往更小"*; ja *"…同じ向きに動くが、幅は小さいことが多い"*. ko/zh/ja reuse the parent guide's 같은 방향 / 同向 / 同じ向き and 폭 / 幅度 / 幅 terms.
+- A 6-line dated comment under the `rateEffects` header with the figures above. It does not ship.
+- Patcher `scratchpad/cash/patch.mjs`: old ×1 / new ×0 asserted for all 6 pairs before writing, and the reverse after. A repeat run refuses (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) both times |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en note → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-CUw4DTsD.js` / `markets-Of3SO99q.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) → **1** file each. Old en and old zh → **0**. Comment's `SNDR 0.06` → **0**. Control: the untouched Bonds note → 1. Nonsense probe → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New note present and old absent in `innerText` in **all five languages**. **DOM control:** injected `PROBE_ZQX` read true, then false. Screenshot shows the card wrapping cleanly |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Moves with" holds in every hike and cut leg, for both series. "Often by less" holds for both: T-bills moved 63-97% and savings 6-7%. "Often" leaves room for a bill moving one-for-one over a short window. The arrows (Rates ↑ → Yield ↑) are unchanged and still right.
+- **§10.1:** the plant proves the guard reads `markets.js`, and no product is named in shipped text. **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** the dates are in a comment, `npm test`'s scan of `markets.js` comments passes, and the bundle probe shows the comment doesn't ship.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `tracks the policy rate`, `policy rate`, `rateEffects` → 0 hits. This narrows one note that the 09-18 rewrite kept as the textbook direction. That rewrite's three "Yet…" notes and its header are byte-identical (diff +11/−5, all in the Cash block and the new comment). **No conflict found.**
+
+**Seen, not fixed:** *"Growth names most sensitive"* (the Stocks card) is also unmeasured: a superlative, and growth is widely reported to have beaten value through the 2015-18 hikes (not measured here). It is arguable and needs Tiingo style-ETF data, so it is not picked by default. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said cash yields "track" the Fed's rate. T-bills do (88-97% of each hike), but the average savings rate moved 7% of 2022-23's hikes, so the card now says "moves with the policy rate, often by less", in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
 ### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep, after the previous run's two residuals broke) — M2 is no longer "mostly created when banks lend, not by the central bank". Dashboard M2 note + glossary "M2", five languages.
 
 Rules: W-6.2 ok (residuals measured, neither taken; then a free pick); W-9.4 n/a. **Judgment call under W-11.2:** it says to take an open numbered item when residuals turn up nothing. Every open one (117, 140, 143, 149, 76) says not to pick it over content, so I continued the Dashboard sweep.
