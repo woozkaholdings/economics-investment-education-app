@@ -575,6 +575,14 @@ export const balanceSheetCaption = {
 // with the rise in unemployment over the next 3 years is 0.17 (0.22 for the
 // peak less core inflation). 2007's 5.26% peak preceded the largest rise
 // (+5.6 pts); 1984's 11.64% preceded almost none (+0.2). It now says that.
+//
+// 2026-10-13: the fourth item said "Real rates — after inflation — say more
+// than headline rates." Measured on FRED (FEDFUNDS, CPIAUCSL, CPILFESL, UNRATE,
+// USREC), monthly 1959-2026: as a signal that a recession starts within 12
+// months, the nominal funds rate scored AUC 0.77, the rate less core CPI
+// inflation 0.75, less headline 0.68 (10y-3m spread 0.88 as a control); rank
+// correlation with the next 24 months' rise in unemployment 0.39 / 0.34 / 0.22.
+// The real rate didn't say more, so the line no longer ranks them.
 export const ratePrinciples = [
   {
     en: "Policy changes work with lags — often a year or more.",
@@ -598,11 +606,11 @@ export const ratePrinciples = [
     ja: "水準そのものより、変化のスピードが重要なことが多いです。",
   },
   {
-    en: "Real rates — after inflation — say more than headline rates.",
-    es: "Las tasas reales, descontada la inflación, dicen más que las nominales.",
-    ko: "물가를 반영한 실질금리가 명목금리보다 더 많은 것을 말해 줍니다.",
-    zh: "扣除通胀后的实际利率比名义利率更能说明问题。",
-    ja: "インフレを差し引いた実質金利のほうが、名目金利より多くを語ります。",
+    en: "Real rates — after inflation — are worth reading alongside headline rates, not instead of them.",
+    es: "Las tasas reales, descontada la inflación, conviene leerlas junto a las nominales, no en su lugar.",
+    ko: "물가를 반영한 실질금리는 명목금리를 대신하기보다 함께 볼 때 의미가 있습니다.",
+    zh: "扣除通胀后的实际利率值得与名义利率一起看，而不是取而代之。",
+    ja: "インフレを差し引いた実質金利は、名目金利の代わりではなく、あわせて見ると役立ちます。",
   },
   {
     en: "Stocks have not usually fallen across a whole hiking cycle: of the last 5, the S&P 500 ended 4 higher and was about flat over 1994-95, despite drops of up to 23% along the way. The clear exception came earlier, in 1973-74, when it fell sharply.",

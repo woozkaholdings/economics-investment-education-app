@@ -3209,6 +3209,48 @@ same journey.
 
 ## Run log
 
+### 2026-10-13 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Key Principle "Real rates — after inflation — say more than headline rates" no longer ranks them: on FRED, the real rate didn't say more. Five languages.
+
+Rules: W-6.2 ok (the previous entry left no residual to take; free pick); W-9.4 n/a. `npm test` before: not run; the archiving entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.
+
+**Why this line:** it had **0** hits in `AGENT_LOG.md`, the archive and `CLAIMS.md` (control: "work with lags" → 2 archive hits, the 09-17 sweep). It is the last `ratePrinciples` item nobody had measured. The open numbered items (117, 140, 143, 149, 76) still say not to pick them over content.
+
+**Step 3.5: the premise, measured.** Keyless FRED CSV: FEDFUNDS, CPIAUCSL, CPILFESL, UNRATE, USREC, GS10, TB3MS, monthly 1959-2026 (`scratchpad/real/an.mjs`, which throws on a bad header or a non-numeric value). **Controls:** bogus id → **404**; FF 1981-01 = 19.08, UNRATE 2009-10 = 10.0 and USREC 2008 asserted; month-parity AUC **0.500**; −(10y−3m) AUC **0.876**; the oracle's Spearman **1.000**.
+
+| signal | AUC: recession starts ≤12m (706 months, 108 positive) | Spearman with ΔU over the next 24m |
+|---|---|---|
+| nominal FF | **0.774** | **0.390** |
+| FF − core CPI yoy | 0.749 | 0.338 |
+| FF − headline CPI yoy | 0.683 | 0.218 |
+| FF − core realized over the *next* 12m | 0.683 | n/a |
+
+Split 1959-84 / 1985-2026: nominal wins both on ΔU (0.39/0.45 vs core 0.21/0.42). On AUC, core real edges it only after 1985 (0.780 vs 0.728). The 10-12 peak-rate run had real slightly ahead at cycle peaks (0.22 vs 0.17, n = 12, both weak). **Premise breaks:** no reliable edge either way, so "say more" is unsupported. Real rates still matter: 1975-06 had FF 5.55% with real −3.6%.
+
+#### What shipped
+- `markets.js` `ratePrinciples[3]`, five languages. en: *"Real rates — after inflation — are worth reading alongside headline rates, not instead of them."* es *conviene leerlas junto a las nominales, no en su lugar*; ko *대신하기보다 함께 볼 때 의미가 있습니다*; zh *值得与名义利率一起看，而不是取而代之*; ja *名目金利の代わりではなく、あわせて見ると役立ちます*. Hand-read all four.
+- An 8-line dated comment carries the figures; the build strips it. W-11.2: narrowed, no figure ships.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/real/patch.mjs` asserts old ×1 / new ×0 for each of 6 sites, then the reverse. A first try refused on a bad comment anchor and wrote nothing (`cmp` vs a pre-copy); a repeat refuses |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Guard sees the file | planted *"You should buy stocks now."* → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `markets-CzWDFSIL.js` |
+| Bundle | 5 new probes → `markets-*.js`; old en → 0 files; `AUC 0.77` (the comment) → 0; nonsense → 0. The old zh phrase's one hit is an unrelated L-economy sentence |
+| Live | static `dist/` in the Browser pane, Reference → Market Dashboard: new sentence present and old absent in **all five languages**; control principle ("speed of change") present |
+
+#### Step 5: adversarial self-check
+- **Is the new line true and neutral?** It makes no ranking claim, and it is analytical, not advice (§10.1 plant above). §10.2/§10.3 n/a. No date added (§2.3).
+- **Instrument fairness:** a trailing-inflation real rate is an ex-post proxy. The forward-realized variant did no better (0.683), so the result doesn't come from the proxy choice.
+- **Siblings:** a scan of `src/content/` for real-rate comparatives found only this line (control: it matched). **DECISIONS / completed work:** `git log -S` shows the line unchanged since the rebuild, and no prior entry measured it. **No conflict found.**
+
+**Seen, not fixed:** the `ratePrinciples` list is now fully measured. Remaining unmeasured Dashboard text is lesson-33/34 figure labels, which are lifted verbatim from the lessons (§64/§69/§71), so their lessons are the place to measure. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said real (after-inflation) rates "say more" than headline rates; 65 years of FRED data show no reliable edge either way, so it now says to read them together. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-13 (scheduled dev-agent; W-5.3 archiving pass, owed by the previous entry) — run log days 2026-10-04 → 10-10 (28 entries, 191,935 b) moved verbatim to the archive. No source change.
 
 Rules: a standing chore, not a residual, so W-6.2 n/a; W-9.4 n/a. W-5.3's **twenty-third** firing.
