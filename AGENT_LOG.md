@@ -3209,6 +3209,46 @@ same journey.
 
 ## Run log
 
+### 2026-10-13 (scheduled dev-agent; residual of the peak-rate run held, then a free pick) — "Be the Fed Chair": cheap credit no longer "feeds" the next expansion's inflation as a rule. It can, and after 2008 it didn't. Five languages.
+
+Rules: W-6.2 ok (I took the previous run's residual, its second in a chain; it held, so no edit. ⛔ The next run may NOT take a residual of this one); W-9.4 n/a. `npm test` before: exit 0, 0 FAIL, 1 WARN (O-3's). Run log 239,158 b before; **after this entry `check-log-size` WARNs (0.88 runs of headroom), so the next run owes W-5.3’s archiving pass.**
+
+**Residual first: *"The speed of change often matters more than the level itself"* (Dashboard). It holds, so no edit.** I rebuilt the previous run's cycle table from keyless FRED FEDFUNDS / UNRATE / CPILFESL: the same 12 peaks and FF values, and ρ(level, Δunemployment) = **0.17**, as the previous run reported. 2023-08 now has its 36 months, so n = 13. Spearman against Δunemployment: level 0.17, speed (pts/yr) 0.33, fastest 12-month rise 0.28, size of the hike 0.54. Head to head, in pairs where speed and level disagree, the faster cycle came before the harsher slowdown in **12 of 18** (max-12: 11 of 17). "Often" holds. **Controls:** bogus id → 404, published FF/UNRATE values asserted, self ρ = 1.00. An oracle (Δunemployment vs level) wins **34/34**. My first pair script misread the columns; its row count (12, not 13) caught it.
+
+**Free pick: lesson 35's simulator, contraction → "Cut toward zero".** *"credit left cheap for long enough feeds the next expansion's inflation"* had **0** hits across both logs, `CLAIMS.md` and `DECISIONS.md`. Found by a Node scan of markets/signals/policy/sectors/glossary for English sentences no log mentions: 45, nearly all definitions or hypothetical setup (control: the 10-12 peak-rate line was found).
+FRED PCEPILFE / PCEPI / FEDFUNDS (control: both indexes average **100.000** over 2017):
+| episode | FF ≤ 0.25 | expansion after | core PCE < 2% | headline < 2% |
+|---|---|---|---|---|
+| 2008-12..2015-12 | 85 mo | 2009-07..2020-02 | **123/128 (96%)**, max 2.06 | 100/128 (78%) |
+| 2020-04..2022-03 | 24 mo | 2020-05..2026-08 | 10/76, max **5.64** | 10/76 |
+**Premise breaks:** the longest near-zero stretch in the data was followed by a decade of inflation under 2%. "Can feed" is true; "feeds" is not.
+
+#### What shipped
+- `policyScenarios.js` `contraction` / `cutToZero` outcome, five languages. en: *"…can feed the next expansion's inflation — the same tension, one turn of the cycle later. It isn't automatic: after the 2008 cut, rates stayed near zero for seven years, and inflation ran below 2% for most of the expansion that followed."* ko/zh/ja/es: the same, with 할 수 있습니다 / 可能会 / ことがあります / puede alimentar. I hand-read all four.
+- A 6-line dated comment with the figures, which the build strips.
+- W-11.2: I narrowed rather than adding a statistic. The one dated clause is there because a bare "can" still reads as the rule. This is an outcome card, not a glossary entry or a 9-12 card.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/speed/patch.mjs`: old ×1 / new ×0 for all 5 before, the reverse after; a repeat refuses |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Guard sees the file | planted *"You should buy stocks now."* → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-pTKx1mEp.js` |
+| Bundle | 5 new probes → 1 file each; old en and old zh (`太久，会为`) → 0; the comment's `123 of 128` → 0; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, lesson 35 with 29-34 seeded complete. After clicking "Cut toward zero", the new sentence is present and the old one absent in **all five languages** |
+
+#### Step 5: adversarial self-check
+- **True?** Target range 0-0.25% from 2008-12-16 to 2015-12-16 is seven years. "Most of the expansion" holds on both headline (78%) and core (96%). I didn't say "the Fed's 2% target": it was formalized only in 2012.
+- **Siblings:** a Node scan of the English content (control: the edited sentence matched) found one other hit: lesson 35's 2021 sentence, which is about a decision, not a rule. No conflict.
+- **§10.1** plant above. **§10.2 / §10.3** n/a. **§2.3:** a bare year, which the guard allows in outcomes. **DECISIONS / completed work:** `git log -S` shows the sentence unchanged since `2836338`. **No conflict found.**
+
+**Seen, not fixed:** nothing new turned up. The scan's other 44 were definitions or teaching setup, so next run take an open numbered item or another unmeasured surface. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine; I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Fed-chair simulator said cheap credit "feeds" the next expansion's inflation; after 2008 it didn't for a decade, so it now says "can", with that example. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I didn't read or touch it.
+
 ### 2026-10-12 (scheduled dev-agent; residual of the Bonds run, W-11.2 Dashboard sweep) — the last rate principle no longer says "Where tightening stops shapes how gentle or harsh the slowdown is": a higher peak rate hasn't reliably meant a harsher one. Five languages.
 
 Rules: W-6.2 ok (the previous run was a free pick, so its residual may be taken; the next run may take a residual of this one only once more); W-9.4 n/a. `check-log-size` before: run log 233,655 b, 93.5% of warn, 2.5 runs of headroom, no WARN. W-5.3's pass waits for the WARN (as on 10-07), likely next run.

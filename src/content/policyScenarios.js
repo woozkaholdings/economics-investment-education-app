@@ -136,6 +136,12 @@ export const policyScenarios = [
     options: [
       {
         id: "cutToZero",
+        // Corrected 2026-10-13: the last limit said cheap credit "feeds" the
+        // next expansion's inflation, as a rule. FRED FEDFUNDS / PCEPILFE /
+        // PCEPI: the funds rate sat at or under 0.25% for 85 months (2008-12
+        // to 2015-12), and in the 2009-07..2020-02 expansion core PCE was
+        // under 2% in 123 of 128 months (headline 78%). The 24-month run in
+        // 2020-22 was followed by core PCE up to 5.6%. So "can", not "does".
         label: {
           en: "Cut toward zero",
           es: "Bajar hacia cero",
@@ -144,11 +150,11 @@ export const policyScenarios = [
           ja: "ゼロに向けて下げる",
         },
         outcome: {
-          en: "This is the conventional response, and it works the way the lesson describes: cheaper financing for a house, a car or a payroll supports hiring and investment — on the same lag, so it will not stop this quarter's job losses. Two limits are worth carrying forward. The dial stops at roughly zero, so a deep enough downturn exhausts it entirely, and that is exactly where the balance-sheet tools in the QE and QT lesson begin. And credit left cheap for long enough feeds the next expansion's inflation — the same tension, one turn of the cycle later.",
-          es: "Es la respuesta convencional y funciona como describe la lección: financiar una casa, un auto o una nómina resulta más barato, lo que sostiene la contratación y la inversión, con el mismo rezago, así que no detendrá los despidos de este trimestre. Vale la pena llevarse dos límites. El dial se detiene cerca de cero, así que una recesión suficientemente profunda lo agota por completo, y justo ahí empiezan las herramientas de balance de la lección sobre QE y QT. Y el crédito barato mantenido el tiempo suficiente alimenta la inflación de la siguiente expansión: la misma tensión, una vuelta más del ciclo.",
-          ko: "가장 일반적인 대응이며, 레슨이 설명한 그대로 작동합니다. 집, 자동차, 급여를 융통하는 비용이 싸지면서 채용과 투자를 떠받칩니다. 시차는 똑같이 존재하므로 이번 분기의 실직을 막아주지는 못합니다. 기억해둘 한계가 둘 있습니다. 다이얼은 대략 0에서 멈추기 때문에 충분히 깊은 침체는 이 수단을 완전히 소진시키며, 바로 거기서 QE와 QT 레슨의 대차대조표 수단이 시작됩니다. 그리고 값싼 신용을 오래 두면 다음 확장기의 물가 상승을 키웁니다. 같은 긴장이 사이클 한 바퀴 뒤에 다시 나타나는 것입니다.",
-          zh: "这是常规做法，运作方式和课文说的一样：买房、买车、发工资的融资成本下降，支撑招聘和投资——时滞同样存在，所以它挡不住这个季度的裁员。有两个限制值得记住。旋钮大致到零就停了，足够深的衰退会把它彻底用尽，而那正是 QE 与 QT 那一课里资产负债表工具登场的地方。另外，信贷便宜得太久，会为下一轮扩张的通胀埋下伏笔——同一种张力，只是晚了一个周期。",
-          ja: "これが標準的な対応で、レッスンの説明どおりに働きます。住宅や自動車の購入、給与の支払いに充てるお金を安く借りられるようになり、採用と投資を支えます。同じように時差があるので、今四半期の雇用喪失は止められません。持ち帰るべき限界が二つあります。ダイヤルはおよそゼロで止まるため、十分に深い不況はこの手段を使い切ってしまい、まさにそこからQEとQTのレッスンで扱うバランスシート手段が始まります。そしてお金を安いまま長く置きすぎると、次の拡大局面のインフレを育てます。同じ緊張が、サイクルを一周して戻ってくるのです。",
+          en: "This is the conventional response, and it works the way the lesson describes: cheaper financing for a house, a car or a payroll supports hiring and investment — on the same lag, so it will not stop this quarter's job losses. Two limits are worth carrying forward. The dial stops at roughly zero, so a deep enough downturn exhausts it entirely, and that is exactly where the balance-sheet tools in the QE and QT lesson begin. And credit left cheap for long enough can feed the next expansion's inflation — the same tension, one turn of the cycle later. It isn't automatic: after the 2008 cut, rates stayed near zero for seven years, and inflation ran below 2% for most of the expansion that followed.",
+          es: "Es la respuesta convencional y funciona como describe la lección: financiar una casa, un auto o una nómina resulta más barato, lo que sostiene la contratación y la inversión, con el mismo rezago, así que no detendrá los despidos de este trimestre. Vale la pena llevarse dos límites. El dial se detiene cerca de cero, así que una recesión suficientemente profunda lo agota por completo, y justo ahí empiezan las herramientas de balance de la lección sobre QE y QT. Y el crédito barato mantenido el tiempo suficiente puede alimentar la inflación de la siguiente expansión: la misma tensión, una vuelta más del ciclo. No es automático: tras el recorte de 2008, las tasas se quedaron cerca de cero durante siete años, y la inflación estuvo por debajo del 2% durante la mayor parte de la expansión que siguió.",
+          ko: "가장 일반적인 대응이며, 레슨이 설명한 그대로 작동합니다. 집, 자동차, 급여를 융통하는 비용이 싸지면서 채용과 투자를 떠받칩니다. 시차는 똑같이 존재하므로 이번 분기의 실직을 막아주지는 못합니다. 기억해둘 한계가 둘 있습니다. 다이얼은 대략 0에서 멈추기 때문에 충분히 깊은 침체는 이 수단을 완전히 소진시키며, 바로 거기서 QE와 QT 레슨의 대차대조표 수단이 시작됩니다. 그리고 값싼 신용을 오래 두면 다음 확장기의 물가 상승을 키울 수 있습니다. 같은 긴장이 사이클 한 바퀴 뒤에 다시 나타나는 것입니다. 다만 저절로 그렇게 되지는 않습니다. 2008년 인하 이후 금리는 7년 동안 0 근처에 머물렀지만, 뒤이은 확장기의 대부분 동안 물가 상승률은 2%를 밑돌았습니다.",
+          zh: "这是常规做法，运作方式和课文说的一样：买房、买车、发工资的融资成本下降，支撑招聘和投资——时滞同样存在，所以它挡不住这个季度的裁员。有两个限制值得记住。旋钮大致到零就停了，足够深的衰退会把它彻底用尽，而那正是 QE 与 QT 那一课里资产负债表工具登场的地方。另外，信贷便宜得太久，可能会为下一轮扩张的通胀埋下伏笔——同一种张力，只是晚了一个周期。但这并非必然：2008年降息之后，利率在接近零的水平停留了七年，而随后那一轮扩张的大部分时间里，通胀都低于2%。",
+          ja: "これが標準的な対応で、レッスンの説明どおりに働きます。住宅や自動車の購入、給与の支払いに充てるお金を安く借りられるようになり、採用と投資を支えます。同じように時差があるので、今四半期の雇用喪失は止められません。持ち帰るべき限界が二つあります。ダイヤルはおよそゼロで止まるため、十分に深い不況はこの手段を使い切ってしまい、まさにそこからQEとQTのレッスンで扱うバランスシート手段が始まります。そしてお金を安いまま長く置きすぎると、次の拡大局面のインフレを育てることがあります。同じ緊張が、サイクルを一周して戻ってくるのです。ただし必ずそうなるわけではありません。2008年の利下げの後、金利は7年間ほぼゼロにとどまりましたが、続く拡大局面の大半で、インフレ率は2%を下回っていました。",
         },
       },
       {
