@@ -3209,6 +3209,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-13 (scheduled dev-agent; free pick, lesson sweep) — essentials L12's PMI no longer "cancels automatically once enough equity has built up": the automatic trigger is the payment schedule, and a rise in the home's value doesn't count. Five languages.
+
+Rules: W-6.2 ok (the previous entry left no residual; free pick); W-9.4 n/a. `npm test` before: not run; the previous entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.
+
+**Found by** a Node scan of the 44 lessons' English quantifier sentences sharing no 30-char window with either log or `CLAIMS.md` (whitespace-normalized): 338 → 184 unmentioned. Controls: a known-measured L33 sentence → found; nonsense → not. (My first version never tested its positive control; fixed.)
+
+**Candidate 1 held, no edit: L35 *"Most of the time these two goals point the same direction"*.** FRED PCEPILFE/UNRATE/NROU, 1960-01 → 2026-08, n = 800; "pulling apart" = core-PCE gap from 2% and unemployment gap from NROU call for opposite policy. Controls: bogus id → 404; UNRATE 2009-10/2020-04 asserted; oracle 100%, anti-oracle 0%, 204-month shift 47%. At ±0.5 tolerance they pulled apart **26%** of months (±1: 15-18%; 2008-26: 3%). Only zero tolerance gives 46%. Holds.
+
+**Candidate 2, the pick: L12 *"…typically cancels automatically once enough equity has built up."*** CFPB ("When can I remove PMI", fetched today): under the Homeowners Protection Act the servicer must end PMI automatically when the principal is **scheduled** to reach 78% of the **original** value, or at the loan's midpoint; 80% is request-only. A price rise never counts, and prepaying doesn't move the automatic date. **Premise held:** the sentence implies a trigger the law doesn't have.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L12 §3, one clause each. en: *"…and typically cancels automatically once the scheduled payments have paid down enough of the loan; a rise in the home's value doesn't count toward that."* es *una vez que los pagos programados han reducido lo suficiente el préstamo; que la vivienda suba de valor no cuenta para eso*; ko *예정된 상환으로 대출 잔액이 충분히 줄어들면… 집값이 오른 것만으로는 자동 해지되지 않습니다*; zh *按计划还款使贷款余额降到足够低时自动取消；房价上涨并不计入其中*; ja *予定どおりの返済でローン残高が十分に減ると…住宅の値上がりは、これには数えられません*. Hand-read all four against the English.
+- W-11.2: narrowed, no figure (78% stays out). English +84 chars, still 177 min.
+- L12 es/ko/zh/ja re-marked `ai` (`translation-review.mjs mark`); ledger diff **24 lines, exactly L12's four entries**. `readiness --write`: §4.3 166,991 → **167,075** chars, plus §10.4's volume sentence. `translation-completeness --write` not run.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/pmi/patch.mjs`: old ×1 / new ×0 for all 5 before, the reverse after; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). The first run failed §10.4 (L12 stale ×4), and the second failed the §4.3/§10.4 figures; both were fixed as above |
+| Guard sees the file | planted *"You should buy stocks now."* after the new clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | 5 new probes → each in its own language's `lessonContent.essentials.*` chunk; 5 old probes → 0 files; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, essentials 1-11 seeded complete, `#/lesson/12`. New present / old absent in **all five languages** (language select). DOM control: injected `PROBE_ZQX` read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The new clause is the HPA rule without the number, and it says what the lesson's own "equity" (built by payments) meant. It gives no advice to buy, rent or refinance (§10.1 plant above). §10.2/§10.3 n/a; no date (§2.3).
+- **Over-claim check:** Fannie/Freddie let a borrower *request* removal based on a new appraisal after seasoning. The clause says only that a price rise doesn't count toward the **automatic** cancellation, which stays true.
+- **Siblings:** "PMI"/"mortgage insurance" across `src/` (control: L12 matched) appear only here plus the unrelated ISM-PMI quiz option. DECISIONS.md's two PMI lines are about term chips. `git log -S` shows the clause unchanged since the track split. **No conflict found.**
+
+**Seen, not fixed:** the other 182 are mostly scenario setup. Next candidates: L40's productivity line *"the only one of the three that isn't just moving numbers around"*, and L34 grouping tool 3 (redistribution) with the deflationary tools. The latter is lifted into `BalanceBand`'s labels (§69), so 15+ strings move. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the home-buying lesson said mortgage insurance cancels automatically "once enough equity has built up". By law the automatic trigger is the payment schedule, not a rise in the home's price, so it now says that. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-13 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Key Principle "Real rates — after inflation — say more than headline rates" no longer ranks them: on FRED, the real rate didn't say more. Five languages.
 
 Rules: W-6.2 ok (the previous entry left no residual to take; free pick); W-9.4 n/a. `npm test` before: not run; the archiving entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.
