@@ -3209,6 +3209,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-14 (scheduled dev-agent; residual of the 10-13 PMI run) — L34 no longer groups tool 3 (redistribution) with the deflationary tools: a tax-funded transfer isn't reliably deflationary. Lesson + the deleveraging dial, five languages.
+
+Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Held, no edit: L40 Rule 3's *"isn't just moving numbers around"*.** It's loose but not false: rule 3 is the only one of the three that raises output.
+
+**Step 3.5: the pick's premise, measured.** L34 called tool 4 *"the opposite of the first three tools"* and named the deflationary tools *"(cutting, defaulting, taxing)"*, the dial's left end label. Tool 3 as the lesson describes it is a **transfer**: tax higher earners to fund support for everyone else. CBO Working Paper 2015-02's output multipliers (via Wharton's reproduction; cbo.gov 403s here): transfers to persons **0.4-2.1**, one-year tax cuts for higher-income people **0.1-0.6**. A $1 tax-funded transfer nets **−0.2 to +2.0** (matched low/low +0.3, high/high +1.5). **Positive control:** the same table classifies tool 1 correctly, since federal purchases are 0.5-2.5, so cutting them shrinks output in every case. Caveat: this treats a tax rise as a mirrored tax cut. **Premise held:** "deflationary" doesn't describe tool 3.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L34. Three edits each: tool 3 gains one sentence (en: *"Unlike the first two tools, it moves spending power from one group to another rather than mainly shrinking it."*); tool 4 becomes *"the opposite of the first two tools"*; the balance paragraph's group becomes *"(cutting, defaulting)"*. es *traslada poder de compra de un grupo a otro en lugar de, sobre todo, reducirlo*; ko *전체 지출을 주로 줄이기보다 구매력을 한 집단에서 다른 집단으로 옮깁니다*; zh *主要是把购买力从一部分人转到另一部分人手中，而不是让总支出萎缩*; ja *支出全体を主に縮めるのではなく、購買力をある層から別の層へ移します*.
+- `markets.js`: the dial's left end label and text alternative, ×5 (§69 requires both to be lesson substrings). The zone-order comment now says tools 1-2, with a dated note on why tool 3 sits on neither end. `charts.jsx`: two comments ("tools 1-3", "the first three"). The quiz and glossary don't group the tools, so they're unchanged.
+- L34 es/ko/zh/ja re-marked `ai`; ledger diff **24 lines, L34's four entries**. `refresh-readiness --write`: en 167,075 → **167,176** chars, still 177 min; LAUNCH_PLAN §4.0 ~29,200 → ~29,300 words.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/delev/patch.mjs`: 27 pairs, each old ×1 / new ×0 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). The first run failed §10.4; the re-mark and refresh fixed it |
+| §69 sees the label | planted the old `"cutting, defaulting, taxing"` end label → 3 §69 FAILs; restored (`cmp`) → 0 |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | 5 new probes, each only in its own language's economy chunk; the new end label in `markets-*`; 10 old phrases → 0 files; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, economy 29-33 seeded, `#/lesson/34`. In all five languages (via the select) the new sentence, "first two" and the 2-tool group are present. Dial alt text reads "cutting, defaulting —". DOM control `PROBE_ZQX`: true, then false. A ko/zh probe for 증세/加税 read true. It was too broad (it matches the 1932 tax rise and tool 3 itself); the exact old tuples are 0 in the bundle |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The sentence doesn't call tool 3 stimulative, which the range's low end wouldn't support. No advice, date or Dalio (§10.1 plant above).
+- **Internal consistency:** the 1930-32 example still lists *"a large tax increase"* among the deflationary tools. The Revenue Act of 1932 raised taxes to balance the budget, which is austerity (tool 1), not a funded transfer, so it holds. But tool 1's heading says only *"CUT SPENDING"*. Seen, not fixed.
+- **Prior work:** `git log -S"cutting, defaulting, taxing"` shows the phrase in the lesson since the initial commit (`eda6dd0`), and lifted into the dial on 09-03 (`2c4f58b`). Nothing in the run log or archive had measured tool 3's sign. DECISIONS.md: no conflict. **No conflict found.**
+
+**Seen, not fixed:** tool 1's heading "CUT SPENDING (Austerity)" omits tax rises, which the 1930-32 example counts. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the debt lesson called "tax the rich to fund support" a spending-shrinking tool like cuts and defaults. CBO estimates don't support that; it now says it moves spending power between groups. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-13 (scheduled dev-agent; free pick, lesson sweep) — essentials L12's PMI no longer "cancels automatically once enough equity has built up": the automatic trigger is the payment schedule, and a rise in the home's value doesn't count. Five languages.
 
 Rules: W-6.2 ok (the previous entry left no residual; free pick); W-9.4 n/a. `npm test` before: not run; the previous entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.

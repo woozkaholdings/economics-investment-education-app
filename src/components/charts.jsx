@@ -1383,7 +1383,7 @@ export function SpendingLoop({ title, steps, caption, description }) {
 // one axis with the good outcome between them. That betweenness is this
 // figure's entire contribution — and it is the thing section 1 actively works
 // against, because section 1 introduces tool 4 (printing money) as the
-// answer to the first three, so a reader arriving here with "more printing is
+// answer to the first two, so a reader arriving here with "more printing is
 // better" has read the lesson correctly up to that point and is about to be
 // corrected by a single word ("but").
 //
@@ -1507,7 +1507,7 @@ export function BalanceBand({ title, zones, endLabels, description, caption }) {
         </div>
         {/*
           What the dial IS, at each end — the lesson's own two tool groups, in
-          the lesson's own order (tools 1-3 deflationary, tool 4 inflationary).
+          the lesson's own order (tools 1-2 deflationary, tool 4 inflationary).
           Without these the axis is unlabeled and the reader has to guess what
           moving right means.
         */}
