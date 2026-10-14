@@ -3209,6 +3209,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-14 (scheduled dev-agent; free pick, lesson sweep) — L21's home-listing example no longer says offers "cluster near the anchor instead of near the home's actual worth": listing prices pull estimates part of the way, not all of it. Five languages.
+
+Rules: W-6.2 ok (free pick, as the previous entry required); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** The older "Seen, not fixed" leads were already measured (balance-sheet caption 10-11, Growth names 10-12, L38 Peak `b45aa0a`). Money lessons 16-28 and 41-44 are the least-touched since 09-20. A scan of their empirical sentences found L21 §2, unchanged since `28e5555`.
+
+**Step 3.5: the premise, measured.** en: *"A home listed at $450,000 shapes every offer that follows… — offers cluster near the anchor instead of near the home's actual worth."*
+- Lab: Northcraft & Neale 1987 (OBHDP 39:84-97) hypothesized *insufficient* adjustment. As reported secondhand (EdgeProp; I couldn't read the paper's scanned tables here), agents' appraisals across a $30,000 listing-price spread differed by about $14,550, roughly **48%** of the gap. A later study reports anchoring indexes of **67%** (agents) and **86%** (students).
+- Field: Bucchianeri & Minson 2013 (JEBO 89:76-92), >14,000 sales: higher list prices go with higher sale prices.
+- **Positive control:** the same sources support the lesson's direction (the anchor pulls), so they can confirm a claim, not just refute one.
+- **Premise held for the clause:** estimates move partway toward the anchor. "Every offer" and "instead of near the home's actual worth" go further than the evidence does.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L21 §2: the clause was narrowed rather than given a statistic (W-11.2). en now reads *"A home listed at $450,000 tends to pull the offers that follow toward it, even from buyers who never independently priced the neighborhood."* es *tiende a atraer hacia sí las ofertas que siguen*; ko *이후에 이어지는 제안들을 그 가격 쪽으로 끌어당기는 경향이 있습니다*; zh *往往会把之后的报价拉向这个价格*; ja *その後に続く提示価格をその価格の方へ引き寄せる傾向があります*. Hand-read against the English. The salary sentence, the takeaway and the quiz don't make the "cluster" claim, so they're unchanged.
+- L21 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,365 → **167,307** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/anchor/patch.mjs`: old ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from the file, not through a pipe. The first run failed §10.4; the re-mark and refresh fixed it |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe is in only its own `lessonContent.money.*` chunk; the 5 old phrases and a nonsense probe → 0 files |
+| Live | static `dist/` in the Browser pane (404 control: `/assets/nope.js` → 404), money 16-20 + 41-44 seeded, `#/lesson/21`. Via the language select, each language showed only its own probe, no old phrase, and `<html lang>` followed. DOM control `PROBE_ZQX`: true, then false. localStorage cleared after |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** "Tends to pull… toward it" holds at every measured index (48-86%) and in the field data. The sentence is about negotiation psychology, not an asset. It has no advice, date or Dalio (§10.1 plant above).
+- **Consistency:** the salary sentence's "tends to pull the eventual number toward theirs" now matches. The takeaway ("treat it as a starting offer, not a fact") still follows. DECISIONS.md and CLAIMS.md don't mention anchoring. **No conflict found.**
+
+**Seen, not fixed:** L18's marshmallow paragraph credits "whether their household has taught them that promises… are usually kept". The best-known follow-up (Kidd et al. 2013) varied whether *the experimenter* had kept a promise, so "household" is an extrapolation (recalled, not fetched). Arguable. While trying to read the 1987 paper's scan, a Browser-pane navigation to its PDF triggered a download dialog on the owner's screen. Nothing was saved by me; don't retry that URL. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the anchoring lesson said a listing price makes offers bunch up at it rather than at the home's worth. Research shows a partial pull, so it now says the price "tends to pull" offers toward it. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-14 (scheduled dev-agent; residual of the previous L34 run) — L34 tool 1 now says a tax rise that closes a budget gap counts as austerity, so the lesson's 1930-32 "large tax increase" maps to a deflationary tool. Five languages.
 
 Rules: W-6.2 ok (second residual in a row; ⛔ the next run may NOT take a residual of this one); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
