@@ -3209,6 +3209,37 @@ same journey.
 
 ## Run log
 
+### 2026-10-14 (scheduled dev-agent; residual of the previous L34 run) — L34 tool 1 now says a tax rise that closes a budget gap counts as austerity, so the lesson's 1930-32 "large tax increase" maps to a deflationary tool. Five languages.
+
+Rules: W-6.2 ok (second residual in a row; ⛔ the next run may NOT take a residual of this one); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Step 3.5: the premise, measured.** The previous entry's "Seen, not fixed": tool 1 is "CUT SPENDING (Austerity)", and its body describes only layoffs and cancelled contracts. But the 1930-32 example lists *"a large tax increase"* among *"the deflationary tools"*. After the last run, the only tool that mentions taxes is tool 3, which "raises taxes on higher earners" and is "not mainly shrinking" spending. The Revenue Act of 1932 raised the top rate **25% → 63%** (Wikipedia; FRASER *Commercial & Financial Chronicle* 1932-06-04), so a learner who maps it onto the four tools lands on tool 3. That contradicts the example. Its stated purpose was to balance the budget, not to fund transfers, so it is tool 1 in substance. **Positive control:** the lesson's own sentence lists it as deflationary, and the 10-14 entry's CBO table has every tax-change multiplier above 0, so a deficit-closing tax rise shrinks output in every estimate. **Premise held.**
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L34 tool 1: one sentence appended at the end of the paragraph. en: *"Raising taxes to close the gap counts as austerity too: the money goes toward closing the deficit rather than toward support for others, so it also takes spending power out of the economy."* es *Subir impuestos para tapar ese agujero también cuenta como austeridad…le quita poder de compra a la economía*; ko *부족분을 메우려고 세금을 올리는 것도 긴축에 해당합니다…경제에서 구매력을 빼냅니다*; zh *为填补缺口而加税也算紧缩…从经济中抽走购买力*; ja *不足を埋めるための増税も緊縮に含まれます…経済から購買力を奪います*. Each reuses that language's existing word for the gap (agujero / 예산 부족 / 缺口 / 不足) and tool 3's word for spending power. Hand-read against the English.
+- Heading, dial labels ("cutting, defaulting") and quiz option "Austerity (cutting spending)" unchanged. "Cutting" still covers spending cuts, and the quiz option is narrow but not false. W-11.2: one sentence, no figure.
+- L34 es/ko/zh/ja re-marked `ai`. Ledger diff **8 lines**, the four source hashes (same reviewer and date as the previous run). `refresh-readiness --write`: en 167,176 → **167,365** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/austerity/patch.mjs`: anchor ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read directly (no pipe) |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of the 5 probes is in only its own language's `lessonContent.economy.*` chunk; nonsense probe → 0 files |
+| Live | static `dist/` in the Browser pane, economy 29-33 seeded, `#/lesson/34`. Driving the language select en→es→ko→zh→ja: each language showed exactly its own probe and none of the others; `<html lang>` followed. DOM control `PROBE_ZQX` read true, then false |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Deficit-closing tax rises are contractionary in standard estimates. The sentence states a mechanism and doesn't rank austerity or recommend it. No advice, date or Dalio (§10.1 plant above).
+- **Consistency:** 1930-32's tax increase now maps to tool 1. Tool 3 is still separated by where the money goes, and "Why Tool #4" ("only tool 1 (austerity) and tool 2 (default)") still holds. DECISIONS.md and CLAIMS.md don't mention austerity; `git log -S` finds no earlier version of this sentence. **No conflict found.**
+
+**Seen, not fixed:** the 1930-32 example says the US leaned on "budget-balancing", and federal outlays may have *risen* from FY1930 to FY1932 (recalled from OMB Historical Table 1.1, **not fetched**). The 1932 act was the budget-balancing attempt, so this is arguable and unmeasured. ⛔ That would be a third residual, so the next run picks free. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the debt lesson's "cut spending" tool now also covers tax rises that close a budget gap, so its 1932 tax-increase example no longer contradicts the tool list. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-14 (scheduled dev-agent; residual of the 10-13 PMI run) — L34 no longer groups tool 3 (redistribution) with the deflationary tools: a tax-funded transfer isn't reliably deflationary. Lesson + the deleveraging dial, five languages.
 
 Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
