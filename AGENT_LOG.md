@@ -3209,6 +3209,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-14 (scheduled dev-agent; residual of the L21 run) — L18's marshmallow paragraph no longer says waiting depends on "whether their household has taught them" that promises are kept: the study varied whether an adult had just kept one. Five languages.
+
+Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Step 3.5: the premise, measured.** The previous entry's "Seen, not fixed" was recalled, not fetched. Europe PMC REST (keyless; PubMed's page served a cookie wall; control: a nonexistent PMID → `hitCount 0`):
+- **Kidd, Palmeri & Aslin 2013** (*Cognition*, PMID 23063236), N = 28, mean age 4;6: the marshmallow task run *"in an environment demonstrated to be either unreliable or reliable"*. Reliable-condition children waited significantly longer (p < 0.0005). The manipulation was the experimenter's broken or kept promise minutes earlier, not the child's home.
+- **Watts, Duncan & Quan 2018** (*Psych Sci*, PMID 29799765): the link from waiting to age-15 achievement was half the original size and shrank by two-thirds with controls for family background and the home environment. That concerns what waiting *predicts*, not what drives it.
+- **Positive control:** both abstracts support the paragraph's direction (waiting depends on things outside the child's control), so the source could confirm the clause, not only refute it.
+- **Premise held:** "household has taught them" is an extrapolation. The measured cause is whether the adults present have kept their word.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L18 §2, one clause narrowed (W-11.2, no statistic). en: *"…like whether the adults around them have kept their promises about 'later'."* es *como si los adultos a su alrededor han cumplido sus promesas sobre 'después'* (keeps the original's *como si* + indicative); ko *주변 어른들이 '나중'에 대한 약속을 지켜 왔는지처럼*; zh *比如身边的大人是否兑现过关于“以后”的承诺*; ja *周りの大人が「後で」という約束を守ってきたかどうかなど*. Hand-read against the English. The next sentence ("easier to practice when the environment makes waiting feel safe") still follows.
+- L18 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,307 → **167,292** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/marsh/patch.mjs`: old ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file, not a pipe |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe in only its own `lessonContent.money.*` chunk; 5 old phrases and a nonsense probe → 0 files |
+| Live | static `dist/` (404 control `/assets/nope.js` → 404), 16-17 seeded, `#/lesson/18`. **My first pass read all-false in four languages, old phrases included: the lazy chunk hadn't loaded.** Re-read after a 1 s wait, with the marshmallow word as an in-language control: each language showed its own new clause, no old one, no other language's, and `<html lang>` followed. DOM `PROBE_ZQX`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Kidd's in-session manipulation is exactly "adults around them have kept their promises". N = 28 is small, but the paragraph already says "later research" and the direction matches. No advice, date or Dalio (§10.1 plant above).
+- **Prior work / decisions:** `git log -S"household has taught them"` → only the lesson's creation (`fef3bb1`) and two file splits. DECISIONS.md and CLAIMS.md don't mention delay of gratification; the quiz, glossary and kids content don't repeat the clause. **No conflict found.**
+
+**Seen, not fixed:** nothing new in L18. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the marshmallow passage credited a child's household for teaching that promises are kept. The study actually varied whether an adult had just kept a promise, so it now says "the adults around them". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-14 (scheduled dev-agent; free pick, lesson sweep) — L21's home-listing example no longer says offers "cluster near the anchor instead of near the home's actual worth": listing prices pull estimates part of the way, not all of it. Five languages.
 
 Rules: W-6.2 ok (free pick, as the previous entry required); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
