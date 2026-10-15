@@ -3209,6 +3209,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L22's feed section no longer counts search engines among the amplifiers or says the algorithm hands the bias back "faster each time": feeds can tilt, and search showed both headlines. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's "Seen, not fixed" was empty, and items 149/120 say not to pick them over content); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Commit subjects since 09-15 never name money lessons 22, 24, 26, 28 or 41-44. Of 22/24/26, only L22 §3 makes empirical claims, and they've been unchanged since `1f798b9` (08-14).
+
+**Step 3.5: the premise, measured.** en said *"…the platform he searched on wasn't neutral either. Search engines, investing forums, and social apps are built to show more of whatever keeps someone clicking… Over enough searches, his feed quietly reshapes itself into an amplifier…"* and *"a habit an algorithm learns and hands back, faster each time."* Europe PMC REST (keyless; control: a nonexistent-title query → `hitCount 0`):
+- **Robertson et al. 2023** (*Nature*, PMID 37225979), Google Search, 2018 + 2020: participants' *engagement* held more identity-congruent and unreliable sources than their search results *exposed* them to. The selecting was the user's, not the engine's.
+- **González-Bailón et al. 2023** (*Science*, 37499003): on Facebook, ideological segregation rises from potential to actual (curated) exposure. **Guess et al. 2023** (*Science*, 37498999): a chronological feed showed more content from moderate friends and mixed-audience sources than the algorithmic one. **Nyhan et al. 2023** (*Nature*, 37500978): most of what users see comes from like-minded sources.
+- **Positive control:** those three confirm the *feed* claim, so the sources can confirm, not only refute.
+- **Premise held:** feeds tilt, and search wasn't shown to. "Faster each time" has no source at all. §1 already says *"The search returned both headlines either way"*; §3 contradicted it.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L22 §3: three clauses narrowed, nothing added (W-11.2). en: *"Tomás's late-night search showed him both headlines, and which one he read was his own choice. The feeds he scrolls afterward aren't that even-handed. Investing forums and social apps are built…"*; *"Over time, his feed can tilt toward the belief he already held — not because anyone rigged it, but because his own past clicks trained it to."*; *"…a habit an algorithm can learn and hand back."* es/ko/zh/ja carry the same three changes, hand-read against the English.
+- L22 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,292 → **167,253** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | 15 pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe only in its own `lessonContent.money.*` chunk; 5 old phrases and a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over `dist/` (404 control → 404), `#/lesson/22` seeded. en: 3 new clauses true; 3 old and "Search engines" false. es/ko/zh/ja via the select: own new clause only, Tomás's name as in-language control, `<html lang>` followed. DOM `PROBE_ZQX`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Every remaining claim is about feeds, which three 2023 field studies support. Search is left as the story already framed it. No advice, date or Dalio (§10.1 plant above).
+- **Prior work / decisions:** `git log -S"faster each time"` → only `1f798b9` (created) and `6f5c48c` (file split). DECISIONS.md and CLAIMS.md don't mention algorithms or confirmation bias, and the quiz and glossary don't repeat the claim (`grep -i algorithm src/` → only this file). **No conflict found.**
+
+**Seen, not fixed:** the heading "Why Your Feed Makes It Worse" stands. Nyhan 2023 found that cutting like-minded exposure moved no attitudes, but that measured polarization, not decision confidence, so it's arguable. "Reliably gets more clicks" rests on selective-exposure research (Hart et al. 2009 meta-analysis, a moderate effect; recalled, not fetched). `public/data/market.json` (asOf 2026-10-14) is uncommitted from the market job and is left alone per W-11.4. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the confirmation-bias lesson blamed search engines for retraining on your clicks and called the effect "faster each time". Research finds search results were less one-sided than what people chose to click, so the lesson now puts that on feeds, which "can tilt". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-14 (scheduled dev-agent; residual of the L21 run) — L18's marshmallow paragraph no longer says waiting depends on "whether their household has taught them" that promises are kept: the study varied whether an adult had just kept one. Five languages.
 
 Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
