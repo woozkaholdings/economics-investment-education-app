@@ -3209,6 +3209,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L16 no longer says its cash-flow "asset/liability" names turn up "in nearly every book written about money": some popular money books use the words more loosely than an accountant would. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead, L41's heading, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Money lessons 16 and 20 are the only ones no accuracy commit has ever named. L20's claims are about mechanism and hold. L16 §1 said *"That difference has a name that turns up in nearly every book written about money. An asset is something that puts money into your pocket over time. A liability is something that takes money out."* That is the *Rich Dad* cash-flow sense. Economy L30, which comes earlier on the main path, uses the accountant's sense in all five languages: the lender *"now holds an asset (you owe them money), and you hold a liability (you owe it)"*.
+
+**Step 3.5: the premise, measured.**
+- **Fed SCF 2019-22 bulletin** (HTML, `curl` 200; a nonexistent sibling URL → 404; "Survey of Consumer Finances" ×23 as an in-page control): *"The most commonly held type of nonfinancial asset in 2022 was a vehicle"*, and vehicle loans are counted as debt. Under L16's definition, Maya's car is a liability.
+- **FASB Concepts Statement 8 ch. 4** (secondary summaries via search): an asset is a present right to an economic benefit, and a liability is a present obligation to transfer one. Ownership and obligation, not cash-flow direction.
+- **Positive control:** the same search found the cash-flow definition attributed to Kiyosaki, and critics noting accountants don't use it. The SCF *PDF* inflated to subset-encoded glyphs, and its control word read 0, so that extraction was discarded, not read as a negative.
+- **Premise held:** this usage belongs to some popular books, not "nearly every book", and it contradicts L30 unless flagged. The *Rich Dad* lens stays. Only the universality claim goes.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L16 §1 ¶4 + takeaway. en: *"Some popular money books give that difference a name, using the words “asset” and “liability” more loosely than an accountant would."* Takeaway: *"In this lesson's sense, an asset puts money into your pocket…"*. es *«activo» y «pasivo» con más libertad que un contador* / *En el sentido de esta lección*; ko *'자산'과 '부채'라는 말을 회계사보다 느슨한 뜻으로* / *이 레슨에서 말하는 뜻으로*; zh *对“资产”和“负债”这两个词的用法比会计师宽松* / *按本课的说法*; ja *「資産」と「負債」という言葉を会計士よりゆるい意味で* / *このレッスンの意味では*. A first draft said "two words"; a hand read found that vague, so a second patch names them. The words for "lesson" match each file's existing usage.
+- L16 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: en 167,229 → **167,303** chars. The quiz item (*"According to this lesson…"*) was already scoped and is unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l16/patch.mjs` 10 pairs + `patch2.mjs` 5 pairs, old ×1 / new ×0 each before; repeats refuse (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 6 new probes in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 41-44 seeded, `#/lesson/16`. en: body + takeaway true, old false, "Maya and Dan" as control. es/ko/zh/ja via the real select: own new body + takeaway true, own old sentence false, no English left, name as in-language control, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The lens and the "which direction the money flows" test are unchanged. The edit removes a universality claim and the conflict with L30. It adds no advice, date or Dalio (the plant above; diff grep for advice/date strings → 0).
+- **Prior work / decisions:** `git log -S"nearly every book written about money" -- src` → only creation (`6918fc9`) and the two file splits. DECISIONS.md and CLAIMS.md say nothing on asset/liability definitions. L43's "asset-versus-liability test" still reads true, and so does the quiz. **No conflict found.**
+
+**Seen, not fixed:** L16 §2's *"the vivid feeling wins nearly every time"*. It's unsourced, but framed as experience, so arguable. `market.json` (asOf 10-14, market job), `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L16 presented the *Rich Dad* "a car is a liability" definition as the one in nearly every money book. The Fed counts a car as a household's most common asset, and lesson 30 teaches that sense, so L16 now flags its usage as looser than an accountant's. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L42 no longer says "almost every dollar" of investment, business and rental income "started life as labor income": they usually start with it, and returns compound from there. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's two "Seen, not fixed" leads were both marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
