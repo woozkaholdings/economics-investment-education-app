@@ -3209,6 +3209,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L17: the better apartment's lift fades over "a year or two", not "about three months", and moving back's loss "tends to weigh more", not "far stronger". Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead, L16 §2, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN. `check-log-size` before: run log 102,425 b, PASS.
+
+**Picking.** Essentials L1/L2/L9 (no accuracy commit since 09-01) were read and are clean. Money L17 §1 ¶4 had two claims unchanged since `bb7f772` (08-07): *"Within about three months, the better apartment stops registering as better"* and a loss *"far stronger"* than the upgrade's satisfaction.
+
+**Step 3.5: the premise, measured.**
+- **Wolbring 2017** (*J Happiness Stud* 18(5), SOEP; RePEc abstract): housing satisfaction rises after a move, *"declines in the following years"*, and *"after about 2 years"* returns to levels from several years before. Moves made for housing reasons bring *"partly lasting gains"*. **Nakazato, Schimmack & Oishi 2011** (*Soc Indic Res* 100, SOEP; secondary summary, the DIW page refused the connection): housing satisfaction rose and stayed elevated. Life satisfaction didn't move.
+- **Positive control:** Europe PMC returned **Suh, Diener & Fujita 1996** (PMID 8656337): *"only life events during the previous 3 months influenced life satisfaction"*. That is the likely source of "three months". It covers life events in general and overall satisfaction, not how a home feels. A nonexistent-title query → `hitCount 0`.
+- **Loss half:** L27 (10-12) now says the classic ~2× estimate is the top of a range that runs *"well below it, and in some designs close to none"* (Brown et al. 2024 median 1.69). "Far stronger" is the old figure, and the course itself has since corrected it.
+- **Premise held.** Adaptation is real, so the ratchet stays. The three-month timing and the "far" don't hold up.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L17 §1 ¶4, narrowed with no figure added (W-11.2). en: *"Within a year or two, the better apartment mostly stops registering as better… Most of the pleasure faded; the $400 didn't. …it would feel like a loss, and losses tend to weigh more than the mild satisfaction the upgrade produced in the first place."* es/ko/zh/ja carry the same three changes, hand-read. That read caught doubled connectives in ko/zh/ja (그리고, 而, そして), and a second patch removed them.
+- L17 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,303 → **167,309** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l17/patch.mjs` 15 pairs + 3 connective pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 5 new probes in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 16 seeded, `#/lesson/17`. en: 3 new clauses true, 2 old false, heading as control. es/ko/zh/ja via the real select: own new + loss clauses true, own old false, no English left, Priya's name as in-language control, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The ratchet, the $400 arithmetic and the takeaway (*"the pleasure of each one fades while its cost doesn't"*) all stand. "Fades" is what both studies show. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"Within about three months"` → only creation and the two file splits. DECISIONS.md mentions L17 only for glossary-chip scope. The quiz and glossary don't repeat either claim. The loss clause now agrees with L27 instead of contradicting it. **No conflict found.**
+
+**Seen, not fixed:** L17 §2 *"high earners can and regularly do live paycheck to paycheck"*. Self-report surveys support it, but those are industry polls, so not measured here. `public/data/market.json` (market job), `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone (W-11.4). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L17 said a nicer apartment stops feeling nicer "within about three months". German panel data puts the fade at about two years, and partial for moves made for the home itself, so the lesson now says "within a year or two, mostly". Its "far stronger" sense of loss now matches lesson 27's corrected range. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L16 no longer says its cash-flow "asset/liability" names turn up "in nearly every book written about money": some popular money books use the words more loosely than an accountant would. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's only lead, L41's heading, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
