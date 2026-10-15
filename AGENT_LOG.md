@@ -3209,6 +3209,43 @@ same journey.
 
 ## Run log
 
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L42 no longer says "almost every dollar" of investment, business and rental income "started life as labor income": they usually start with it, and returns compound from there. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's two "Seen, not fixed" leads were both marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** The previous entry left L28 and 41-44 as the money lessons no commit since 09-15 names. L28's retail-trading claim matches Barber & Odean 2002 ("Online Investors", recalled: switchers beat the market before going online, then traded more and lagged it), so I left it. L41/43/44 were corrected 09-11/12. The 09-11 entry flagged L42's *"almost every dollar of the other three started life as labor income belonging to someone"* as an owner framing call and didn't pick it by default. It's an empirical claim, though, so I measured it.
+
+**Step 3.5: the premise, measured.**
+- **Compounding:** Tiingo SPY (repo key), 1995-01-03 → 2025-01-02, adjClose **26.35 → 573.39 = 21.8×**. **Control:** the price-only close went 45.78 → 584.64 = **12.8×**, which matches the S&P 500's known move (~459 → ~5,868), and adjClose > close as dividends require. So a dollar of saved wages held 30 years is **~95% returns** by the end (~90% after CPI's ~2.1×). The later dollars started life as investment income, not labor.
+- **Flow:** FRED `LABSHPUSA156NRUG` (PWT labor share) 2023 = **0.568**. **Control:** the known value is ~0.57-0.6, so the instrument reads true. A nonexistent series id → 404. That means about 40% of national income arises as capital income each year. Also `PIROA` 2026-08 = $4.71T against `COE` 2026-Q2 = $16.35T.
+- **Premise held:** the *starting* money is usually saved wages or the owner's hours, which supports the lesson's point. "Almost every dollar" does not hold once returns compound.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L42 §2 + takeaway, narrowed with nothing added (W-11.2). en: *"…the honest shape of the whole thing: the other three usually start with labor income belonging to someone."* Takeaway: *"…and the other three usually start with somebody's labor income."* es *suelen empezar con el ingreso laboral de alguien*; ko *대개 누군가의 노동소득에서 시작됩니다*; zh *通常都是从某个人的劳动收入起步的*; ja *たいてい誰かの労働所得から始まります*. I hand-read each against the English. The next sentence still follows: *"The categories aren't a ladder people climb by escaping work."*
+- L42 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,253 → **167,229** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l42/patch.mjs`: 10 pairs, old ×1 / new ×0 before (ja's two identical new strings allowed for); a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe appears in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 41 seeded, `#/lesson/42`. en: body + takeaway clauses true, 2 old false, §1 heading as control. es/ko/zh/ja via the real select: body + takeaway show only that language's version, 10 old strings absent, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** "Usually start with" is about how these incomes begin, which the lesson's own examples show (Ben's saved wages, Tom's deposit, Alina's hours). Nothing ranks the categories. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"almost every dollar of the other three"` → only creation (`b6c9bc9`, the owner-approved draft) and archive text. CLAIMS.md and DECISIONS.md don't mention it. The glossary's Labor/Investment Income definitions make no origin claim, and the L44 figure caption ("years of saved wages") still agrees. **No conflict found.** This text came from the owner-approved draft. The 09-11 entry declined to touch it, and I narrowed it on measurement.
+
+**Seen, not fixed:** L41's heading *"Thirteen Years, and Not One Hour on This"*. It's framed as most adults' experience, and 09-11 already hedged the body. Arguable. `public/data/market.json` is uncommitted from the market job and left alone (W-11.4). `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L42 said nearly every dollar of investment, business and rental income began as someone's wages. Thirty years of SPY compounding turn a saved dollar into ~95% returns, so it now says those incomes "usually start with" labor income. Still waiting on you: **O-2**.
+
+**Two commits, the first empty.** `0e3d6d8` carries this run's message on a tree identical to `3f411eb`. I passed the file list as `$FILES`, which zsh doesn't word-split, so `git add` failed on one 8-path pathspec, and the tree-count assertion passed because nothing had been added. The content is in the next commit. I didn't rewrite history to fold them together. **Lesson:** use a zsh array (`FILES=(…); git add -- $FILES`), and assert `git diff --cached --name-only | wc -l` against the expected count, not just the tree's file count.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L22's feed section no longer counts search engines among the amplifiers or says the algorithm hands the bias back "faster each time": feeds can tilt, and search showed both headlines. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's "Seen, not fixed" was empty, and items 149/120 say not to pick them over content); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
