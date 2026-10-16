@@ -3209,6 +3209,45 @@ same journey.
 
 ## Run log
 
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — L35's "master dial" no longer says "nearly every other rate… follows", mortgage first: rates usually move with it, a new mortgage less reliably. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's L7 lead was marked arguable and stays a note); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** I scanned the three English lesson files for absolute quantifiers (119 hits, read by hand). Most are narrative or already hedged. L35 §1 opened: *"When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the annual rate — the APR — on your credit card."* No commit has touched it since creation (`2afcb42`, 08-05). A sibling regex over glossary/markets/quiz/kids/policy found only this sentence. **Control:** it fired on that known sentence.
+
+**Step 3.5: the premise, measured.** FRED CSV, keyless (`curl` 200 ×6; a nonexistent series id → **404**). Monthly FEDFUNDS vs MORTGAGE30US (weekly → monthly mean) vs MPRIME, 1972 → 2026-09, all windows with a Fed move of at least the threshold:
+| window, Fed move | prime same direction | 30-yr mortgage same direction |
+|---|---|---|
+| 12 m, ≥1.0 pt | **98.7%** (309/313) | **86.3%** (270/313) |
+| 6 m, ≥0.5 pt | 96.7% | 81.6% |
+- **Positive control:** prime, which card APRs key off, comes back near 100% on the same instrument. **Reading control:** the lesson's own *"about 3.1% to 4.2%"* reproduces from the same weekly series (3.12 on 12-16-2021, 4.16 on 03-17-2022).
+- **Counterexamples:** Aug → Dec 2024, fed funds 5.33 → 4.48 while the mortgage went **6.50 → 6.71** (6.96 by Jan). In 2004-06, fed funds +4.2 pts and the mortgage +0.5. Savings (SNDR) went the same way as the Fed both ways in 2022-25, by much less.
+- **Premise held:** "follows" is true of card APRs, true in direction for savings, and only usually true for a new mortgage, the first item the sentence named.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L35 §1, one sentence narrowed, no figure added (W-11.2). en: *"…most other rates in your financial life usually move the same way: what your savings account pays you, the annual rate — the APR — on your credit card, and, less reliably, the rate on a new mortgage."* The mortgage now comes last, next to the existing "market-set rates move first" passage. es/ko/zh/ja say the same. I wrote each one and hand-read it against the English.
+- L35 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,352 → **167,382** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/fed/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; after, old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-SviZ6IWT.js`, system Node v24.18.0 |
+| Bundle | each of 5 new probes in exactly 1 asset; the 5 old phrases → 0; control (L35 heading) → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), economy 29-34 seeded, `#/lesson/35`. en: new true, old false, heading control true. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The new sentence describes how rates relate. It says nothing about when to borrow or refinance. The arrows below it ("Raise the dial → borrowing gets more expensive") are tendencies and still hold. The glossary "Fed Funds Rate" (*"influences most other rates… from mortgages to savings accounts"*) and the quiz explanation (*"ripples out to mortgages…"*) say "influence", not "follow", so they agree and were left alone. Diff grep `dalio|should buy|recommend|you should` → 0.
+- **Prior work / decisions:** `git log -S"every other rate"` → creation and file splits only. DECISIONS.md and CLAIMS.md say nothing on it. The 10-12 Cash-card fix (*"moves with it, often by less"*) agrees. **No conflict found.**
+
+**Seen, not fixed:** nothing new beyond L7's arguable W-4 line. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the interest-rates lesson said that when the Fed moves, nearly every other rate "follows", mortgage first. But mortgage rates rose through the Fed's 2024 cuts. It now says most rates usually move the same way, and a new mortgage less reliably. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L8: "Three numbers shape almost every insurance policy" now says most home, auto and health policies, and that life insurance usually has no deductible. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous lead, L31's productivity line, was marked arguable and stays a note); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
