@@ -3209,6 +3209,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L8: "Three numbers shape almost every insurance policy" now says most home, auto and health policies, and that life insurance usually has no deductible. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous lead, L31's productivity line, was marked arguable and stays a note); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** No commit since 09-15 names essentials 1, 2, 7, 8, 9 or 15. I read all six in English. L1's $54 → $648 and 40% rent, and L2's $50/wk → $600 in 12 weeks, check out arithmetically. L8 §2 opened: *"Three numbers shape almost every insurance policy"* (premium, deductible, coverage limit). But §1 of the same lesson lists life insurance among "every type", and life insurance has no deductible. Nothing has touched the sentence since creation (`43cc966`, 08-06).
+
+**Step 3.5: the premise, measured.**
+- **California Dept. of Insurance consumer guides** (`curl` 200): the life guide (91,719 b) has **"premium" ×50, "deductible" ×0**. It defines the face amount as what is paid to the beneficiary (less policy loans). **Control:** the same regulator's residential guide, read the same way, has **"deductible" ×4**. A third URL came back 48,035 b, exactly the size of a nonexistent-path control, so it was a soft 404 and I discarded it.
+- **Auto:** liability coverage typically has no deductible; collision and comprehensive each carry one (NerdWallet, Bankrate). About 75-79% of insured drivers buy collision or comprehensive (III, via carinsurance.com), so "most auto policies" holds. **Health:** KFF EHBS 2025 finds **88%** of covered workers with single coverage have a general annual deductible.
+- **Premise held:** "almost every policy" was false for a whole category the lesson itself names, and "most home, auto and health" is true.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L8 §2 first sentence, narrowed. No figure added (W-11.2). en: *"Three numbers shape most home, auto and health policies (life insurance usually has no deductible)."* es/ko/zh name the same three kinds of insurance. **ja drops 医療:** Japanese private 医療保険 mostly pays fixed per-day benefits with no deductible, so ja says 住宅や自動車. Each translation was hand-read against the English.
+- L8 es/ko/zh/ja re-marked `ai` (ledger 24 lines). `refresh-readiness --write`: en 167,303 → **167,352** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/ins/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; after, old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1** (§10.1); restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-JA8bc5OW.js`, system Node v24.18.0 |
+| Bundle | each of 5 new probes in exactly 1 asset; the 5 old phrases → 0; control (§1 heading) → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), essentials 1-7 seeded, `#/lesson/8`. en: new true, old false, §2 heading control true. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The parenthetical is a fact about product structure. It doesn't say which policy to buy, and the section's own "not a rule this lesson can hand out" paragraph is unchanged. The quiz item for this lesson (higher deductible → lower premium) and the glossary "Deductible" definition both still agree. Diff grep `dalio|should buy|recommend` → 0.
+- **Prior work / decisions:** `git log -S` → creation and file splits only. DECISIONS.md and CLAIMS.md say nothing on this. **No conflict found.**
+
+**Seen, not fixed:** L7's *"A refund or amount owed that swings from year to year usually means an outdated W-4"* and *"most workers fill out once… and never revisit"* are unmeasured population claims (tax-law changes, e.g. 2022's end of the advance child tax credit, also swing refunds). Arguable, so not picked. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the insurance lesson said premium, deductible and coverage limit shape "almost every" policy, but life insurance (which the lesson also covers) has no deductible. It now names home, auto and health, and notes the life exception. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L4: on-time payment and low utilization "still do most of the work", not "almost all": FICO weights them 35% + 30%. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's only lead was measured and held, see below); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
