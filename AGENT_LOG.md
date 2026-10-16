@@ -3209,6 +3209,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L4: on-time payment and low utilization "still do most of the work", not "almost all": FICO weights them 35% + 30%. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead was measured and held, see below); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Previous lead: L17 §2's *"high earners can and regularly do live paycheck to paycheck"*. **Measured, and it holds.** Fed SHED 2024 (Income and Expenses chapter, HTML 200; a wrong-slug URL → 404): 66% of adults with $100k+ income spent less than their income last month, so about a third had no margin. **Control:** the same page's all-adults split, 51 / 19 / 30, matches the published summary. No edit. Money L24/L26 and economy L31 were read and are clean (framing or already measured). Essentials L4 §3 ended: *"the two factors from the first section — paying on time and keeping utilization low — still do almost all of the work from there."* No commit has touched it since creation (`512852d`, 08-13).
+
+**Step 3.5: the premise, measured.**
+- **myFICO "What's in my FICO Scores"** (`curl` 200; a nonexistent sibling slug → 404): payment history **35%**, amounts owed **30%**, length of history **15%**, new credit **10%**, credit mix **10%**. **Control:** all five factor labels found with their weights, and they sum to 100.
+- Even on the generous reading (all of "amounts owed" counts as utilization), the two factors are **65%**. Length of history (15%) is exactly what a starting-from-zero reader doesn't have yet.
+- **Premise held:** "almost all" overstates it, and "most" is true. §1 already says the other factors "matter too, but less", so this sentence was the only place the lesson contradicted itself.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L4 §3 last sentence, narrowed with no figure added (W-11.2). en *"still do most of the work from there."* es *la mayor parte del trabajo*; ko *대부분의 일을*; zh *大部分的作用*; ja *大部分の役割を* (the old ja *ほとんどの* reads as "almost all"). Each was hand-read against the English.
+- L4 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,309 → **167,303** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/fico/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 5 new probes in exactly 1 file, its own `lessonContent.essentials.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), essentials 1-3 seeded, `#/lesson/4`. en: new true, old false, "Starting From Zero" heading as control. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The sentence still credits the two factors §1 calls the biggest, and the quiz explain (*"usually the biggest factors"*) agrees. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"almost all of the work"` → only creation and the file splits. DECISIONS.md mentions credit scores only for track/glossary scope. CLAIMS.md is silent. The glossary has no factor claim. **No conflict found.**
+
+**Seen, not fixed:** L31's *"productivity grows in a fairly straight, gentle line"*. Year-to-year productivity growth does dip below zero, but the claim is relative to credit, and L30 measured credit as the bigger swing. Arguable. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the credit-score lesson said on-time payment and low balances do "almost all" the work. FICO's own weights put them at about two-thirds, so it now says "most". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L17: the better apartment's lift fades over "a year or two", not "about three months", and moving back's loss "tends to weigh more", not "far stronger". Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's only lead, L16 §2, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN. `check-log-size` before: run log 102,425 b, PASS.
