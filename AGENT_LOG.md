@@ -1569,6 +1569,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
+177. **Four short phrases still shared with the "How the Economic Machine Works" transcript (§10.2, found 2026-10-16).** That run removed the six complete sentences the app had quoted (L29, L31, q004, q009). Its 7-word overlap instrument (`ngram.mjs` in that entry; a Wikipedia "Business cycle" control gives 1 run, a proper name) still finds four 7-word runs: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008's keyed option *"Don't have debt rise faster than income"*. L40 already words that rule *"Don't let debt rise faster than income"*, so the option is the cheapest fix, and it keeps option length unchanged for §65. Also L31's thinkAbout *"borrow from your future self"* (5 words). **Arguable:** these are short and close to common phrasing. Reword only with the instrument re-run, and do not turn this into a sweep of ordinary terms like "short-term debt cycle", which the lessons need.
+
 176. **✅ Closed 2026-10-02 (dev-agent).** `check-blindspot.mjs`'s zh timing pattern now allows up to four Han characters between the verb and `的好`, and accepts bare `买`/`卖`. Its `fires` list (all must match) covers `买入的好时机`, `买入股票的好时机` and `买股票的好时机`. Live instances were 0 and are still 0. Details are in the 2026-10-02 run-log entry.
 
 175. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
@@ -3208,6 +3210,44 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-16 (scheduled dev-agent; free pick, §10.2 residual) — six sentences that reproduced the "How the Economic Machine Works" video near-verbatim (L29 subtitle + definition, L31 ×2, quiz q004/q009 explains) are now in the app's own words. Five languages.
+
+Rules: W-6.2 ok (free pick); W-9.4 n/a. Baseline `npm test` this run, before editing: exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** A quantifier sweep (132 hits, control fired) found only already-measured claims (L36, L39). Reading L31 I recognized its takeaway (*"Every time you borrow, you create a cycle…"*) as the video's line. LAUNCH_PLAN §10.2 says *"No name-brand framing, no direct quotes, anywhere in the app"*, and `check-blindspot` only greps the name, so an unattributed quote is invisible to it.
+
+**Step 3.5: the premise, measured.**
+- Two transcripts (singjupost.com, sozai.app; both 200, nonexistent-path control → **404**) agree word for word.
+- Instrument (`scratchpad/sweep/ngram.mjs`): shared 7-word runs vs every `src/**` line, README, index.html. **Result: 9 runs, the longest 14 words**: *"[Productivity] matters most in the long run, but credit matters most in the short run"* (L31 §1, verbatim), *"spending and incomes grow faster than the production of goods, prices rise"* (q004 explain, 12w), *"a buyer exchanging money or credit with a seller for"* (L29 §1, 10w), *"Every time you buy something, you create a transaction"* (L29 subtitle, 9w), and five 7-word runs.
+- **Negative control:** Wikipedia "Business cycle" (200, 3× the transcript's length) through the same instrument → **1** run, a proper name ("the Federal Reserve Bank of St. Louis").
+- **Premise held**, and it was wider than L31: four complete sentences quoted verbatim, plus the L31 takeaway paraphrasing three consecutive sentences (*"anytime you borrow you create a cycle. This is as true for an individual as it is for the economy"*), and q009's explain repeating half of the L31 quote.
+
+#### What shipped
+- `lessonContent.economy.*.js` L29 §1 definition, L31 §1 sentence, L31 takeaway; `quizText.*.js` q004 and q009 explains; `lessons.js` L29 subtitle. 30 one-sentence edits, written per language and hand-read against the English. Meanings kept, two hedged on the way: inflation prices *"tend to rise"*, and credit swings *"drive much of"* the short-run ups and downs, not "matter most". No figure added (W-11.2).
+- L29 and L31 es/ko/zh/ja re-marked `ai` (`translation-review.mjs mark`; ledger diff 48 lines, exactly those 8 entries). `readiness --write`: en 167,382 → **167,500** chars. That rounds LAUNCH_PLAN §4.0 from ~167,000 to ~168,000,, by the script.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | 30 pairs, old ×1 / new ×0 before; old ×0 / new ×1 / U+FFFD ×0 after; a repeat refuses (exit 1) |
+| Instrument after | 9 → **4** runs, longest 14 → **7** words. The 4 untouched 7-word sites still fire, which is the control |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged (en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6) |
+| Guard sees the file | planted *"You should buy stocks now."* after the new takeaway → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BYqXB4tT.js`, system Node v24.18.0 |
+| Bundle | 10 new probes (en ×6, es, ko, zh, ja) each in exactly 1 asset; 5 old phrases → 0; L29 title control → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), 29-30 seeded. en `#/lesson/31`: new ×2 true, old ×2 false, heading true. ja via the real select (`<html lang="ja">`): L31 new true / old false; L29 subtitle + definition new true / old false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **§10.2:** the diff removes quoted text and adds no name or attribution (diff grep `dalio|bridgewater` → 0). **§10.1:** diff grep `should buy|you should|recommend|buy now` → 0.
+- **True?** Each claim is kept or softened; q004 still explains its keyed option and now matches L32 §1.
+- **Prior work / decisions:** none of the five sentences appears in DECISIONS.md or CLAIMS.md. The only log mention (archive, q004) is about which lesson the question is mapped to, not its wording. **No conflict found.**
+
+**Seen, not fixed:** four 7-word overlaps remain: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008 option *"Don't have debt rise faster than income"* (L40 already says "Don't let…"). Plus L31's thinkAbout *"borrow from your future self"* (5w). Short and arguable: filed as backlog item 177. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** six lines in the app (Lessons 29 and 31, two quiz explanations) were word-for-word or near-word-for-word from the well-known "economic machine" video, which your plan rules out. They're now in the app's own words, in all five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — L35's "master dial" no longer says "nearly every other rate… follows", mortgage first: rates usually move with it, a new mortgage less reliably. Five languages.
 

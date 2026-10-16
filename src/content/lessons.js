@@ -167,7 +167,7 @@ export const lessons = [
   {
     id: 29, track: "economy", icon: "🔄", color: "#2563eb", minutes: 3,
     title: {"en":"Transactions: The Building Block","es":"Transacciones: el pilar fundamental","ko":"거래: 경제의 기본 단위","zh":"交易：经济的基石","ja":"取引：経済の基本単位"},
-    subtitle: {"en":"Every time you buy something, you create a transaction","es":"Cada vez que compras algo, creas una transacción","ko":"무언가를 살 때마다 거래가 만들어집니다","zh":"每次购买都创造一笔交易","ja":"何かを買うたびに取引が生まれる"},
+    subtitle: {"en":"Every purchase is a trade, and an economy is millions of them","es":"Cada compra es un intercambio, y una economía son millones de ellos","ko":"모든 구매는 거래이고, 경제는 그런 거래 수백만 건입니다","zh":"每次购买都是一笔交易，而经济就是千千万万笔交易","ja":"買い物はどれも取引で、経済はその何百万もの積み重ね"},
   },
   {
     id: 30, track: "economy", icon: "💳", color: "#7c3aed", minutes: 3,

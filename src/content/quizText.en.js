@@ -55,7 +55,7 @@ export const quizText = [
       "Low interest rates alone",
       "Stock market crashes"
     ],
-    "explain": "When spending and incomes grow faster than the production of goods, prices rise. That's inflation."
+    "explain": "When spending grows faster than the economy can produce goods and services, prices tend to rise. That's inflation."
   },
   {
     "q": "What happens during deleveraging that's different from recession?",
@@ -105,7 +105,7 @@ export const quizText = [
       "Government stimulus",
       "Stock market gains"
     ],
-    "explain": "Productivity growth is what raises living standards over the long run. Credit matters most in the short run and creates the cycles — but it can't create real, lasting growth on its own."
+    "explain": "Productivity growth is what raises living standards over the long run. Swings in credit drive much of the shorter-run ups and downs — but credit can't create real, lasting growth on its own."
   },
   {
     "q": "Which of these is NOT one of the 4 tools for reducing a debt burden?",

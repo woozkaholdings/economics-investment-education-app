@@ -55,7 +55,7 @@ export const quizText = [
       "Tasas bajas solas",
       "Caídas bursátiles"
     ],
-    "explain": "Cuando el gasto y los ingresos crecen más rápido que la producción de bienes, los precios suben. Eso es la inflación."
+    "explain": "Cuando el gasto crece más rápido de lo que la economía puede producir en bienes y servicios, los precios tienden a subir. Eso es la inflación."
   },
   {
     "q": "¿Qué ocurre durante un desapalancamiento que lo distingue de una recesión?",
@@ -105,7 +105,7 @@ export const quizText = [
       "Estímulo gubernamental",
       "Ganancias del mercado bursátil"
     ],
-    "explain": "El crecimiento de la productividad es lo que eleva el nivel de vida a largo plazo. El crédito importa más a corto plazo y crea los ciclos, pero no puede generar crecimiento real por sí solo."
+    "explain": "El crecimiento de la productividad es lo que eleva el nivel de vida a largo plazo. Los vaivenes del crédito explican buena parte de las subidas y bajadas a corto plazo, pero el crédito no puede generar crecimiento real por sí solo."
   },
   {
     "q": "¿Cuál de estas NO es una de las 4 herramientas para reducir la carga de deuda?",
