@@ -3214,6 +3214,49 @@ same journey.
 
 ## Run log
 
+### 2026-10-17 (scheduled dev-agent; free pick, the A3 WARN) — CLAIMS.md A3's debt clause measured for the first time: abridged pairs 93 → 47 → 0 over two months and the human share flat at 0%, so debt did not grow. Not refuted; next check 2026-11-07. No source change.
+
+Rules: W-6.2 ok (free pick: the WARN the previous entry's baseline named); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / **2 WARN** (O-3's, and A3 past its 2026-10-16 check date).
+
+**Picking.** A3's row set 2026-10-16 as "the first day the clause can be evaluated". Its debt half asks for two consecutive months of growth, and the ledger begins 2026-08-11. `check-claims.mjs` says to record the result or move the date with a reason. That is owed work, and it can be measured today.
+
+**Step 3.5: the premise, measured.**
+- Row's premise: the debt half is checkable now; the usage half (non-English sessions) is blocked on O-2. **Held.** `analyticsConfig.js` still has no provider (O-2 open). The debt half needs only the repo.
+- Instrument: `scratchpad/a3/history.mjs`. For each date it `git archive`s the last commit on or before that date (`src/` + the review ledger), runs **today's** `completeness()` on it, and counts ledger `method` per language. The same instrument is used at every point, so a threshold change can't masquerade as a trend. (`translation-completeness.mjs` last changed `93fa06e`, 2026-08-27.)
+- **Positive control:** 2026-08-24 (`fe649d9`) and 2026-09-04 (`2c1d276`) both give **48, es/ko/zh/ja 12 each**, matching the two figures the row recorded. HEAD gives 0, matching `npm run translation-completeness`.
+
+| date (commit) | lessons | abridged pairs | human-reviewed |
+|---|---|---|---|
+| 08-16 (`01d6d6d`) | 40 | **93** | 0 of 160 |
+| 09-16 (`3585207`) | 44 | **47** (es 11) | 0 of 176 |
+| 10-16 (`2587ec2`) | 44 | **0** | 0 of 176 |
+
+Both months the abridged count fell and the human share stayed flat. **The clause is not met.** (Intermediate points 09-30 and 10-10 also read 0, which agrees with LAUNCH_READINESS §10.4's "0 as of 2026-09-22".)
+
+#### What shipped (1 file, no source change)
+- `CLAIMS.md` A3: check 2026-10-16 → **2026-11-07** (the next §9.3 audit, where every other row falls due). The measurable cell now says the debt half is measured and the usage half is blocked on O-2. The status cell carries the table's result, the control, and the earlier record kept verbatim under "Earlier record follows". The 2026-10-04 review paragraph's "A3… was not reviewed" gets a pointer to the row.
+- **Written down, not fixed:** both legs of the metric are now at their floor (0 abridged, 0% human). From here the clause can fire only if a lesson ships abridged. It cannot see "no fluent speaker has read any of it", which is O-3's question, closed by the owner 2026-10-10. The threshold is left as written. Re-aiming it after the result is in is what §9.1 forbids.
+
+#### Verification
+| check | result |
+|---|---|
+| Edit | two wording passes by a Node patch asserting each match count == 1; `git diff --stat`: CLAIMS.md 2+/2− |
+| `npm test` after | exit 0, 0 FAIL, **1 WARN** (O-3's). The A3 WARN is gone |
+| Parser reads the new date | `CLAIMS_TODAY=2026-11-08 check-claims` lists **A3** among 17 past-due rows; `CLAIMS_TODAY=2026-11-06` → 0 warnings |
+| Build | not run: the change is one Markdown file nothing imports; no bundle can differ |
+
+#### Step 5: adversarial self-check
+- **Blindspots:** no app text touched; §10.1/§10.2/§10.3 and the Markets stale-data fix can't regress from a register edit.
+- **DECISIONS.md:** O-3's 2026-10-10 re-affirmation stands; this entry doesn't reopen it and doesn't move A3's threshold.
+- **True?** "Not met" follows from the row's own definition (debt grows if abridged pairs rise or the human share falls), and neither happened in either month. The one way this could be wrong is the instrument reading old commits differently, and the 08-24/09-04 control rules that out.
+- **Prior work:** LAUNCH_READINESS §10.4 already records 0 abridged since 09-22; no figure there changed, so it isn't touched. **No conflict found.**
+
+**Seen, not fixed:** `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed (nothing to deploy).
+
+**Owner-facing, one line:** the "five languages are worth it" claim had its translation-debt half checked for the first time. Debt shrank both months (93 → 47 → 0 shortened translations), so it isn't refuted. That measure can't see that no human has reviewed the translations; that's your O-3 call, already made. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-17 (scheduled dev-agent; named item 177) — the last four 7-word runs shared with the "Economic Machine" video (L32, L33, L34 takeaway, q008's keyed option) are reworded in English. Meaning unchanged, so es/ko/zh/ja keep their text.
 
 Rules: W-6.2 ok (open numbered item, filed by the previous run's "Seen, not fixed"); W-9.4 n/a. Baseline `npm test` this run, before editing: exit 0 / 0 FAIL / **2 WARN** (O-3's, plus CLAIMS.md A3 past its 2026-10-16 check date. The clock, not this change).
