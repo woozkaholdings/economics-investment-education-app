@@ -9796,7 +9796,9 @@ function trendDirection(src) {
 //     see item 160 for the ones whose distractors are short and whose concept
 //     name is long, which need distractor prose in four unreviewed languages
 //     (an O-3 decision, not a run's). The number stays on screen every run
-//     instead.
+//     instead. (O-3 closed 2026-10-10: AI-reviewed translations keep shipping
+//     under "(Beta)", so that distractor prose is now a run's work; q008's
+//     was the first, 2026-10-17.)
 //
 //     BOTH DIRECTIONS ARE MEASURED ON PURPOSE. Trimming a correct option too
 //     hard just inverts the tell — "the short one is right" is the same defect

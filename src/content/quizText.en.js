@@ -90,9 +90,9 @@ export const quizText = [
   {
     "q": "The first rule of thumb for managing debt is:",
     "opts": [
-      "Always buy stocks",
-      "Never borrow money",
-      "Save 50% of income",
+      "Let income rise faster than productivity",
+      "Borrow more whenever interest rates fall",
+      "Don't borrow in your own currency",
       "Don't let debt rise faster than income"
     ],
     "explain": "Debt that keeps rising faster than income takes up more and more of it. Falling interest rates can keep the payments bearable for years, as they did for US households until 2008, but rates can only fall so far. The rule applies to households and countries alike, though a country that borrows in its own currency has more room, as Japan shows."

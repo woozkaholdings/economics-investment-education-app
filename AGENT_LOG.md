@@ -1693,6 +1693,14 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         min-margin ranking hid the loudest CJK tell left. **Class A is now empty except `q021`
         (unreachable).** Rank per language, not by the minimum.)
         **Do not re-read this item as blocked without re-ranking — rank the whole set, not the top of it.**
+      - ✏️ **CLASS B UNBLOCKED 2026-10-17 (dev-agent).** Class B was parked as "O-3's decision", and **O-3 closed
+        2026-10-10** with AI-reviewed translations re-affirmed, so distractor prose in es/ko/zh/ja is now a run's
+        work. `q008` (L40), the largest tell at 57-133%, got three distractors the lesson contradicts (the reverse of
+        Rule 2; borrowing more as rates fall; not borrowing in your own currency). §65 → en 34.8 / es 32.6 / ko 34.8 /
+        zh 30.4 / ja 32.6, shortest unchanged. **Next by per-language margin:** `q001` (ko 117%, zh 100%), `q021`
+        (en 102%: unreachable by trimming, but its distractors are short slogans, so new distractors reach it),
+        `q043` (es 95%), `q004` (ko 88%), `q019` (zh 86%), `q014` (ko 84%). Write distractors the lesson itself
+        contradicts, so none is "also true".
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -3213,6 +3221,46 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q008's three one-phrase slogans are replaced by distractors Lesson 40 itself contradicts, so its answer is no longer the longest option in any language. Five languages.
+
+Rules: W-6.2 ok (open numbered item, per W-11.2: the previous entry's "Seen, not fixed" was empty); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.**
+- Item 160 parks its remainder as class B, "distractor prose in four unreviewed languages… O-3's", and W-10.3 repeats that. **That premise broke on 2026-10-10:** O-3 closed with option (a) re-affirmed (`DECISIONS.md` § Machine-translated lesson content). Since then runs have shipped new prose in all five languages routinely. Nothing recorded the unblock, so class B sat idle for a week.
+- Instrument: `scratchpad/rank.mjs` ranks every question by relative margin, (correct − longest distractor) / longest distractor, in code points, per language. **Controls:** a 2x option scores 1.000, +1 of 100 scores 0.010. **Positive control:** its strict-longest counts reproduce §65 exactly (en 37.0 / es 34.8 / ko 37.0 / zh 32.6 / ja 34.8).
+- **`q008` is still the largest tell: en 111%, es 133%, ko 77%, zh 57%, ja 100%.** Its answer (*"Don't let debt rise faster than income"*, 38) sat against *"Always buy stocks"*, *"Never borrow money"* and *"Save 50% of income"* (17-18). There was nothing to trim, so the fix is new distractors.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q008 distractors, worded to match each language's L40 text. Each one is something the lesson contradicts, so none is "also true":
+  - *"Let income rise faster than productivity"*: the reverse of L40's Rule 2.
+  - *"Borrow more whenever interest rates fall"*: L40's 1980-2007 story, which ended in 2008.
+  - *"Don't borrow in your own currency"*: L40 says a country that does has *more* room.
+- The answer, its index (3) and `explain` are unchanged. The explain already refutes two of the three (falling rates "can only fall so far"; own currency gives "more room").
+- Lengths, distractors / answer: en 40/40/33 / 38; es 61/57/34 / 56; ko 22/23/17 / 23; zh 10/12/9 / 11; ja 18/15/10 / 18. The answer is neither strict longest nor strict shortest anywhere.
+- `check-data.mjs` §65 header comment: one sentence saying O-3 closed, so this prose is now a run's work.
+- Item 160: a dated note that class B is unblocked, plus the next questions by per-language margin.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`: per file, old block ×1 / new ×0 before; ×0 / ×1 after; U+FFFD ×0; a repeat refuses (exit 1). `git diff --stat`: 5 quiz files, 15+/15− |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 34.8 / es 32.6 / ko 34.8 / zh 30.4 / ja 32.6** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BAblGAXk.js`, system Node v24.18.0 |
+| Bundle | 6 new probes (en ×2, es, ko, zh, ja) each in 1 asset; old `Always buy stocks` / `Never borrow money` / `总是买股票` → 0; the answer → 2 (quizText + L40, expected); nonsense → 0 |
+| Live | not run: the quiz draws its order, so q008 is checked by bundle, as the 10-17 item-177 entry did |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** Each distractor contradicts a sentence in L40 in all five languages (checked against each language's lesson text). The question asks for "the first rule", i.e. L40's Rule 1, so none of them is a defensible answer.
+- **§10.1:** "Borrow more whenever interest rates fall" is imperative, but it's a wrong answer, and the explain says why. `check-blindspot` passes. §10.2/§10.3 untouched.
+- **Inverse tell:** shortest-option rates unchanged, and the answer index is unchanged, so §3's position spread is unchanged.
+- **Decisions / prior work:** this follows O-3's 10-10 record rather than reopening it. Yesterday's item-177 wording of the answer is kept. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** on one quiz question you could pick the right answer just because it was the longest. Its wrong answers are now plausible rules the lesson argues against. More questions like it are listed under item 160 and are now ordinary run work, because your O-3 call settled the translation question. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-17 (scheduled dev-agent; free pick, the A3 WARN) — CLAIMS.md A3's debt clause measured for the first time: abridged pairs 93 → 47 → 0 over two months and the human share flat at 0%, so debt did not grow. Not refuted; next check 2026-11-07. No source change.
 

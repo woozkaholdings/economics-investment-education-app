@@ -90,9 +90,9 @@ export const quizText = [
   {
     "q": "La primera regla general para manejar la deuda es:",
     "opts": [
-      "Siempre comprar acciones",
-      "Nunca pedir prestado",
-      "Ahorrar 50%",
+      "Deja que los ingresos crezcan más rápido que la productividad",
+      "Pide más prestado cada vez que bajen las tasas de interés",
+      "No te endeudes en tu propia moneda",
       "No dejes que la deuda crezca más rápido que los ingresos"
     ],
     "explain": "Una deuda que sigue creciendo más rápido que los ingresos ocupa una parte cada vez mayor de ellos. La caída de las tasas de interés puede mantener los pagos soportables durante años, como pasó con los hogares de EE.UU. hasta 2008, pero las tasas solo pueden bajar hasta cierto punto. La regla vale tanto para los hogares como para los países, aunque un país que se endeuda en su propia moneda tiene más margen, como muestra Japón."
