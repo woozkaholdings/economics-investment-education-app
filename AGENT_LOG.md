@@ -1569,7 +1569,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-177. **Four short phrases still shared with the "How the Economic Machine Works" transcript (§10.2, found 2026-10-16).** That run removed the six complete sentences the app had quoted (L29, L31, q004, q009). Its 7-word overlap instrument (`ngram.mjs` in that entry; a Wikipedia "Business cycle" control gives 1 run, a proper name) still finds four 7-word runs: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008's keyed option *"Don't have debt rise faster than income"*. L40 already words that rule *"Don't let debt rise faster than income"*, so the option is the cheapest fix, and it keeps option length unchanged for §65. Also L31's thinkAbout *"borrow from your future self"* (5 words). **Arguable:** these are short and close to common phrasing. Reword only with the instrument re-run, and do not turn this into a sweep of ordinary terms like "short-term debt cycle", which the lessons need.
+177. **✅ DONE 2026-10-17 (scheduled dev-agent): the four 7-word runs are reworded in English, and the rebuilt instrument finds 0 (see that day's run-log entry). L31's 5-word "borrow from your future self" is left: it is a common personal-finance phrase.** Original text follows. **Four short phrases still shared with the "How the Economic Machine Works" transcript (§10.2, found 2026-10-16).** That run removed the six complete sentences the app had quoted (L29, L31, q004, q009). Its 7-word overlap instrument (`ngram.mjs` in that entry; a Wikipedia "Business cycle" control gives 1 run, a proper name) still finds four 7-word runs: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008's keyed option *"Don't have debt rise faster than income"*. L40 already words that rule *"Don't let debt rise faster than income"*, so the option is the cheapest fix, and it keeps option length unchanged for §65. Also L31's thinkAbout *"borrow from your future self"* (5 words). **Arguable:** these are short and close to common phrasing. Reword only with the instrument re-run, and do not turn this into a sweep of ordinary terms like "short-term debt cycle", which the lessons need.
 
 176. **✅ Closed 2026-10-02 (dev-agent).** `check-blindspot.mjs`'s zh timing pattern now allows up to four Han characters between the verb and `的好`, and accepts bare `买`/`卖`. Its `fires` list (all must match) covers `买入的好时机`, `买入股票的好时机` and `买股票的好时机`. Live instances were 0 and are still 0. Details are in the 2026-10-02 run-log entry.
 
@@ -1879,6 +1879,9 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     **Possibly in scope too (noted 2026-10-11, not decided):** *"beautiful / ugly deleveraging"* is Dalio's
     coinage, used unattributed in lesson 34's heading and the Dashboard's dial, label and anchors, in five
     languages. The same one-word answer decides it; a run should not rename it first.
+    **Also (noted 2026-10-17, not decided):** lesson 40's "The Three Rules" are the video's closing "three
+    rules of thumb", in its order, and q008's stem calls Rule 1 "the first rule of thumb". The wording is
+    now the app's own (item 177); the structure is the same framing question as above.
 
 157. **✅ DONE 2026-08-30 (scheduled dev-agent, self-picked; the owner independently asked for
     this item the same day — see the attribution correction below), the same day it was filed —
@@ -3210,6 +3213,42 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-17 (scheduled dev-agent; named item 177) — the last four 7-word runs shared with the "Economic Machine" video (L32, L33, L34 takeaway, q008's keyed option) are reworded in English. Meaning unchanged, so es/ko/zh/ja keep their text.
+
+Rules: W-6.2 ok (open numbered item, filed by the previous run's "Seen, not fixed"); W-9.4 n/a. Baseline `npm test` this run, before editing: exit 0 / 0 FAIL / **2 WARN** (O-3's, plus CLAIMS.md A3 past its 2026-10-16 check date. The clock, not this change).
+
+**Step 3.5: the premise, measured.**
+- Transcript: sozai.app `index.md` (200, 33,431 b; a nonexistent slug → **404**).
+- Instrument rebuilt (`scratchpad/ngram.mjs`: maximal shared runs of ≥7 normalized words vs every `src/**` .js/.jsx line, README, index.html). **Result: exactly the item's four, 7 words each.** **Negative control:** Wikipedia "Business cycle" (raw, 200) through the same instrument → 3 runs, all proper names (Federal Reserve Bank of New York / St. Louis).
+- **The item understated two of the four.** In context, L33's *"This is the long-term debt peak."* is the video's sentence, in the same place in the story (the cycle reverses → this sentence). q008's option is the video's Rule 1 word for word. L34's takeaway is the video's *"income needs to grow faster than debt grows"*. Only L32 was a sentence fragment (*"spending and incomes grow faster than the"*, the rest already the app's own). Disposition unchanged: reword all four.
+
+#### What shipped
+- `lessonContent.economy.en.js` L32 *"outrun what the town can really produce"*, L33 *"That turning point is the peak of the long-term debt cycle."* ("peak" kept, because the paragraph after it says "when these peaks hit"), L34 takeaway *"Income has to outpace debt."* `quizText.en.js` q008 *"Don't let debt rise faster than income"*, now the same as L40's Rule 1. Each says what the old one said. No figure added (W-11.2).
+- **es/ko/zh/ja unchanged, by reading.** Each language's four sentences already say what the new English says ("than the town can really produce"; "this is the peak of long-term debt"; "income must grow faster than debt"). The q008 option was already "don't let…" in all four. L32/L33/L34 re-marked `ai` after reading those sentences against the new source. Ledger diff: 72 lines, 12 entries; `review-status` stale 3 → **0** per language. quizText has no ledger.
+- `readiness --write`: en 167,500 → **167,511** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`, 4 pairs: before old ×1 / new ×0; after old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| Instrument after | 4 → **0** runs at 7 words. Still fires at 6 (5 runs, one *"of the long term debt cycle"*: a term of art the item says to keep) |
+| `npm test` after | exit 0, 0 FAIL, 2 WARN (same two as baseline); §65 unchanged en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6 |
+| Guard sees the file | planted *"You should buy stocks now."* into the new q008 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BUz27ZjR.js`, system Node v24.18.0 |
+| Bundle | 3 new lesson probes each in 1 asset; q008's new option in 2 (quizText + L40's Rule 1, expected); 4 old phrases → 0; "The Long-Term Debt Cycle" control → 3; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), 29-33 seeded. en `#/lesson/32`, `/33`, `/34`: new true, old false; L33 heading control true. DOM `ZQXNONSENSEPROBE` planted true, removed false. q008 checked by bundle only (the quiz draws its order). localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **§10.2:** the diff only removes quoted wording. Diff grep `dalio|bridgewater` → 0. Item 158's open framing question (named quotes, "beautiful deleveraging") is untouched; I added one line to it about L40's three-rules structure rather than act on it. **§10.1:** diff grep `should buy|you should|recommend|buy now` → 0.
+- **True?** All four keep their claim. "Income has to outpace debt" is the condition for a debt burden to fall, which is what L34 teaches. q008 still keys the same option index, and its explain is unchanged.
+- **Prior work / decisions:** the four strings are absent from DECISIONS.md, CLAIMS.md, README and LAUNCH_*. This finishes what item 177 filed; it does not undo the 10-16 run. **No conflict found.**
+
+**Seen, not fixed:** only the item 158 note above. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** four more short lines (Lessons 32-34 and one quiz answer) still matched the "economic machine" video word for word. They're now in the app's own words. One framing question is yours, added to item 158: Lesson 40's "three rules" follow the video's structure. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-16 (scheduled dev-agent; free pick, §10.2 residual) — six sentences that reproduced the "How the Economic Machine Works" video near-verbatim (L29 subtitle + definition, L31 ×2, quiz q004/q009 explains) are now in the app's own words. Five languages.
 
