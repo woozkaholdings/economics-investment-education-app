@@ -20,10 +20,10 @@ export const quizText = [
   {
     "q": "What drives the economy?",
     "opts": [
-      "Only government spending",
-      "Gold reserves",
+      "Only what the government spends",
+      "Cash spent (credit doesn't count)",
       "Total spending (money + credit)",
-      "Stock prices"
+      "Prices sellers decide to set"
     ],
     "explain": "Total spending drives the economy. Spending = money + credit. Every dollar spent becomes someone else's income."
   },

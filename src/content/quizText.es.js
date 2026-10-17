@@ -20,10 +20,10 @@ export const quizText = [
   {
     "q": "¿Qué impulsa la economía?",
     "opts": [
-      "Solo gasto del gobierno",
-      "Reservas de oro",
+      "Solo lo que gasta el gobierno",
+      "Efectivo gastado (el crédito no cuenta)",
       "Gasto total (dinero + crédito)",
-      "Precios de acciones"
+      "Los precios que fijan los vendedores"
     ],
     "explain": "El gasto total impulsa la economía. Gasto = dinero + crédito. Cada dólar gastado se convierte en el ingreso de otra persona."
   },

@@ -1697,10 +1697,12 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         2026-10-10** with AI-reviewed translations re-affirmed, so distractor prose in es/ko/zh/ja is now a run's
         work. `q008` (L40), the largest tell at 57-133%, got three distractors the lesson contradicts (the reverse of
         Rule 2; borrowing more as rates fall; not borrowing in your own currency). §65 → en 34.8 / es 32.6 / ko 34.8 /
-        zh 30.4 / ja 32.6, shortest unchanged. **Next by per-language margin:** `q001` (ko 117%, zh 100%), `q021`
+        zh 30.4 / ja 32.6, shortest unchanged. **Next by per-language margin:** ~~`q001` (ko 117%, zh 100%)~~ (done
+        2026-10-17, see that day's q001 entry), `q021`
         (en 102%: unreachable by trimming, but its distractors are short slogans, so new distractors reach it),
         `q043` (es 95%), `q004` (ko 88%), `q019` (zh 86%), `q014` (ko 84%). Write distractors the lesson itself
         contradicts, so none is "also true".
+        After q001, §65 reads en 32.6 / es 30.4 / ko 32.6 / zh 28.3 / ja 30.4; `q021` heads the ranking.
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -3221,6 +3223,46 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q001 ("What drives the economy?") gets three distractors Lesson 29 contradicts, so its answer is no longer the longest option, or the only one in parentheses. Five languages.
+
+Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty). W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.**
+- Instrument rebuilt (`scratchpad/rank.mjs`: relative margin (correct − longest distractor) / longest distractor, code points, per language). **Controls:** 2x → 1.000, +1 of 100 → 0.010. **Positive control:** strict-longest counts reproduce §65 exactly (en 34.8 / es 32.6 / ko 34.8 / zh 30.4 / ja 32.6).
+- **Held:** `q001` tops the ranking at en 29% / es 30% / **ko 117% / zh 100%** / ja 67%, as item 160 said. It is class B: the answer *"Total spending (money + credit)"* is already a bare phrase, against *"Only government spending"*, *"Gold reserves"*, *"Stock prices"*.
+- **The item understated it slightly:** the answer was also the only option with a parenthesis and a `+`, a second visual cue alongside length.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q001 distractors, worded to match each language's L29 text. Each is something L29 contradicts:
+  - *"Only what the government spends"*: L29 says households buy about two thirds, more than three times all government.
+  - *"Cash spent (credit doesn't count)"*: L29 says credit spends exactly like money. Same parenthesis form as the answer.
+  - *"Prices sellers decide to set"*: L29 says prices come *from* spending (total spent ÷ quantity sold).
+- The answer, its index (2) and `explain` are unchanged. The explain (*"Spending = money + credit"*) already refutes the second.
+- Lengths, distractors / answer: en 31/33/28 / 31; es 29/39/36 / 30; ko 9/14/11 / 13; zh 7/11/9 / 10; ja 9/14/9 / 10. Not strictly longest or shortest anywhere.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`, scoped to q001's `opts`: per file old ×1 / new ×0 before, U+FFFD ×0; a repeat refuses (exit 1). `git diff --stat`: 5 quiz files, 15+/15− |
+| Rank after | q001 out of the top 12. §65's own figures in the next row agree with the instrument |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 32.6 / es 30.4 / ko 32.6 / zh 28.3 / ja 30.4** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Guard sees the file | planted *"You should buy stocks now."* as a q001 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BE50B4X4.js`, system Node v24.18.0 |
+| Bundle | 7 new probes (en ×3, es, ko, zh, ja) each in 1 asset; old `Gold reserves` / `Only government spending` / `黄金储备` → 0; the answer → 1; nonsense → 0 |
+| Live | not run: the quiz draws its order, so q001 is checked by bundle, as the q008 entry did |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** Sellers do post prices, so the third distractor is the closest call. But the question asks what *drives* the economy, and L29 teaches prices as an output of spending in all five languages. The other two each contradict one L29 sentence directly.
+- **§10.1:** none of the new options is advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0, and `check-blindspot` passes. §10.2: the money + credit framing in L29 and the answer is untouched, and nothing quoted was added. §10.3 untouched.
+- **Inverse tell / position:** shortest-option rates unchanged; answer index unchanged, so §3's spread is unchanged.
+- **Prior work / decisions:** follows O-3's 10-10 record and item 160's class-B note. It doesn't redo the q008 run. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the first quiz question could be answered by picking the longest option, the only one with a parenthesis. Its wrong answers are now ideas Lesson 29 argues against. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q008's three one-phrase slogans are replaced by distractors Lesson 40 itself contradicts, so its answer is no longer the longest option in any language. Five languages.
 
