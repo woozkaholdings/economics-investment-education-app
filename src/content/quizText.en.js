@@ -440,10 +440,10 @@ export const quizText = [
   {
     "q": "Why is personal finance often left out of school curricula?",
     "opts": [
-      "There is nothing useful that could be taught about it",
-      "Curricula favor examinable subjects, and money rules are local and change often",
-      "It is deliberately withheld to keep people in debt",
-      "Every country already teaches it thoroughly"
+      "Nothing needs teaching: a first payslip explains money quickly enough",
+      "Curricula favor examinable subjects; money rules keep changing",
+      "It's withheld deliberately, to keep people borrowing and indebted",
+      "Money rules hardly differ or change, so families can handle it"
     ],
     "explain": "Curricula are built around examinable, standardizable subjects, and money rules differ by country and change every few years — so the topic is awkward to standardize and goes stale quickly. It fell between subjects rather than being withheld on purpose. The effect on you is the same either way, which is why it's worth naming."
   },

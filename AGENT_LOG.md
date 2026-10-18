@@ -1700,9 +1700,13 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         zh 30.4 / ja 32.6, shortest unchanged. **Next by per-language margin:** ~~`q001` (ko 117%, zh 100%)~~ (done
         2026-10-17, see that day's q001 entry), ~~`q021`~~ (done 2026-10-18: answer trimmed AND new
         distractors; ✏️ its old distractors were 44-54-char sentences, not "short slogans", and one, *"less money
-        overall"*, echoed L7's own benefits-cliff caveat), `q043` (es 95%), `q004` (ko 88%), `q019` (zh 86%),
+        overall"*, echoed L7's own benefits-cliff caveat), ~~`q043`~~ (done 2026-10-18: answer trimmed AND new
+        distractors; ✏️ L41's stated 3 min sat 2 words under the 4-min boundary, so English options must keep
+        their word count), `q004` (ko 88%), `q019` (zh 86%),
         `q014` (ko 84%). Write distractors the lesson itself contradicts, so none is "also true".
-        After q021, §65 reads en 30.4 / es 28.3 / ko 30.4 / zh 26.1 / ja 28.3; `q043` heads the ranking.
+        After q043, §65 reads en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1; `q004` heads the ranking.
+        ⚠️ **Quiz options count toward a lesson's `minutes`** (READING_MODEL counts every option), so
+        check the lesson's word total before and after; `check-data` §2 fails if it crosses a boundary.
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -3223,6 +3227,47 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-18 (scheduled dev-agent; named item 160, class B) — quiz q043 (why school skips personal finance): answer trimmed and three distractors Lesson 41 contradicts, so the answer is no longer the longest option. Five languages.
+
+Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 30.4 / es 28.3 / ko 30.4 / zh 26.1 / ja 28.3.
+
+**Step 3.5: the premise, measured.**
+- Instrument rebuilt (`scratchpad/rank.mjs`, relative margin in code points). **Controls:** 2x → 1.000, +1 of 100 → 0.010. **Positive control:** strict-longest counts reproduce the baseline §65 exactly.
+- **Held:** `q043` tops the ranking at en 49% / **es 95%** / ko 71% / zh 74% / ja 25% (en 53/[79]/50/43). Class B: the answer was the only two-clause option; two distractors ("nothing useful could be taught", "every country already teaches it thoroughly") weren't reasons at all.
+- **New constraint the item didn't name:** READING_MODEL counts quiz options in a lesson's `minutes`. L41 sat at **698 words (3 min), 2 under the 4-min boundary**. The first draft added 5 English words → 703 → `check-data` §2 **FAIL** (minutes 3, computes 4). Rather than add a minute (W-11.2's length watch), the English options were reworded back to the original 38 words.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q043 `opts`, worded from each language's L41 text. Answer index (1) and `explain` unchanged; the explain still says "differ by country" and "rather than withheld on purpose".
+  - Answer: *"Curricula favor examinable subjects; money rules keep changing"* (*"are local and"* dropped).
+  - *"Nothing needs teaching: a first payslip explains money quickly enough"*: L41 calls experience an "unusually slow and expensive" teacher whose feedback arrives years later.
+  - *"It's withheld deliberately, to keep people borrowing and indebted"*: L41 says "Nobody sat in a room and decided" this.
+  - *"Money rules hardly differ or change, so families can handle it"*: L41 says they "differ by country and change every few years", and family teaching passes on habits "including the ones that didn't work".
+- Lengths, answer in brackets: en 69/[62]/65/62; es 84/[82]/80/77; ko 50/[48]/35/46; zh 24/[24]/22/23; ja 32/[34]/33/35. Not strictly longest or shortest anywhere (en ties for shortest, zh ties for longest).
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`: per file old block ×1 / new ×0, answer-not-strict-extreme assert, U+FFFD ×0; a repeat refuses (exit 1). English then hand-edited for the word count. `git diff --stat`: 5 quiz files, 20+/20− |
+| L41 words | 698 before → 703 (draft, FAIL) → **698** after; `minutes` 3, unchanged |
+| Rank after | q043 en −10% / es −2% / ko −4% / zh 0% / ja −3%; `q004` now heads |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Guard sees the file | planted *"You should buy stocks now."* as a q043 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-Dh7qy5Wr.js`, system Node v24.18.0 |
+| Bundle | 8 new probes (en ×4, es, ko, zh, ja) each in 1 asset; 4 old options → 0; nonsense → 0 |
+| Live | **Run this time:** L41's reader shows its check question in a fixed place, unlike Practice. `dist/` served statically, `#/lesson/41`: all 4 new options render in both the pre-question and the end check, the old ones → 0; clicking the keyed option shows "CORRECT!" and the explain |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** The family option is the closest call, since L41 says family is who usually fills the gap. But its first clause (rules hardly differ or change) contradicts L41 directly, and L41 says that family teaching is "not a substitute for having been taught". Each distractor contradicts an L41 sentence present in all five languages.
+- **§10.1:** none of the options is advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|20xx` → 0. §10.2/§10.3 untouched. No dates or figures added.
+- **W-11.2:** the answer got shorter, no statistic added, lesson minutes and English word count unchanged.
+- **Prior work / decisions:** continues item 160's class-B queue in order. Doesn't redo q001/q008/q021. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the "why don't schools teach money?" quiz question could be answered by picking the longest option. Its wrong answers are now ideas Lesson 41 argues against. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-18 (scheduled dev-agent; named item 160, class B) — quiz q021 (tax brackets): answer trimmed and three new distractors Lesson 7 contradicts, so the answer is no longer twice the length of any other option. Five languages.
 

@@ -440,10 +440,10 @@ export const quizText = [
   {
     "q": "¿Por qué las finanzas personales suelen quedar fuera de los planes de estudio escolares?",
     "opts": [
-      "No hay nada útil que se pudiera enseñar al respecto",
-      "Los planes de estudio favorecen las materias evaluables, y las reglas del dinero son locales y cambian con frecuencia",
-      "Se oculta deliberadamente para mantener a la gente endeudada",
-      "Todos los países ya la enseñan a fondo"
+      "No hace falta enseñarlo: con el primer sueldo uno entiende el dinero bastante rápido",
+      "Los planes favorecen materias evaluables, y las reglas del dinero cambian a menudo",
+      "Se oculta a propósito, para que la gente siga pidiendo prestado y viva endeudada",
+      "Las reglas del dinero casi no varían ni cambian, así que basta con la familia"
     ],
     "explain": "Los planes de estudio se construyen alrededor de materias evaluables y estandarizables, y las reglas del dinero varían según el país y cambian cada pocos años — así que el tema es difícil de estandarizar y queda obsoleto rápido. Cayó entre las materias en vez de ser ocultado a propósito. El efecto sobre ti es el mismo de cualquier forma, por eso vale la pena nombrarlo."
   },
