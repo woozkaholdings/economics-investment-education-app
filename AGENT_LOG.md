@@ -227,6 +227,64 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-12 — set by the weekly review 2026-10-18. Supersedes W-11's *active* clauses below. The standing rules are UNCHANGED and still binding: W-11.1's entry format (it worked, so it stays), W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week: 34 commits since `654f974`: 29 dev-agent (28 runs; one run made two commits, see
+> W-12.3), 4 market refreshes and 1 review. 28 run-log entries for 28 runs, 4/day on every full day,
+> no mismatch, no outage.** Build green. `npm test` exits 0 with 0 FAIL and 1 WARN (O-3's disclosure).
+> Grade **A**. Every test W-11 set passed, measured off the instruments, and no content error or
+> advice-adjacency was found. The launch is still blocked on O-2, which only the owner can move.
+>
+> ### W-12.0 — W-11's tests, measured. All three pass.
+> (i) **Entry size:** the mean entry dated 10-12 → 10-18 is **4,962 b** (n=26, target ≤ 5,500). The
+> largest heading is **295 chars** (cap 400). (ii) **§65 longest-option rates at `687db75`:** en
+> **28.3** / es **26.1** / ko **28.3** / ja **26.1** / zh **23.9**, against a ceiling of 37.0 / 34.8 /
+> 37.0 / 34.8 / 32.6. Shortest-option rates are unchanged at 2.2 / 2.2 / 0.0 / 4.3 / 2.2. (iii)
+> **Length watch:** English lesson text went from 166,954 to **167,511 chars (+0.3%)**, and lesson
+> time held at **177 min**.
+>
+> ### W-12.1 — item 160 has reached its goal. Stop picking it.
+> Class B was unblocked correctly on 10-17 (O-3 had closed), and four runs (q008, q001, q021, q043)
+> took English from 37.0% to **28.3%**. Chance is 25.0%. With 46 questions the remaining gap is under
+> 2 questions, which is noise, not a tell. **Item 160 is no longer a pick.** §65's rates at `687db75`
+> are now a regression ceiling only: en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9, with
+> shortest-option rates at or below 2.2 / 2.2 / 0.0 / 4.3 / 2.2. Re-open item 160 only if a later
+> edit pushes a rate above that ceiling.
+>
+> ### W-12.2 — keep the accuracy sweep, short and measured. W-11.2's rules still hold.
+> This week's fixes were sound (spot-checked by the review: loss aversion's "classic estimate" range,
+> L35's rates "usually move the same way", L34 tax rises as austerity, M0/M2, PMI on the payment
+> schedule, the q008 distractors against L40's own text). Prefer narrowing a false clause to adding a
+> figure. **One clarity candidate, optional and subject to W-9.4:** the Market Dashboard Bonds note
+> *"Long maturities most sensitive, but their yields usually rise less"* is accurate but terse, and a
+> beginner can't tell that "sensitive" means price. If picked, say price and yield explicitly.
+> **When the sweep turns up nothing,** take an open numbered item (e.g. 117, 140, 149) rather than
+> re-reading a surface a run has already declared clean.
+>
+> ### W-12.3 — commit safety: assert what was staged, not just the tree.
+> `0e3d6d8` committed with an empty change set. The 8 paths were passed as one unsplit zsh scalar, so
+> `git add` failed and the run's tree-count check still passed. `9b80006` carried the content, and
+> the run documented it honestly. **From now on:** before committing, assert that
+> `git diff --cached --name-only | wc -l` equals the expected file count, and use a zsh array for path
+> lists. One line in the entry is enough. Not a pick.
+>
+> ### W-12.4 — owner items. O-2 is still the only critical-path item (5th week).
+> **O-2:** one analytics account and one public key, ~20 minutes. Until it lands, §4.3's Phase-0 gate
+> stays **❌ Unmeasurable**. **O-5** (have the market job push, or document the weekend gap) and
+> **O-6** (automate the archive move) are still undecided. They are asked again in the review, not
+> here. Runs should not restate them in entries.
+>
+> ### W-12.5 — deploy and market data, measured. The usual weekday shape.
+> `check-deployed --identify`: the live site is **`2587ec2`** (Fri 10-16 19:50), byte-identical. It
+> is 5 content commits behind (`bfe677b` and the four item-160 quiz fixes). The live `market.json` is
+> asOf 10-16, so Sectors goes dark **Wed 2026-10-21** unless there's a push before then. Not a defect.
+>
+> ### W-12.6 — this block's test, for 2026-10-25.
+> (i) §65 at or below W-12.1's ceiling. (ii) The mean entry dated 10-19 → 10-25 is ≤ 5,500 b, and no
+> heading is over 400 chars. (iii) English lesson text grows ≤ 0.5% from **167,511** chars. (iv)
+> No empty commit: every dev-agent commit touches at least one file. Run the instruments; do not
+> retype any of these from here.
+
 > ## PRIORITY BLOCK W-11 — set by the weekly review 2026-10-11. Supersedes W-10's *active* clauses below. The standing rules are UNCHANGED and still binding: W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week shipped 28 dev-agent commits, 3 owner-directed ones and 4 market refreshes (35 since
@@ -1671,7 +1729,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 161. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-160. **🟡 PARTLY DONE, and its own stop-clause is CORRECTED (2026-09-02, owner-directed: "do item 160
+160. **✅ GOAL REACHED 2026-10-18 (weekly review, W-12.1): §65 longest-option rates are en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9 against 25.0% chance. No longer a pick; those rates are now a regression ceiling.** Earlier status follows. **🟡 PARTLY DONE, and its own stop-clause is CORRECTED (2026-09-02, owner-directed: "do item 160
 ⭐ **PROMOTED by the weekly review 2026-09-20 (W-8.5).** This item still carries a standing `npm test` WARN (longest-option tapping scores en 52.2% against a 25.0% baseline) and was not picked once in the 61 dev-agent commits of 2026-09-13 → 09-20. **While that WARN stands, this item outranks a sentence-audit pick** — see W-8.5 for the rule and the override clause.
     next"). The clause below says "there is nothing left in it that trimming can honestly reach" and
     routes the remainder to O-3. That is TRUE OF MECHANICAL CUTS — re-proven this run with a stronger
