@@ -378,6 +378,9 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // in 1999-2000 (-0.7%), 2004-06 (+2.7%) and 2015-18 (0.0%) it moved least,
 // because its yield rose less than the 2-year's in all 5 cycles
 // (+1.44/+0.05/-0.18/0.00/+1.45 vs +3.05/+1.21/+2.38/+1.65/+2.97 points).
+// 2026-10-18: the note said "Long maturities most sensitive" without saying
+// sensitive in WHAT, in a sentence whose other half is about yields. It now
+// names both: price per unit of yield change (duration), then the yield itself.
 export const rateEffects = [
   {
     key: "stocks",
@@ -398,11 +401,11 @@ export const rateEffects = [
     name: { en: "Bonds", es: "Bonos", ko: "채권", zh: "债券", ja: "債券" },
     rising: "↓", falling: "↑",
     note: {
-      en: "Long maturities most sensitive, but their yields usually rise less",
-      es: "Los de largo plazo, más sensibles, pero su rendimiento suele subir menos",
-      ko: "장기채가 가장 민감하지만, 장기 금리는 대개 덜 오름",
-      zh: "长期债券最敏感，但其收益率通常涨得更少",
-      ja: "長期債が最も敏感だが、その利回りはたいてい上昇幅が小さい",
+      en: "For the same yield change, long-term bond prices move most, but their yields usually rise less",
+      es: "A igual cambio de rendimiento, el precio de los bonos a largo plazo varía más, pero su rendimiento suele subir menos",
+      ko: "수익률이 같은 폭으로 변하면 장기채 가격이 가장 크게 움직이지만, 장기채 수익률은 대개 덜 오름",
+      zh: "收益率变动幅度相同时，长期债券价格波动最大，但其收益率通常涨得更少",
+      ja: "利回りの変化が同じなら長期債の価格が最も大きく動くが、その利回りはたいてい上昇幅が小さい",
     },
   },
   {

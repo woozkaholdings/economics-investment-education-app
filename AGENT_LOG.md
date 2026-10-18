@@ -257,7 +257,7 @@ for the history. No open P1/P2 items.
 > schedule, the q008 distractors against L40's own text). Prefer narrowing a false clause to adding a
 > figure. **One clarity candidate, optional and subject to W-9.4:** the Market Dashboard Bonds note
 > *"Long maturities most sensitive, but their yields usually rise less"* is accurate but terse, and a
-> beginner can't tell that "sensitive" means price. If picked, say price and yield explicitly.
+> beginner can't tell that "sensitive" means price. If picked, say price and yield explicitly. **Picked 2026-10-18** (run 1 of 2 under W-9.4; a second run re-reads it).
 > **When the sweep turns up nothing,** take an open numbered item (e.g. 117, 140, 149) rather than
 > re-reading a surface a run has already declared clean.
 >
@@ -3285,6 +3285,40 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-18 (scheduled dev-agent; free pick, W-12.2's clarity candidate) — Reference → Market signals, Bonds card: the note now says what "most sensitive" meant: for the same yield change, long-term bond prices move most. Five languages.
+
+Rules: W-6.2 ok (free pick named by W-12.2; the previous entry's "Seen, not fixed" was empty); W-9.4 applies (short string, hand-read): this is run 1 of 2, so a second run should re-read it before calling it settled. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Step 3.5: the premise, measured.**
+- **Held, and it's narrower than "sensitive is ambiguous".** The card reads "Rates ↑ Price ↓" above the note, so "sensitive" leans toward price. But the note's own sentence has two quantities, names only the second ("their yields"), and says "maturities", which a beginner may not know. The Stocks note ("Growth names most sensitive") uses the same construction without a second quantity, so it is left alone.
+- **The facts the note rests on, re-measured** (FRED DGS2/10/20/30, keyless CSV; `scratchpad/cycles.mjs`, par bond, semiannual). **Control:** modified duration at 5% → 2y **1.88** / 10y **7.79** / 30y **15.45**, which matches the textbook values. 30-year yield change, first hike → last hike: +1.38 / +0.14 / −0.15 / −0.02 / +1.48, against the 2-year's +2.91 / +1.36 / +2.51 / +1.61 / +2.87. So it rose less in **all 5** cycles, and "usually" stays a safe hedge. The 30-year price fell most only in 1994-95 (−16.0%) and 2022-23 (−25.9%), the same as the code comment. Small day-pick differences from the comment's figures (e.g. +1.38 vs +1.44) don't change any sign or ranking.
+
+#### What shipped
+- `src/content/markets.js` `rateEffects.bonds.note`, all five languages: *"For the same yield change, long-term bond prices move most, but their yields usually rise less"*. "Price" and "yield" are both named, and "maturities" is now "long-term bonds". es/ko/zh/ja say the same thing in their own phrasing (e.g. ja 「利回りの変化が同じなら長期債の価格が最も大きく動くが…」).
+- A 3-line comment under the existing Bonds re-measurement says why the note changed. No figure was added (W-11.2).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 1 file, 8+/5− |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged |
+| Guard sees the file | planted *"You should buy bonds now."* in the en note → `check-blindspot` **exit 1**; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-DJbvC0EJ.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) each in 1 asset; old en note → 0; nonsense → 0 |
+| Live | `dist/` served statically. en at 320px: the note renders; Bonds card 138×186, same row height as Stocks, overflow 0, page overflow 0. **es (the longest string)** at 320px: Bonos 138×202, the same as Acciones in its row, overflow 0, page overflow 0 |
+
+#### Step 5: adversarial self-check
+- **Still true?** "Prices move most for the same yield change" is duration, and the control reproduces it. The new wording doesn't claim long bonds *fell* most in hiking cycles, which history refutes in 3 of 5.
+- **§10.1:** a description of a mechanism, not advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|20xx` → 1 hit, and it's the dated code comment, which doesn't render. §10.2/§10.3 untouched; no live-looking figure.
+- **Prior work / decisions:** this keeps the 2026-10-12 Bonds correction ("yields usually rise less") intact and only clarifies its first half. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2 (markets.js, AGENT_LOG.md).
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Bonds card on Market signals said long bonds were "most sensitive" without saying to what. It now says their prices move most for the same change in yield.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-18 (scheduled dev-agent; named item 160, class B) — quiz q043 (why school skips personal finance): answer trimmed and three distractors Lesson 41 contradicts, so the answer is no longer the longest option. Five languages.
 
