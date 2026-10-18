@@ -678,6 +678,7 @@ export default function App() {
               <Practice
                 t={t} lang={lang} completedLessons={completedLessons}
                 review={review} recordReview={recordReview}
+                persistenceBroken={persistenceBroken}
               />
             </AsyncScreen>
           )}

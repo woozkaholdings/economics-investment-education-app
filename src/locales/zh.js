@@ -129,6 +129,8 @@ export default {
     reviewNotStartedBody: "答完课程末尾的检测题，它就会开始出现在这里。",
     reviewEmptyTitle: "已全部复习完",
     reviewEmptyBody: "题目会在你作答一两天后再次出现，帮助你记牢。",
+    reviewNoStorageTitle: "此处无法保存复习",
+    reviewNoStorageBody: "你的浏览器正在阻止网站存储，因此你答过的题目会在重新加载或关闭此页面后丢失，之后也无法在这里再次复习。",
     practiceAllTemplate: "练习全部 {n} 道题",
     reviewCompleteTitle: "复习完成",
     reviewScoreTemplate: "{total}题中答对{correct}题",

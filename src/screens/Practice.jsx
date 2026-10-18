@@ -110,7 +110,7 @@ const QUIZ_TEXT_LOADERS = {
   ja: () => import("../content/quizText.ja.js"),
 };
 
-export default function Practice({ t, lang, completedLessons, review, recordReview }) {
+export default function Practice({ t, lang, completedLessons, review, recordReview, persistenceBroken = false }) {
   // Frozen when a session starts: answering mutates `review`, and a live queue
   // would drop the current question out from under the learner mid-answer.
   const [session, setSession] = useState(null);
@@ -535,15 +535,27 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
         // "Caught up" is kept for what it actually describes: answered
         // everything, next repetition not due yet. That is a real achievement
         // and still earns the check.
+        //
+        // A third state since 2026-10-18: storage blocked. Both strings above
+        // are false there. Measured live on the built app with every
+        // `localStorage` access throwing: answer lesson 29's check and this
+        // card says questions "come back here a day or two after you answer
+        // them"; after a real reload it says "Answer the check question… and
+        // it starts showing up here" to a learner who just did. Control, same
+        // flow with storage working: the question survives the reload. So
+        // when persistence is broken the card says what actually happens.
         <Card style={{ marginTop: space["5"], textAlign: "center" }}>
           <div
             style={{
               display: "flex", justifyContent: "center",
-              color: seen > 0 ? ink.ok : ink.muted,
+              color: seen > 0 && !persistenceBroken ? ink.ok : ink.muted,
               marginBottom: space["3"],
             }}
           >
-            <Icon name={seen > 0 ? "check" : "book"} size="2rem" strokeWidth={2.2} />
+            <Icon
+              name={persistenceBroken ? "info" : seen > 0 ? "check" : "book"}
+              size="2rem" strokeWidth={2.2}
+            />
           </div>
           {/* The id is a test hook and is deliberately NOT tied to which of the
               two strings renders: it names the card, so the state matrix can
@@ -551,10 +563,10 @@ export default function Practice({ t, lang, completedLessons, review, recordRevi
               (scripts/a11y-states.js, item 118). Same convention as
               `how-review-title` below and `track-<key>-title` on Learn. */}
           <Text id="review-empty-title" variant="heading" color={ink.strong}>
-            {seen > 0 ? t.reviewEmptyTitle : t.reviewNotStartedTitle}
+            {persistenceBroken ? t.reviewNoStorageTitle : seen > 0 ? t.reviewEmptyTitle : t.reviewNotStartedTitle}
           </Text>
           <Text variant="small" color={ink.muted} style={{ marginTop: space["2"] }}>
-            {seen > 0 ? t.reviewEmptyBody : t.reviewNotStartedBody}
+            {persistenceBroken ? t.reviewNoStorageBody : seen > 0 ? t.reviewEmptyBody : t.reviewNotStartedBody}
           </Text>
         </Card>
       )}

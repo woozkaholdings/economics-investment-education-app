@@ -2298,6 +2298,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
     > starts showing up here"** — to a learner who had just done exactly that. **The empty state is
     > not merely uninformative here; it describes the learner's behavior wrongly**, which is a
     > sharper version of the same defect (a) was filed about.
+    > ✅ **The wrong-description half FIXED 2026-10-18 (scheduled dev-agent):** with storage blocked, the nothing-due card now says review can't be saved here (`reviewNoStorage*`, five languages), fresh, after answering and after a reload, measured live with an unblocked control. **(a) itself is still open.**
     - **Honest priority: low.** The defect is fixed; these are the seams around it. **All of it is
       downstream of O-1** — nobody has opened the app, so no learner has met either branch.
 
@@ -3285,6 +3286,51 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-18 (scheduled dev-agent; open item 117, its 09-07 storage note) — Review's nothing-due card no longer gives false instructions when site storage is blocked: it says answered questions are lost on reload instead of telling the learner to do what they just did. Five languages.
+
+Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty); W-9.4 n/a (new copy, not a hand read; the Bonds note's second read is still owed to a later run, since the previous run was that read's run 1). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** W-12.2's sweep came first. A quantifier scan (`scratchpad/quant.mjs`, control sentence fired) covered L20, 23-26, 28, 43, 44 and essentials 2, 3, 9, 10, 11, 14, 15, plus `economicSignals`, `policyScenarios` and `kidsContent`: 133 hits. Every checkable one had already been measured (L23's 1981 figures on 09-19, L28's trading claim on 10-15, L7/L10's take-home line on 09-11, L44's labor-income lines on 09-11). One was never examined, kids 9-12 *"Almost every adult eventually borrows money for something big"* (0 hits in both logs and CLAIMS). I didn't pick it because no source I know of gives a lifetime rate, and current-holdings data (SCF) can't refute "eventually". So, per W-12.2, an open numbered item: 117's 09-07 note, the only part of 117/140/149 that describes a measured learner-visible defect.
+
+**Step 3.5: the premise, measured.** Served HEAD's build (`index-DJbvC0EJ.js`, same as the previous run's) statically, plus a `blocked.html` whose `localStorage` getter throws. 404 control → 404. Driven through the UI:
+- Blocked, fresh: *"Nothing to review yet / Answer the check question…"*
+- Blocked, after answering L29's check: *"You're all caught up / Questions come back here a day or two after you answer them"*. That's a promise this device can't keep.
+- Blocked, after `location.reload()` (marker gone, blocker still installed): back to *"Answer the check question…"*, to a learner who just did. **Held, as the note said.**
+- **Control**, unblocked, storage cleared, same flow + reload: `ecycles_review` holds q001 and the card reads "caught up" with "Practice all questions (1)". So the instrument discriminates, and the defect is specific to blocked storage.
+
+#### What shipped
+- `Practice.jsx`: the nothing-due card gets a third state. When `persistenceBroken`, it shows the `info` icon at `ink.muted` and `reviewNoStorageTitle` / `reviewNoStorageBody`. This overrides both existing variants. The practice button is unchanged, since practicing in-session still works. A comment records the measurement.
+- `App.jsx`: passes `persistenceBroken` (already in `useAppState`) to `Practice`.
+- Locales, 2 keys × 5: en *"Review can't be saved here"* / *"Your browser is blocking site storage, so questions you answer are lost when you reload or close this page, and can't come back here for review later."* es/ko/zh/ja reuse each language's existing `storageBlockedBody` terms (e.g. ja ストレージ, 再読み込み).
+- Item 117's 09-07 note: a dated line saying the wrong-description half is fixed. **(a), hidden vs. route-to-Learn, is still open and still the owner's call.**
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 7 files, 28+/5− |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged |
+| Guard sees the keys | removed `reviewNoStorageBody` from ja → `npm test` **exit 1**, *"TR.ja: missing key"*; restored (`cmp`) |
+| `check-blindspot` | exit 0; diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0 |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-CePfGO_s.js`, system Node v24.18.0 |
+| Bundle | 5 new titles each in 1 asset; nonsense → 0 |
+| Live, blocked | fresh, after answering, and after a real reload all show the new card (info icon); "Practice all questions (1)" still shown in-session |
+| Live, control | unblocked: fresh "Nothing to review yet", after answering "caught up", the same as before |
+| Layout | es (longest) at 320px: card 288 wide, card overflow 0, page overflow 0; screenshot checked |
+
+#### Step 5: adversarial self-check
+- **Is the new copy true?** "Lost when you reload or close" is what the measured reload shows. "Can't come back… later" has one edge case: a tab left open, never reloaded, past the due date. I judged that negligible, and mobile browsers discard background tabs anyway.
+- **Redundant with the global notice?** It overlaps (*"can't keep… review schedule"*), but that notice can be dismissed, and this card was actively false. It now says the same thing as the notice instead of contradicting it.
+- **§10.1/§10.2/§10.3:** no advice, no branding, not kids content. No date or figure.
+- **DECISIONS.md:** localStorage-only state unchanged. No new storage.
+- **Prior work:** doesn't touch 117(a) or (b), the 08-26 not-started fix, or the 09-02 rail fix. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** kids 9-12 *"Almost every adult eventually borrows money for something big"* has never been measured. It's probably high but not "almost every". I couldn't measure it this run, so it isn't numbered. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** if a browser blocks storage, the Review tab used to tell learners to answer a question they had just answered. It now says plainly that review can't be saved there.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-18 (scheduled dev-agent; free pick, W-12.2's clarity candidate) — Reference → Market signals, Bonds card: the note now says what "most sensitive" meant: for the same yield change, long-term bond prices move most. Five languages.
 

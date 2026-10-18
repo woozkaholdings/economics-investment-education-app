@@ -129,6 +129,8 @@ export default {
     reviewNotStartedBody: "레슨 끝의 확인 문제에 답하면 그 문제가 여기에 나타나기 시작합니다.",
     reviewEmptyTitle: "모두 복습했습니다",
     reviewEmptyBody: "문제는 답한 뒤 하루이틀 지나 다시 나타나 기억에 남도록 도와줍니다.",
+    reviewNoStorageTitle: "여기서는 복습을 저장할 수 없습니다",
+    reviewNoStorageBody: "브라우저가 사이트 저장소를 차단하고 있어, 답한 문제는 이 페이지를 새로고침하거나 닫으면 사라지고 나중에 여기서 다시 복습할 수 없습니다.",
     practiceAllTemplate: "문제 {n}개 모두 풀기",
     reviewCompleteTitle: "복습 완료",
     reviewScoreTemplate: "{total}개 중 {correct}개 정답",
