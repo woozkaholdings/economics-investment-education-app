@@ -1698,11 +1698,11 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
         work. `q008` (L40), the largest tell at 57-133%, got three distractors the lesson contradicts (the reverse of
         Rule 2; borrowing more as rates fall; not borrowing in your own currency). §65 → en 34.8 / es 32.6 / ko 34.8 /
         zh 30.4 / ja 32.6, shortest unchanged. **Next by per-language margin:** ~~`q001` (ko 117%, zh 100%)~~ (done
-        2026-10-17, see that day's q001 entry), `q021`
-        (en 102%: unreachable by trimming, but its distractors are short slogans, so new distractors reach it),
-        `q043` (es 95%), `q004` (ko 88%), `q019` (zh 86%), `q014` (ko 84%). Write distractors the lesson itself
-        contradicts, so none is "also true".
-        After q001, §65 reads en 32.6 / es 30.4 / ko 32.6 / zh 28.3 / ja 30.4; `q021` heads the ranking.
+        2026-10-17, see that day's q001 entry), ~~`q021`~~ (done 2026-10-18: answer trimmed AND new
+        distractors; ✏️ its old distractors were 44-54-char sentences, not "short slogans", and one, *"less money
+        overall"*, echoed L7's own benefits-cliff caveat), `q043` (es 95%), `q004` (ko 88%), `q019` (zh 86%),
+        `q014` (ko 84%). Write distractors the lesson itself contradicts, so none is "also true".
+        After q021, §65 reads en 30.4 / es 28.3 / ko 30.4 / zh 26.1 / ja 28.3; `q043` heads the ranking.
       - **Length is the ONLY exploitable axis in this quiz, and that is now measured rather than assumed.**
         Two other tells were scored this date, each with controls that fired in both directions:
         **answer position** — `0:10 / 1:13 / 2:13 / 3:10` over 46 questions, best single position
@@ -3223,6 +3223,46 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-18 (scheduled dev-agent; named item 160, class B) — quiz q021 (tax brackets): answer trimmed and three new distractors Lesson 7 contradicts, so the answer is no longer twice the length of any other option. Five languages.
+
+Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 32.6 / es 30.4 / ko 32.6 / zh 28.3 / ja 30.4.
+
+**Step 3.5: the premise, measured.**
+- Instrument rebuilt (`scratchpad/rank.mjs`, relative margin in code points). **Controls:** 2x → 1.000, +1 of 100 → 0.010. **Positive control:** its strict-longest counts reproduce the baseline §65 exactly.
+- **Held:** `q021` tops the ranking at en 102% / es 63% / ko 56% / zh 56% / ja 78% (answer 109 code points against 44-54 in en).
+- **Broke, twice.** (1) The item says the distractors are "short slogans". They are full 44-54-char sentences. The tell was the answer's length, so trimming alone (87) or new distractors alone wouldn't close it. Both were needed. (2) The distractor *"You take home less money overall than before the raise"* echoes L7's benefits-cliff sentence, which says a household **can** end up with "less money overall" (es is word-for-word: *menos dinero en total*). So it was arguably "also true".
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q021 `opts`, worded from each language's L7 text. Answer index (2) and `explain` unchanged.
+  - Answer: *"Only the income inside the new bracket is taxed at the higher rate"* (the tail *"— the rest is unchanged"* dropped; the explain still says it).
+  - *"All of your income is now taxed at the new bracket's higher rate"*: L7 says only that slice is.
+  - *"Income you already earned this year gets taxed retroactively at the higher rate"*: L7 says "never" in those words (retroactivamente / 소급 / 追溯 / さかのぼって).
+  - *"Your take-home pay ends up lower than it was before the raise"*: L7 says take-home pay never goes down, and at a cliff it "goes up". This replaces the "money overall" option.
+- Lengths, answer in brackets: en 64/79/[66]/61; es 66/79/[69]/57; ko 27/31/[28]/22; zh 17/21/[20]/12; ja 21/28/[24]/15. Not strictly longest or shortest anywhere.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`: per file, old block ×1 / new ×0 before; asserts the answer is neither strictly longest nor shortest (it refused a first draft where ja was longest by 1); U+FFFD ×0; a repeat refuses (exit 1). `git diff --stat`: 5 quiz files, 20+/20− |
+| Rank after | q021 en −16% / es −13% / ko −10% / zh −5% / ja −14%; `q043` now heads |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 30.4 / es 28.3 / ko 30.4 / zh 26.1 / ja 28.3** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Guard sees the file | planted *"You should buy stocks now."* as a q021 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-DrVUnWEc.js`, system Node v24.18.0 |
+| Bundle | 7 new probes each in 1 asset (`追溯征税` alone is in 2: the zh L7 lesson uses it; the full zh option is in 1); old `Your entire income gets taxed at the new`, `rest is unchanged`, `按新的更高税率征税` → 0; nonsense → 0 |
+| Live | not run: the quiz draws its order, so q021 is checked by bundle, as the q001/q008 entries did |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** The take-home distractor is the one to test. The ACA premium-credit cliff and the benefit cliffs reduce a household's resources, but not its take-home pay, and L7 draws exactly that line. Each distractor contradicts a sentence L7 has in all five languages.
+- **§10.1:** none of the options is advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0. §10.2/§10.3 untouched. No dates or figures added.
+- **W-11.2:** the answer got shorter, and no statistic was added. **Inverse tell / position:** shortest-option rates unchanged, answer index unchanged.
+- **Prior work / decisions:** extends item 160's class-B queue in order. It doesn't redo the 09-20 trim analysis; it combines the trim with new distractors, as that analysis implied. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the tax-bracket quiz question's right answer was twice as long as any wrong one, and one wrong answer was arguably true. Both are fixed. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q001 ("What drives the economy?") gets three distractors Lesson 29 contradicts, so its answer is no longer the longest option, or the only one in parentheses. Five languages.
 

@@ -220,10 +220,10 @@ export const quizText = [
   {
     "q": "Si un aumento empuja parte de tu ingreso a un tramo fiscal más alto, ¿qué pasa realmente?",
     "opts": [
-      "Todo tu ingreso se grava a la nueva tasa más alta",
-      "Terminas con menos dinero en total que antes del aumento",
-      "Solo la porción que cayó en el nuevo tramo se grava a la tasa más alta — el resto no cambia",
-      "El gobierno se queda con todo el aumento como impuesto"
+      "Todo tu ingreso pasa a gravarse a la tasa más alta del nuevo tramo",
+      "El ingreso que ya ganaste este año se grava retroactivamente a la tasa más alta",
+      "Solo el ingreso que cae en el nuevo tramo se grava a la tasa más alta",
+      "Tu sueldo neto termina siendo menor que antes del aumento"
     ],
     "explain": "Los tramos fiscales marginales solo gravan la porción de ingreso que cae en cada tramo, no todo el ingreso a esa tasa. Un aumento nunca puede reducir tu sueldo neto: solo significa que los dólares adicionales tributan un poco más."
   },

@@ -220,10 +220,10 @@ export const quizText = [
   {
     "q": "If a raise pushes part of your income into a higher tax bracket, what actually happens?",
     "opts": [
-      "Your entire income gets taxed at the new, higher rate",
-      "You take home less money overall than before the raise",
-      "Only the portion of income that fell into the new bracket is taxed at the higher rate — the rest is unchanged",
-      "The government takes the entire raise as tax"
+      "All of your income is now taxed at the new bracket's higher rate",
+      "Income you already earned this year gets taxed retroactively at the higher rate",
+      "Only the income inside the new bracket is taxed at the higher rate",
+      "Your take-home pay ends up lower than it was before the raise"
     ],
     "explain": "Marginal tax brackets only tax the slice of income that falls into each bracket, not the whole income at that bracket's rate. A raise can never shrink your take-home pay — it can only mean the extra dollars are taxed a bit more."
   },
