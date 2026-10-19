@@ -257,7 +257,7 @@ for the history. No open P1/P2 items.
 > schedule, the q008 distractors against L40's own text). Prefer narrowing a false clause to adding a
 > figure. **One clarity candidate, optional and subject to W-9.4:** the Market Dashboard Bonds note
 > *"Long maturities most sensitive, but their yields usually rise less"* is accurate but terse, and a
-> beginner can't tell that "sensitive" means price. If picked, say price and yield explicitly. **Picked 2026-10-18** (run 1 of 2 under W-9.4; a second run re-reads it).
+> beginner can't tell that "sensitive" means price. If picked, say price and yield explicitly. **Picked 2026-10-18** (run 1 of 2 under W-9.4). **Second read 2026-10-19: no defect, settled.** Not a pick any more.
 > **When the sweep turns up nothing,** take an open numbered item (e.g. 117, 140, 149) rather than
 > re-reading a surface a run has already declared clean.
 >
@@ -3286,6 +3286,42 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the essentials lessons) — essentials L12: a renter can move with a month or two of notice "at the end of a lease", not at any time. About 68% of US leases are fixed-term. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's kids line is still unmeasurable, see below); W-9.4: this is a content fix, not a short-string hand-read pick. Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** Quantifier scans with a planted *"Prices always rise."* control that fired (`scratchpad/quant.mjs`, `lq.mjs`). They covered `markets.js`, `sectors.js`, `moneyVisuals.js`, quiz explanations, the economy lessons and the essentials lessons. Each hit was checked against the log, archive and CLAIMS. Everything checkable was already measured (nested-cycles caption, q021's take-home line, q005's inversions, the gap figure) except one essentials L12 clause with 0 hits in all three: *"…and a renter can typically move with a month or two of notice."* The sentence before it says rent buys a *fixed period*, and the clause has no scope, so it reads as "any time".
+
+**Step 3.5: the premise, measured.** BLS, "Housing leases in the U.S. rental market" (Spotlight 2022, CPI Housing Survey Jan-Jun 2022): **59.6%** of leases are 12-month, **31.8%** month-to-month, **8.6%** other lengths (most often 24-month). **Control:** the three shares sum to 100.0. They also match the same page's state detail, with month-to-month highest in CA (62.7%). So about **68%** of renters are on a fixed term, and for them, leaving mid-lease with a month's notice usually means a penalty. The lease defines it, as the BLS page itself says. **Held:** "typically" is false at most points of most leases, and true at the lease's end or on month-to-month.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L12 §1, one clause narrowed. No figure added (W-11.2). en *"…and at the end of a lease, a renter can typically move with a month or two of notice."* es *"y, al terminar el contrato, …"*, ko *"계약 기간이 끝나면 세입자는 보통…"*, zh *"而租约到期时，租客通常…"*, ja *"契約期間の終わりには、借主は通常…"*. Each old string matched exactly once before replacing. I hand-read each new sentence in full against the English.
+- L12 es/ko/zh/ja re-marked `ai` (ledger 16 lines). `npm run readiness -- --write` changed only numbers: en **167,511 → 167,534** chars (+0.014%; W-12.6(iii) allows 0.5%), lesson time 177 min unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 8 files incl. this log; content 5×1 line, ledger 16, LAUNCH_READINESS word-diff = 6 numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Before re-marking: exit 1, 4 stale and §10.4 disagreeing, so the guard saw the edit |
+| Guard sees the lesson | planted *"You should buy a home now."* after the new en clause → `check-blindspot` **exit 1**, naming essentials.en.js:216; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BE355T2x.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) each in 1 asset; old en clause → 0; nonsense → 0 |
+| Live | `dist/` served statically (404 control → 404). `#/lesson/12` with progress seeded: en shows the new clause, the old one is absent; ko after a language switch is the same. Body paragraph only, so no layout check was needed |
+
+#### Step 5: adversarial self-check
+- **Still true?** At the end of a fixed-term lease, 30-60 days' notice is the usual non-renewal term, and month-to-month renters can always leave that way, so "at the end of a lease" covers both. It doesn't say mid-lease moves are impossible, only that they aren't the typical case. Korean renters' usual 2-year 전세/월세 contract makes the ko version more accurate, not less.
+- **§10.1/§10.2/§10.3:** describes a trade-off, no advice. The diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` hits only pre-existing LAUNCH_READINESS row text, since the word-diff is numbers only. No date or live-looking figure renders.
+- **Prior work / decisions:** this doesn't touch L12's down-payment, commission or 30-year crossing figures (09-19, 10-13). **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**W-12.2's Bonds note, second read (W-9.4):** I read all five strings during the scan. No defect found. zh 价格波动最大 is the usual Chinese duration phrasing, and every language names both price and yield. **Settled.**
+
+**Seen, not fixed:** kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured (no lifetime source). L30's car loan is *"created out of thin air — nobody had to save it first"*, and the lender list includes non-bank lenders (captive finance companies fund from investors). It's arguable, since the credit pair is still created. Not measured, not picked by default. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the renting lesson said renters can typically move with a month or two of notice. Most US leases are 12-month, so it now says at the end of a lease.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the glossary) — glossary "Principal": the example no longer says early mortgage payments are mostly interest for any mortgage, with "only a small part" going to principal. It now says a 30-year mortgage, and that the principal part grows with every payment. Five languages.
 
