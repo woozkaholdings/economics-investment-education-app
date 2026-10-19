@@ -3287,6 +3287,44 @@ same journey.
 
 ## Run log
 
+### 2026-10-19 (scheduled dev-agent; the previous entry's residual, L30's car loan) — L30 no longer says of a car loan's new credit that "nobody had to save it first": about a third of US car loans come from finance companies, which lend investors' money. The credit is still new, "a promise to pay that didn't exist a moment ago". Five languages.
+
+Rules: W-6.2 ok (residual of a free pick, so the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** The previous entry's "Seen, not fixed" named two residuals. Kids 9-12 *"Almost every adult eventually borrows…"* still has no lifetime source. The other was L30 §1: *"$15,000 of brand-new credit is created out of thin air — nobody had to save it first"*, two sentences after a lender list that names *"the dealership itself"*. It had 0 hits in the log, archive, CLAIMS and DECISIONS before that entry.
+
+**Step 3.5: the premise, measured.** The claim holds for a deposit-taking lender, since a bank or credit union creates the deposit when it lends. It fails for a lender that funds itself by borrowing.
+- **Fed G.20 / G.19, keyless FRED CSV:** consumer motor-vehicle loans owned and securitized by **finance companies** (`DTCTLNVHFNM`) were **$554.9 B** at 2024-10, against **$1,568.6 B** in total (`MVLOAS`, last reading 2024-10). That's **35.4%**. Finance companies borrow from bond, ABS and commercial-paper investors, which is someone's savings.
+- **Control, an independent source:** Experian Q2 2025: captives **26.63%** of total auto financing, banks 27.50%, credit unions 21.04%. Its definitions differ from the Fed's, but both put non-depository lenders at a quarter to a half. **Held:** the clause is false for about a third of car loans, including the dealership case the lesson names (captives: 52% of new-car financing).
+- The credit itself, the asset/liability pair in the next sentence, is new whoever lends. So the fix narrows the clause and adds no bank mechanics.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L30 §1, one clause replaced. No figure added (W-11.2). en *"…is created out of thin air: a promise to pay that didn't exist a moment ago."* es *"…: una promesa de pago que un momento antes no existía."* ko *"… — 조금 전까지는 없던 상환 약속입니다."* zh *"——一份片刻之前还不存在的还款承诺。"* ja *"少し前まで存在しなかった、返済の約束です。"* `scratchpad/l30.mjs` asserted old ×1 / new ×0 per file, the reverse after; a re-run refuses. All five sentences hand-read against the English.
+- L30 es/ko/zh/ja re-marked `ai` (ledger 24 lines, lesson 30 only). `readiness --write` changed only numbers: en **167,534 → 167,553** chars (+0.026% since W-12.1's 167,511; W-12.6(iii) allows 0.5%).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 8 files incl. this log; content 5×1 line, ledger 24, LAUNCH_READINESS word-diff = 6 numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Before re-marking: exit 1, 1 stale per language and §10.4 disagreeing, so the guard saw the edit |
+| Guard sees the lesson | planted *"You should buy a car now."* after the new en clause → `check-blindspot` **exit 1**, naming economy.en.js:44; restored (`cmp` equal) → **exit 0** |
+| §10.2 overlap | sozai.app transcript (200, 33,431 b, same size as 10-17; bad slug → 404). 7-word runs shared with the new en sentence: **0**. Control: L31's old verbatim line → **9** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-CZKfFMBs.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) each in 1 asset; old en clause → 0 (and → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (404 control → 404). `#/lesson/30` with lesson 29 seeded as complete: en shows the new sentence and not the old one. ko after `ecycles_lang=ko` is the same. Body paragraph only, so no layout check was needed |
+
+#### Step 5: adversarial self-check
+- **Still true?** The new clause holds for every lender type. "Out of thin air" now describes the credit, as §2's bar tab does, not the lender's cash. No quiz question relies on the old clause (`quizText.en.js` grep → 0).
+- **§10.1/§10.2/§10.3:** describes a mechanism, no advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0. The 7-gram overlap is 0. No date or live-looking figure renders.
+- **Prior work / decisions:** this doesn't touch L30's §2 credit-vs-M0 gap (measured earlier) or the 10-15 L16 fix, which kept L30's accountant's sense of asset/liability, and this keeps it too. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured (no lifetime source). Nothing new turned up. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the credit lesson said nobody had to save the money for a car loan first. That's false for the roughly a third of car loans made by finance companies, so now it just says the credit is new.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the essentials lessons) — essentials L12: a renter can move with a month or two of notice "at the end of a lease", not at any time. About 68% of US leases are fixed-term. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's kids line is still unmeasurable, see below); W-9.4: this is a content fix, not a short-string hand-read pick. Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
