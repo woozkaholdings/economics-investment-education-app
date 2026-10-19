@@ -3287,6 +3287,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the glossary) — glossary "Principal": the example no longer says early mortgage payments are mostly interest for any mortgage, with "only a small part" going to principal. It now says a 30-year mortgage, and that the principal part grows with every payment. Five languages.
+
+Rules: W-6.2 ok (free pick; I didn't take the previous entry's unmeasured kids line, see below); W-9.4 n/a (measured accuracy fix, not a hand read; the Bonds note's second read is still owed, and this run couldn't take it because the Bonds run is one of the previous two). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** The previous run's residual, kids 9-12 *"Almost every adult eventually borrows…"*, still has no lifetime source, and current-holdings data can't refute "eventually", so I left it. A quantifier scan of `glossary.js`'s en entries (`scratchpad/quant2.mjs`; a planted *"Prices always rise."* fired) gave 22 hits. Most are already measured in place (yield curve, Baa spread, PMI, bubble credit). The one with no measurement anywhere (0 hits in the log, archive and CLAIMS) was "Principal"'s example: *"Early in a mortgage, most of each payment covers interest and only a small part reduces the principal."* Lesson 12 and its quiz question already limit this to a 30-year loan and name the rate (09-19). The glossary didn't.
+
+**Step 3.5: the premise, measured.** FRED MORTGAGE30US (1971-) and MORTGAGE15US (1991-), keyless CSV. Interest share of the first payment = 1 − (1+r)^−n. **Control:** 30y at 7% → 87.7%, crossing at month 242; 30y at 3% → crossing year 7.0. Both match `moneyVisuals.js`'s comment and L12's text.
+- **15-year loan:** interest was half or less of the first payment in **688 of 1,834 weeks (37.5%)**, including **every week of 2010-21**. At the 2.10% low (2021-07) it was 27%. **So "most… covers interest" was false for a whole decade of 15-year loans. Held.**
+- **30-year loan:** interest was most of the first payment in every week since 1971 (54.8% at the 2.65% low). But principal reached **45.2%** of that payment, so "only a small part" was false at 2010s rates. At the latest reading (7.40%, 2026-10-15) it's 10.9%.
+
+#### What shipped
+- `src/content/glossary.js` "Principal" `ex`, five languages: en *"Early in a 30-year mortgage, most of each payment covers interest, and the part that reduces the principal grows with every payment."* es/ko/zh/ja say the same (e.g. ko 「30년 만기 주택담보대출 초기에는… 원금을 줄이는 부분은 상환할 때마다 커집니다」). "Grows with every payment" holds for any fixed-rate amortizing loan, since the balance only falls. No figure added (W-11.2).
+- A 10-line comment above the entry records the old text and the measurement.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 1 file, 11+/1− (one source line holds all five strings); each old string matched exactly once before replacing |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged; en lesson chars still 167,511 |
+| Guard sees the entry | planted *"You should buy a home now."* in the new en `ex` → `check-blindspot` **exit 1**, naming glossary.js "Principal"; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-D4hgrjb5.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) each in 1 asset (`markets-*.js`); old en text → 0; nonsense → 0 |
+| Live | `dist/` served statically (404 control → 404). Reference → Glossary → Principal shows the new en text, old text absent; at 320px the line is 254 wide, no overflow, page scrollWidth 320 |
+
+#### Step 5: adversarial self-check
+- **Still true?** "Most" is measured for every weekly 30-year rate on record. "Grows with every payment" is algebra for a fixed rate. The edge case is an ARM whose rate resets upward, but that happens years in, not "early". Hand-read all five strings after the edit; none is garbled.
+- **§10.1/§10.2/§10.3:** describes a mechanism, no advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0. No date or live-looking figure renders (the dated comment doesn't render).
+- **Prior work / decisions:** this matches the glossary to L12's 09-19 scoping and its quiz, and doesn't touch `splitCrossing` or the L12 figure. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2 (glossary.js, AGENT_LOG.md).
+
+**Seen, not fixed:** kids 9-12 *"Almost every adult eventually borrows…"* still unmeasured (no lifetime source). Nothing else new in the glossary scan. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the glossary said early mortgage payments are mostly interest for any mortgage. That wasn't true for 15-year loans in 2010-21, so it now says a 30-year mortgage.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-18 (scheduled dev-agent; open item 117, its 09-07 storage note) — Review's nothing-due card no longer gives false instructions when site storage is blocked: it says answered questions are lost on reload instead of telling the learner to do what they just did. Five languages.
 
 Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty); W-9.4 n/a (new copy, not a hand read; the Bonds note's second read is still owed to a later run, since the previous run was that read's run 1). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
