@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the glossary, by meaning rather than quantifier) — glossary "Brokerage Account" no longer says "a 401(k) or IRA defers that tax": that is true only of the Traditional versions. It now says they put off the tax until withdrawal or, in the Roth version, can remove it altogether. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's kids line is still unmeasurable); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** This morning's glossary sweep was a quantifier scan, so it could only catch overstatements. I read all 43 English entries for wrong mechanisms instead. One had no measurement anywhere (`defers that tax` gets 0 hits in the log, archive, CLAIMS and DECISIONS): "Brokerage Account" said that *"a 401(k) or IRA defers that tax"*. The 09-11 L6 entry already flagged the same flaw in L6's takeaway (*"for a Roth the growth is never taxed rather than taxed later"*) but didn't pick it. L6 §2, the IRA entry and the essentials brokerage lesson all describe Roth correctly.
+
+**Step 3.5: the premise, measured** (IRS pages, read through WebFetch's summarizer). *Roth IRAs*: *"qualified distributions are tax-free"* and *"You cannot deduct contributions to a Roth IRA."* *Retirement plans FAQs on designated Roth accounts*: eligible distributions *"(including earnings) are generally tax-free"*. **Control, the same instrument on the Traditional IRA page:** amounts *"are not taxed until you take a distribution"*, so the summarizer tells deferral apart from exemption. **Held:** "defers" is right for Traditional accounts and wrong for Roth ones, and both the 401(k) and the IRA come in a Roth version.
+
+#### What shipped
+- `src/content/glossary.js` "Brokerage Account" `f`, one clause in each of five languages. en *"…while a 401(k) or IRA puts off that tax until withdrawal or, in its Roth version, can remove it altogether."* ko 「…인출할 때까지 미루고, 로스 방식이라면 아예 없앨 수도 있습니다」, es *"…hasta el retiro o, en su versión Roth, pueden eliminarlo por completo"*, zh 「…推迟到取款时，罗斯型甚至可以完全免除」, ja 「…引き出し時まで先送りし、ロス型なら課税そのものがなくなることもあります」. Roth terms match each IRA entry. No figure added (W-11.2). A 5-line comment above the entry records the old text and the sources.
+- `scratchpad/brok.mjs` asserted old ×1 / new ×0 per string, and the reverse after; a re-run refuses. All five strings hand-read against the English. The glossary is outside the translation ledger (file header), so nothing was re-marked; lesson chars are unchanged at 167,553.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 1 source file, 6+/1− (one line holds all five strings, plus the comment) |
+| `npm test` after | exit 0 (read directly, not through a pipe), 0 FAIL, 1 WARN (O-3's); §65 unchanged |
+| Guard sees the entry | planted *"You should buy a home now."* after the new en clause → `check-blindspot` **exit 1**, naming glossary.js:84; restored (`cmp` equal) → **exit 0**. ⚠️ My first plant, *"You should open a Roth IRA now."*, got **exit 0**: the guard matches literal phrases only, as its header says |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-rw59GL3L.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (404 control → 404). Reference → Glossary: en shows the new clause and not the old one, and the entry's `ex` control is present. ko after `ecycles_lang=ko` is the same. At 320px the ko line is 288 wide and the page's scrollWidth is 320 |
+
+#### Step 5: adversarial self-check
+- **Still true?** Traditional: tax at withdrawal (IRS). Roth: qualified withdrawals are tax-free, earnings included (IRS), and non-qualified ones may not be, so it says "can". A Node scan of all English `src` for `tax-deferred|defers tax|postpones tax|puts off that tax` finds 2 hits: my new clause (the control) and the essentials lesson, which is already correct.
+- **§10.1/§10.2/§10.3:** describes a tax mechanism and recommends neither version. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|open a roth|choose roth|best account|as of 20xx` → 0. No date or live-looking figure renders.
+- **Prior work / decisions:** this brings the glossary into line with L6's 09-11 fix and the IRA entry, and touches neither. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2 (glossary.js, AGENT_LOG.md).
+
+**Seen, not fixed:** `check-blindspot` doesn't catch *"You should open a Roth IRA now."*, because its literal list has `should buy` but not `should open`. A known limit (header). L6's takeaway, *"mainly changes when the tax bill comes due"*, is still the hedged simplification the 09-11 entry left. Kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the glossary said retirement accounts only delay tax on investment gains. For Roth accounts, the tax on growth can be gone entirely, so now it says that.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-19 (scheduled dev-agent; the previous entry's residual, L30's car loan) — L30 no longer says of a car loan's new credit that "nobody had to save it first": about a third of US car loans come from finance companies, which lend investors' money. The credit is still new, "a promise to pay that didn't exist a moment ago". Five languages.
 
 Rules: W-6.2 ok (residual of a free pick, so the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
