@@ -3287,6 +3287,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-20 (scheduled dev-agent; free pick, W-12.2 sweep by meaning: policy simulator, signals, money and essentials lessons) — essentials L13 no longer says a taxable brokerage account is taxed only when an investment is sold for a profit: dividends and interest are taxed in the year they're paid, as L6 and the glossary already say. Five languages.
+
+Rules: W-6.2 ok (free pick; the kids 9-12 line is still unmeasurable); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** Read by meaning. Clean: `policyScenarios.js`, `economicSignals.js` (checkable claims already measured in the archive; labels match `fred.js`), money L21/24/26/27. Essentials L2/9/10/13/14/15 gave one: L13 §1 names only *"gains are taxed as they're realized — when an investment is sold for a profit"*, while the same section describes sweep interest. Item 86 (08-20) fixed L6 to name both halves and left L13 with one. `dividends and interest`: 0 hits in log, archive, CLAIMS, DECISIONS.
+
+**Step 3.5: the premise, measured.** IRS Pub 550 (downloaded, tags stripped in Node): *"you are considered to receive interest, dividends, or other earnings … when they are credited to your account and subject to your withdrawal"*, and *"Report amounts you receive from money market funds as dividend income"*, which covers one of L13's own sweep destinations. IRS Topic 404 agrees. **Controls:** Topic 409 (same summarizer) ties gains to a sale and says nothing on yearly dividend tax; a phrase absent from Pub 550 returned -1. **Held:** holding without selling is not tax-free.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L13 §1, one clause each. en *"…but dividends and interest are taxed in the year they're paid, and gains are taxed as they're realized — when an investment is sold for a profit — rather than…"*. es *"los dividendos y los intereses se gravan el año en que se pagan, y las ganancias…"*. ko 「배당금과 이자는 지급된 해에, 차익은 … 실현되는 시점에 과세되며」. zh 「但股息和利息要在派发当年缴税，收益则会在实现时…」. ja 「配当や利息は支払われた年に、値上がり益は実現時…」. The terms are L6's in each language. No figure added (W-11.2). `scratchpad/l13.mjs` asserted old ×1 / new ×0 per file, then the reverse, and a re-run refuses. I hand-read all five sentences in full.
+- `lessonTerms.js` 13 §0 gains a `Dividend` chip: §3.0.3 failed on the new use, same sense as the glossary entry.
+- L13 es/ko/zh/ja re-marked `ai` (ledger 16 lines). `readiness --write` changed numbers only: en **167,553 → 167,616** chars (+0.063% since W-12.1's 167,511; the allowance is 0.5%).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 9 files incl. this log; content 5×1 line, lessonTerms 1, ledger 16, LAUNCH_READINESS 2 rows, numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Before the chip and re-marks: exit 1 (4 stale, §10.4 disagreeing, §3.0.3 naming "Dividend"), so the guards saw the edit |
+| Guard sees the lesson | planted *"You should buy a home now."* after the new en clause → `check-blindspot` **exit 1** at essentials.en.js:230; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` green, `index-B1i6J-fX.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (404 control → 404). `#/lesson/13`, lessons 1-12 seeded: en shows the new clause and not the old one, plus a "Dividend" chip; ko is the same, with a 배당금 chip. Body paragraph only, so no layout check |
+
+#### Step 5: adversarial self-check
+- **Still true?** "In the year they're paid" is constructive receipt, per Pub 550. Tax-exempt municipal interest is the edge case, but "taxed" is still the normal treatment for a beginner's account, as in L6. A Node scan for sale-only tax wording (`taxed only when|not taxed until … sold|taxed when … sold|taxed as they're realized`) finds only L13 itself. **Control:** HEAD's copy → 1. The glossary, money and economy lessons → 0.
+- **§10.1/§10.2/§10.3:** describes a tax mechanism and recommends no account. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|best account|as of 20` → 0. No date or live-looking figure.
+- **Prior work / decisions:** this completes item 86's 08-20 principle ("both halves are named") in the one lesson it left. It doesn't touch L6 or the glossary's 10-19 Roth fix. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 9.
+
+**Seen, not fixed:** L27 §2, selling at a loss, *"only the paperwork changes"*: a realized loss can offset gains. Arguable (the point is the loss is sunk); not measured. Kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the brokerage lesson implied a regular investment account owes no tax until you sell. Dividends and interest are taxed every year, so it now says that, matching the retirement lesson.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-19 (scheduled dev-agent; free pick, W-12.2 sweep of the glossary, by meaning rather than quantifier) — glossary "Brokerage Account" no longer says "a 401(k) or IRA defers that tax": that is true only of the Traditional versions. It now says they put off the tax until withdrawal or, in the Roth version, can remove it altogether. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's kids line is still unmeasurable); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.

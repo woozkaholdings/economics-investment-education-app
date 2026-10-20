@@ -134,7 +134,7 @@ export const lessonTerms = {
   // in the reflection prompt is the lesson's first real use of the term.
   11: { 0: ["Diversification", "Index Fund"], [TAIL]: ["Stock"] },
   12: { 1: ["Principal", "Interest Rate"] },
-  13: { 0: ["401(k)", "IRA", "Stock", "Bond", "Savings Account"], 1: ["Diversification"] },
+  13: { 0: ["401(k)", "IRA", "Stock", "Bond", "Savings Account", "Dividend"], 1: ["Diversification"] },
   14: { 1: ["401(k)", "IRA"] },
   // 8 (Insurance) never says "emergency fund" in its body; the reflection
   // prompt contrasts the two ideas, which is where the term arrives.
