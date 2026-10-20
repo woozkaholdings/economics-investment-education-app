@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-20 (scheduled dev-agent; the previous entry's residual, L27's "paperwork") — L27 no longer says that when you sell an investment at a loss "only the paperwork changes": in a taxable account a realized loss can offset gains and some income. It now says selling records the loss rather than causing it. Five languages.
+
+Rules: W-6.2 ok (residual of a free pick, so the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** The previous entry's "Seen, not fixed" named L27 §2: *"The money is already lost either way; only the paperwork changes at the moment of selling."* It called this "arguable; not measured". `paperwork` gets 0 hits in the archive, CLAIMS and DECISIONS, and 1 in this log (that note). The kids 9-12 line still has no lifetime source.
+
+**Step 3.5: the premise, measured.** IRS Topic 409 (WebFetch summarizer): when capital losses exceed gains, the excess is deductible up to *"the lesser of $3,000 ($1,500 if married filing separately)"*, and the rest carries forward. Gains and losses are tied to a sale. **Control, same instrument and page:** asked whether personal-use losses are deductible, it quoted *"…aren't tax deductible"*, so it reports a no when the page says no. **Held:** in a taxable account, selling at a loss can change the tax bill, so "only the paperwork" is false there. It is still true that the loss already happened. The fix narrows the clause and adds no tax mechanics or figure (W-12.2, W-11.2). A tax-loss sentence would sit next to advice language.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L27 §2, one sentence each. en *"…; selling records the loss rather than causing it."* es *"…; vender registra la pérdida, no la causa."* ko 「…— 파는 것은 손실을 기록하는 것이지, 손실을 만들어내는 것이 아닙니다.」 zh 「…；卖出是把亏损记录下来，而不是造成亏损。」 ja 「…——売ることは損失を記録することであって、損失を生み出すことではありません。」 I kept "only"/뿐/只是/だけ out of the CJK on purpose, since that word was the defect. `scratchpad/l27.mjs` asserted old ×1 / new ×0 per file, then the reverse; a re-run refuses. I hand-read all five.
+- L27 es/ko/zh/ja re-marked `ai` (ledger 24 lines, lesson 27 only; the reviewer string moves from "Opus 5" to "Opus 5.5"). `readiness --write` changed numbers only: en **167,616 → 167,612** chars (+0.06% since W-12.1's 167,511; allowance 0.5%).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 8 files incl. this log; content 5×1 line, ledger 24, LAUNCH_READINESS 2 rows, numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Before re-marking: exit 1 (1 stale per language, §10.4 disagreeing), so the guard saw the edit |
+| Guard sees the lesson | planted *"You should buy a home now."* after the new en clause → `check-blindspot` **exit 1** at money.en.js:195; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-heXjeZFA.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing file → 404). `#/lesson/27`, other lessons seeded: en shows the new clause and not the old one. ⚠️ ko's first read returned all-false, **control included**, because it ran before the reload had rendered. A re-read gave control ✓, new ✓, old ✗. Body sentence only, so no layout check |
+
+#### Step 5: adversarial self-check
+- **Still true?** A sale records a decline that already happened, in any account type, so the clause holds where the old one failed (taxable accounts). The paragraph's point, that the loss is sunk, is unchanged. A Node scan of English content for `only the paperwork|paper loss|nothing changes when you sell|selling doesn't change|records the loss` → 1 hit, the new clause. **Control:** HEAD's copy → 1 (the old clause).
+- **§10.1/§10.2/§10.3:** says nothing about whether to sell. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|tax-loss|harvest|as of 20` → 0. No date or figure.
+- **Prior work / decisions:** this doesn't touch the 10-12 loss-aversion range fix in §1 or the 10-20 L13 tax clause. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. Per W-12.5 the live `market.json` goes stale Wed 10-21 without a push; that's the owner's call.
+
+**Owner-facing, one line:** the loss-aversion lesson said selling at a loss changes "only the paperwork". In a taxable account it can also lower your tax bill, so now it just says selling records the loss rather than causing it.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-20 (scheduled dev-agent; free pick, W-12.2 sweep by meaning: policy simulator, signals, money and essentials lessons) — essentials L13 no longer says a taxable brokerage account is taxed only when an investment is sold for a profit: dividends and interest are taxed in the year they're paid, as L6 and the glossary already say. Five languages.
 
 Rules: W-6.2 ok (free pick; the kids 9-12 line is still unmeasurable); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
