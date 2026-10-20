@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-20 (scheduled dev-agent; free pick, W-12.2: the 10-19 glossary entry's L6 residual) — essentials L6's takeaway no longer says the account type "mainly changes when the tax bill comes due": in a Roth, growth is usually never taxed. It now says the account type changes "when, or whether, its growth is taxed". Five languages.
+
+Rules: W-6.2 ok (free pick; the previous run's residuals were measured first, see below); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** I measured the previous entry's residual first. L39 Expansion *"CPI near the Fed's target"*: FRED `CPIAUCSL` YoY over every `USREC`=0 month since 1948 (`scratchpad/exp.mjs`). **Controls:** 2022-06 = 8.98, 1980-03 = 14.59, 2015-06 = 0.18 (published ≈9.0 / 14.6 / 0.1-0.2). FRED's missing 2025-10 value is skipped, with a calendar lookback. The median expansion month is **2.8%**; 45% of months are in 1-3% (63% since 1983), and 26% are above 4% (1970s). In 9 of 11 expansions, CPI rose ≥0.5 pt from the first year to the last. **It holds loosely as "a normal reading", so I left it alone.** So I took L6's takeaway, flagged 09-11, 10-06 and 10-19 and never picked: the defect the 10-19 glossary fix closed.
+
+**Step 3.5: the premise, measured.** IRS *Roth IRAs* (WebFetch summarizer): *"You cannot deduct contributions to a Roth IRA"* and *"qualified distributions are tax-free"*. The 10-19 entry's designated-Roth FAQ adds *"(including earnings)"*. **Control, the same instrument on *Traditional IRAs*:** amounts *"are not taxed until you take a distribution"*, and it reports no tax-free claim. **Held:** a Roth is funded with taxed money, like a brokerage account, so it doesn't change *when* tax is paid on contributions. It removes the tax on growth. "Mainly changes when" is true of Traditional only. It contradicted L6 §1.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L6 takeaway, first clause only. en *"The account type mainly changes when, or whether, its growth is taxed, not the kind of investment inside it — …"*. es *"…cuándo tributa su crecimiento, o si llega a tributar, no…"*. ko 「…불어난 수익에 세금이 언제 붙는지, 혹은 아예 붙지 않는지이지, …」. zh 「…增值部分什么时候缴税、甚至要不要缴税，而不是…」. ja 「…増えた分にいつ税金がかかるか、そもそもかかるかどうかで、…」. The growth nouns are each language's §1 terms. No figure (W-11.2). ⚠️ **My first draft added a parenthesis, *"(in a Roth, usually not at all)"*, +6 words. That pushed L6 from 3 to 4 min, and `check-data` §2 failed on it.** I cut it to "when, or whether" (+1 word), and minutes held at 3. `scratchpad/l6.mjs` and `l6b.mjs` asserted old ×1 / new ×0 per file, and a re-run refuses. I hand-read all five.
+- L6 es/ko/zh/ja re-marked `ai` (ledger 16 lines). `readiness --write` changed numbers only: en **167,701 → 167,711** chars (+0.12% since W-12.1's 167,511; the allowance is 0.5%).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 8 files incl. this log; content 5×1 line, ledger 16, LAUNCH_READINESS 2 rows, numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. With HEAD's ledger and the first draft: exit 1 (§2 minutes 3≠4, §10.4 disagreeing), so the guards saw the edit |
+| Guard sees the lesson | planted *"You should open a Roth IRA now. You should invest now."* after the takeaway → `check-blindspot` **exit 1** (it fires on *invest*; *open* is still the 10-19 known gap); restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BPTi_IxO.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing file → 404). Lessons 1-5 seeded, `#/lesson/6`: en shows control ("Traditional vs Roth") ✓, new ✓, old ✗; zh via the real select: control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Still true?** Traditional: growth taxed at withdrawal ("when"). Roth: qualified withdrawals tax-free ("whether"). Both halves now match §1 and the 10-19 glossary. A Node scan of English content and the glossary for when-only wording (`changes … when the tax|defers that tax`) → 0. **Controls:** HEAD's L6 → 1, the pre-10-19 glossary → 1.
+- **§10.1/§10.2/§10.3:** compares account mechanics and recommends none. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|best account|open a roth|as of 20` → 0. No date or figure.
+- **Prior work / decisions:** this keeps the 10-06 run's 401(k)-menu clause and the 09-11 §1 fix word for word. It changes the one clause both left. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** `check-blindspot` still misses *"You should open…"* (10-19 note). Kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. Per W-12.5 the live `market.json` goes stale Wed 10-21 without a push; that's the owner's call.
+
+**Owner-facing, one line:** the retirement-accounts lesson ended by saying the account type mainly changes *when* you pay tax. With a Roth, the growth usually isn't taxed at all, so it now says "when, or whether".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-20 (scheduled dev-agent; free pick, W-12.2 sweep of economy L36-39) — L39's Trough line no longer says the CPI gauge reads "low" there. Inflation has usually kept falling for months after the recovery began, so it now says CPI is usually still cooling. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous two runs left only the unmeasurable kids 9-12 line); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
