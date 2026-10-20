@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-20 (scheduled dev-agent; free pick, W-12.2 sweep of economy L36-39) — L39's Trough line no longer says the CPI gauge reads "low" there. Inflation has usually kept falling for months after the recovery began, so it now says CPI is usually still cooling. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous two runs left only the unmeasurable kids 9-12 line); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** I read L36-39 by meaning; L36-38 hold only claims the archive already measured. L39 §2's Trough line lists *"GDP near its low point, CPI low, …"*. The 09-11 run that fixed the Contraction clause (archive) left it with *"inflation is typically at its cycle low there"*, asserted, not measured.
+
+**Step 3.5: the premise, measured.** FRED `CPIAUCSL` and `USREC` (keyless CSV), YoY at each of the 12 NBER troughs since 1949, compared with the low over the next 24 months (`scratchpad/trough.mjs`). **Controls:** the trough months it derives match NBER's 12 dates; YoY for 2022-06 = 8.98 and for 1980-03 = 14.59 (published ≈9.0 and 14.6 SA). The instrument can say "at the low": it did for 3 troughs. **Result:** in **9 of 12**, inflation kept falling by ≥0.5 pt for another **7-24 months** (e.g. 1975-03: 10.5% → 5.0% by 1976-12; 1991-03: 4.8% → 2.7%). Only 1949, 2009 and 2020 bottomed at or within a month of the trough. As a level, 6 of 12 troughs were above 2.5%, including 10.5% (1975) and 13.2% (1980). **The premise held:** "CPI low" is wrong as a level and wrong as "at its cycle low". It is right as a direction, which is also how the sentence describes the other four gauges. No figure added (W-11.2).
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L39 §2 Trough, one clause each. en *"CPI usually still cooling (inflation tends to keep falling for months after the recovery begins)"*. es *"el IPC suele seguir enfriándose (la inflación tiende a seguir bajando durante meses después de que empieza la recuperación)"*. ko 「CPI는 대개 아직 식고 있으며(인플레이션은 회복이 시작된 뒤에도 몇 달 동안 계속 내려가는 경향이 있습니다)」. zh 「CPI通常仍在降温（通胀往往在复苏开始后还会继续回落好几个月）」. ja 「CPIはたいていまだ冷え続けており（インフレ率は回復が始まってからも数か月は下がり続ける傾向があります）」. The cooling verbs are the ones each language's Contraction clause already uses. `scratchpad/l39.mjs` asserted old ×1 / new ×0 per file, then the reverse, and a re-run refuses. I hand-read all five.
+- L39 es/ko/zh/ja re-marked `ai` (ledger 24 lines). `readiness --write` changed numbers only: en **167,612 → 167,701** chars (+0.11% since W-12.1's 167,511; allowance 0.5%). LAUNCH_PLAN §4.0's rounded word count moved 29,300 → 29,400.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 9 files incl. this log; content 5×1 line, ledger 24, LAUNCH_READINESS 2 rows, LAUNCH_PLAN 1, numbers only |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Before re-marking: exit 1 (1 stale per language, §10.4 disagreeing), so the guard saw the edit |
+| Guard sees the lesson | planted *"You should buy stocks now,"* after the new en clause → `check-blindspot` **exit 1** at economy.en.js; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-CeUB2yNu.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (missing file → 404). Seeded 29-38 as numeric ids plus `ecycles_legacy_lesson_id_migrated` (string ids read as 0/44 and bounce to `#/learn`). en `#/lesson/39`: control ✓, new ✓, old ✗. ko via the real select: first read all-false, control included (chunk loading); re-read control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Still true?** "Usually" and "tends to" carry 9 of 12, and "for months" sits inside the measured 7-24. The clause now agrees with the Contraction line's "CPI cooling" and with CPI being a lagging gauge. A Node scan of English content for trough-and-low-inflation wording → 0 hits. **Control:** HEAD's copy → 1 (the old clause). L38 and the Dashboard make no trough-inflation claim (grep → 0).
+- **§10.1/§10.2/§10.3:** describes a gauge and names no asset or action. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now|as of 20` → 0. No date or figure.
+- **Prior work / decisions:** this completes the 09-11 run's "CPI cooling" fix, which named this clause and left it alone. It doesn't touch the 09-19 Peak "drifted above target" check (measured, held). **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 9.
+
+**Seen, not fixed:** L39 §2 Expansion's *"CPI near the Fed's target"*: the Fed has had a formal 2% target only since 2012, and 1970s expansions ran far above it. It's arguable as "what a normal reading looks like", and not measured. Kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. Per W-12.5 the live `market.json` goes stale Wed 10-21 without a push; that's the owner's call.
+
+**Owner-facing, one line:** the indicators lesson said inflation reads "low" at the bottom of a recession. Usually it is still falling and keeps falling for months into the recovery (in 1975 it was 10.5%), so it now says that.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-20 (scheduled dev-agent; the previous entry's residual, L27's "paperwork") — L27 no longer says that when you sell an investment at a loss "only the paperwork changes": in a taxable account a realized loss can offset gains and some income. It now says selling records the loss rather than causing it. Five languages.
 
 Rules: W-6.2 ok (residual of a free pick, so the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
