@@ -33,6 +33,16 @@
 // (2024-01, its high) while the target's upper bound went 0.25% -> 5.50%:
 // about 8% of the hikes passed through. Cuts to 3.75% took it to 0.38%.
 //
+// The 13-17 credit-score card was corrected 2026-10-21. Until then it said a
+// score "isn't something you build on purpose as a teenager". Some families do
+// exactly that, and essentials lesson 4 says so: being added as an authorized
+// user on a family member's card can add that account's history to your own
+// report. CFPB, "Becoming Credit Visible" (2017): 9.6% of consumers' credit
+// records were created by an authorized-user account; 18.3% of those under 25
+// had one. Some issuers report a minor's authorized-user history only from 18
+// (Experian, 2024). The card now says you don't HAVE to start as a teenager,
+// which keeps its point (habits first, no instruction to open credit early).
+//
 // The 9-12 `activity` was measured 2026-10-10. Until then it ended "You're
 // measuring inflation!" after a month of 5 grocery prices. Monthly, 2010-,
 // BLS average prices (8 items) vs CPI food at home (CUUR0000SAF11, NSA): an
@@ -176,7 +186,7 @@ export const kidsContent = {
         why: { en: "Not knowing this difference is one of the most common shocks of a first real paycheck — knowing it ahead of time turns a surprise into just a fact.", es: "No conocer esta diferencia es una de las sorpresas más comunes del primer sueldo real — saberlo de antemano convierte una sorpresa en solo un hecho.", ko: "이 차이를 모르는 것은 첫 정식 월급에서 가장 흔히 받는 충격 중 하나예요 — 미리 알아두면 놀라움이 그냥 사실이 돼요.", zh: "不知道这个差异是第一份正式工资最常见的冲击之一——提前了解，就能把意外变成一个平常的事实。", ja: "この違いを知らないことは、初めての本当の給料でよくある衝撃の一つ——前もって知っておけば、驚きはただの事実に変わる。" },
       },
       {
-        text: { en: "A CREDIT SCORE is a number that sums up how reliably you've paid money back in the past. It isn't something you build on purpose as a teenager — but the habits that shape it later, like paying bills on time and not borrowing more than you can repay, are the same ones worth starting early.", es: "Un PUNTAJE DE CRÉDITO es un número que resume qué tan confiable has sido pagando dinero en el pasado. No es algo que construyas a propósito siendo adolescente — pero los hábitos que lo forman después, como pagar cuentas a tiempo y no pedir prestado más de lo que puedes devolver, vale la pena empezarlos temprano.", ko: "신용 점수는 과거에 돈을 얼마나 믿을 수 있게 갚았는지를 나타내는 숫자예요. 십대 때 일부러 만드는 건 아니지만, 나중에 그 점수를 결정하는 습관들 — 제때 청구서를 내고, 갚을 수 있는 만큼만 빌리는 것 — 은 일찍 시작할 가치가 있어요.", zh: "信用分数是一个数字，用来概括你过去还钱的可靠程度。十几岁时不会刻意去建立它——但日后决定这个分数的习惯，比如按时还账单、不借超过自己能还的钱，值得早点养成。", ja: "クレジットスコアとは、これまでどれだけ確実にお金を返してきたかをまとめた数字のこと。10代のうちにわざと作るものではないけれど、あとでそのスコアを決める習慣——請求書を期日どおりに払う、返せる以上のお金を借りない——は、早いうちから始める価値があるよ。" },
+        text: { en: "A CREDIT SCORE is a number that sums up how reliably you've paid money back in the past. You don't have to start building one as a teenager — but the habits that shape it later, like paying bills on time and not borrowing more than you can repay, are the same ones worth starting early.", es: "Un PUNTAJE DE CRÉDITO es un número que resume qué tan confiable has sido pagando dinero en el pasado. No hace falta empezar a construirlo siendo adolescente — pero los hábitos que lo forman después, como pagar cuentas a tiempo y no pedir prestado más de lo que puedes devolver, vale la pena empezarlos temprano.", ko: "신용 점수는 과거에 돈을 얼마나 믿을 수 있게 갚았는지를 나타내는 숫자예요. 십대 때부터 꼭 만들기 시작해야 하는 건 아니지만, 나중에 그 점수를 결정하는 습관들 — 제때 청구서를 내고, 갚을 수 있는 만큼만 빌리는 것 — 은 일찍 시작할 가치가 있어요.", zh: "信用分数是一个数字，用来概括你过去还钱的可靠程度。十几岁时不必开始建立它——但日后决定这个分数的习惯，比如按时还账单、不借超过自己能还的钱，值得早点养成。", ja: "クレジットスコアとは、これまでどれだけ確実にお金を返してきたかをまとめた数字のこと。10代のうちから作り始めなければならないものではないけれど、あとでそのスコアを決める習慣——請求書を期日どおりに払う、返せる以上のお金を借りない——は、早いうちから始める価値があるよ。" },
         why: { en: "The habits that build a good credit score later — paying on time, not overborrowing — are worth understanding before they're actually being tested.", es: "Los hábitos que construyen un buen puntaje de crédito después — pagar a tiempo, no pedir prestado de más — vale la pena entenderlos antes de que realmente se pongan a prueba.", ko: "나중에 좋은 신용 점수를 만드는 습관들 — 제때 갚기, 과도하게 빌리지 않기 — 은 실제로 시험대에 오르기 전에 이해해둘 가치가 있어요.", zh: "以后建立良好信用分数的那些习惯——按时还款、不过度借贷——值得在真正被考验之前就先弄明白。", ja: "後で良いクレジットスコアを築く習慣——期日どおりに払う、借りすぎない——は、実際に試される前に理解しておく価値がある。" },
       },
     ],

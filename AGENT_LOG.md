@@ -3287,6 +3287,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-21 (scheduled dev-agent; free pick, W-12.2 parent-guide sweep) — the 13-17 credit-score card no longer says a score "isn't something you build on purpose as a teenager": some families do, and essentials L4 says how. It now says you don't have to start as a teenager. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's residual, the 9-12 card's mortgage wording, was left alone); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** I read all 21 English cards plus the three activities and tips in `kidsContent.js`. The archive shows this card's clause was written on 2026-08 as §10.1 framing ("not an instruction to open credit early") and never measured.
+
+**Step 3.5: the premise, measured.** (1) **The app contradicts itself:** essentials L4 ("Credit Scores: Your Financial Reputation"), "Starting From Zero" section: *"Being added as an authorized user on a trusted family member's older, well-managed card can also add that account's history to your own report."* (2) **CFPB, "Becoming Credit Visible" (2017)**, PDF inflated with Node (`scratchpad/pdftext.mjs`; no PDF tools here): *"The credit records of an additional 9.6 percent of consumers were created when the consumer became an authorized user"*. Table 7: 18.3% of consumers under 25 had an authorized-user account. **Control:** the same passage's "15 percent… with a co-borrower" plus 9.6 gives its own stated "about 1-in-4", so the extraction read the right numbers. (3) **Issuers:** Experian (2024) says the history is added when the child is included, "or at age 18 with some card issuers". Per-issuer claims come only from blogs, so none is in learner text. **Premise held:** a parent can build a teen's credit file on purpose, even if some issuers add it only at 18. The clause is false as a statement of fact.
+
+#### What shipped
+- `kidsContent.js` 13-17 `lessons[6].text`, one clause. en *"You don't have to start building one as a teenager — but…"*. es *"No hace falta empezar a construirlo siendo adolescente"*. ko 「십대 때부터 꼭 만들기 시작해야 하는 건 아니지만」. zh 「十几岁时不必开始建立它」. ja 「10代のうちから作り始めなければならないものではないけれど」. The card's point stays: habits first, no instruction to open credit. No figure and no mechanism in learner text. The `why` is unchanged.
+- A dated 10-line header paragraph with the figures and sources. ⚠️ **My miss, caught before the commit:** my first draft said "essentials lesson 16" (the archive's 2026-08 number). `lessons.js` puts the credit-score lesson at essentials **id 4**, and §31 now checks that reference (17 → 18 references).
+- `scratchpad/edit.mjs` asserted old ×1 / new ×0 per string and refused on re-run (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 2 files incl. this log; `kidsContent.js` 1 line + 10 header lines |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). The only changed lines are §31 (+1 reference, my header's) and §52 (+10 scanned lines) |
+| Guard sees the card | planted *"You should open a credit card now."* before the new en clause → `check-blindspot` **exit 1**; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-DCgpMFH1.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en and ja → 0 (the old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset → 404). Reference → Kids → Ages 13-17: en control ("Real-World Economics") ✓, new ✓, old ✗. ja via the real select: control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Does "don't have to" overcorrect?** It says neither "should" nor "shouldn't", so it holds under any issuer's policy. **Sibling scan** (Node, `.en.js` + glossary + kids + `locales/en.js`, both orders of teen/minor/kid ↔ credit/score within 160 chars): 0 hits other than this card and its header. Those 2 are the control.
+- **§10.1:** the diff grep for `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20xx` → 0, and the guard plant fired. **§10.3:** the card keeps its read-together voice, addressed through the parent. **No date or live figure in learner text.**
+- **Prior work / decisions:** this doesn't undo the 2026-08 "not an instruction to open credit early" intent. It keeps that intent and drops only the false fact. Quiz untouched, so §65 can't move. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** 5-8's comparison-shopping `why` says it "saves real money on every big purchase" (an "every" that W-12.2 would narrow), and 5-8 calls groceries a "big thing". Both are unmeasured. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide told teens' parents a credit score "isn't something you build on purpose as a teenager", but adding a teen to a parent's card does exactly that (the app's own credit-score lesson says so). It now says they don't have to start that early.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-21 (scheduled dev-agent; the previous entry's residual, kids 9-12) — the parent guide's 9-12 credit card says "Most adults borrow money for something big at some point", not "Almost every adult eventually": SCF 2022 supports "most". es also drops the false friend *eventualmente* in 3 places. Five languages.
 
 Rules: W-6.2 ok (residual of a free pick; ⛔ the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
