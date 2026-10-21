@@ -105,6 +105,8 @@ let MONTH_YEAR_PATTERN = null;
 // is the same clean-looking negative as a clean corpus, and one of these WAS
 // dead when it was written (see the control's header).
 let TIMING_ADVICE = null;
+// The "you should <verb>" class, widened 2026-10-21, held for the same control.
+let DIRECTIVE_ADVICE = null;
 
 const srcFiles = walk(join(ROOT, "src"), [".js", ".jsx"]);
 const contentFiles = walk(join(ROOT, "src", "content"), [".js"]);
@@ -207,39 +209,54 @@ const readmePath = join(ROOT, "README.md");
     { re: /(買う|売る|投資する)のに(良|よ)い(時期|タイミング)/, fires: "今は投資するのに良いタイミングです。" },
   ];
   TIMING_ADVICE = timing;
+  // The "you should <verb>" class. WIDENED 2026-10-21: it listed only
+  // buy/sell/invest, so "You should open a Roth IRA now.", "You should put
+  // your savings in index funds." and "You should move your money into
+  // bonds." each passed this check when planted in a lesson, while "You
+  // should buy stocks now." failed it. The added verbs act on an account or
+  // a sum of money. Each was checked against the current corpus (0 hits in
+  // all five languages) before landing. "need to" is deliberately left out,
+  // because it describes how something works ("you need to open an account to
+  // buy shares"); "should" and "ought to" tell the reader what to do.
+  // Japanese also takes the する-verb's short すべき form, which the
+  // corpus uses (判断すべき, 調整すべき); 投資すべきです used to pass.
+  const directive = [
+    { re: /you( should| ought to| had better|['’]d better) (buy|sell|invest|open|put|move|transfer)/i, fires: ["You should buy stocks now.", "You should open a Roth IRA now.", "You should put your savings in index funds.", "You'd better move your money into bonds."] },
+    { re: /deber[ií]as?\s+(comprar|vender|invertir|abrir|poner|mover|transferir)/i, fires: ["Deberías comprar acciones.", "Deberías abrir una cuenta Roth IRA ahora."] },
+    { re: /(사야|팔아야|투자해야|열어야|개설해야|넣어야|옮겨야)\s?합니다/, fires: ["지금 주식을 사야 합니다.", "지금 Roth IRA 계좌를 개설해야 합니다."] },
+    { re: /应该(购买|买入|卖出|投资|开立|开设|开户|转入)/, fires: ["你应该买入股票。", "你应该开立一个罗斯IRA账户。"] },
+    { re: /(買う|売る|投資す(る)?|開設す(る)?|開く|移す)べきです/, fires: ["株を買うべきです。", "今すぐ投資すべきです。", "ロスIRA口座を開設すべきです。"] },
+  ];
+  DIRECTIVE_ADVICE = directive;
   const patterns = [
     // English
     /best investments\s*:/i,
     /\bbe bullish\b/i,
     /\bbe cautious\b/i,
-    /you should (buy|sell|invest)/i,
     /\bwe (recommend|suggest|advise)\b/i,
     // Spanish
     /mejores inversiones\s*:/i,
     /\bs(?:é|ea)\s+alcista\b/i,
     /\bs(?:é|ea)\s+cauteloso\b/i,
-    /deber[ií]as?\s+(comprar|vender|invertir)/i,
     /\b(recomendamos|sugerimos|aconsejamos)\b/i,
     // Korean
     /최고의\s*투자\s*[:：]/,
     /낙관적이어야\s?합니다|강세를\s?예상하세요/,
     /신중해야\s?합니다|조심하세요/,
-    /(사야|팔아야|투자해야)\s?합니다/,
     /추천합니다|권장합니다|권해\s?드립니다/,
     // Chinese
     /最佳投资\s*[:：]/,
     /应该看涨|建议看涨/,
     /应该谨慎/,
-    /应该(购买|买入|卖出|投资)/,
     /我们(建议|推荐)/,
     // Japanese
     /最良の投資\s*[:：]|最高の投資\s*[:：]/,
     /強気になるべき|強気を推奨/,
     /慎重になるべき/,
-    /(買う|売る|投資する)べきです/,
     /推奨します|お勧めします|おすすめします/,
-    // The timing class, in all five languages.
+    // The timing and "you should <verb>" classes, in all five languages.
     ...timing.map((entry) => entry.re),
+    ...directive.map((entry) => entry.re),
   ];
   // index.html joins the scan 2026-08-24 (backlog item 98), for the same
   // reason README.md joined §10.2 above: a rule only covers the files it
@@ -492,7 +509,8 @@ const readmePath = join(ROOT, "README.md");
 // teaching copy is worse than one that is slightly narrow — it trains runs to
 // route around the check.
 {
-  const timing = TIMING_ADVICE ?? [];
+  // The directive class carries `fires` lists too, so it is checked the same way.
+  const timing = [...(TIMING_ADVICE ?? []), ...(DIRECTIVE_ADVICE ?? [])];
   const advice = ADVICE_PATTERNS ?? [];
   // Verbatim from src/content/lessonContent.money.en.js and .es.js, in the
   // corpus's real one-physical-line storage shape.
@@ -517,7 +535,7 @@ const readmePath = join(ROOT, "README.md");
     );
   } else {
     ok(
-      `§10.1 timing control: ${timing.length} timing pattern(s) each fire on their own advice sentence (en/es/ko/zh/ja), ` +
+      `§10.1 timing control: ${timing.length} timing and directive pattern(s) each fire on their own advice sentence (en/es/ko/zh/ja), ` +
         `and ${LIVE_MUST_STAY_CLEAN.length} shipped sentence(s) that a wider draft flagged stay clean against all ${advice.length} advice patterns.`,
     );
   }

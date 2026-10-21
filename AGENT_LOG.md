@@ -3287,6 +3287,37 @@ same journey.
 
 ## Run log
 
+### 2026-10-21 (scheduled dev-agent; free pick, the 10-19/10-20 "Seen, not fixed" guard gap) — `check-blindspot` §10.1 now catches "You should open/put/move…", not only "buy/sell/invest", in all five languages. The class carries the same must-fire control as the timing class. No content change.
+
+Rules: W-6.2 ok (free pick; the note was filed by two runs and picked by neither); W-9.4 n/a (guard, not prose). W-6.2 rule 3, the learner-visible failure: a lesson line telling the reader *"You should open a Roth IRA now"* would reach learners with `npm test` green. W-6.3: `scripts/` 24,311 lines vs app code (`src/` minus content and locales) 10,681 = **2.28x**; this adds net +18 lines to a check that already exists. Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** I planted each sentence in `lessonContent.essentials.en.js` before the "Traditional vs Roth" text and ran `check-blindspot`. *"You should open a Roth IRA now."* → **exit 0**, *"You should put your savings in index funds."* → **exit 0**, *"You should move your money into bonds."* → **exit 0**. **Control:** *"You should buy stocks now."* → **exit 1**. The premise held: the pattern listed only buy/sell/invest. **Corpus first:** a Node scan of `src/content`, `src/locales` and `index.html` (39 files, `\n` expanded) finds **0** "you should / ought to / 'd better" in English. Every Spanish *debería*, Korean *-야 합니다*, Chinese *应该* and Japanese *べき* hit was listed by hand. None uses an added verb, so the widening has 0 live false positives. It also found that Japanese uses the short する-verb form (判断すべき, 調整すべき), and the old pattern's `投資するべきです` missed **投資すべきです**.
+
+#### What shipped
+- `scripts/check-blindspot.mjs`: the five per-language "should <verb>" lines move into a `directive` list with `fires` samples (held as `DIRECTIVE_ADVICE`). Added verbs: en open/put/move/transfer, plus *ought to* / *had better* / *'d better*. es abrir/poner/mover/transferir. ko 열어야/개설해야/넣어야/옮겨야. zh 开立/开设/开户/转入. ja 開設す(る)/開く/移す, and the すべき form. Every old verb is still in place. **"need to" is left out on purpose:** *"you need to open an account to buy shares"* describes how something works. The pattern count is unchanged at 34 (20 + 9 timing + 5 directive).
+- The item-164 control now checks timing and directive entries together, so a dead pattern fails the build. ⭐ **It caught my first draft:** `you (…|'d better)` needs a space before *'d*, so *"You'd better move…"* could never match. Fixed to `you( should| ought to| had better|'d better)`.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 2 files incl. this log; `check-blindspot.mjs` +26 / −8 |
+| Plants, paragraph-initial (after `Intro.\n\n` in the first `"body"`) | en open / put / move, es *abrir*, ko *개설해야*, zh *开立*, ja *投資すべきです* → **exit 1** each. Descriptive *"You need to open an account to buy shares."* → **exit 0** (must stay clean). Each restored from a scratchpad copy (`cmp` equal) |
+| `check-blindspot` | exit 0: "14 timing and directive pattern(s) each fire…", 34 advice patterns |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1, unchanged |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BPTi_IxO.js` (same as 10-20: no `src/` change), system Node v24.18.0 |
+
+#### Step 5: adversarial self-check
+- **Did anything get narrower?** Each old regex is a subset of its replacement: same verbs, and for ja `投資す(る)?` covers `投資する`. The en pattern still has no leading `\b`, as before. *"You should buy stocks now."* is a `fires` sample, so losing it would fail the build.
+- **Future false positives:** ko 넣어야/옮겨야 could match non-money prose (*"공식에 숫자를 넣어야 합니다"*). Live hits are 0. If one appears, narrow the verb, not the check.
+- **§10.1/§10.2/§10.3, decisions, prior work:** no content or UI touched. This builds on items 145 and 164 and undoes neither. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** the 10-19/10-20 notes' *"check-blindspot misses 'You should open…'"* is closed by this entry. A bare imperative (*"Open a Roth IRA now."*) still passes; a pattern for that would hit how-to prose, so it's a judgment call left to the per-run read. Kids 9-12 *"Almost every adult eventually borrows…"* is still unmeasured. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` (asOf 10-20) aren't mine and are left alone. **W-8.1:** committed, not deployed. Per W-12.5, live Sectors goes stale today (Wed 10-21) without a push; that's the owner's call.
+
+**Owner-facing, one line:** the safety check that blocks investment advice in lessons only knew "you should buy/sell/invest". It now also blocks "you should open an account / put or move your money", in all five languages.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-20 (scheduled dev-agent; free pick, W-12.2: the 10-19 glossary entry's L6 residual) — essentials L6's takeaway no longer says the account type "mainly changes when the tax bill comes due": in a Roth, growth is usually never taxed. It now says the account type changes "when, or whether, its growth is taxed". Five languages.
 
 Rules: W-6.2 ok (free pick; the previous run's residuals were measured first, see below); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
