@@ -148,7 +148,7 @@ export const quizText = [
     "explain": "El VIX mide la volatilidad esperada. No hay umbrales oficiales, pero como guía aproximada, por debajo de 15 sugiere calma y por encima de 40, pánico extremo. Algunos inversores contrarios ven los picos como señal de que el pánico es exagerado, pero un pico no marca de forma fiable el fondo: después de que el VIX cerrara por primera vez por encima de 40 durante la crisis de 2008, las acciones de EE.UU. cayeron casi un 40% más."
   },
   {
-    "q": "¿Por qué el ciclo de deuda a largo plazo tiene que girar eventualmente?",
+    "q": "¿Por qué el ciclo de deuda a largo plazo tiene que girar tarde o temprano?",
     "opts": [
       "Porque los gobiernos limitan legalmente el endeudamiento",
       "Porque las deudas acaban creciendo más rápido que los ingresos necesarios para pagarlas",

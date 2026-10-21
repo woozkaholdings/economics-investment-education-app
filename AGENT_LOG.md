@@ -3287,6 +3287,42 @@ same journey.
 
 ## Run log
 
+### 2026-10-21 (scheduled dev-agent; the previous entry's residual, kids 9-12) — the parent guide's 9-12 credit card says "Most adults borrow money for something big at some point", not "Almost every adult eventually": SCF 2022 supports "most". es also drops the false friend *eventualmente* in 3 places. Five languages.
+
+Rules: W-6.2 ok (residual of a free pick; ⛔ the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Picking.** Seven entries since 10-18 call this "unmeasured (no lifetime source)"; none records a web search. Two WebSearches found no ever-borrowed figure, so I measured the floor.
+
+**Step 3.5: the premise, measured.** Fed SCF 2022 summary extract (`scfp2022excel.zip` → `SCFP2022.csv`, 22,975 records, `scratchpad/scf.mjs`), weighted by `WGT`. "Something big" = `HMRTHEL`/`HRESDBT`/`HVEH_INST`/`HEDN_INST` > 0, held at one moment. **Controls:** all families, any debt **77.4** (Fed Table 4: 77.4), vehicle **34.7** (34.7), education **21.7** (21.8), card balance **45.2** (45.2). Any debt by age 55-64 / 65-74 / 75+ = **77.2 / 64.8 / 53.4** (EBRI's published reading of the same survey: identical). Result by head's age: <35 **73.0**, 35-44 **77.1**, 45-54 **77.1**, 55-64 65.2, 65-74 50.1, 75+ 37.7. A point-in-time share is a floor for "at some point", so **"most" is measured; "almost every" (~90%+) is neither shown nor refuted.** Narrowed per W-12.2. **Second defect, found reading the five:** es *eventualmente* means "possibly", not "eventually" (RAE returned 403; Migaku and Gymglish both call it a false friend). It appeared 3 times in src, each translating *eventually*.
+
+#### What shipped
+- `kidsContent.js` 9-12 `lessons[0].why`, first clause only. en *"Most adults borrow money for something big at some point — …"*. es *"La mayoría de los adultos pide prestado en algún momento para algo grande — …"*. ko 거의 모든 어른은 결국 → 「대부분의 어른은 언젠가」. zh 几乎每个成年人最终都会 → 「大多数成年人都会在某个时候」. ja 大人になればほとんどの人が → 「大人の大半は、いつか」. No figure in learner text. A dated paragraph goes in the file header, with the figures and controls.
+- es *eventualmente* → *tarde o temprano*: `quizText.es.js` stem *"¿Por qué el ciclo de deuda a largo plazo tiene que girar tarde o temprano?"* and `glossary.js` "Deleveraging" `ex` *"Un país abrumado por la deuda tarde o temprano tiene que desapalancarse…"*. Options, answer index and explains unchanged. `quizText.es.js:328`'s *"la eventual opción"* stays: the adjective means "possible", which is right there.
+- `scratchpad/edit.mjs` asserted old ×1 / new ×0 per string and refused on re-run; all five hand-read.
+- ⚠️ **My miss, caught by the bundle probe:** my src scan listed the glossary hit, but I misread it as English. The post-build *eventualmente* probe returned 1 asset, and that is how the third string got fixed. Read each hit's text, not just its file.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 4 files incl. this log; `kidsContent.js` 1 line + 10 header lines, `quizText.es.js` 1, `glossary.js` 1 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). §65 and §66 (*"0/192 pair(s) under 70%"*) identical to baseline; the only changed line is §52's scanned-line count (+9, the header) |
+| Guard sees the card | planted *"You should open a Roth IRA now."* before the new en clause → `check-blindspot` **exit 1**; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-CoxVbxwD.js`, system Node v24.18.0 |
+| Bundle | 5 new kids probes + 2 *tarde o temprano* probes each in 1 asset; *"Almost every adult"* → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); *eventualmente* → 0; nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing file → 404). Reference → Kids → Ages 9-12: en control ("How Money Moves") ✓, new ✓, old ✗; es via the real select: control ✓, new ✓, *eventualmente* ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Still true?** The floor is 73-77% at every head age under 55, counting only home, vehicle and education loans, not card balances. **Sibling scan** (`almost every|nearly every|most adults…` within 80 chars of `borrow|debt|loan|mortgage`, all `src/`): 0 new hits. **Control:** the old string in the new header comment fired.
+- **§10.3:** the card stays parent-facing. Only the `why` clause changed; the `text` still addresses the child through the parent. **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0. No date or live figure in learner text.
+- **Prior work / decisions:** this doesn't touch the 10-11 seasons or paycheck cards. Quiz options are unchanged, so §65's ceiling (W-12.1) can't move. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 4.
+
+**Seen, not fixed:** the lifetime share is still unknown (a cohort source like PSID would settle it); the card no longer depends on it. The card's `text` opens *"When your parents borrow money for a house"*, assuming a mortgage; arguable, not measured. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide told parents "almost every adult" borrows for a car, home or education. Fed survey data supports "most" (about three in four families under 55 have such a loan at any one time), so it now says that. Spanish also stopped using *eventualmente* to mean "eventually", in three places.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-21 (scheduled dev-agent; free pick, the 10-19/10-20 "Seen, not fixed" guard gap) — `check-blindspot` §10.1 now catches "You should open/put/move…", not only "buy/sell/invest", in all five languages. The class carries the same must-fire control as the timing class. No content change.
 
 Rules: W-6.2 ok (free pick; the note was filed by two runs and picked by neither); W-9.4 n/a (guard, not prose). W-6.2 rule 3, the learner-visible failure: a lesson line telling the reader *"You should open a Roth IRA now"* would reach learners with `npm test` green. W-6.3: `scripts/` 24,311 lines vs app code (`src/` minus content and locales) 10,681 = **2.28x**; this adds net +18 lines to a check that already exists. Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's).

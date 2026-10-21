@@ -65,6 +65,15 @@
 // span L32/L33 give). Controls: the 2009-20 expansion reads 128, the 2020
 // recession 2 and the 2008-09 recession 18, NBER's own published counts.
 //
+// The 9-12 credit card's `why` was measured 2026-10-21. Until then it said
+// "Almost every adult eventually borrows" for a car, a home or an education.
+// No lifetime source was found. SCF 2022 summary extract, weighted: 77.1% of
+// families with a head aged 35-54 hold a home, vehicle or education loan at
+// one moment (73.0% under 35, 65.2% at 55-64). That is a floor for "at some
+// point", so "most" holds and "almost every" is unmeasured. Controls: any
+// debt 77.4%, vehicle 34.7%, card balance 45.2%, the Fed's published shares.
+// es also dropped "eventualmente", which means "possibly", not "eventually".
+//
 // These figures drift. Re-measure before trusting them; do not retype them.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -109,7 +118,7 @@ export const kidsContent = {
     lessons: [
       {
         text: { en: "When your parents borrow money for a house (mortgage), they're using CREDIT. They pay it back over years with INTEREST — that's the cost of borrowing.", es: "Cuando tus padres piden un préstamo para una casa (una hipoteca), usan CRÉDITO. Lo devuelven durante años con INTERESES — ese es el costo de pedir prestado.", ko: "부모님이 집을 사기 위해 돈을 빌리면(모기지), 신용을 사용하는 것입니다. 몇 년에 걸쳐 이자와 함께 갚아 나가는데, 그 이자가 바로 돈을 빌리는 비용이에요.", zh: "父母借钱买房（按揭）就是在用信贷。他们要用很多年连本带息还清——利息就是借钱的成本。", ja: "親が家を買うためにお金を借りる（住宅ローン）時、それが「信用」。何年もかけて利息とともに返していく——その利息が、お金を借りるコストだよ。" },
-        why: { en: "Almost every adult eventually borrows money for something big — a car, a home, an education — so understanding what 'paying it back with interest' really means is worth learning early.", es: "Casi todo adulto eventualmente pide prestado para algo grande — un auto, una casa, una educación — así que entender qué significa 'pagarlo con intereses' vale la pena aprenderlo temprano.", ko: "거의 모든 어른은 결국 자동차, 집, 교육 같은 큰 것을 위해 돈을 빌리게 돼요 — 그러니 '이자를 붙여 갚는다'는 게 무슨 뜻인지 일찍 이해해두는 게 좋아요.", zh: "几乎每个成年人最终都会为大件事——车、房子、教育——借钱，所以早点弄懂“加上利息还钱”到底是什么意思很值得。", ja: "大人になればほとんどの人が、車や家や教育のような大きなもののためにお金を借りることになる——だから「利息をつけて返す」の本当の意味を早く知っておく価値がある。" },
+        why: { en: "Most adults borrow money for something big at some point — a car, a home, an education — so understanding what 'paying it back with interest' really means is worth learning early.", es: "La mayoría de los adultos pide prestado en algún momento para algo grande — un auto, una casa, una educación — así que entender qué significa 'pagarlo con intereses' vale la pena aprenderlo temprano.", ko: "대부분의 어른은 언젠가 자동차, 집, 교육 같은 큰 것을 위해 돈을 빌리게 돼요 — 그러니 '이자를 붙여 갚는다'는 게 무슨 뜻인지 일찍 이해해두는 게 좋아요.", zh: "大多数成年人都会在某个时候为大件事——车、房子、教育——借钱，所以早点弄懂“加上利息还钱”到底是什么意思很值得。", ja: "大人の大半は、いつか車や家や教育のような大きなもののためにお金を借りることになる——だから「利息をつけて返す」の本当の意味を早く知っておく価値がある。" },
       },
       {
         text: { en: "The economy goes through seasons like nature: Growth (spring) → Peak (summer) → Slowdown (fall) → Bottom (winter) → Growth again!", es: "La economía tiene estaciones como la naturaleza: Crecimiento (primavera) → Pico (verano) → Desaceleración (otoño) → Fondo (invierno) → ¡Crecimiento otra vez!", ko: "경제도 자연처럼 계절이 있습니다: 성장(봄) → 정점(여름) → 둔화(가을) → 바닥(겨울) → 다시 성장!", zh: "经济像自然一样有四季：增长（春）→ 顶峰（夏）→ 放缓（秋）→ 低谷（冬）→ 再次增长！", ja: "経済にも自然のような季節がある：成長（春）→ ピーク（夏）→ 減速（秋）→ 底（冬）→ また成長！" },
