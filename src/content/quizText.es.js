@@ -295,7 +295,7 @@ export const quizText = [
       "Su padre y sus hijos, a partes iguales y de forma automática",
       "Quien el proveedor del 401(k) decida que es el familiar más cercano"
     ],
-    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de jubilación” y “Seguros”. Su padre figura en el formulario, así que recibe el 401(k) directamente, sin importar lo que diga un testamento más reciente. Las normas que pueden anular un formulario, como el derecho de un cónyuge actual a un 401(k) o una ley estatal que anula la designación de un ex-cónyuge tras un divorcio, no se aplican aquí: nunca hubo cónyuge."
+    "explain": "Un testamento no controla cuentas con su propia designación de beneficiario, como un 401(k) o un seguro de vida de las lecciones “Cuentas de jubilación” y “Seguros”. Su padre figura en el formulario, así que recibe el 401(k) directamente, sin importar lo que diga un testamento más reciente. Las normas que pueden anular un formulario no se aplican aquí: nunca hubo cónyuge, así que ningún cónyuge tiene derecho al 401(k), y tampoco hubo divorcio. Incluso tras un divorcio, una ley estatal que anula la designación de un ex-cónyuge puede alcanzar una IRA o algunos seguros de vida, pero la ley federal le impide alcanzar un 401(k)."
   },
   {
     "q": "Una persona ve un puntaje de crédito de 705 en una app y 680 en otra app distinta el mismo día. Según esta lección, ¿cuál es la explicación más probable?",

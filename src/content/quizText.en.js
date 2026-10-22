@@ -295,7 +295,7 @@ export const quizText = [
       "Their father and children, split evenly between them automatically",
       "Whoever the 401(k) provider decides is the closest family member"
     ],
-    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from “Retirement Accounts” and “Insurance”. Their father is named on the form, so he receives it directly, regardless of what a more recent will says. Rules that can override a form, like a current spouse's right to a 401(k) or a state law canceling an ex-spouse's designation after a divorce, don't apply here: there was never a spouse. That is why beneficiary forms need to be updated separately after major life changes."
+    "explain": "A will doesn't control accounts with their own beneficiary designation, like a 401(k) or life insurance policy from “Retirement Accounts” and “Insurance”. Their father is named on the form, so he receives it directly, regardless of what a more recent will says. Rules that can override a form don't apply here: there was never a spouse, so no spouse has a claim to the 401(k), and there was no divorce. Even after a divorce, a state law canceling an ex-spouse's designation can reach an IRA or some life insurance, but federal law keeps it from reaching a 401(k). That is why beneficiary forms need to be updated separately after major life changes."
   },
   {
     "q": "A person sees a credit score of 705 in one app and 680 in a different app on the same day. Based on this lesson, what's the most likely explanation?",

@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-22 (scheduled dev-agent; free pick, W-12.2 sweep of the quiz explanations) — quiz q028's explanation no longer lists "a state law canceling an ex-spouse's designation after a divorce" as a rule that can override a 401(k) form: federal law keeps those state laws away from a 401(k). It now says they can reach an IRA or some life insurance, but not a 401(k). Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's L4 residual chain was closed, and no residual of it was taken); W-9.4 n/a (measured legal-accuracy fix). Baseline `npm test` at `7f7ad56`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1. `check-log-size`: run log 235,197 b, 2.8 runs of headroom, so W-5.3 is not due yet.
+
+**Picking.** I read all 46 English `explain` strings. Most are hedged or were measured by earlier runs (q005's "every US recession since 1955" is the SF Fed's 10y-1y finding; q025's crossover years and q024's "roughly a quarter" recompute exactly). q028's explanation, written 2026-10-04, says: *"Rules that can override a form, like a current spouse's right to a 401(k) or a state law canceling an ex-spouse's designation after a divorce, don't apply here."* The question is about a 401(k), so a reader takes both rules as ones that can override a 401(k) form. The second one can't.
+
+**Step 3.5: the premise, measured.** WebSearch: **Egelhoff v. Egelhoff (2001)** held that ERISA preempts Washington's revocation-on-divorce statute for ERISA plans, and the ex-wife still named on the Boeing plan forms collected. Kennedy v. DuPont (2009) applied the same plan-documents rule to a savings plan. **Control, the side that must hold:** the same search confirms **Sveen v. Melin (2018)** upheld such a statute for a non-ERISA life insurance policy, and IRAs sit outside ERISA too. So the instrument can return "applies" as well as "doesn't apply". The 10-04 run's own entry (archived) recorded exactly this split ("Those apply to life insurance and IRAs, not to ERISA 401(k)s") and then wrote the explanation without it. **Premise held:** the clause is false by implication for the account the question is about. This matters in practice, because a divorced reader could conclude state law fixes an old 401(k) form. It doesn't, and the ex usually collects.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q028 `explain`, one sentence replaced by two. en: *"Rules that can override a form don't apply here: there was never a spouse, so no spouse has a claim to the 401(k), and there was no divorce. Even after a divorce, a state law canceling an ex-spouse's designation can reach an IRA or some life insurance, but federal law keeps it from reaching a 401(k)."* es/ko/zh/ja say the same. All five read by hand in full. The question, options and answer index are unchanged, so §65 can't move. The es explanation still has no closing "That is why…" sentence; the 10-04 run left it that way, and so do I.
+- `scratchpad/edit.mjs` asserted old ×1 / new ×0 for all 5 strings before, old ×0 / new ×1 / U+FFFD ×0 after, and refused on re-run (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 6 files incl. this log; each `quizText` file 1 line |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). Only the reading-model line changed: 36,091 → 36,114 words, still 177 min |
+| Guard sees the explain | planted *"You should open an IRA now."* after the new en sentence → `check-blindspot` **exit 1**, naming `quizText.en.js:298`; restored from a scratchpad copy (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-z5zMMdqt.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in exactly 1 asset (that language's `quizText` chunk); old en and old ja → 0 (old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | **not done.** The explanation appears only after answering q028 in Practice. The bundle probe covers each language's chunk |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "Federal law keeps it from reaching a 401(k)" is true of the plan's payout. Two edges stay out of learner text: a governmental or church 401(k) isn't under ERISA, and some state courts let the family sue the ex *after* the payout. Neither changes who the plan pays. "Can reach" hedges the ~26-state variation. **Sibling scan** (Node over `src/content`, ex-spouse in all five languages): 15 hits. 5 are this explanation (the control), and 10 are lesson 14 ¶2 in five languages. That paragraph says "about half of US states… cancel an ex-spouse's designation after a divorce **for some kinds of accounts**", which is true, but right after a 401(k)-and-ex-spouse example it doesn't say a 401(k) isn't one of them. Seen, not fixed (below).
+- **§10.1/§10.2:** the diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. The text describes the law and tells nobody whom to name. **§10.3:** not kids content. **No date or live figure.**
+- **Prior work / decisions:** this keeps the 10-04 run's answer key and scenario, and corrects only its explanation. Nothing in "Completed and pruned" is undone, and DECISIONS.md says nothing on it. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 6.
+
+**Seen, not fixed:** lesson 14 ¶2 (essentials, five languages) could name which accounts the state laws reach: *"…for some kinds of accounts, such as an IRA or life insurance you buy yourself, though not a 401(k)."* It's true as written, so this is a clarity residual, and the next run may take it. A lesson edit also needs the ledger re-mark and `minutes` check. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the estate-planning quiz's explanation listed state divorce laws among the rules that can override a 401(k) beneficiary form. Federal law stops those laws from reaching a 401(k), so an ex-spouse still named on the form usually collects. It now says that.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-22 (scheduled dev-agent; the previous entry's residual, essentials L4's subtitle) — the credit-score lesson's subtitle no longer says the score "follows you into almost every big purchase": a purchase paid in cash never touches it. It now says "almost every big loan". Five languages.
 
 Rules: W-6.2 ok (residual of a residual of a free pick, its last allowed link: ⛔ **the next run may NOT take a residual of this one**); W-9.4 n/a (measured accuracy fix). Baseline `npm test` at `fabbbd4`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
