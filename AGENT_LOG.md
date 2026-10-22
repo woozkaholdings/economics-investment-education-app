@@ -3287,6 +3287,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-22 (scheduled dev-agent; the previous entry's residual, essentials L4's subtitle) — the credit-score lesson's subtitle no longer says the score "follows you into almost every big purchase": a purchase paid in cash never touches it. It now says "almost every big loan". Five languages.
+
+Rules: W-6.2 ok (residual of a residual of a free pick, its last allowed link: ⛔ **the next run may NOT take a residual of this one**); W-9.4 n/a (measured accuracy fix). Baseline `npm test` at `fabbbd4`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Step 3.5: the premise, measured.** The two biggest purchases most people make are a home and a car. Sources found by WebSearch: (1) **NAR 2025 Profile of Home Buyers and Sellers:** all-cash purchases averaged **26%** over the year, a record (19% for primary homes, 30% for repeat buyers). (2) **Experian, auto finance:** about **80%** of new vehicles are financed (80.5% in Q1 2025, via Mercer Capital), and historically only about **54-55%** of used ones (Q2 2014, Q3 2019). Used sales outnumber new about 2.5 to 1, so roughly 4 in 10 vehicle purchases are made without a loan. A purchase without a loan doesn't involve a credit score, so "almost every big purchase" is false. **Control, the side that must hold:** a loan almost always involves a score check. FICO says its scores are used by 90% of top US lenders, and Fannie Mae and Freddie Mac mortgages require one. That's FICO's own claim, so no figure goes into learner text. **Premise held:** the claim is true of loans, not purchases. W-12.2 says narrow the clause, so I changed the noun and added no number. The lesson body already covers apartments and insurance, so the subtitle doesn't have to.
+
+#### What shipped
+- `lessons.js` essentials id 4 `subtitle`, one noun each. en *"A number that follows you into almost every big loan"*. es *"…en casi cada préstamo grande"*. ko 「거의 모든 큰 대출을 따라다니는 숫자」. zh 「几乎跟随你每一笔大额贷款的数字」 (笔 is the right measure word for a loan). ja 「ほぼすべての大きな借り入れについてくる数字」. All five read by hand. No header comment: `lessons.js` carries none per lesson, and this log has the reasoning.
+- `scratchpad/edit.mjs` asserted old ×1 / new ×0 for all 5 strings, and refused on re-run (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 2 files incl. this log; `lessons.js` 1 line |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). Output is **byte-identical** to the baseline: same word count, so `minutes` and §2 hold, and §65 can't move |
+| Guard sees the subtitle | planted *"You should open a credit card now."* in the en subtitle → `check-blindspot` **exit 1**, naming `lessons.js:245`; restored from a scratchpad copy (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-DpuunZ1J.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en and old ja → 0 (old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset → 404). The subtitle renders only in the lesson reader, so I set completed lessons to [1,2,3] and opened `#/lesson/4`. en: control (the title) ✓, new ✓, old ✗. ja via the real select (`lang=ja`): control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "Almost" covers the exceptions: a loan from family, or a dealer that lends without checking. Dropping "purchase" loses the apartment and insurance uses, but the lesson's first section names both. **Sibling scan** (Node over `src/`, every/each/all/most + big/large/major + purchase/loan, and the old and new forms in four languages): 8 hits. 5 are this subtitle (the control). The other 3 are the 5-8 kids card fixed earlier today and its header. No new defect.
+- **§10.1/§10.2:** the diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. **§10.3:** not kids content. **No date or live figure in learner text.**
+- **Prior work / decisions:** the 10-16 L4 run ("still do most of the work") touched the body, not the subtitle. Nothing in "Completed and pruned" is undone. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** nothing new. The run log is 230,101 b before this entry (`check-log-size`, 2026-10-22), so W-5.3's archive pass is still due in about 4 entries. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the credit-score lesson's subtitle said the score follows you into "almost every big purchase". About a quarter of homes and around 4 in 10 cars are bought without a loan, and then no score is checked, so it now says "almost every big loan".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-22 (scheduled dev-agent; residual of the 10-21 credit-score run, kids 5-8) — the parent guide's comparison-shopping card no longer says the habit "saves real money on every big purchase": checking a second price often pays, not always. It now says it "can save". Five languages.
 
 Rules: W-6.2 ok (residual of a free pick; the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test` at `a4041c1`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
