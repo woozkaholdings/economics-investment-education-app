@@ -3287,6 +3287,39 @@ same journey.
 
 ## Run log
 
+### 2026-10-22 (scheduled dev-agent; the previous entry's residual, essentials L14 ¶2) — the estate-planning lesson now says which accounts the state divorce laws reach: an IRA or life insurance you buy yourself, though not a 401(k). And "about half of US states" is now "many": newer counts run to 35 or more. Five languages.
+
+Rules: W-6.2 ok (residual of a free pick; the next run may take a residual of this one only once more); W-9.4 n/a (measured legal-accuracy fix). Baseline `npm test` at `bf4776d`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1. `check-log-size`: 241,401 b before this entry (96.6% of the 250 KB warn budget), so **W-5.3's archive pass is due next run.**
+
+**Step 3.5: the premise, measured.** The residual said ¶2 is "true as written" but doesn't say a 401(k) is outside the state laws, right after a 401(k)-and-ex-spouse example. WebSearch: **Egelhoff v. Egelhoff (2001)** holds ERISA preempts revocation-on-divorce statutes for ERISA plans (a Bradley 2022 article says the same). **Control, the side that must hold:** **Sveen v. Melin (2018)** upheld Minnesota's statute for an individual life policy, and after Sveen the Court left standing an Arizona ruling that applied one to an IRA. So the instrument returns "reaches" as well as "doesn't". **Held, and it broke a second figure:** the count. Sources from around Sveen say **26 states** (2018). Bradley 2022 says **at least 35** with UPC-2-804-style statutes reaching non-probate assets; an undated Mississippi bill note says **more than 40**. The counts use different definitions, so "about half" is defensible for 2018 and likely an undercount now. W-12.2 says narrow rather than add a figure, so it becomes "many", which is true under every count.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L14 ¶2, one clause each. en *"…and many US states automatically cancel an ex-spouse's designation after a divorce for some kinds of accounts, such as an IRA or life insurance you buy yourself, though not a 401(k)."* es *"…muchos estados… como un IRA o un seguro de vida contratado por cuenta propia, aunque no en un 401(k)."* (`un IRA` matches the file's 3× masculine usage). ko 「미국의 많은 주는 이혼 후 IRA나 본인이 직접 가입한 생명보험처럼 401(k)가 아닌 일부 계좌에서…」. zh 「美国许多州…例如IRA或自己购买的人寿保险，401(k)则不在此列。」 ja 「また米国の多くの州では、離婚後、IRAや自分で加入した生命保険など、401(k)以外の一部の口座について…」. All five read by hand in full. ⚠️ **My first zh draft ended 「但不包括401(k)。」 straight before the next sentence's 「但这些规定…」**, two 但 in a row. Caught on the read-back and reworded before marking.
+- L14 es/ko/zh/ja re-marked `ai` (ledger 16 lines). `readiness --write` changed numbers only: en **167,711 → 167,774** chars (+0.16% since W-12.1's 167,511; allowance 0.5%).
+- `scratchpad/edit.mjs` asserted old ×1 / new ×0 for all 5 strings before, old ×0 / new ×1 / U+FFFD ×0 after, and refused on re-run (exit 1). The zh fix had its own assert, same shape.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 8 files incl. this log; content 5×1 line, ledger 16, LAUNCH_READINESS 2 rows (numbers only) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged. Only the word count (36,114 → 36,126, still 177 min, L14 holds at 4), §33's char total and the readiness figures moved. With HEAD's ledger: exit 1 (1 stale per language, §10.4 disagreeing), so the guard saw the edit |
+| Guard sees the lesson | planted *"You should open an IRA now."* after the new en clause → `check-blindspot` **exit 1**, naming `lessonContent.essentials.en.js:252`; restored from a scratchpad copy (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-fwT4yDAL.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in exactly 1 asset (that language's essentials chunk); old en and old ja → 0 (old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset → 404). Lessons 1-13 seeded, `#/lesson/14`. en: control (title) ✓, new ✓, old ✗. ko via the real select's setter + change event (`lang=ko`; the pane was 0×0, so no a11y tree): control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "Life insurance you buy yourself" is deliberate: employer group life usually sits under ERISA, so the state law may not reach it. A governmental or church 401(k) isn't under ERISA. That's a rare edge, and yesterday's q028 entry made the same call. "Many" doesn't claim most, and the next sentence ("they vary by account and by state and don't cover every case") still holds. **Sibling scan** (Node over `src/`, half-of-states / many-states / ex-spouse / revocation in all five languages): the 5 new clauses (the control) plus q028's explanation, which already says the same thing. Old forms → 0.
+- **§10.1/§10.2:** the diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. The text describes the law and tells nobody whom to name. **§10.3:** not kids content. **No date or live figure in learner text.**
+- **Prior work / decisions:** this keeps the 10-04 L14 rewrite's structure and the 401(k) spousal-right clause word for word, and agrees with today's q028 fix. Nothing in "Completed and pruned" is undone. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8. ⚠️ My draft said 9; the assert caught it, and both figures here were corrected before the commit.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the estate-planning lesson said "about half of US states" cancel an ex-spouse's beneficiary designation after a divorce, right after a 401(k) example. Those laws can't reach a 401(k), and newer counts put it at 35+ states, so it now says "many US states… such as an IRA or life insurance you buy yourself, though not a 401(k)".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-22 (scheduled dev-agent; free pick, W-12.2 sweep of the quiz explanations) — quiz q028's explanation no longer lists "a state law canceling an ex-spouse's designation after a divorce" as a rule that can override a 401(k) form: federal law keeps those state laws away from a 401(k). It now says they can reach an IRA or some life insurance, but not a 401(k). Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's L4 residual chain was closed, and no residual of it was taken); W-9.4 n/a (measured legal-accuracy fix). Baseline `npm test` at `7f7ad56`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1. `check-log-size`: run log 235,197 b, 2.8 runs of headroom, so W-5.3 is not due yet.
