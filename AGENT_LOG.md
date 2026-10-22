@@ -3287,6 +3287,39 @@ same journey.
 
 ## Run log
 
+### 2026-10-22 (scheduled dev-agent; residual of the 10-21 credit-score run, kids 5-8) — the parent guide's comparison-shopping card no longer says the habit "saves real money on every big purchase": checking a second price often pays, not always. It now says it "can save". Five languages.
+
+Rules: W-6.2 ok (residual of a free pick; the next run may take a residual of this one only once more); W-9.4 n/a (measured accuracy fix). Baseline `npm test` at `a4041c1`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.
+
+**Step 3.5: the premise, measured.** Kaplan & Menzio, "The Morphology of Price Dispersion" (NBER w19877, IER 2015), via WebSearch: within one market, the same good's price has a standard deviation of about **19-36%**, and the distribution is **symmetric**. A household's whole basket varies less, 9-14%. So comparing prices often pays. That is the positive control: the habit's value isn't zero, so "can save" holds. But with a symmetric spread, in a two-store check the first store is the cheaper one about half the time, and checking then saves nothing. **Premise held:** "every" is false, and "can" is true. W-12.2 says narrow the clause, so no figure goes into learner text. **The residual's second half, groceries called a "big thing", is settled, not fixed:** next to a toy, the 5-8 card's comparison, a grocery bill is big. That reading is the child's frame and it's defensible.
+
+#### What shipped
+- `kidsContent.js` 5-8 `lessons[2].why`, one clause each. en *"…can save real money on big purchases for the rest of a person's life."* es *"puede ahorrar dinero real en las compras grandes"*. ko 「큰 지출을 할 때 실제로 돈을 아껴줄 수 있어요」. zh 「可以让人一辈子在大额购物上省下…」. ja 「大きな買い物で本当にお金を節約できる」. All five read by hand. The `text` and `activity` are unchanged.
+- A dated 7-line header paragraph with the source and the reasoning. `scratchpad/edit.mjs` asserted old ×1 / new ×0 for all 6 strings, and refused on re-run (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 2 files incl. this log; `kidsContent.js` 1 line + 8 header lines |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). §65 unchanged. Changed lines: §52 (+8 scanned lines, the header) and §66: still 0/192 under threshold, and one registered read-complete pair moved above threshold (5 → 4 under, 4 → 5 inert), i.e. this card's new translation is longer relative to en |
+| Guard sees the card | planted *"You should open a brokerage account now."* before the en `why` → `check-blindspot` **exit 1**; restored (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-CknTkhmY.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; old en and old ja → 0 (old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset → 404). Reference → Kids: en control ("comparison shopping") ✓, new ✓, old ✗; ja via the real select (`lang=ja`): control ✓, new ✓, old ✗. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "Can save" still endorses the habit, and the card's point stands. **Sibling scan** (Node over `src/`, every/each + purchase, comparison shopping, and the four translated forms): 13 hits. The card's own 6 are the control. The rest are L29's subtitle "Every purchase is a trade" (true by definition), an essentials thinkAbout's "write down every purchase" (an instruction to record, not a claim), and essentials L4's subtitle "almost every big purchase", already hedged. No new defect found.
+- **§10.1/§10.2:** the diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. **§10.3:** the `why` stays the adult-facing rationale. **No date or live figure in learner text.**
+- ⚠️ **My miss, caught before the commit:** the draft of this entry called the "Every purchase is a trade" subtitle "L1". `lessons.js` puts it at economy **id 29**.
+- **Prior work / decisions:** this doesn't touch the 10-21 credit cards or any quiz, so §65 can't move. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** essentials L4's subtitle *"A number that follows you into almost every big purchase"*: a home or car loan checks credit, but most cash purchases don't. That's arguable and unmeasured. Run log is 224,965 b before this entry, so W-5.3's archive pass is due in about 5 entries. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide told 5-8 parents that comparing prices "saves real money on every big purchase". Prices for the same thing do vary a lot between stores, but sometimes the first one is the cheapest, so it now says the habit "can save".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-21 (scheduled dev-agent; free pick, W-12.2 parent-guide sweep) — the 13-17 credit-score card no longer says a score "isn't something you build on purpose as a teenager": some families do, and essentials L4 says how. It now says you don't have to start as a teenager. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry's residual, the 9-12 card's mortgage wording, was left alone); W-9.4 n/a (measured accuracy fix). Baseline `npm test`: exit 0 / 0 FAIL / 1 WARN (O-3's), §65 en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1.

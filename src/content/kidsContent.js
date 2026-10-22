@@ -43,6 +43,14 @@
 // (Experian, 2024). The card now says you don't HAVE to start as a teenager,
 // which keeps its point (habits first, no instruction to open credit early).
 //
+// The 5-8 comparison-shopping card's `why` was narrowed 2026-10-22. Until
+// then it said the habit "saves real money on every big purchase". Kaplan &
+// Menzio, "The Morphology of Price Dispersion" (IER 2015): the same good's
+// price within one market has a standard deviation of about 19-36%, so
+// checking a second price often pays. But the spread is symmetric, so in a
+// two-store check the first store is the cheaper one about half the time,
+// and checking then saves nothing. It now says the habit "can save".
+//
 // The 9-12 `activity` was measured 2026-10-10. Until then it ended "You're
 // measuring inflation!" after a month of 5 grocery prices. Monthly, 2010-,
 // BLS average prices (8 items) vs CPI food at home (CUUR0000SAF11, NSA): an
@@ -113,7 +121,7 @@ export const kidsContent = {
       },
       {
         text: { en: "The same toy can cost different amounts at different stores. Checking the price in more than one place before you buy is called comparison shopping — grown-ups do it for big things too, like groceries.", es: "El mismo juguete puede costar cantidades distintas en diferentes tiendas. Revisar el precio en más de un lugar antes de comprar se llama comparar precios — ¡los adultos también lo hacen para cosas grandes, como el súper!", ko: "같은 장난감이라도 가게마다 가격이 다를 수 있어요. 사기 전에 여러 곳의 가격을 비교하는 것을 가격 비교라고 해요 — 어른들도 장보기 같은 큰 지출을 할 때 이렇게 해요!", zh: "同一个玩具在不同商店的价格可能不一样。买之前多看几个地方的价格，这叫做比价——大人买杂货这样的大件东西时也会这样做！", ja: "同じおもちゃでも、お店によって値段が違うことがあるよ。買う前にいくつかのお店で値段を比べることを「価格比較」というよ。大人も買い物のときに同じことをしているんだ！" },
-        why: { en: "That same habit — checking more than one price before buying — saves real money on every big purchase for the rest of a person's life.", es: "Ese mismo hábito — revisar más de un precio antes de comprar — ahorra dinero real en cada compra grande durante toda la vida.", ko: "사기 전에 여러 곳의 가격을 확인하는 이 습관은 평생 큰 지출을 할 때마다 실제로 돈을 아껴줘요.", zh: "买之前多看几个价格这个习惯，会让人一辈子每次大额购物都省下实实在在的钱。", ja: "買う前にいくつかの値段を比べるこの習慣は、一生の間、大きな買い物のたびに本当にお金を節約してくれる。" },
+        why: { en: "That same habit — checking more than one price before buying — can save real money on big purchases for the rest of a person's life.", es: "Ese mismo hábito — revisar más de un precio antes de comprar — puede ahorrar dinero real en las compras grandes durante toda la vida.", ko: "사기 전에 여러 곳의 가격을 확인하는 이 습관은 평생 큰 지출을 할 때 실제로 돈을 아껴줄 수 있어요.", zh: "买之前多看几个价格这个习惯，可以让人一辈子在大额购物上省下实实在在的钱。", ja: "買う前にいくつかの値段を比べるこの習慣は、一生の間、大きな買い物で本当にお金を節約できる。" },
       },
       {
         text: { en: "If a toy you want costs more than what's in your piggy bank, you can WAIT and keep saving instead of buying something smaller right now. Waiting for a bigger goal is its own money skill.", es: "Si un juguete que quieres cuesta más de lo que tienes en tu alcancía, puedes ESPERAR y seguir ahorrando en vez de comprar algo más pequeño ahora mismo. Esperar por una meta más grande también es una habilidad con el dinero.", ko: "갖고 싶은 장난감이 저금통에 있는 돈보다 비싸다면, 지금 작은 걸 사는 대신 기다리며 계속 저축할 수 있어요. 더 큰 목표를 위해 기다리는 것도 돈을 다루는 능력이에요.", zh: "如果你想要的玩具比存钱罐里的钱贵，你可以等一等继续存钱，而不是现在就买个更小的。为更大的目标而等待，也是一种理财能力。", ja: "欲しいおもちゃが貯金箱の中のお金より高いときは、今すぐ小さいものを買う代わりに「待って」貯金を続けることもできるよ。大きな目標のために待つことも、大切なお金のスキルなんだ。" },
