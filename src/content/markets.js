@@ -381,6 +381,16 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // 2026-10-18: the note said "Long maturities most sensitive" without saying
 // sensitive in WHAT, in a sentence whose other half is about yields. It now
 // names both: price per unit of yield change (duration), then the yield itself.
+// Stocks, re-measured 2026-10-23: its note said "Growth names most sensitive".
+// Per point of 10-year yield change (Fama-French daily value-weighted BE/ME
+// Lo 30 vs Hi 30, FRED DGS10), growth did worse than value in every decade
+// since 1962, but only as a lean (it lagged on 52-59% of up-yield days), and
+// it was never the hardest-hit group (4th-7th of 14; utilities or staples were
+// hardest hit in each span since 2000, 12-industry portfolios). Over the last
+// 5 hiking cycles, first hike to last, growth beat value in 4 (+5.2/+1.7/-26.4/+13.3/+9.0 pts; Russell
+// IWF/IWD total return agrees for the 3 it covers). So "hardest" is labeled
+// as the textbook claim it is, and the note says what history did, as gold's,
+// real estate's and the dollar's do.
 export const rateEffects = [
   {
     key: "stocks",
@@ -388,11 +398,11 @@ export const rateEffects = [
     name: { en: "Stocks", es: "Acciones", ko: "주식", zh: "股票", ja: "株式" },
     rising: "↓", falling: "↑",
     note: {
-      en: "Growth names most sensitive",
-      es: "Las de crecimiento, más sensibles",
-      ko: "성장주가 가장 민감",
-      zh: "成长股最敏感",
-      ja: "グロース株が最も敏感",
+      en: "On paper growth stocks are hit hardest, yet they beat value stocks in 4 of the last 5 hiking cycles",
+      es: "Sobre el papel, las de crecimiento son las más afectadas; aun así, superaron a las de valor en 4 de los últimos 5 ciclos de alzas",
+      ko: "이론상으로는 성장주가 가장 크게 타격을 받지만, 최근 다섯 번의 인상 사이클 중 네 번은 가치주를 앞섬",
+      zh: "按道理成长股受冲击最大，但在最近五轮加息周期中，有四轮跑赢了价值股",
+      ja: "理屈の上ではグロース株が最も打撃を受けるが、直近5回の利上げ局面のうち4回はバリュー株を上回った",
     },
   },
   {

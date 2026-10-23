@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-23 (scheduled dev-agent; free pick, W-12.2 sweep of the Market Dashboard) — the rate-effects Stocks card no longer says "Growth names most sensitive": growth stocks were never the hardest-hit group when yields rose, and they beat value stocks over 4 of the last 5 hiking cycles. It now says that, with "hardest" labeled "on paper". Five languages.
+
+Rules: W-6.2 ok (free pick; the previous run was the archive chore); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `1e0645c`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** `sectors.js`, `economicSignals.js`, `moneyVisuals.js` captions, L31 and L38 read clean. The Stocks note dates from the 08-04 rebuild and was never measured.
+
+**Step 3.5: the premise, measured.** Fama-French daily value-weighted BE/ME portfolios (growth = Lo 30, value = Hi 30), 12-industry portfolios and FRED DGS10, all keyless. (1) **Per point of 10y yield rise**, growth did worse than value in every span since 1962 (negative slope in all 5 spans), but only as a lean: it lagged on 52-59% of up-yield days in each decade. It was **never the hardest-hit group**: 4th to 7th of 14, with utilities or staples hardest hit in each span since 2000. So "most" is false. (2) **Over the last 5 hiking cycles** (first hike to last, the same 5 as the gold, real-estate and dollar notes), growth minus value was **+5.2 / +1.7 / −26.4 / +13.3 / +9.0** pts. Growth beat value in 4 of 5. That holds with Lo 20/Hi 20 and Lo 10/Hi 10, and across ±5-day start/end shifts (121/121 in every case but 1999-2000 Lo 30, 117/121). **Controls:** Tiingo SPY reproduces the 09-18 entry's +11.1 / +20.8 / +4.6 exactly; a bad ticker and a bad FRED id → 404. Russell IWF/IWD total return, an independent source, agrees on the winner in all 3 cycles it covers. **Premise held:** the superlative is false, and history went the other way.
+
+#### What shipped
+- `markets.js` `rateEffects` stocks `note`, one string per language. en *"On paper growth stocks are hit hardest, yet they beat value stocks in 4 of the last 5 hiking cycles"* (98 chars, the Bonds note's length). es *"Sobre el papel, las de crecimiento son las más afectadas; aun así, superaron a las de valor en 4 de los últimos 5 ciclos de alzas"*. ko 「이론상으로는 성장주가 가장 크게 타격을 받지만, 최근 다섯 번의 인상 사이클 중 네 번은 가치주를 앞섬」. zh 「按道理成长股受冲击最大，但在最近五轮加息周期中，有四轮跑赢了价值股」. ja 「理屈の上ではグロース株が最も打撃を受けるが、直近5回の利上げ局面のうち4回はバリュー株を上回った」. The "on paper" words and the stock terms are L38's own, per language; the numerals follow each language's sibling notes. All five read by hand.
+- A dated 10-line comment above `rateEffects` with sources and figures. `scratchpad/tools/edit.mjs` asserted old ×1 / new ×0 before, new ×1 / U+FFFD ×0 after, and refused on re-run.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 2 files incl. this log; `markets.js` +15 / −5 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged (en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1); §2.3 ok |
+| Guard sees the note | planted *"You should buy growth stocks now."* in the en note → `check-blindspot` **exit 1**, naming `markets.js:401`; restored from a scratchpad copy (`cmp` equal) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-C8gsoAv5.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset (`markets-*.js`); old en and old ja → 0 (old en → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset → 404). Reference → Market Dashboard, all five languages via the real select: control (a sibling card) ✓, new ✓, old ✗. At 320px (en/es/ja): no overflow, and the card is the Bonds card's height. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "On paper… hardest" keeps the textbook duration claim but labels it, as L38's Why section does ("On paper, growth stocks… should get the biggest lift"). The history clause is what the card's header asks of a note. **Sibling scan** (Node over `src/content`, `growth (stocks|names|compan)`): L38's four sentences, which say the same thing about whole expansions, and L35's tech-vs-utilities passage ("more exposed… than a utility's", then "tech beat utilities in eleven" of 14). Both agree with this measurement. No new defect.
+- **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. The note reports what happened over past cycles and tells nobody what to hold. **§10.3:** not kids content. **No date or live figure:** §2.3 passes, and "the last 5 hiking cycles" is the sibling notes' phrasing.
+- **Prior work / decisions:** this follows 09-18's pattern (`47e594c` and the gold/real-estate/dollar notes) and leaves 10-12/10-18's Bonds note alone. Nothing in "Completed and pruned" is undone. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** the glossary has no entry for growth or value stocks. This card and L38 use both terms, and only L38 defines value (inline). The old note's "growth names" had the same gap. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard told readers growth stocks are "most sensitive" to rising rates. They were never the hardest-hit group, and they beat value stocks over 4 of the last 5 Fed hiking cycles, so the card now says that and labels "hit hardest" as the textbook view.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-23 (scheduled dev-agent; W-5.3 archiving pass, owed by the previous entry) — run log days 2026-10-11 → 10-17 (28 entries, 145,458 b) moved verbatim to the archive. No source change.
 
 Rules: a standing chore, not a residual, so W-6.2 n/a; W-9.4 n/a. W-5.3's **twenty-fourth** firing.
