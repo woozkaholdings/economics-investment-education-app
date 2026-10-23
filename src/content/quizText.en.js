@@ -475,6 +475,6 @@ export const quizText = [
       "That it is available to anyone immediately at no cost",
       "That it is taxed identically to wages everywhere"
     ],
-    "explain": "'Passive' describes only the final stage, once something is already built or bought. Getting there takes capital, years, skill or risk, and the result gives up protections a wage has — legal minimums, notice periods, and being paid regardless of how the business did. It isn't a better rung on a ladder; it's a different trade."
+    "explain": "'Passive' describes only the final stage, once something is already built or bought. Getting there takes capital, years, skill or risk, and the result gives up protections a wage has — legal minimums, notice periods in most countries, and being paid regardless of how the business did. It isn't a better rung on a ladder; it's a different trade."
   }
 ];

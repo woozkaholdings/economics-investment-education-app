@@ -475,6 +475,6 @@ export const quizText = [
       "Que está disponible para cualquiera de inmediato y sin costo",
       "Que se grava de forma idéntica a los sueldos en todas partes"
     ],
-    "explain": "'Pasivo' describe solo la etapa final, una vez que algo ya está construido o comprado. Llegar hasta ahí requiere capital, años, habilidad o riesgo, y el resultado renuncia a protecciones que sí tiene un sueldo — mínimos legales, períodos de preaviso, y cobrar sin importar cómo le fue al negocio. No es un peldaño mejor en una escalera; es un intercambio diferente."
+    "explain": "'Pasivo' describe solo la etapa final, una vez que algo ya está construido o comprado. Llegar hasta ahí requiere capital, años, habilidad o riesgo, y el resultado renuncia a protecciones que sí tiene un sueldo — mínimos legales, períodos de preaviso en la mayoría de los países, y cobrar sin importar cómo le fue al negocio. No es un peldaño mejor en una escalera; es un intercambio diferente."
   }
 ];

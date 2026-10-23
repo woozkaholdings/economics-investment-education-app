@@ -3287,6 +3287,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-23 (scheduled dev-agent; free pick, W-12.2 sweep of money L41-44) — L44's takeaway and quiz q046's explanation no longer list "notice periods" as a protection every wage carries. Every US state but Montana is at-will, so most US jobs have no legal notice period. Both now say "in most countries", as L44's own body does. Five languages.
+
+Rules: W-6.2 ok (free pick; I declined the previous entry's residual, see below); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `7fceda2`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** The previous residual (Market Dashboard cards don't link to the glossary) is a feature, not a fix. Its premise is also off: Sectors explains "relative strength" inline and links no glossary chip either. Read in English: L41, L42, L43, L44. L41-43 read clean. In L44, §2's body says *"In most countries it comes with legal minimums, notice periods…"*, but the takeaway drops the qualifier: *"the protections a wage carries: legal minimums, notice periods, and getting paid…"*. q046's explanation (lesson 44) says the same thing unqualified. The 09-11 L44 creditor run (archive l.48631) fixed the body's creditor clause and left both of these alone.
+
+**Step 3.5: the premise, measured.** NCSL's at-will overview (WebFetch, asked to quote verbatim or say NONE FOUND): *"Employment relationships are presumed to be 'at-will' in all U.S. states except Montana"*, and an employer *"can terminate an employee at any time"*. Federal WARN requires 60 days' notice only for plant closings and mass layoffs at larger employers (DOL WARN page: *"qualified plant closings and mass layoffs"*). **Control:** DOL's general Termination page returned NONE FOUND for both questions, so the fetch reports absence rather than inventing a quote. "Most countries" is still fair: a WebSearch summary of OECD Employment Outlook 2026 (not opened) puts the OECD-average notice period at 1.3 months for a 4-year tenure. The app's examples are in dollars and its essentials track teaches the 401(k), so its default reader is in the one rich country this is false for. **Premise held.**
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js` L44 takeaway: en *"legal minimums, in most countries a notice period, and getting paid…"*. The qualifier reuses each body's own words: es *en la mayoría de los países*, ko 대부분의 나라에서는, zh 在大多数国家还有, ja 多くの国では. 1/1 per file.
+- `quizText.{en,es,ko,zh,ja}.js` q046 `explain`: en *"legal minimums, notice periods in most countries, and being paid regardless…"*, with the same words per language. Options untouched, so §65 is unaffected. 1/1 per file.
+- Edit script asserted old ×1 / new ×0 before, new ×1 / old ×0 / U+FFFD ×0 after, and refused on re-run.
+- Ledger: L44 es/ko/zh/ja were reported **stale** after the English edit (the control) and re-marked `ai` after I read each against the new English. `npm run readiness -- --write` updated en chars 167,774 → **167,793** (`LAUNCH_READINESS.md` 2/2).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); WARN/FAIL lines `diff`-identical to the pre-edit run |
+| Guard sees the takeaway | planted *"You should buy dividend stocks now,"* in the en takeaway → `check-blindspot` **exit 1** at `lessonContent.money.en.js:268`; restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-a-NHSr3s.js`, system Node v24.18.0 |
+| Bundle | 10 new probes (2 × 5 languages) each in 1 asset; both old en forms → 0 (each → 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0; unchanged body control → 1 |
+| Live | built `dist/` served statically (`/` 200, missing asset 404). `#/lesson/44` with seeded progress, all five languages via the real select: new ✓, old ✗, body control ✓, negative ✗. ⚠️ The first batched pass read false for everything, controls included, because it probed before the lazy chunk rendered. Separate calls read true. q046 checked in the bundle only. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "In most countries" stays true where notice is the law, and it matches the body two paragraphs up. It adds no figure or date, and it doesn't single out the US, so nothing can go stale.
+- **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. The sentence describes legal protections and tells nobody which income to pursue. **§10.3:** not kids content. **No date or live figure.**
+- **Prior work / decisions:** this keeps the earlier creditor fix and the body untouched. Nothing in "Completed and pruned" is undone, and `.js` content modules are unchanged. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 13.
+
+**Seen, not fixed:** glossary "Passive Income" says that *"unlike a wage the income carries no legal minimum and no notice period"*. That implies the same thing about wages, and in five languages it carries a §67 length record. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 44's summary and its quiz explanation told readers every wage comes with a notice period. Most US jobs are at-will and have none, so both now say "in most countries", as the lesson body already did.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-23 (scheduled dev-agent; the previous entry's residual, the glossary gap) — the glossary now defines "Growth Stock" and "Value Stock", and lesson 38 chips both on its first section. L38 used "growth stocks" four sections before defining it, and the Market Dashboard's Stocks card compares the two without defining either. Five languages.
 
 Rules: W-6.2 ok (first residual of a free pick); W-9.4 n/a (new entries, not a hand read of an existing surface). `npm test` before any edit (HEAD `06589a4`): exit 0 / 0 FAIL / 1 WARN (O-3's).
