@@ -1,4 +1,4 @@
-# Agent Log — Archived Run Log (2026-08-01 → 2026-10-10)
+# Agent Log — Archived Run Log (2026-08-01 → 2026-10-17)
 
 Archived 2026-08-16 by the weekly review (backlog item W-3). `AGENT_LOG.md` had grown to
 909 KB / 9,814 lines, of which the run log was ~93% — a cost paid by every dev-agent run, since
@@ -56840,6 +56840,1057 @@ The previous run caught only the upper end (*"read end to start … 'more than t
 **Owner-facing, one line:** lesson 40's closing prompt told every learner they "now understand more about how the economy works than most people", which the app has no way to know, because finishing a lesson is a single tap. It now asks which of the three rules they could check against their own finances, and what numbers would show it, in all five languages. Still waiting on you: **O-2** (analytics account) and **O-3** (a fluent review, or cap or re-affirm the Beta languages).
 
 **Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+## Archived 2026-10-11 → 2026-10-17
+
+### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep, after the previous run's two residuals broke) — M2 is no longer "mostly created when banks lend, not by the central bank". Dashboard M2 note + glossary "M2", five languages.
+
+Rules: W-6.2 ok (residuals measured, neither taken; then a free pick); W-9.4 n/a. **Judgment call under W-11.2:** it says to take an open numbered item when residuals turn up nothing. Every open one (117, 140, 143, 149, 76) says not to pick it over content, so I continued the Dashboard sweep.
+
+**Step 3.5, the residuals first.** (1) Balance-sheet caption *"each expansion came from buying bonds"*: **premise broke.** FRED `WALCL` vs `WSHOSHO` between the five bar endpoints: securities moved **105% / 87% / 94% / 93%** of total assets. The fall-2008 lending spike is real (assets 0.93 → 2.26T while securities stayed at 0.48 → 0.49T), but it unwound before QE3's end, and the caption describes bar-to-bar change. Control: `WSHOSHO` at 2014-10 = $4.22T, the known SOMA level. No edit. (2) *"Beautiful vs Ugly Deleveraging"*: lesson 34 heading, Dashboard dial and anchors in five languages. Whether a Dalio coinage counts as "name-brand framing" is item 158's §10.2 scope question, the owner's. Not a run's call.
+
+**Step 3.5, the pick.** The Dashboard M2 note said *"Mostly created when banks lend, not by the central bank."* Glossary "M2" said the same as the premise of its last sentence. `when banks lend` / `Mostly created` → **0** hits across both logs, `CLAIMS.md` and `DECISIONS.md`: never measured. FRED keyless CSV (`M2SL`, `TOTLL`, `TOTBKCR`, `WSHOSHO`), script `scratchpad/bs/m2.mjs`, which throws on any non-numeric value:
+- **2020-02 → 2021-12:** M2 **+$6.0T**, bank loans **+$0.6T** (10%), Fed securities **+$4.4T**.
+- **2008 → 2025:** loans grew by **46%** of M2's growth (bank credit including securities: 70%).
+- **Control, 1973-2007:** loans **91%** of M2's growth (1990-2007: 104%). The old note described that era.
+- The QE lesson already says the Fed buys *"from banks and investors"*; buying from investors creates deposits.
+- **Disposition (W-11.2, narrow, no figure):** delete "mostly … not by the central bank". The note says QE can add to M2. The glossary keeps only the true premise.
+
+#### What shipped
+- `markets.js` M2 `note`, five languages: en *"Banks create it when they lend, and QE can add to it too."* es `la QE` / ko 양적완화 / zh 量化宽松 / ja 量的緩和, matching the M0 note's terms.
+- `glossary.js` "M2" `f`, five languages: en *"Because banks create it when they lend, M2 can grow or shrink even while the monetary base is unchanged."* The sentence is 46 chars shorter.
+- A 9-line dated comment under the 10-11 M0 paragraph. It does not ship.
+- Patcher `scratchpad/bs/patch.mjs`: old ×1 / new ×0 before, reverse after. A repeat run refuses 11/11.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3) both times |
+| `check-blindspot` sees the glossary edit | planted *"You should buy stocks now."* → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-DgWcCfsV.js`, system Node v24.18.0 |
+| Bundle | 6 new-string probes (en/ko/ja note, en/zh/es glossary) → **1** each. Old en note, old en glossary clause, old zh note → **0**. Comment's `TOTLL` → **0**. Control: untouched M2 `contains` → 1. Nonsense probe → 0 |
+| Live walk | static `dist/`, Browser pane. Dashboard: new note present, old absent, in **all five languages**. Glossary: en and ja new present, old absent, untouched `ex` present. **DOM control:** injected `PROBE_ZQX` read true, then false |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** Bank lending creates deposits, and QE purchases from non-banks create deposits directly. "Can" keeps it from claiming every QE dollar lands in M2. The glossary's conclusion still follows from its narrowed premise.
+- **§10.1:** the plant proves the guard reads the edit. **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** no level, rate or date ships, and the comment uses `YYYY-MM` (the guard scans comments here).
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `when banks lend`, `money supply`, `M2`, `not by the central bank` → 0 hits. **No conflict found.**
+
+**Seen, not fixed:** nothing new beyond the two residuals above. Untracked `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` are not mine and were left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the app said M2 is created "mostly by banks, not the central bank", but in 2020-21 M2 rose $6T while bank loans rose $0.6T. It now says QE can add to it too, in five languages. One question for you, under item 158: does "beautiful/ugly deleveraging" (a Dalio coinage, used in lesson 34 and the Dashboard) fall under §10.2? Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-11 (scheduled dev-agent; free pick, W-11.2 sweep) — M0 is no longer "the only tier a central bank sets directly": the base rose during much of QT2. Market Dashboard note + glossary "M0", five languages.
+
+Rules: W-6.2 ok (free pick); W-9.4 n/a. The glossary was declared clean 10-05, and this is not a re-read: the claim was found on the Dashboard, and the glossary carries the same sentence.
+
+**Step 3.5: the premise, measured with a control.** The Market Dashboard's money-supply card said the monetary base is *"The only tier a central bank sets directly. QE expands it, QT shrinks it."* Glossary "M0" said *"the only one the central bank controls directly"*. FRED, keyless CSV (`BOGMBASE`, `WALCL`, `WRESBAL`, `RRPONTSYD`, `WTREGEN`), script `scratchpad/m0/an.mjs`:
+- **QT2 (runoff from 2022-06):** the Fed's assets fell in **40** months, and the base **rose in 18 of them**. It went from **$5.51T** at QT's start to a high of **$5.90T (2024-02)** while assets fell 8.92 → ~7.6T. The offset was the reverse-repo facility draining **$2.16T (2023-06) → $0.44T (2024-06)** into reserves. Over all of QT2, assets fell $2.33T and the base fell only $0.21T.
+- **QT1 (2017-10 → 2019-08):** the base fell with assets (−$0.56T vs −$0.68T).
+- **Control (QE):** 2008-08 → 2014-10, assets +$3.5T and base +$3.15T. The script also throws on any non-numeric value.
+- **Disposition (W-11.2):** QE and QT push the base, but the TGA, the reverse repo and cash demand move it too, and the Fed sets none of those. So the edit deletes "only … directly", keeps the direction and adds "but other flows move it too". The figures stay in the source comment.
+
+#### What shipped
+- `markets.js` M0 `note`, all five languages: en *"The tier a central bank creates. QE expands it and QT shrinks it, but other flows move it too."* es/ko/zh/ja carry the same three clauses (es `lo`, which agrees with `nivel`).
+- `glossary.js` "M0" `f`, all five languages: the same deletion and clause (es `la`, agreeing with `medida`). The edited en sentence went 149 → 128 chars.
+- A 9-line dated comment above `moneyAggregates`. It does not ship.
+- Patcher `scratchpad/m0/patch.mjs`: old ×1 / new ×0 asserted before writing and the reverse after. A second dry run refuses (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before | exit 0, 0 FAIL, 1 WARN (O-3 review coverage) |
+| `npm test` after | first run **exit 1**: §2.3 caught "June 2022" in *my comment* (the guard scans comments in `markets.js`). Reworded to `2022-06`; then **exit 0, 0 FAIL, 1 WARN** |
+| `check-blindspot` sees the glossary edit | planted *"You should buy stocks now."* → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-YjTsRbZj.js`, system Node v24.18.0 |
+| Bundle | en/ko/ja new clause → **2** occurrences each (note + glossary), in `markets-*.js`. Old en note, old en glossary clause, old zh note → **0**. Comment's `RRPONTSYD` → **0**. Control: the untouched M0 `contains` → 1. Nonsense probe → 0 |
+| Live walk | static `dist/`, Browser pane. Market Dashboard: new note in `innerText` in **all five languages**, old absent. Glossary (en): new present, old absent. **DOM control:** injected `PROBE_ZQX` read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** The base is currency plus reserves, both of them Fed liabilities. The QE/QT direction is measured (QE1-3, QT1), and so is "other flows" (QT2, 18 of 40 months). "Shrinks" stays as the direction of the push, and the new clause keeps it from reading as a guaranteed outcome.
+- **§10.1:** the plant proves the guard reads the edit. **§10.2:** `dalio` in the added lines → 0. **§10.3:** n/a. **§2.3:** no level, rate or date ships.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `controls directly`, `sets directly`, `monetary base`, `M0` → 0 hits. Item 114's M0 naming and `contains` are unchanged (diff 1/1 glossary, 13/5 markets). A reviewer re-running the fetch, `an.mjs`, `npm test`, the plant, the build, the probes and the walk gets the same result. **No conflict found.**
+
+**Seen, not fixed:** (1) The balance-sheet caption says each expansion *"came from buying bonds"*. Fall 2008's jump (0.9 → 2.2T) was mostly emergency lending, before QE1's purchases began. Arguable, not measured. (2) *"Beautiful vs Ugly Deleveraging"* on the Dashboard is Dalio's coinage. Item 158 may cover it; not checked. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the app said the Fed "sets the monetary base directly", but the base grew through most of 2023 while QT ran. Both places now say other flows move it too, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-11 (scheduled dev-agent; **the previous run's named residual (3), the 9-12 seasons card's `why`**, first named by the 10-10 grocery entry as *"Arguable, not measured, not picked by default"*. The previous run was itself a residual pick, so this is the second in a row. W-6.2 rule 1 allows that, and ⛔ **the next run may NOT take a residual of this one.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a measured accuracy fix carried into four languages. `npm test` was **not** run before editing; the exit 0 / 0 FAIL / 1 WARN baseline is the previous entry's reading, and the post-edit run reproduces it) — **the parent guide's 9-12 seasons card (Reference → Kids → Ages 9-12, `lessons[1].why`) no longer follows its spring → summer → fall → winter metaphor with *"The economy really does move in cycles like this"*. It now says the economy really does move through these phases, but unlike the seasons, no one knows how long each will last: in the US since World War II, growth has lasted anywhere from 1 year to more than 10, and downturns from 2 months to a year and a half.** The card's `text` (the metaphor itself) and the closing "recognizing the pattern…" clause are unchanged. All five languages, plus a dated paragraph in the file's header comment.
+
+**Step 3.5: the premise, measured with a control. It holds.** The residual's claim was that seasons are regular and business cycles are not. "Like this", right after a metaphor whose every phase lasts about three months, tells a parent the cycle keeps a schedule.
+- **FRED `USREC`** (NBER recession indicator, monthly, keyless CSV, 1854-12 → present): `scratchpad/seasons/an.mjs` computes run lengths. Since 1945 there have been **12 complete expansions of 12-128 months** (1980-81 shortest, 2009-20 longest) and **13 recessions of 2-18 months**. Recession start to start runs **18-146 months**, which is the "year and a half to more than twelve years" that L32/L33 already ship. One season's length never varies by 10x. A cycle's growth phase varies by more than 10x.
+- **Control:** the script reads 128 months for the expansion that began 2009-07, 2 for the 2020 recession and 18 for 2008-09. All three are NBER's own published counts. It also throws on any value other than 0/1. The instrument reads the series correctly.
+- **Disposition:** keep the metaphor, since the order of phases is real and that is what a 9-12 card can teach. Fix the `why` that turned it into a schedule. The figures are a dated historical range of the kind L32/L33 ship, not a live market number.
+
+#### What shipped
+- `kidsContent.js` 9-12 `lessons[1].why`, all five strings rewritten (**1 line**). es keeps the impersonal register of its sibling `why`s. ko keeps 해요체. ja keeps the plain form (*～たどる*, *～わからない*). The "recognizing the pattern" clause is byte-identical in each language.
+- Header comment: a 7-line "measured 2026-10-11" paragraph plus its `//` separator above *"These figures drift"*. It does not ship (bundle probe below).
+- Patcher `scratchpad/seasons/patch.mjs` (node, `split/join`): old ×1 / new ×0 / no `"` asserted per string before writing, the reverse after. A second dry run refuses (exit 1). Original in `scratchpad/seasons/orig/`.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (the review-coverage WARN that O-3's closure keeps). §66: *"0/192 pair(s) under 70%"* |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* before the new en sentence (×1) → **exit 1**. Restored from `scratchpad/seasons/post.js`, `cmp`-identical → **exit 0** |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-Soui60Ec.js`, system Node v24.18.0 (`bootstrap-node.sh` → `/usr/local/bin`) |
+| Bundle | each of the 5 new probes is in **1** asset. The en, es and ko old probes are in **0**. The comment's `FRED USREC` is in **0** (the comment does not ship). Control: the untouched 5-8 *"Every trade in a real economy works the same way"* is in 1. Nonsense probe: 0 |
+| Live walk | served the out-of-tree `dist/` with `python3 -m http.server`, opened it in the Browser pane, Reference → Kids → Ages 9-12. `innerText` carries the new sentence and not the old one in **all five languages** (switched via the language select, then set back to en). The metaphor `text` still renders. **DOM control:** an injected `PROBE_ZQX` span read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "From 1 year to more than 10": 12 and 128 months. "From 2 months to a year and a half": 2 and 18. Dropping 1945's recession, which began before the war ended, leaves the range unchanged (2020: 2, 2008-09: 18). "No one knows how long each one will last": NBER describes cycles as recurrent but not periodic, and the 12-to-128 spread is the evidence. "Really does move through these phases": every post-1945 cycle went expansion → peak → contraction → trough.
+- **§10.1:** no product and no action. The plant proves the guard reads this file. **§10.2:** `dalio` in the added lines → 0. **§10.3:** this is a `why`, the field addressed to the parent, and the voice is unchanged. No new blurb, no render change. **§2.3:** a dated historical range (*"since World War II"*), not a current figure. The same span already ships in L32/L33.
+- **Completed work:** the three 10-10/10-11 kids fixes and their header paragraphs are byte-identical (`git diff --numstat`: 9 added / 1 removed, which is the card line plus 8 comment lines). **DECISIONS.md / CLAIMS.md:** `seasons` and `cycles like this` → 0 hits. **Would a reviewer get my result?** Yes, by re-fetching `USREC`, re-running `an.mjs`, the patcher's dry run, `npm test`, the plant, the build, the probes and the DOM walk. **No conflict found.**
+
+**Seen, not fixed:** (1) The card's `text` runs Slowdown (fall) → Bottom (winter) as if every slowdown ends in a bottom. Some slowdowns end without a recession (the mid-1990s is the usual example). **Arguable, not measured, not picked by default.** (2) Carried from the previous run: ko's 국민연금 and ja's 健康保険/厚生年金 on the teen paycheck card are country-specific readings for a fluent reviewer (O-3), and that card's `why` ("one of the most common shocks") is an unmeasured population claim. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked. None of them are mine, and I touched none of them. Translations are machine-written, under O-3's re-affirmed (Beta). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide's 9-12 card compared the economy to the four seasons and then said it "really does move in cycles like this". But seasons keep a schedule, and US expansions since 1945 have lasted from 1 year to almost 11. The card now keeps the metaphor and says plainly that, unlike the seasons, no one knows how long each phase will last, with the measured range. All five languages. Still waiting on you: **O-2** (analytics account).
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-11 (scheduled dev-agent; **the previous run's named residual (2), the 13-17 paycheck card's "income tax"**. Its "Seen, not fixed" called it *"Not measured"*. The previous run was a free pick, so W-6.2 rule 1 allows this, and **the next run may take a residual of this one only once more.** **W-9.4 does not bind:** neither of the previous two runs was a short-string hand read, and this is a measured accuracy fix carried into four languages. `npm test` was **not** run before editing; the exit 0 / 0 FAIL / 1 WARN baseline is the previous entry's reading, and the post-edit run reproduces it) — **the parent guide's teen paycheck card (Reference → Kids → Ages 13-17, `lessons[5].text`) no longer lists "income tax, plus payroll taxes for Social Security and Medicare" as what separates gross from net pay, as if income tax came first. en/es now say the difference is taxes withheld before you're paid; on a small part-time paycheck most of it is usually Social Security and Medicare, and the federal income tax withheld is often zero, because the withholding tables don't take income tax from pay that low. ko/zh/ja, which describe their own countries' systems, keep their text and add one hedged sentence: small part-time pay often has no income tax withheld.** All five languages, plus a dated paragraph in the file's header comment.
+
+**Step 3.5: the premise, measured with a control. It holds, and it is stronger than the residual said.** The 10-01 run that added "income tax" to en/es (archive l.55510) justified it as *"usually the larger withholding"*. That was not measured, and for this card's reader it is backward.
+- **IRS Pub 15-T (2026), Worksheet 1A, Single, standard W-4** (WebFetch of irs.gov/publications/p15t): line 1g **$8,600**; the table's first row is $0 to **$7,500 → $0**, then 10% to $19,900, then $1,240 + 12% to $57,900. **Control:** $8,600 + $7,500 = **$16,100**, which is the 2026 standard deduction the IRS published separately (IR-2025-103, Rev. Proc. 2025-32). Two IRS sources agree, so the table was read correctly. **No federal income tax is withheld below $16,100 a year annualized, about $309.62 a week.**
+- **`scratchpad/pay/wh.mjs`** (the worksheet in Node; it throws if the zero bracket ≠ the standard deduction): at $284/wk, $0 income tax against $21.73 of Social Security + Medicare (7.65%). At $400/wk, $9.04 against $30.60. A $600/wk full-time summer job: $30.08 against $45.90. **Income tax withholding first exceeds Social Security + Medicare at about $50,200 a year annualized.** A hand calculation gives $50,115, which agrees.
+- **Who this card is about:** BLS CPS 2024 annual averages, table 38: median weekly pay of part-time wage and salary workers aged 16-24 was **$289 (men) / $284 (women)**. 2024's zero ceiling was $14,600/52 = $281. So the median sat just above it: **just under half had nothing withheld, and at the median it was under $1 a week.** There is no 16-19 row; teens earn less than 16-24, so this is a conservative bound. **Disposition: keep the card's point (gross ≠ net, and that is normal), fix the composition.**
+- **ko/zh/ja** were localized on 10-01 to their own systems. I web-checked each zero threshold and did not fluent-read: **KR** simplified withholding table, 0 for a single earner at or under ₩1.06M/month. **JP** monthly table, column 甲, 0 under ¥88,000 (column 乙, used when no dependents form is filed, withholds 3.063%). **CN** cumulative method, 0 while cumulative wages stay under ¥5,000 × months employed. A 劳务报酬 payment over ¥800 IS withheld. All three are hedged with "often" (`많아요`, `往往`, `ことも多い`), and no figure ships.
+
+#### What shipped
+- `kidsContent.js` 13-17 `lessons[5].text`, en/es rewritten mid-string; ko/zh/ja +1 sentence each (**5 strings, 1 line**). es keeps tú. ko keeps 해요체. ja keeps the plain form (*～だ*, *～よ*).
+- Header comment: a 15-line "measured 2026-10-11" paragraph plus its `//` separator above *"These figures drift"*. It does not ship (bundle probe below).
+- Patchers `scratchpad/pay/patch.mjs` and `patch2.mjs` (node, `split/join`): old ×1 / new ×0 / no `"` asserted per string before writing, the reverse after. A second dry run refuses (exit 1) for each. Original in `scratchpad/pay/orig/`. All five strings read back out of the imported module: 0 U+FFFD.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` (en/es only) | **exit 0 but 2 WARN**: §66 flagged `13-17.lessons[5].text` ko 0.31 / zh 0.22 / ja 0.28, because the English grew and they did not. **This is why ko/zh/ja carry the hedge.** Adding them to `READ_COMPLETE` would have been false, since they did not carry the new content |
+| `npm test` (final) | **exit 0, 0 FAIL, 1 WARN** (the review-coverage WARN that O-3's closure keeps). §66: *"0/192 pair(s) under 70%"* |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* before the new en sentence (anchor ×1) → **exit 1, §10.1 FAIL**. Restored from `scratchpad/pay/post.js`, `cmp`-identical → **exit 0** |
+| Build | `scripts/build-out-of-tree.sh --no-copy-back` **exit 0**, `index-ZUDDwy0L.js`, system Node v24.18.0 (`bootstrap-node.sh` → `/usr/local/bin`) |
+| Bundle | each of the 5 new probes is in **1** asset. The en, es and ko old probes are in **0**. The comment's `IR-2025-103` is in **0** (the comment does not ship). Control: the untouched 5-8 *"Every trade in a real economy works the same way"* is in 1. Nonsense probe: 0 |
+| Live walk | served the out-of-tree `dist/` with `python3 -m http.server`, opened it in the Browser pane, Reference → Kids → Ages 13-17. `innerText` carries the new sentence and not the old one in **all five languages** (switched via the language select, then set back to en). **DOM control:** an injected `PROBE_ZQX` span read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Most of it is usually Social Security and Medicare": federally, up to about $50,200 annualized. A state income tax at teen pay (low brackets, small amounts) does not close a gap of $20+ a week. "Usually" covers the exceptions I know of: the student FICA exemption for work at one's own school, and a minor working for a parent's sole proprietorship. "The federal income tax withheld is often zero": just under half at the 16-24 median, and more for 16-19. "Withholding tables don't take income tax from pay that low": the zero bracket on a standard W-4. The text does not mention claiming exempt on a W-4, which would be advice-adjacent.
+- **§10.1:** no product and no action. The plant proves the guard reads this file. **§10.2:** `dalio` in the diff → 0. **§10.3:** same voice and shape as the card's other strings. No new blurb, no render change. **§2.3:** no date or figure in shipped text. The figures live only in the comment, which the bundle probe shows does not ship.
+- **Completed work:** this narrows the 10-01 run's en/es addition and keeps everything else that run built. ko/zh/ja's taxes-vs-premiums split is byte-identical, and income tax is still named in en/es. The 09-20 and 10-10 header paragraphs are untouched (`git diff --numstat`: 17 added / 1 removed: the card line, rewritten, plus 16 comment lines). **DECISIONS.md / CLAIMS.md:** nothing rules on this string. **Would a reviewer get my result?** Yes, by re-fetching Pub 15-T and BLS table 38, re-running `wh.mjs`, the patchers' dry runs, `npm test`, the plant, the build, the probes and the DOM walk. **No conflict found.**
+
+**Seen, not fixed:** (1) ko still lists 국민연금 among a first paycheck's deductions. In Korea, workers under 18 are generally not compulsory National Pension members. ja still lists 健康保険/厚生年金: in Japan, students are generally outside part-timer social-insurance coverage. **Both not measured, and both are country-specific readings for a fluent reviewer (O-3).** (2) The card's `why`, *"one of the most common shocks of a first real paycheck"*, is an unmeasured population claim. **Arguable, not picked by default.** (3) The previous run's seasons residual (9-12 `why`) is still open. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are still untracked. None of them are mine, and I touched none of them. Translations are machine-written, under O-3's re-affirmed (Beta). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the parent guide's teen paycheck card listed income tax first among what comes out of a first paycheck. For a teen's part-time pay, federal income tax withheld is often $0 (nothing below $16,100 a year in 2026), and Social Security + Medicare is the bigger piece until about $50,000. The card now says so in English and Spanish, and ko/zh/ja add a hedged line that small part-time pay often has no income tax withheld. Still waiting on you: **O-2** (analytics account).
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-12 (scheduled dev-agent; residual of the Bonds run, W-11.2 Dashboard sweep) — the last rate principle no longer says "Where tightening stops shapes how gentle or harsh the slowdown is": a higher peak rate hasn't reliably meant a harsher one. Five languages.
+
+Rules: W-6.2 ok (the previous run was a free pick, so its residual may be taken; the next run may take a residual of this one only once more); W-9.4 n/a. `check-log-size` before: run log 233,655 b, 93.5% of warn, 2.5 runs of headroom, no WARN. W-5.3's pass waits for the WARN (as on 10-07), likely next run.
+
+**Step 3.5: the premise, measured with a control.** The Dashboard's sixth Key Principle says the terminal rate sets how hard the landing is. It got **1** hit across both logs (the previous run's "Seen, not fixed"), so it was never measured. FRED monthly FEDFUNDS / UNRATE / CPILFESL via keyless CSV, `scratchpad/tight/an.mjs` (throws on a bad header or a non-numeric value). A cycle peak is the highest FEDFUNDS within ±12 months, ≥1.75 pts above the trailing-36-month low. Outcome: the highest UNRATE in the next 36 months minus the lowest in the 6 months up to the peak. **Controls:** bogus id → **HTTP 404**; FEDFUNDS 1981-01 = **19.08**, 2023-08 = **5.33**, UNRATE 2009-10 = **10.0** (published, asserted); Spearman of a series with itself → 1.00, with its negation → −0.99 (ties, unhandled).
+
+| peak | FF | real (FF − core yoy) | Δ unemployment, 36m |
+|---|---|---|---|
+| 1957-10 | 3.50 | n/a | +3.6 |
+| 1959-11 | 4.00 | 2.0 | +2.1 |
+| 1963-10 | 3.50 | 1.9 | +0.3 |
+| 1966-11 | 5.76 | 2.4 | +0.4 |
+| 1969-08 | 9.19 | 3.2 | +2.7 |
+| 1974-07 | 12.92 | 4.1 | +3.9 |
+| 1981-06 | 19.10 | 9.7 | +3.6 |
+| 1984-08 | **11.64** | 6.3 | **+0.2** |
+| 1989-03 | 9.85 | 5.2 | +2.4 |
+| 1995-04 | 6.05 | 2.9 | +0.3 |
+| 2000-07 | 6.54 | 4.1 | +2.5 |
+| 2007-02 | **5.26** | 2.5 | **+5.6** |
+
+- Excluded: 2019-04 (pandemic, +11.1) and 2023-08 (35 months, +1.1).
+- **Spearman, peak vs Δ unemployment: nominal 0.17 (n=12), real 0.22 (n=11).** **The premise breaks:** neither the nominal nor the real terminal rate sorts mild slowdowns from harsh ones.
+- **Disposition (W-11.2: narrow, no figure ships):** the line now says the true, weaker thing. The figures go in a comment.
+
+#### What shipped
+- `markets.js` `ratePrinciples[5]`, five languages. en *"A higher peak rate hasn't reliably meant a harsher slowdown — other forces matter too."*; es *"Una tasa máxima más alta no ha traído de forma fiable una desaceleración más dura; también pesan otros factores."*; ko *"금리가 더 높이 올라갔다고 해서 경기 둔화가 꼭 더 심했던 것은 아닙니다. 다른 요인도 함께 작용합니다."*; zh *"利率峰值更高，并不一定意味着放缓更剧烈；其他因素也在起作用。"*; ja *"金利のピークが高いほど減速が厳しくなる、とは限りませんでした。ほかの要因も影響します。"*
+- A 7-line dated comment above `ratePrinciples` with the figures. It does not ship.
+- `scratchpad/tight/patch.mjs`: dry run, then old ×1 / new ×0 asserted for all 6 pairs, and the reverse after; a repeat refuses. A Node sibling scan of `src/` found only this line (control fired).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en line → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-BPevXXKs.js` / `markets-BfsI9HGg.js`, system Node v24.18.0 |
+| Bundle | 5 new probes → **1** file each; old en and old zh → **0**; the comment's `FEDFUNDS, UNRATE` → **0**. Controls: the untouched "Real rates" line → 1, nonsense → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New line present and old absent in **all five languages**; the "Real rates" control is present |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Hasn't reliably" is ρ ≈ 0.2 with two large counterexamples. It doesn't say tightening is harmless; the lags principle beside it stands. The cycle picker is crude (1980 folds into 1981; 1974's recession began before its peak), and neither changes the two counterexamples.
+- **§10.1:** no added line contains advice, and the plant shows the guard reads `markets.js`. **§10.2 / §10.3:** n/a. **§2.3:** every figure is in a comment, and the guard passes.
+- **DECISIONS / CLAIMS / completed work:** `tightening stops` returns 0 hits in `DECISIONS.md` and `CLAIMS.md`. The 09-18 S&P principle and the other four lines are byte-identical (diff +12/−5). **No conflict found.**
+
+**Seen, not fixed:** the "speed of change often matters more than the level" principle is still arguable framing, and I didn't measure it. The Learn list's *"Credit: The Most Important Part"* title is item 158's (owner). The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine; I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said where rate hikes stop "shapes" how harsh the slowdown is. Across 12 hiking cycles the peak rate barely predicted it: 2007's 5.26% came before the worst rise in unemployment, and 1984's 11.64% came before almost none. The line now says that, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I didn't read or touch it.
+
+### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Bonds card no longer says "Long maturities move most": they're the most sensitive, but their yields usually rise less. Five languages.
+
+Rules: W-6.2 ok (the previous run's residual was not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 228,423 b, 91.4% of warn, 3.1 runs of headroom, no WARN.
+
+**Residual:** L27's "$50" title. Harinck 2007's stake sizes weren't found (one search, one fetch). Still arguable, so no edit.
+
+**Step 3.5: the premise, measured with a control.** The Market Dashboard's Bonds card (`markets.js` `rateEffects`) said *"Long maturities move most"*. `Long maturities` gets **0** hits across both logs and `CLAIMS.md`, so it was never measured. Per unit of yield change it is duration, which is true. Over a hiking cycle it may not be. FRED daily DGS2/5/10/20/30 via keyless CSV; `scratchpad/bonds/an.mjs` prices a constant-maturity semiannual par bond and throws on a bad header or a non-numeric value. **Controls:** bogus id → **HTTP 404**; a par bond priced at its own yield → 100 (asserted); DGS10 2022-03-15 = **2.15**, 2023-07-26 = **3.86**, DFF steps 0.08 → 0.33 on 2022-03-17 (published).
+
+| first → last hike | 2y | 5y | 10y | 30y | 30y yield Δ vs 2y |
+|---|---|---|---|---|---|
+| 1994-95 | −5.6% | −9.8 | −12.8 | **−16.7** | +1.44 vs +3.05 |
+| 1999-2000 | −2.2 | **−3.7** | −3.6 | −0.7 | +0.05 vs +1.21 |
+| 2004-06 | −4.5 | **−5.4** | −4.0 | +2.7 | −0.18 vs +2.38 |
+| 2015-18 | −3.2 | −4.2 | **−4.3** | 0.0 | 0.00 vs +1.65 |
+| 2022-23 | −5.6 | −8.9 | −14.1 | **−25.4** | +1.45 vs +2.97 |
+
+- **The premise holds as a historical claim:** the longest maturity fell most in only **2 of 5** cycles, and moved *least* in the other 3. Its yield rose less than the 2-year's in **5 of 5**.
+- **Disposition (W-11.2, narrow, no figure ships):** keep the true half (sensitivity), drop "move most", and add the reason it fails. That's the same "most sensitive" form as the Stocks card next to it.
+
+#### What shipped
+- `markets.js` Bonds `note`, five languages. en *"Long maturities most sensitive, but their yields usually rise less"*; es *"Los de largo plazo, más sensibles, pero su rendimiento suele subir menos"*; ko *"장기채가 가장 민감하지만, 장기 금리는 대개 덜 오름"*; zh *"长期债券最敏感，但其收益率通常涨得更少"*; ja *"長期債が最も敏感だが、その利回りはたいてい上昇幅が小さい"*.
+- A 7-line dated comment under the Cash comment with the figures above. It does not ship.
+- `scratchpad/bonds/patch.mjs` asserted old ×1 / new ×0 for all 6 pairs, and the reverse after; a repeat refuses.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) both times |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en note → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-U-8-n-U5.js` / `markets-BjgJHM0o.js`, system Node v24.18.0 |
+| Bundle | 5 new probes → **1** file each. Old en and old zh → **0**. Comment's `DGS2/5/10/20/30` → **0**. Controls: untouched Stocks note → 1, nonsense → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New note present and old absent in **all five languages**; Cash note control true. `PROBE_ZQX` true → false. Card wraps to 3 lines, like Real Estate |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Most sensitive" is duration, and it holds at every maturity step. "Usually rise less" holds in 5/5 cycles against the 2-year, and against the policy rate too (the 30y rose at most +1.45 while the target rose ≥ +1.75). "Usually" leaves room for a cycle where it doesn't. The arrow (Rates ↑ → Price ↓) still holds: the 2y/5y/10y fell in all 5 cycles.
+- **§10.1:** the plant proves the guard reads `markets.js`; added lines matching `should buy|sell|recommend|dalio` → **0**. **§10.2:** n/a. **§10.3:** n/a. **§2.3:** all 3 added lines with a year are comments; `npm test` passes.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `Long maturities`, `rateEffects` → 0, and no `duration` hit concerns bonds. The 09-18 header and its three "Yet…" notes are byte-identical (diff +12/−5). **No conflict found.**
+
+**Seen, not fixed:** the Dashboard's key-insight lines *"The speed of change often matters more than the level itself"* and *"Where tightening stops shapes how gentle or harsh the slowdown is"* are 0-hit and unmeasured. They're arguable framing, not picked by default. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said long bonds "move most" when rates rise. They're the most rate-sensitive, but in 3 of the last 5 hiking cycles the 30-year moved least, because long yields barely rose. The card now says both, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-12 (scheduled dev-agent; free pick, after the previous run's residual held) — loss aversion is no longer "consistently roughly twice": that is the classic estimate, and later meta-analyses range from about that down to near 1. L19, L27 + its figure, one quiz explain; five languages.
+
+Rules: W-6.2 ok (residual measured and not taken; then a free pick); W-9.4 n/a. `check-log-size` before: run log 223,314 b, 3.7 runs of headroom, no WARN.
+
+**The residual first: the Stocks card's *"Growth names most sensitive"*. It holds, so no edit.** Ken French VW monthly (`6_Portfolios_2x3`, `12_Industry`), first hike → last hike for the last 5 cycles: growth beat value **3/5** (big-cap legs 4/5), tech beat utilities **4/5**, market up **5/5**. But over the **first 12 months** after the first hike, growth trailed value **4/5** and tech trailed utilities 3/5. Under the card's "all else equal" heading the push claim stands. Controls: 1999 / 2022 growth-value and 2008 market reproduce the 09-18 run's figures exactly; a bogus French URL → 404.
+
+**Step 3.5, the pick.** L27 said research *"consistently finds that losses feel roughly twice as painful"*. So did its takeaway, L19, a quiz explain and the figure (*"felt twice over"*, drawn 1 : −2). The archive only asserted it (l.3794). Measured against the abstracts:
+- **Tversky & Kahneman 1992: λ 2.25** (the control: the classic figure comes back).
+- **Brown, Imai, Vieider & Camerer, JEL 2024** (607 estimates): mean **1.955** [1.82, 2.10], median **1.69**.
+- **Walasek, Mullett & Stewart, J Econ Psych 2024:** **1.31** [1.10, 1.53].
+- **Yechiam & Zeif, J Econ Psych 2025**, re-analyzing Brown's data: about **1.07**, not significantly above 1, in symmetric, unordered designs.
+- **Premise holds:** "about twice" is one end of the range, and "consistently" is false.
+- **Disposition (W-11.2):** short surfaces drop the number ("often … more"); only L27's body gives the range. The figure keeps its 2x drawing, captioned as the classic estimate.
+
+#### What shipped (31 + 5 strings, 11 files)
+- **L27 §1:** "usually sharper and lasts longer" → "often sharper". Research sentence: *"…put the gap at about twice in its classic estimate; later reviews of many studies range from about that to well below it, and in some designs close to none."*
+- **L27 takeaway:** "often aren't felt equally — a loss can hurt more". **L19:** "often finds that losing something feels worse". **Quiz explain:** "feel more painful than". The answer key and options are unchanged.
+- **Figure:** title → *"The same $50, weighed unequally"*. Caption → *"In the classic estimate, the loss registers about twice as strongly"*. Its source comment now cites all four papers.
+- es/ko/zh/ja carry the same clauses; L19/L27 ledger re-marked `ai` ×4 after reading each against the new English. `readiness --write`: en 166,954 → **166,991**, still 177 min.
+- **Step 5 caught an error before commit:** the draft said later reviews "find it smaller", but Brown's 1.955 *is* about twice. Patch 2 fixed that clause ×5.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3); an intermediate §10.4 ledger FAIL cleared by the re-mark |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in L27 en → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-4PjajpAk.js`, system Node v24.18.0 |
+| Bundle | final-text probes ×5 languages, title, caption, quiz → **1** each. Old strings and draft "find it smaller" → **0**; comment's `Yechiam` → 0. Controls: untouched L27 sentence → 1, nonsense → 0 |
+| Live walk | static `dist/` (first-pass build), lesson 27: new body, takeaway, caption, title present and old absent in **all five languages**. DOM probe true → false. Patch 2's clause: bundle probe only |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** Classic ≈ 2.25; "about that to well below it" spans 1.955 / 1.69 / 1.31 / 1.07; "close to none" is Yechiam & Zeif.
+- **§10.1:** the plant fired, and no added line contains advice (0 hits). **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** the years are in a comment, and the guard passes.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** no loss-aversion ratio recorded (0 hits). **No conflict found.**
+
+**Seen, not fixed:** (1) L27's title *"Why Does Losing $50 Hurt More…"* and the quiz's correct option *"feels far heavier"*. Harinck et al. 2007 report it reverses for *small* amounts; stake sizes not found. Arguable. (2) Untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the loss-aversion lesson said research "consistently" finds losses hurt "twice" as much. That is the 1992 estimate; 2024-25 meta-analyses range from about 2 down to about 1. Five surfaces now say so, in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-12 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Cash card no longer says its yield "tracks the policy rate": it moves with it, often by less. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous run's two residuals were measured and closed by it); W-9.4 n/a. `check-log-size` before editing: run log 218,022 b, 87.2% of warn, 4.4 runs of headroom, no WARN, so W-5.3's archiving pass is not due yet.
+
+**Step 3.5: the premise, measured with a control. It holds.** The Market Dashboard's rate-effects grid (`markets.js` `rateEffects`, Cash card) said *"Yield tracks the policy rate"*. "Tracks" is a claim about size. `Yield tracks` has 1 hit across both logs, and it is the 09-18 run using the string as a bundle *control* (archive l.52457), so it was never measured. It also sat beside the parent guide's 13-17 activity, which 10-10 measured to *"usually moves the same way as the Fed, though often by much less"*. Keyless FRED CSV, `scratchpad/cash/an.mjs`, which throws on a non-numeric value or a header that isn't the requested id. **Controls:** a bogus id → **HTTP 404**; the spliced target reads **5.50** on 2023-08-01 and **0.25** on 2022-03-01 (published); `DTB3` 2023-08-01 = 5.27.
+- **3-month T-bill (`DTB3`) share of the target's move:** 2004-06 hikes **88%**, 2015-18 **97%**, 2022-23 **94%**. Cuts since 2024-09: **63%**, because bills move ahead of the target.
+- **National average savings rate (`SNDR`, from 2021-04):** 2022-23 **0.06 → 0.43, 7%** of +5.25. Cuts since 2024-09: **6%**.
+- **Disposition (W-11.2, narrow, no figure ships):** "tracks" is true for one kind of cash and false for the kind most learners hold, and the card just says "Cash". So "tracks" becomes "moves with … often by less", which is true for both. I did not name T-bills or money-market funds: §10.1, and 10-10 made the same choice when it left out "high-yield".
+
+#### What shipped
+- `markets.js` Cash `note`, five languages. en *"Yield moves with the policy rate, often by less"*; es *"…se mueve con la tasa de política, a menudo menos"*; ko *"…같은 방향으로 움직이지만, 폭은 더 작은 경우가 많음"*; zh *"…同向变动，但幅度往往更小"*; ja *"…同じ向きに動くが、幅は小さいことが多い"*. ko/zh/ja reuse the parent guide's 같은 방향 / 同向 / 同じ向き and 폭 / 幅度 / 幅 terms.
+- A 6-line dated comment under the `rateEffects` header with the figures above. It does not ship.
+- Patcher `scratchpad/cash/patch.mjs`: old ×1 / new ×0 asserted for all 6 pairs before writing, and the reverse after. A repeat run refuses (exit 1).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` before / after | exit 0, 0 FAIL, 1 WARN (O-3's review coverage) both times |
+| `check-blindspot` sees the edit | planted *"You should buy stocks now."* in the en note → **exit 1**; restored (`cmp`-identical) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-CUw4DTsD.js` / `markets-Of3SO99q.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) → **1** file each. Old en and old zh → **0**. Comment's `SNDR 0.06` → **0**. Control: the untouched Bonds note → 1. Nonsense probe → 0 |
+| Live walk | static `dist/` in the Browser pane, Reference → Market Dashboard. New note present and old absent in `innerText` in **all five languages**. **DOM control:** injected `PROBE_ZQX` read true, then false. Screenshot shows the card wrapping cleanly |
+
+#### Step 5: adversarial self-check
+- **Is the new text true?** "Moves with" holds in every hike and cut leg, for both series. "Often by less" holds for both: T-bills moved 63-97% and savings 6-7%. "Often" leaves room for a bill moving one-for-one over a short window. The arrows (Rates ↑ → Yield ↑) are unchanged and still right.
+- **§10.1:** the plant proves the guard reads `markets.js`, and no product is named in shipped text. **§10.2:** `dalio` in added lines → 0. **§10.3:** n/a. **§2.3:** the dates are in a comment, `npm test`'s scan of `markets.js` comments passes, and the bundle probe shows the comment doesn't ship.
+- **DECISIONS / CLAIMS / LAUNCH_READINESS / README:** `tracks the policy rate`, `policy rate`, `rateEffects` → 0 hits. This narrows one note that the 09-18 rewrite kept as the textbook direction. That rewrite's three "Yet…" notes and its header are byte-identical (diff +11/−5, all in the Cash block and the new comment). **No conflict found.**
+
+**Seen, not fixed:** *"Growth names most sensitive"* (the Stocks card) is also unmeasured: a superlative, and growth is widely reported to have beaten value through the 2015-18 hikes (not measured here). It is arguable and needs Tiingo style-ETF data, so it is not picked by default. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are not mine, and I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said cash yields "track" the Fed's rate. T-bills do (88-97% of each hike), but the average savings rate moved 7% of 2022-23's hikes, so the card now says "moves with the policy rate, often by less", in five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I did not read or touch it.
+
+### 2026-10-13 (scheduled dev-agent; free pick, lesson sweep) — essentials L12's PMI no longer "cancels automatically once enough equity has built up": the automatic trigger is the payment schedule, and a rise in the home's value doesn't count. Five languages.
+
+Rules: W-6.2 ok (the previous entry left no residual; free pick); W-9.4 n/a. `npm test` before: not run; the previous entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.
+
+**Found by** a Node scan of the 44 lessons' English quantifier sentences sharing no 30-char window with either log or `CLAIMS.md` (whitespace-normalized): 338 → 184 unmentioned. Controls: a known-measured L33 sentence → found; nonsense → not. (My first version never tested its positive control; fixed.)
+
+**Candidate 1 held, no edit: L35 *"Most of the time these two goals point the same direction"*.** FRED PCEPILFE/UNRATE/NROU, 1960-01 → 2026-08, n = 800; "pulling apart" = core-PCE gap from 2% and unemployment gap from NROU call for opposite policy. Controls: bogus id → 404; UNRATE 2009-10/2020-04 asserted; oracle 100%, anti-oracle 0%, 204-month shift 47%. At ±0.5 tolerance they pulled apart **26%** of months (±1: 15-18%; 2008-26: 3%). Only zero tolerance gives 46%. Holds.
+
+**Candidate 2, the pick: L12 *"…typically cancels automatically once enough equity has built up."*** CFPB ("When can I remove PMI", fetched today): under the Homeowners Protection Act the servicer must end PMI automatically when the principal is **scheduled** to reach 78% of the **original** value, or at the loan's midpoint; 80% is request-only. A price rise never counts, and prepaying doesn't move the automatic date. **Premise held:** the sentence implies a trigger the law doesn't have.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L12 §3, one clause each. en: *"…and typically cancels automatically once the scheduled payments have paid down enough of the loan; a rise in the home's value doesn't count toward that."* es *una vez que los pagos programados han reducido lo suficiente el préstamo; que la vivienda suba de valor no cuenta para eso*; ko *예정된 상환으로 대출 잔액이 충분히 줄어들면… 집값이 오른 것만으로는 자동 해지되지 않습니다*; zh *按计划还款使贷款余额降到足够低时自动取消；房价上涨并不计入其中*; ja *予定どおりの返済でローン残高が十分に減ると…住宅の値上がりは、これには数えられません*. Hand-read all four against the English.
+- W-11.2: narrowed, no figure (78% stays out). English +84 chars, still 177 min.
+- L12 es/ko/zh/ja re-marked `ai` (`translation-review.mjs mark`); ledger diff **24 lines, exactly L12's four entries**. `readiness --write`: §4.3 166,991 → **167,075** chars, plus §10.4's volume sentence. `translation-completeness --write` not run.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/pmi/patch.mjs`: old ×1 / new ×0 for all 5 before, the reverse after; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). The first run failed §10.4 (L12 stale ×4), and the second failed the §4.3/§10.4 figures; both were fixed as above |
+| Guard sees the file | planted *"You should buy stocks now."* after the new clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | 5 new probes → each in its own language's `lessonContent.essentials.*` chunk; 5 old probes → 0 files; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, essentials 1-11 seeded complete, `#/lesson/12`. New present / old absent in **all five languages** (language select). DOM control: injected `PROBE_ZQX` read true, then false after removal |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The new clause is the HPA rule without the number, and it says what the lesson's own "equity" (built by payments) meant. It gives no advice to buy, rent or refinance (§10.1 plant above). §10.2/§10.3 n/a; no date (§2.3).
+- **Over-claim check:** Fannie/Freddie let a borrower *request* removal based on a new appraisal after seasoning. The clause says only that a price rise doesn't count toward the **automatic** cancellation, which stays true.
+- **Siblings:** "PMI"/"mortgage insurance" across `src/` (control: L12 matched) appear only here plus the unrelated ISM-PMI quiz option. DECISIONS.md's two PMI lines are about term chips. `git log -S` shows the clause unchanged since the track split. **No conflict found.**
+
+**Seen, not fixed:** the other 182 are mostly scenario setup. Next candidates: L40's productivity line *"the only one of the three that isn't just moving numbers around"*, and L34 grouping tool 3 (redistribution) with the deflationary tools. The latter is lifted into `BalanceBand`'s labels (§69), so 15+ strings move. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the home-buying lesson said mortgage insurance cancels automatically "once enough equity has built up". By law the automatic trigger is the payment schedule, not a rise in the home's price, so it now says that. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-13 (scheduled dev-agent; free pick, W-11.2 Dashboard sweep) — the Key Principle "Real rates — after inflation — say more than headline rates" no longer ranks them: on FRED, the real rate didn't say more. Five languages.
+
+Rules: W-6.2 ok (the previous entry left no residual to take; free pick); W-9.4 n/a. `npm test` before: not run; the archiving entry's exit 0 / 0 FAIL / 1 WARN is the baseline, and the post-edit run reproduces it.
+
+**Why this line:** it had **0** hits in `AGENT_LOG.md`, the archive and `CLAIMS.md` (control: "work with lags" → 2 archive hits, the 09-17 sweep). It is the last `ratePrinciples` item nobody had measured. The open numbered items (117, 140, 143, 149, 76) still say not to pick them over content.
+
+**Step 3.5: the premise, measured.** Keyless FRED CSV: FEDFUNDS, CPIAUCSL, CPILFESL, UNRATE, USREC, GS10, TB3MS, monthly 1959-2026 (`scratchpad/real/an.mjs`, which throws on a bad header or a non-numeric value). **Controls:** bogus id → **404**; FF 1981-01 = 19.08, UNRATE 2009-10 = 10.0 and USREC 2008 asserted; month-parity AUC **0.500**; −(10y−3m) AUC **0.876**; the oracle's Spearman **1.000**.
+
+| signal | AUC: recession starts ≤12m (706 months, 108 positive) | Spearman with ΔU over the next 24m |
+|---|---|---|
+| nominal FF | **0.774** | **0.390** |
+| FF − core CPI yoy | 0.749 | 0.338 |
+| FF − headline CPI yoy | 0.683 | 0.218 |
+| FF − core realized over the *next* 12m | 0.683 | n/a |
+
+Split 1959-84 / 1985-2026: nominal wins both on ΔU (0.39/0.45 vs core 0.21/0.42). On AUC, core real edges it only after 1985 (0.780 vs 0.728). The 10-12 peak-rate run had real slightly ahead at cycle peaks (0.22 vs 0.17, n = 12, both weak). **Premise breaks:** no reliable edge either way, so "say more" is unsupported. Real rates still matter: 1975-06 had FF 5.55% with real −3.6%.
+
+#### What shipped
+- `markets.js` `ratePrinciples[3]`, five languages. en: *"Real rates — after inflation — are worth reading alongside headline rates, not instead of them."* es *conviene leerlas junto a las nominales, no en su lugar*; ko *대신하기보다 함께 볼 때 의미가 있습니다*; zh *值得与名义利率一起看，而不是取而代之*; ja *名目金利の代わりではなく、あわせて見ると役立ちます*. Hand-read all four.
+- An 8-line dated comment carries the figures; the build strips it. W-11.2: narrowed, no figure ships.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/real/patch.mjs` asserts old ×1 / new ×0 for each of 6 sites, then the reverse. A first try refused on a bad comment anchor and wrote nothing (`cmp` vs a pre-copy); a repeat refuses |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Guard sees the file | planted *"You should buy stocks now."* → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `markets-CzWDFSIL.js` |
+| Bundle | 5 new probes → `markets-*.js`; old en → 0 files; `AUC 0.77` (the comment) → 0; nonsense → 0. The old zh phrase's one hit is an unrelated L-economy sentence |
+| Live | static `dist/` in the Browser pane, Reference → Market Dashboard: new sentence present and old absent in **all five languages**; control principle ("speed of change") present |
+
+#### Step 5: adversarial self-check
+- **Is the new line true and neutral?** It makes no ranking claim, and it is analytical, not advice (§10.1 plant above). §10.2/§10.3 n/a. No date added (§2.3).
+- **Instrument fairness:** a trailing-inflation real rate is an ex-post proxy. The forward-realized variant did no better (0.683), so the result doesn't come from the proxy choice.
+- **Siblings:** a scan of `src/content/` for real-rate comparatives found only this line (control: it matched). **DECISIONS / completed work:** `git log -S` shows the line unchanged since the rebuild, and no prior entry measured it. **No conflict found.**
+
+**Seen, not fixed:** the `ratePrinciples` list is now fully measured. Remaining unmeasured Dashboard text is lesson-33/34 figure labels, which are lifted verbatim from the lessons (§64/§69/§71), so their lessons are the place to measure. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Market Dashboard said real (after-inflation) rates "say more" than headline rates; 65 years of FRED data show no reliable edge either way, so it now says to read them together. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-13 (scheduled dev-agent; W-5.3 archiving pass, owed by the previous entry) — run log days 2026-10-04 → 10-10 (28 entries, 191,935 b) moved verbatim to the archive. No source change.
+
+Rules: a standing chore, not a residual, so W-6.2 n/a; W-9.4 n/a. W-5.3's **twenty-third** firing.
+
+**Step 3.5: the premise, re-measured.** `check-log-size` at HEAD `6847c70`, before any edit: run log **244,277 b** (97.7% of the 250,000 b warn), **0.92 runs** of headroom, WARN; 10 live days, each one contiguous region, controls 1-4 firing. The premise held. **Which days:** everything before the most recent weekly-review boundary (W-11, 2026-10-11), the rule's date clause as written, so 10-11 → 10-13 stay live, as the 22nd pass kept its boundary day.
+
+#### What shipped (2 files, no source change)
+- `AGENT_LOG.md` **518,136 → 326,199 b** before this entry; **3 live days**, oldest 2026-10-11. **Floor unchanged at 273,859 b.**
+- `AGENT_LOG.archive.md` **5,479,416 → 5,671,392 b** under `## Archived 2026-10-04 → 2026-10-10`, after the 09-27 → 10-03 section and before the line-start `## Archived backlog (closed items)`. Title `→ 2026-10-03` becomes `→ 2026-10-10` (line 1, byte-neutral). Days ascending, entries within a day in live-file order (the 22nd pass's layout). Day sizes: 10-04 23,084; 10-05 24,254; 10-06 28,917; 10-07 23,965; 10-08 29,711; 10-09 32,155; 10-10 29,837.
+- The mover lived in `scratchpad/archive/move.mjs`; `scripts/` gained 0 lines. It anchors the backlog heading at line start and asserts it occurs once, per the 22nd pass's instrument note.
+
+#### Verification
+| Check | Result |
+|---|---|
+| Pre-state | both files `cmp`-identical to `git show HEAD:` before the write |
+| Conservation (mover) | section read back out of the new archive string, days reversed and appended to the new live file → the original **518,136 b** byte for byte; the same rebuild one character short does not match |
+| Conservation (independent, from disk) | a separate script re-read both written files: new archive minus the section, title reverted, **==** HEAD's archive; live rebuilt **==** HEAD's `AGENT_LOG.md`; one-char-short control **false** |
+| Containment | each of the 28 heading lines: new archive ×1, old archive ×0, new live ×0. `^### 2026-10-0[4-9]\|10-10` counts: live **0**, archive **28** |
+| Composition | archive grew **191,976 b** = heading 37 + `\n\n` + block 191,935 + `\n\n` |
+| Repeat | re-running the mover refuses (exit 1) |
+| `npm test` | **exit 0, 0 FAIL, 1 WARN** (O-3's; the headroom WARN is gone). MEASURED 2026-10-13, before this entry: file 326,199 b, run log 52,340 b, floor 273,859 b, archive 5,671,392 b, 3 live days, 31.7 runs of headroom |
+
+#### Step 5: adversarial self-check
+- **Blindspot register / DECISIONS.md:** out of reach; only two markdown files changed. Moved **verbatim**, nothing deleted or edited (W-7.2 rule 3): the two conservation checks are the proof, since `npm test` cannot detect archive loss. Backlog, App summary and Environment note untouched; the floor is byte-identical.
+- **Already-done work:** the archive held 0 of these 28 entries before.
+- **My own claims:** once this commits HEAD moves, so **a reviewer must name this commit's parent `6847c70`**. No conflict found.
+
+**Seen, not fixed:** nothing new. W-10.6(a)'s treadmill: **24** dev-agent runs separate the 22nd pass (`8bda77c`, 10-07) from this one, so log mechanics are 1 run in 25. W-11.1's entry-size test (10-12 → 10-18) is measured off the file at the next review; the four 10-12 entries are still live for it. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the run log was one run from its size budget, so 28 entries from 2026-10-04 to 10-10 moved verbatim into the archive (run log at 23% of budget, warning cleared). No learner-visible change. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched. **Backlog:** 0 b added.
+
+### 2026-10-13 (scheduled dev-agent; residual of the peak-rate run held, then a free pick) — "Be the Fed Chair": cheap credit no longer "feeds" the next expansion's inflation as a rule. It can, and after 2008 it didn't. Five languages.
+
+Rules: W-6.2 ok (I took the previous run's residual, its second in a chain; it held, so no edit. ⛔ The next run may NOT take a residual of this one); W-9.4 n/a. `npm test` before: exit 0, 0 FAIL, 1 WARN (O-3's). Run log 239,158 b before; **after this entry `check-log-size` WARNs (0.88 runs of headroom), so the next run owes W-5.3’s archiving pass.**
+
+**Residual first: *"The speed of change often matters more than the level itself"* (Dashboard). It holds, so no edit.** I rebuilt the previous run's cycle table from keyless FRED FEDFUNDS / UNRATE / CPILFESL: the same 12 peaks and FF values, and ρ(level, Δunemployment) = **0.17**, as the previous run reported. 2023-08 now has its 36 months, so n = 13. Spearman against Δunemployment: level 0.17, speed (pts/yr) 0.33, fastest 12-month rise 0.28, size of the hike 0.54. Head to head, in pairs where speed and level disagree, the faster cycle came before the harsher slowdown in **12 of 18** (max-12: 11 of 17). "Often" holds. **Controls:** bogus id → 404, published FF/UNRATE values asserted, self ρ = 1.00. An oracle (Δunemployment vs level) wins **34/34**. My first pair script misread the columns; its row count (12, not 13) caught it.
+
+**Free pick: lesson 35's simulator, contraction → "Cut toward zero".** *"credit left cheap for long enough feeds the next expansion's inflation"* had **0** hits across both logs, `CLAIMS.md` and `DECISIONS.md`. Found by a Node scan of markets/signals/policy/sectors/glossary for English sentences no log mentions: 45, nearly all definitions or hypothetical setup (control: the 10-12 peak-rate line was found).
+FRED PCEPILFE / PCEPI / FEDFUNDS (control: both indexes average **100.000** over 2017):
+| episode | FF ≤ 0.25 | expansion after | core PCE < 2% | headline < 2% |
+|---|---|---|---|---|
+| 2008-12..2015-12 | 85 mo | 2009-07..2020-02 | **123/128 (96%)**, max 2.06 | 100/128 (78%) |
+| 2020-04..2022-03 | 24 mo | 2020-05..2026-08 | 10/76, max **5.64** | 10/76 |
+**Premise breaks:** the longest near-zero stretch in the data was followed by a decade of inflation under 2%. "Can feed" is true; "feeds" is not.
+
+#### What shipped
+- `policyScenarios.js` `contraction` / `cutToZero` outcome, five languages. en: *"…can feed the next expansion's inflation — the same tension, one turn of the cycle later. It isn't automatic: after the 2008 cut, rates stayed near zero for seven years, and inflation ran below 2% for most of the expansion that followed."* ko/zh/ja/es: the same, with 할 수 있습니다 / 可能会 / ことがあります / puede alimentar. I hand-read all four.
+- A 6-line dated comment with the figures, which the build strips.
+- W-11.2: I narrowed rather than adding a statistic. The one dated clause is there because a bare "can" still reads as the rule. This is an outcome card, not a glossary entry or a 9-12 card.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/speed/patch.mjs`: old ×1 / new ×0 for all 5 before, the reverse after; a repeat refuses |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Guard sees the file | planted *"You should buy stocks now."* → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` **exit 0**, `index-pTKx1mEp.js` |
+| Bundle | 5 new probes → 1 file each; old en and old zh (`太久，会为`) → 0; the comment's `123 of 128` → 0; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, lesson 35 with 29-34 seeded complete. After clicking "Cut toward zero", the new sentence is present and the old one absent in **all five languages** |
+
+#### Step 5: adversarial self-check
+- **True?** Target range 0-0.25% from 2008-12-16 to 2015-12-16 is seven years. "Most of the expansion" holds on both headline (78%) and core (96%). I didn't say "the Fed's 2% target": it was formalized only in 2012.
+- **Siblings:** a Node scan of the English content (control: the edited sentence matched) found one other hit: lesson 35's 2021 sentence, which is about a decision, not a rule. No conflict.
+- **§10.1** plant above. **§10.2 / §10.3** n/a. **§2.3:** a bare year, which the guard allows in outcomes. **DECISIONS / completed work:** `git log -S` shows the sentence unchanged since `2836338`. **No conflict found.**
+
+**Seen, not fixed:** nothing new turned up. The scan's other 44 were definitions or teaching setup, so next run take an open numbered item or another unmeasured surface. The untracked `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine; I left them alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the Fed-chair simulator said cheap credit "feeds" the next expansion's inflation; after 2008 it didn't for a decade, so it now says "can", with that example. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; I didn't read or touch it.
+
+### 2026-10-14 (scheduled dev-agent; residual of the L21 run) — L18's marshmallow paragraph no longer says waiting depends on "whether their household has taught them" that promises are kept: the study varied whether an adult had just kept one. Five languages.
+
+Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Step 3.5: the premise, measured.** The previous entry's "Seen, not fixed" was recalled, not fetched. Europe PMC REST (keyless; PubMed's page served a cookie wall; control: a nonexistent PMID → `hitCount 0`):
+- **Kidd, Palmeri & Aslin 2013** (*Cognition*, PMID 23063236), N = 28, mean age 4;6: the marshmallow task run *"in an environment demonstrated to be either unreliable or reliable"*. Reliable-condition children waited significantly longer (p < 0.0005). The manipulation was the experimenter's broken or kept promise minutes earlier, not the child's home.
+- **Watts, Duncan & Quan 2018** (*Psych Sci*, PMID 29799765): the link from waiting to age-15 achievement was half the original size and shrank by two-thirds with controls for family background and the home environment. That concerns what waiting *predicts*, not what drives it.
+- **Positive control:** both abstracts support the paragraph's direction (waiting depends on things outside the child's control), so the source could confirm the clause, not only refute it.
+- **Premise held:** "household has taught them" is an extrapolation. The measured cause is whether the adults present have kept their word.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L18 §2, one clause narrowed (W-11.2, no statistic). en: *"…like whether the adults around them have kept their promises about 'later'."* es *como si los adultos a su alrededor han cumplido sus promesas sobre 'después'* (keeps the original's *como si* + indicative); ko *주변 어른들이 '나중'에 대한 약속을 지켜 왔는지처럼*; zh *比如身边的大人是否兑现过关于“以后”的承诺*; ja *周りの大人が「後で」という約束を守ってきたかどうかなど*. Hand-read against the English. The next sentence ("easier to practice when the environment makes waiting feel safe") still follows.
+- L18 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,307 → **167,292** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/marsh/patch.mjs`: old ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file, not a pipe |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe in only its own `lessonContent.money.*` chunk; 5 old phrases and a nonsense probe → 0 files |
+| Live | static `dist/` (404 control `/assets/nope.js` → 404), 16-17 seeded, `#/lesson/18`. **My first pass read all-false in four languages, old phrases included: the lazy chunk hadn't loaded.** Re-read after a 1 s wait, with the marshmallow word as an in-language control: each language showed its own new clause, no old one, no other language's, and `<html lang>` followed. DOM `PROBE_ZQX`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Kidd's in-session manipulation is exactly "adults around them have kept their promises". N = 28 is small, but the paragraph already says "later research" and the direction matches. No advice, date or Dalio (§10.1 plant above).
+- **Prior work / decisions:** `git log -S"household has taught them"` → only the lesson's creation (`fef3bb1`) and two file splits. DECISIONS.md and CLAIMS.md don't mention delay of gratification; the quiz, glossary and kids content don't repeat the clause. **No conflict found.**
+
+**Seen, not fixed:** nothing new in L18. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the marshmallow passage credited a child's household for teaching that promises are kept. The study actually varied whether an adult had just kept a promise, so it now says "the adults around them". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-14 (scheduled dev-agent; free pick, lesson sweep) — L21's home-listing example no longer says offers "cluster near the anchor instead of near the home's actual worth": listing prices pull estimates part of the way, not all of it. Five languages.
+
+Rules: W-6.2 ok (free pick, as the previous entry required); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** The older "Seen, not fixed" leads were already measured (balance-sheet caption 10-11, Growth names 10-12, L38 Peak `b45aa0a`). Money lessons 16-28 and 41-44 are the least-touched since 09-20. A scan of their empirical sentences found L21 §2, unchanged since `28e5555`.
+
+**Step 3.5: the premise, measured.** en: *"A home listed at $450,000 shapes every offer that follows… — offers cluster near the anchor instead of near the home's actual worth."*
+- Lab: Northcraft & Neale 1987 (OBHDP 39:84-97) hypothesized *insufficient* adjustment. As reported secondhand (EdgeProp; I couldn't read the paper's scanned tables here), agents' appraisals across a $30,000 listing-price spread differed by about $14,550, roughly **48%** of the gap. A later study reports anchoring indexes of **67%** (agents) and **86%** (students).
+- Field: Bucchianeri & Minson 2013 (JEBO 89:76-92), >14,000 sales: higher list prices go with higher sale prices.
+- **Positive control:** the same sources support the lesson's direction (the anchor pulls), so they can confirm a claim, not just refute one.
+- **Premise held for the clause:** estimates move partway toward the anchor. "Every offer" and "instead of near the home's actual worth" go further than the evidence does.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L21 §2: the clause was narrowed rather than given a statistic (W-11.2). en now reads *"A home listed at $450,000 tends to pull the offers that follow toward it, even from buyers who never independently priced the neighborhood."* es *tiende a atraer hacia sí las ofertas que siguen*; ko *이후에 이어지는 제안들을 그 가격 쪽으로 끌어당기는 경향이 있습니다*; zh *往往会把之后的报价拉向这个价格*; ja *その後に続く提示価格をその価格の方へ引き寄せる傾向があります*. Hand-read against the English. The salary sentence, the takeaway and the quiz don't make the "cluster" claim, so they're unchanged.
+- L21 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,365 → **167,307** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/anchor/patch.mjs`: old ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from the file, not through a pipe. The first run failed §10.4; the re-mark and refresh fixed it |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe is in only its own `lessonContent.money.*` chunk; the 5 old phrases and a nonsense probe → 0 files |
+| Live | static `dist/` in the Browser pane (404 control: `/assets/nope.js` → 404), money 16-20 + 41-44 seeded, `#/lesson/21`. Via the language select, each language showed only its own probe, no old phrase, and `<html lang>` followed. DOM control `PROBE_ZQX`: true, then false. localStorage cleared after |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** "Tends to pull… toward it" holds at every measured index (48-86%) and in the field data. The sentence is about negotiation psychology, not an asset. It has no advice, date or Dalio (§10.1 plant above).
+- **Consistency:** the salary sentence's "tends to pull the eventual number toward theirs" now matches. The takeaway ("treat it as a starting offer, not a fact") still follows. DECISIONS.md and CLAIMS.md don't mention anchoring. **No conflict found.**
+
+**Seen, not fixed:** L18's marshmallow paragraph credits "whether their household has taught them that promises… are usually kept". The best-known follow-up (Kidd et al. 2013) varied whether *the experimenter* had kept a promise, so "household" is an extrapolation (recalled, not fetched). Arguable. While trying to read the 1987 paper's scan, a Browser-pane navigation to its PDF triggered a download dialog on the owner's screen. Nothing was saved by me; don't retry that URL. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the anchoring lesson said a listing price makes offers bunch up at it rather than at the home's worth. Research shows a partial pull, so it now says the price "tends to pull" offers toward it. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-14 (scheduled dev-agent; residual of the previous L34 run) — L34 tool 1 now says a tax rise that closes a budget gap counts as austerity, so the lesson's 1930-32 "large tax increase" maps to a deflationary tool. Five languages.
+
+Rules: W-6.2 ok (second residual in a row; ⛔ the next run may NOT take a residual of this one); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Step 3.5: the premise, measured.** The previous entry's "Seen, not fixed": tool 1 is "CUT SPENDING (Austerity)", and its body describes only layoffs and cancelled contracts. But the 1930-32 example lists *"a large tax increase"* among *"the deflationary tools"*. After the last run, the only tool that mentions taxes is tool 3, which "raises taxes on higher earners" and is "not mainly shrinking" spending. The Revenue Act of 1932 raised the top rate **25% → 63%** (Wikipedia; FRASER *Commercial & Financial Chronicle* 1932-06-04), so a learner who maps it onto the four tools lands on tool 3. That contradicts the example. Its stated purpose was to balance the budget, not to fund transfers, so it is tool 1 in substance. **Positive control:** the lesson's own sentence lists it as deflationary, and the 10-14 entry's CBO table has every tax-change multiplier above 0, so a deficit-closing tax rise shrinks output in every estimate. **Premise held.**
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L34 tool 1: one sentence appended at the end of the paragraph. en: *"Raising taxes to close the gap counts as austerity too: the money goes toward closing the deficit rather than toward support for others, so it also takes spending power out of the economy."* es *Subir impuestos para tapar ese agujero también cuenta como austeridad…le quita poder de compra a la economía*; ko *부족분을 메우려고 세금을 올리는 것도 긴축에 해당합니다…경제에서 구매력을 빼냅니다*; zh *为填补缺口而加税也算紧缩…从经济中抽走购买力*; ja *不足を埋めるための増税も緊縮に含まれます…経済から購買力を奪います*. Each reuses that language's existing word for the gap (agujero / 예산 부족 / 缺口 / 不足) and tool 3's word for spending power. Hand-read against the English.
+- Heading, dial labels ("cutting, defaulting") and quiz option "Austerity (cutting spending)" unchanged. "Cutting" still covers spending cuts, and the quiz option is narrow but not false. W-11.2: one sentence, no figure.
+- L34 es/ko/zh/ja re-marked `ai`. Ledger diff **8 lines**, the four source hashes (same reviewer and date as the previous run). `refresh-readiness --write`: en 167,176 → **167,365** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/austerity/patch.mjs`: anchor ×1 / new ×0 in all 5 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read directly (no pipe) |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of the 5 probes is in only its own language's `lessonContent.economy.*` chunk; nonsense probe → 0 files |
+| Live | static `dist/` in the Browser pane, economy 29-33 seeded, `#/lesson/34`. Driving the language select en→es→ko→zh→ja: each language showed exactly its own probe and none of the others; `<html lang>` followed. DOM control `PROBE_ZQX` read true, then false |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Deficit-closing tax rises are contractionary in standard estimates. The sentence states a mechanism and doesn't rank austerity or recommend it. No advice, date or Dalio (§10.1 plant above).
+- **Consistency:** 1930-32's tax increase now maps to tool 1. Tool 3 is still separated by where the money goes, and "Why Tool #4" ("only tool 1 (austerity) and tool 2 (default)") still holds. DECISIONS.md and CLAIMS.md don't mention austerity; `git log -S` finds no earlier version of this sentence. **No conflict found.**
+
+**Seen, not fixed:** the 1930-32 example says the US leaned on "budget-balancing", and federal outlays may have *risen* from FY1930 to FY1932 (recalled from OMB Historical Table 1.1, **not fetched**). The 1932 act was the budget-balancing attempt, so this is arguable and unmeasured. ⛔ That would be a third residual, so the next run picks free. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the debt lesson's "cut spending" tool now also covers tax rises that close a budget gap, so its 1932 tax-increase example no longer contradicts the tool list. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-14 (scheduled dev-agent; residual of the 10-13 PMI run) — L34 no longer groups tool 3 (redistribution) with the deflationary tools: a tax-funded transfer isn't reliably deflationary. Lesson + the deleveraging dial, five languages.
+
+Rules: W-6.2 ok (residual of a free pick; one more residual allowed); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Held, no edit: L40 Rule 3's *"isn't just moving numbers around"*.** It's loose but not false: rule 3 is the only one of the three that raises output.
+
+**Step 3.5: the pick's premise, measured.** L34 called tool 4 *"the opposite of the first three tools"* and named the deflationary tools *"(cutting, defaulting, taxing)"*, the dial's left end label. Tool 3 as the lesson describes it is a **transfer**: tax higher earners to fund support for everyone else. CBO Working Paper 2015-02's output multipliers (via Wharton's reproduction; cbo.gov 403s here): transfers to persons **0.4-2.1**, one-year tax cuts for higher-income people **0.1-0.6**. A $1 tax-funded transfer nets **−0.2 to +2.0** (matched low/low +0.3, high/high +1.5). **Positive control:** the same table classifies tool 1 correctly, since federal purchases are 0.5-2.5, so cutting them shrinks output in every case. Caveat: this treats a tax rise as a mirrored tax cut. **Premise held:** "deflationary" doesn't describe tool 3.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L34. Three edits each: tool 3 gains one sentence (en: *"Unlike the first two tools, it moves spending power from one group to another rather than mainly shrinking it."*); tool 4 becomes *"the opposite of the first two tools"*; the balance paragraph's group becomes *"(cutting, defaulting)"*. es *traslada poder de compra de un grupo a otro en lugar de, sobre todo, reducirlo*; ko *전체 지출을 주로 줄이기보다 구매력을 한 집단에서 다른 집단으로 옮깁니다*; zh *主要是把购买力从一部分人转到另一部分人手中，而不是让总支出萎缩*; ja *支出全体を主に縮めるのではなく、購買力をある層から別の層へ移します*.
+- `markets.js`: the dial's left end label and text alternative, ×5 (§69 requires both to be lesson substrings). The zone-order comment now says tools 1-2, with a dated note on why tool 3 sits on neither end. `charts.jsx`: two comments ("tools 1-3", "the first three"). The quiz and glossary don't group the tools, so they're unchanged.
+- L34 es/ko/zh/ja re-marked `ai`; ledger diff **24 lines, L34's four entries**. `refresh-readiness --write`: en 167,075 → **167,176** chars, still 177 min; LAUNCH_PLAN §4.0 ~29,200 → ~29,300 words.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/delev/patch.mjs`: 27 pairs, each old ×1 / new ×0 before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). The first run failed §10.4; the re-mark and refresh fixed it |
+| §69 sees the label | planted the old `"cutting, defaulting, taxing"` end label → 3 §69 FAILs; restored (`cmp`) → 0 |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en sentence → `check-blindspot` **exit 1**; restored → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | 5 new probes, each only in its own language's economy chunk; the new end label in `markets-*`; 10 old phrases → 0 files; nonsense → 0 |
+| Live | static `dist/` in the Browser pane, economy 29-33 seeded, `#/lesson/34`. In all five languages (via the select) the new sentence, "first two" and the 2-tool group are present. Dial alt text reads "cutting, defaulting —". DOM control `PROBE_ZQX`: true, then false. A ko/zh probe for 증세/加税 read true. It was too broad (it matches the 1932 tax rise and tool 3 itself); the exact old tuples are 0 in the bundle |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The sentence doesn't call tool 3 stimulative, which the range's low end wouldn't support. No advice, date or Dalio (§10.1 plant above).
+- **Internal consistency:** the 1930-32 example still lists *"a large tax increase"* among the deflationary tools. The Revenue Act of 1932 raised taxes to balance the budget, which is austerity (tool 1), not a funded transfer, so it holds. But tool 1's heading says only *"CUT SPENDING"*. Seen, not fixed.
+- **Prior work:** `git log -S"cutting, defaulting, taxing"` shows the phrase in the lesson since the initial commit (`eda6dd0`), and lifted into the dial on 09-03 (`2c4f58b`). Nothing in the run log or archive had measured tool 3's sign. DECISIONS.md: no conflict. **No conflict found.**
+
+**Seen, not fixed:** tool 1's heading "CUT SPENDING (Austerity)" omits tax rises, which the 1930-32 example counts. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine; left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the debt lesson called "tax the rich to fund support" a spending-shrinking tool like cuts and defaults. CBO estimates don't support that; it now says it moves spending power between groups. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L17: the better apartment's lift fades over "a year or two", not "about three months", and moving back's loss "tends to weigh more", not "far stronger". Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead, L16 §2, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN. `check-log-size` before: run log 102,425 b, PASS.
+
+**Picking.** Essentials L1/L2/L9 (no accuracy commit since 09-01) were read and are clean. Money L17 §1 ¶4 had two claims unchanged since `bb7f772` (08-07): *"Within about three months, the better apartment stops registering as better"* and a loss *"far stronger"* than the upgrade's satisfaction.
+
+**Step 3.5: the premise, measured.**
+- **Wolbring 2017** (*J Happiness Stud* 18(5), SOEP; RePEc abstract): housing satisfaction rises after a move, *"declines in the following years"*, and *"after about 2 years"* returns to levels from several years before. Moves made for housing reasons bring *"partly lasting gains"*. **Nakazato, Schimmack & Oishi 2011** (*Soc Indic Res* 100, SOEP; secondary summary, the DIW page refused the connection): housing satisfaction rose and stayed elevated. Life satisfaction didn't move.
+- **Positive control:** Europe PMC returned **Suh, Diener & Fujita 1996** (PMID 8656337): *"only life events during the previous 3 months influenced life satisfaction"*. That is the likely source of "three months". It covers life events in general and overall satisfaction, not how a home feels. A nonexistent-title query → `hitCount 0`.
+- **Loss half:** L27 (10-12) now says the classic ~2× estimate is the top of a range that runs *"well below it, and in some designs close to none"* (Brown et al. 2024 median 1.69). "Far stronger" is the old figure, and the course itself has since corrected it.
+- **Premise held.** Adaptation is real, so the ratchet stays. The three-month timing and the "far" don't hold up.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L17 §1 ¶4, narrowed with no figure added (W-11.2). en: *"Within a year or two, the better apartment mostly stops registering as better… Most of the pleasure faded; the $400 didn't. …it would feel like a loss, and losses tend to weigh more than the mild satisfaction the upgrade produced in the first place."* es/ko/zh/ja carry the same three changes, hand-read. That read caught doubled connectives in ko/zh/ja (그리고, 而, そして), and a second patch removed them.
+- L17 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,303 → **167,309** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l17/patch.mjs` 15 pairs + 3 connective pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 5 new probes in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 16 seeded, `#/lesson/17`. en: 3 new clauses true, 2 old false, heading as control. es/ko/zh/ja via the real select: own new + loss clauses true, own old false, no English left, Priya's name as in-language control, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The ratchet, the $400 arithmetic and the takeaway (*"the pleasure of each one fades while its cost doesn't"*) all stand. "Fades" is what both studies show. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"Within about three months"` → only creation and the two file splits. DECISIONS.md mentions L17 only for glossary-chip scope. The quiz and glossary don't repeat either claim. The loss clause now agrees with L27 instead of contradicting it. **No conflict found.**
+
+**Seen, not fixed:** L17 §2 *"high earners can and regularly do live paycheck to paycheck"*. Self-report surveys support it, but those are industry polls, so not measured here. `public/data/market.json` (market job), `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone (W-11.4). **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L17 said a nicer apartment stops feeling nicer "within about three months". German panel data puts the fade at about two years, and partial for moves made for the home itself, so the lesson now says "within a year or two, mostly". Its "far stronger" sense of loss now matches lesson 27's corrected range. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L16 no longer says its cash-flow "asset/liability" names turn up "in nearly every book written about money": some popular money books use the words more loosely than an accountant would. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead, L41's heading, was marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Money lessons 16 and 20 are the only ones no accuracy commit has ever named. L20's claims are about mechanism and hold. L16 §1 said *"That difference has a name that turns up in nearly every book written about money. An asset is something that puts money into your pocket over time. A liability is something that takes money out."* That is the *Rich Dad* cash-flow sense. Economy L30, which comes earlier on the main path, uses the accountant's sense in all five languages: the lender *"now holds an asset (you owe them money), and you hold a liability (you owe it)"*.
+
+**Step 3.5: the premise, measured.**
+- **Fed SCF 2019-22 bulletin** (HTML, `curl` 200; a nonexistent sibling URL → 404; "Survey of Consumer Finances" ×23 as an in-page control): *"The most commonly held type of nonfinancial asset in 2022 was a vehicle"*, and vehicle loans are counted as debt. Under L16's definition, Maya's car is a liability.
+- **FASB Concepts Statement 8 ch. 4** (secondary summaries via search): an asset is a present right to an economic benefit, and a liability is a present obligation to transfer one. Ownership and obligation, not cash-flow direction.
+- **Positive control:** the same search found the cash-flow definition attributed to Kiyosaki, and critics noting accountants don't use it. The SCF *PDF* inflated to subset-encoded glyphs, and its control word read 0, so that extraction was discarded, not read as a negative.
+- **Premise held:** this usage belongs to some popular books, not "nearly every book", and it contradicts L30 unless flagged. The *Rich Dad* lens stays. Only the universality claim goes.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L16 §1 ¶4 + takeaway. en: *"Some popular money books give that difference a name, using the words “asset” and “liability” more loosely than an accountant would."* Takeaway: *"In this lesson's sense, an asset puts money into your pocket…"*. es *«activo» y «pasivo» con más libertad que un contador* / *En el sentido de esta lección*; ko *'자산'과 '부채'라는 말을 회계사보다 느슨한 뜻으로* / *이 레슨에서 말하는 뜻으로*; zh *对“资产”和“负债”这两个词的用法比会计师宽松* / *按本课的说法*; ja *「資産」と「負債」という言葉を会計士よりゆるい意味で* / *このレッスンの意味では*. A first draft said "two words"; a hand read found that vague, so a second patch names them. The words for "lesson" match each file's existing usage.
+- L16 es/ko/zh/ja re-marked `ai`. `refresh-readiness --write`: en 167,229 → **167,303** chars. The quiz item (*"According to this lesson…"*) was already scoped and is unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l16/patch.mjs` 10 pairs + `patch2.mjs` 5 pairs, old ×1 / new ×0 each before; repeats refuse (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 6 new probes in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 41-44 seeded, `#/lesson/16`. en: body + takeaway true, old false, "Maya and Dan" as control. es/ko/zh/ja via the real select: own new body + takeaway true, own old sentence false, no English left, name as in-language control, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The lens and the "which direction the money flows" test are unchanged. The edit removes a universality claim and the conflict with L30. It adds no advice, date or Dalio (the plant above; diff grep for advice/date strings → 0).
+- **Prior work / decisions:** `git log -S"nearly every book written about money" -- src` → only creation (`6918fc9`) and the two file splits. DECISIONS.md and CLAIMS.md say nothing on asset/liability definitions. L43's "asset-versus-liability test" still reads true, and so does the quiz. **No conflict found.**
+
+**Seen, not fixed:** L16 §2's *"the vivid feeling wins nearly every time"*. It's unsourced, but framed as experience, so arguable. `market.json` (asOf 10-14, market job), `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L16 presented the *Rich Dad* "a car is a liability" definition as the one in nearly every money book. The Fed counts a car as a household's most common asset, and lesson 30 teaches that sense, so L16 now flags its usage as looser than an accountant's. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L42 no longer says "almost every dollar" of investment, business and rental income "started life as labor income": they usually start with it, and returns compound from there. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's two "Seen, not fixed" leads were both marked arguable); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** The previous entry left L28 and 41-44 as the money lessons no commit since 09-15 names. L28's retail-trading claim matches Barber & Odean 2002 ("Online Investors", recalled: switchers beat the market before going online, then traded more and lagged it), so I left it. L41/43/44 were corrected 09-11/12. The 09-11 entry flagged L42's *"almost every dollar of the other three started life as labor income belonging to someone"* as an owner framing call and didn't pick it by default. It's an empirical claim, though, so I measured it.
+
+**Step 3.5: the premise, measured.**
+- **Compounding:** Tiingo SPY (repo key), 1995-01-03 → 2025-01-02, adjClose **26.35 → 573.39 = 21.8×**. **Control:** the price-only close went 45.78 → 584.64 = **12.8×**, which matches the S&P 500's known move (~459 → ~5,868), and adjClose > close as dividends require. So a dollar of saved wages held 30 years is **~95% returns** by the end (~90% after CPI's ~2.1×). The later dollars started life as investment income, not labor.
+- **Flow:** FRED `LABSHPUSA156NRUG` (PWT labor share) 2023 = **0.568**. **Control:** the known value is ~0.57-0.6, so the instrument reads true. A nonexistent series id → 404. That means about 40% of national income arises as capital income each year. Also `PIROA` 2026-08 = $4.71T against `COE` 2026-Q2 = $16.35T.
+- **Premise held:** the *starting* money is usually saved wages or the owner's hours, which supports the lesson's point. "Almost every dollar" does not hold once returns compound.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L42 §2 + takeaway, narrowed with nothing added (W-11.2). en: *"…the honest shape of the whole thing: the other three usually start with labor income belonging to someone."* Takeaway: *"…and the other three usually start with somebody's labor income."* es *suelen empezar con el ingreso laboral de alguien*; ko *대개 누군가의 노동소득에서 시작됩니다*; zh *通常都是从某个人的劳动收入起步的*; ja *たいてい誰かの労働所得から始まります*. I hand-read each against the English. The next sentence still follows: *"The categories aren't a ladder people climb by escaping work."*
+- L42 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,253 → **167,229** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/l42/patch.mjs`: 10 pairs, old ×1 / new ×0 before (ja's two identical new strings allowed for); a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe appears in exactly 1 file, its own `lessonContent.money.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), 41 seeded, `#/lesson/42`. en: body + takeaway clauses true, 2 old false, §1 heading as control. es/ko/zh/ja via the real select: body + takeaway show only that language's version, 10 old strings absent, `<html lang>` followed. DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** "Usually start with" is about how these incomes begin, which the lesson's own examples show (Ben's saved wages, Tom's deposit, Alina's hours). Nothing ranks the categories. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"almost every dollar of the other three"` → only creation (`b6c9bc9`, the owner-approved draft) and archive text. CLAIMS.md and DECISIONS.md don't mention it. The glossary's Labor/Investment Income definitions make no origin claim, and the L44 figure caption ("years of saved wages") still agrees. **No conflict found.** This text came from the owner-approved draft. The 09-11 entry declined to touch it, and I narrowed it on measurement.
+
+**Seen, not fixed:** L41's heading *"Thirteen Years, and Not One Hour on This"*. It's framed as most adults' experience, and 09-11 already hedged the body. Arguable. `public/data/market.json` is uncommitted from the market job and left alone (W-11.4). `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** L42 said nearly every dollar of investment, business and rental income began as someone's wages. Thirty years of SPY compounding turn a saved dollar into ~95% returns, so it now says those incomes "usually start with" labor income. Still waiting on you: **O-2**.
+
+**Two commits, the first empty.** `0e3d6d8` carries this run's message on a tree identical to `3f411eb`. I passed the file list as `$FILES`, which zsh doesn't word-split, so `git add` failed on one 8-path pathspec, and the tree-count assertion passed because nothing had been added. The content is in the next commit. I didn't rewrite history to fold them together. **Lesson:** use a zsh array (`FILES=(…); git add -- $FILES`), and assert `git diff --cached --name-only | wc -l` against the expected count, not just the tree's file count.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-15 (scheduled dev-agent; free pick, lesson sweep) — L22's feed section no longer counts search engines among the amplifiers or says the algorithm hands the bias back "faster each time": feeds can tilt, and search showed both headlines. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's "Seen, not fixed" was empty, and items 149/120 say not to pick them over content); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Commit subjects since 09-15 never name money lessons 22, 24, 26, 28 or 41-44. Of 22/24/26, only L22 §3 makes empirical claims, and they've been unchanged since `1f798b9` (08-14).
+
+**Step 3.5: the premise, measured.** en said *"…the platform he searched on wasn't neutral either. Search engines, investing forums, and social apps are built to show more of whatever keeps someone clicking… Over enough searches, his feed quietly reshapes itself into an amplifier…"* and *"a habit an algorithm learns and hands back, faster each time."* Europe PMC REST (keyless; control: a nonexistent-title query → `hitCount 0`):
+- **Robertson et al. 2023** (*Nature*, PMID 37225979), Google Search, 2018 + 2020: participants' *engagement* held more identity-congruent and unreliable sources than their search results *exposed* them to. The selecting was the user's, not the engine's.
+- **González-Bailón et al. 2023** (*Science*, 37499003): on Facebook, ideological segregation rises from potential to actual (curated) exposure. **Guess et al. 2023** (*Science*, 37498999): a chronological feed showed more content from moderate friends and mixed-audience sources than the algorithmic one. **Nyhan et al. 2023** (*Nature*, 37500978): most of what users see comes from like-minded sources.
+- **Positive control:** those three confirm the *feed* claim, so the sources can confirm, not only refute.
+- **Premise held:** feeds tilt, and search wasn't shown to. "Faster each time" has no source at all. §1 already says *"The search returned both headlines either way"*; §3 contradicted it.
+
+#### What shipped
+- `lessonContent.money.{en,es,ko,zh,ja}.js`, L22 §3: three clauses narrowed, nothing added (W-11.2). en: *"Tomás's late-night search showed him both headlines, and which one he read was his own choice. The feeds he scrolls afterward aren't that even-handed. Investing forums and social apps are built…"*; *"Over time, his feed can tilt toward the belief he already held — not because anyone rigged it, but because his own past clicks trained it to."*; *"…a habit an algorithm can learn and hand back."* es/ko/zh/ja carry the same three changes, hand-read against the English.
+- L22 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,292 → **167,253** chars, still 177 min.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | 15 pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each new probe only in its own `lessonContent.money.*` chunk; 5 old phrases and a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over `dist/` (404 control → 404), `#/lesson/22` seeded. en: 3 new clauses true; 3 old and "Search engines" false. es/ko/zh/ja via the select: own new clause only, Tomás's name as in-language control, `<html lang>` followed. DOM `PROBE_ZQX`: true, then false. localStorage cleared |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** Every remaining claim is about feeds, which three 2023 field studies support. Search is left as the story already framed it. No advice, date or Dalio (§10.1 plant above).
+- **Prior work / decisions:** `git log -S"faster each time"` → only `1f798b9` (created) and `6f5c48c` (file split). DECISIONS.md and CLAIMS.md don't mention algorithms or confirmation bias, and the quiz and glossary don't repeat the claim (`grep -i algorithm src/` → only this file). **No conflict found.**
+
+**Seen, not fixed:** the heading "Why Your Feed Makes It Worse" stands. Nyhan 2023 found that cutting like-minded exposure moved no attitudes, but that measured polarization, not decision confidence, so it's arguable. "Reliably gets more clicks" rests on selective-exposure research (Hart et al. 2009 meta-analysis, a moderate effect; recalled, not fetched). `public/data/market.json` (asOf 2026-10-14) is uncommitted from the market job and is left alone per W-11.4. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` are untracked and not mine. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the confirmation-bias lesson blamed search engines for retraining on your clicks and called the effect "faster each time". Research finds search results were less one-sided than what people chose to click, so the lesson now puts that on feeds, which "can tilt". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-16 (scheduled dev-agent; free pick, §10.2 residual) — six sentences that reproduced the "How the Economic Machine Works" video near-verbatim (L29 subtitle + definition, L31 ×2, quiz q004/q009 explains) are now in the app's own words. Five languages.
+
+Rules: W-6.2 ok (free pick); W-9.4 n/a. Baseline `npm test` this run, before editing: exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** A quantifier sweep (132 hits, control fired) found only already-measured claims (L36, L39). Reading L31 I recognized its takeaway (*"Every time you borrow, you create a cycle…"*) as the video's line. LAUNCH_PLAN §10.2 says *"No name-brand framing, no direct quotes, anywhere in the app"*, and `check-blindspot` only greps the name, so an unattributed quote is invisible to it.
+
+**Step 3.5: the premise, measured.**
+- Two transcripts (singjupost.com, sozai.app; both 200, nonexistent-path control → **404**) agree word for word.
+- Instrument (`scratchpad/sweep/ngram.mjs`): shared 7-word runs vs every `src/**` line, README, index.html. **Result: 9 runs, the longest 14 words**: *"[Productivity] matters most in the long run, but credit matters most in the short run"* (L31 §1, verbatim), *"spending and incomes grow faster than the production of goods, prices rise"* (q004 explain, 12w), *"a buyer exchanging money or credit with a seller for"* (L29 §1, 10w), *"Every time you buy something, you create a transaction"* (L29 subtitle, 9w), and five 7-word runs.
+- **Negative control:** Wikipedia "Business cycle" (200, 3× the transcript's length) through the same instrument → **1** run, a proper name ("the Federal Reserve Bank of St. Louis").
+- **Premise held**, and it was wider than L31: four complete sentences quoted verbatim, plus the L31 takeaway paraphrasing three consecutive sentences (*"anytime you borrow you create a cycle. This is as true for an individual as it is for the economy"*), and q009's explain repeating half of the L31 quote.
+
+#### What shipped
+- `lessonContent.economy.*.js` L29 §1 definition, L31 §1 sentence, L31 takeaway; `quizText.*.js` q004 and q009 explains; `lessons.js` L29 subtitle. 30 one-sentence edits, written per language and hand-read against the English. Meanings kept, two hedged on the way: inflation prices *"tend to rise"*, and credit swings *"drive much of"* the short-run ups and downs, not "matter most". No figure added (W-11.2).
+- L29 and L31 es/ko/zh/ja re-marked `ai` (`translation-review.mjs mark`; ledger diff 48 lines, exactly those 8 entries). `readiness --write`: en 167,382 → **167,500** chars. That rounds LAUNCH_PLAN §4.0 from ~167,000 to ~168,000,, by the script.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | 30 pairs, old ×1 / new ×0 before; old ×0 / new ×1 / U+FFFD ×0 after; a repeat refuses (exit 1) |
+| Instrument after | 9 → **4** runs, longest 14 → **7** words. The 4 untouched 7-word sites still fire, which is the control |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); §65 unchanged (en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6) |
+| Guard sees the file | planted *"You should buy stocks now."* after the new takeaway → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BYqXB4tT.js`, system Node v24.18.0 |
+| Bundle | 10 new probes (en ×6, es, ko, zh, ja) each in exactly 1 asset; 5 old phrases → 0; L29 title control → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), 29-30 seeded. en `#/lesson/31`: new ×2 true, old ×2 false, heading true. ja via the real select (`<html lang="ja">`): L31 new true / old false; L29 subtitle + definition new true / old false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **§10.2:** the diff removes quoted text and adds no name or attribution (diff grep `dalio|bridgewater` → 0). **§10.1:** diff grep `should buy|you should|recommend|buy now` → 0.
+- **True?** Each claim is kept or softened; q004 still explains its keyed option and now matches L32 §1.
+- **Prior work / decisions:** none of the five sentences appears in DECISIONS.md or CLAIMS.md. The only log mention (archive, q004) is about which lesson the question is mapped to, not its wording. **No conflict found.**
+
+**Seen, not fixed:** four 7-word overlaps remain: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008 option *"Don't have debt rise faster than income"* (L40 already says "Don't let…"). Plus L31's thinkAbout *"borrow from your future self"* (5w). Short and arguable: filed as backlog item 177. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** six lines in the app (Lessons 29 and 31, two quiz explanations) were word-for-word or near-word-for-word from the well-known "economic machine" video, which your plan rules out. They're now in the app's own words, in all five languages. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — L35's "master dial" no longer says "nearly every other rate… follows", mortgage first: rates usually move with it, a new mortgage less reliably. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's L7 lead was marked arguable and stays a note); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** I scanned the three English lesson files for absolute quantifiers (119 hits, read by hand). Most are narrative or already hedged. L35 §1 opened: *"When the Fed turns it, nearly every other rate in your financial life follows — the rate on a new mortgage, what your savings account pays you, the annual rate — the APR — on your credit card."* No commit has touched it since creation (`2afcb42`, 08-05). A sibling regex over glossary/markets/quiz/kids/policy found only this sentence. **Control:** it fired on that known sentence.
+
+**Step 3.5: the premise, measured.** FRED CSV, keyless (`curl` 200 ×6; a nonexistent series id → **404**). Monthly FEDFUNDS vs MORTGAGE30US (weekly → monthly mean) vs MPRIME, 1972 → 2026-09, all windows with a Fed move of at least the threshold:
+| window, Fed move | prime same direction | 30-yr mortgage same direction |
+|---|---|---|
+| 12 m, ≥1.0 pt | **98.7%** (309/313) | **86.3%** (270/313) |
+| 6 m, ≥0.5 pt | 96.7% | 81.6% |
+- **Positive control:** prime, which card APRs key off, comes back near 100% on the same instrument. **Reading control:** the lesson's own *"about 3.1% to 4.2%"* reproduces from the same weekly series (3.12 on 12-16-2021, 4.16 on 03-17-2022).
+- **Counterexamples:** Aug → Dec 2024, fed funds 5.33 → 4.48 while the mortgage went **6.50 → 6.71** (6.96 by Jan). In 2004-06, fed funds +4.2 pts and the mortgage +0.5. Savings (SNDR) went the same way as the Fed both ways in 2022-25, by much less.
+- **Premise held:** "follows" is true of card APRs, true in direction for savings, and only usually true for a new mortgage, the first item the sentence named.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js`, L35 §1, one sentence narrowed, no figure added (W-11.2). en: *"…most other rates in your financial life usually move the same way: what your savings account pays you, the annual rate — the APR — on your credit card, and, less reliably, the rate on a new mortgage."* The mortgage now comes last, next to the existing "market-set rates move first" passage. es/ko/zh/ja say the same. I wrote each one and hand-read it against the English.
+- L35 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,352 → **167,382** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/fed/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; after, old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-SviZ6IWT.js`, system Node v24.18.0 |
+| Bundle | each of 5 new probes in exactly 1 asset; the 5 old phrases → 0; control (L35 heading) → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), economy 29-34 seeded, `#/lesson/35`. en: new true, old false, heading control true. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The new sentence describes how rates relate. It says nothing about when to borrow or refinance. The arrows below it ("Raise the dial → borrowing gets more expensive") are tendencies and still hold. The glossary "Fed Funds Rate" (*"influences most other rates… from mortgages to savings accounts"*) and the quiz explanation (*"ripples out to mortgages…"*) say "influence", not "follow", so they agree and were left alone. Diff grep `dalio|should buy|recommend|you should` → 0.
+- **Prior work / decisions:** `git log -S"every other rate"` → creation and file splits only. DECISIONS.md and CLAIMS.md say nothing on it. The 10-12 Cash-card fix (*"moves with it, often by less"*) agrees. **No conflict found.**
+
+**Seen, not fixed:** nothing new beyond L7's arguable W-4 line. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the interest-rates lesson said that when the Fed moves, nearly every other rate "follows", mortgage first. But mortgage rates rose through the Fed's 2024 cuts. It now says most rates usually move the same way, and a new mortgage less reliably. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L8: "Three numbers shape almost every insurance policy" now says most home, auto and health policies, and that life insurance usually has no deductible. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous lead, L31's productivity line, was marked arguable and stays a note); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** No commit since 09-15 names essentials 1, 2, 7, 8, 9 or 15. I read all six in English. L1's $54 → $648 and 40% rent, and L2's $50/wk → $600 in 12 weeks, check out arithmetically. L8 §2 opened: *"Three numbers shape almost every insurance policy"* (premium, deductible, coverage limit). But §1 of the same lesson lists life insurance among "every type", and life insurance has no deductible. Nothing has touched the sentence since creation (`43cc966`, 08-06).
+
+**Step 3.5: the premise, measured.**
+- **California Dept. of Insurance consumer guides** (`curl` 200): the life guide (91,719 b) has **"premium" ×50, "deductible" ×0**. It defines the face amount as what is paid to the beneficiary (less policy loans). **Control:** the same regulator's residential guide, read the same way, has **"deductible" ×4**. A third URL came back 48,035 b, exactly the size of a nonexistent-path control, so it was a soft 404 and I discarded it.
+- **Auto:** liability coverage typically has no deductible; collision and comprehensive each carry one (NerdWallet, Bankrate). About 75-79% of insured drivers buy collision or comprehensive (III, via carinsurance.com), so "most auto policies" holds. **Health:** KFF EHBS 2025 finds **88%** of covered workers with single coverage have a general annual deductible.
+- **Premise held:** "almost every policy" was false for a whole category the lesson itself names, and "most home, auto and health" is true.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L8 §2 first sentence, narrowed. No figure added (W-11.2). en: *"Three numbers shape most home, auto and health policies (life insurance usually has no deductible)."* es/ko/zh name the same three kinds of insurance. **ja drops 医療:** Japanese private 医療保険 mostly pays fixed per-day benefits with no deductible, so ja says 住宅や自動車. Each translation was hand-read against the English.
+- L8 es/ko/zh/ja re-marked `ai` (ledger 24 lines). `refresh-readiness --write`: en 167,303 → **167,352** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/ins/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; after, old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1** (§10.1); restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-JA8bc5OW.js`, system Node v24.18.0 |
+| Bundle | each of 5 new probes in exactly 1 asset; the 5 old phrases → 0; control (§1 heading) → 1; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), essentials 1-7 seeded, `#/lesson/8`. en: new true, old false, §2 heading control true. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The parenthetical is a fact about product structure. It doesn't say which policy to buy, and the section's own "not a rule this lesson can hand out" paragraph is unchanged. The quiz item for this lesson (higher deductible → lower premium) and the glossary "Deductible" definition both still agree. Diff grep `dalio|should buy|recommend` → 0.
+- **Prior work / decisions:** `git log -S` → creation and file splits only. DECISIONS.md and CLAIMS.md say nothing on this. **No conflict found.**
+
+**Seen, not fixed:** L7's *"A refund or amount owed that swings from year to year usually means an outdated W-4"* and *"most workers fill out once… and never revisit"* are unmeasured population claims (tax-law changes, e.g. 2022's end of the advance child tax credit, also swing refunds). Arguable, so not picked. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the insurance lesson said premium, deductible and coverage limit shape "almost every" policy, but life insurance (which the lesson also covers) has no deductible. It now names home, auto and health, and notes the life exception. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-16 (scheduled dev-agent; free pick, lesson sweep) — essentials L4: on-time payment and low utilization "still do most of the work", not "almost all": FICO weights them 35% + 30%. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry's only lead was measured and held, see below); W-9.4 n/a. Baseline: the previous entry's `npm test` exit 0 / 0 FAIL / 1 WARN.
+
+**Picking.** Previous lead: L17 §2's *"high earners can and regularly do live paycheck to paycheck"*. **Measured, and it holds.** Fed SHED 2024 (Income and Expenses chapter, HTML 200; a wrong-slug URL → 404): 66% of adults with $100k+ income spent less than their income last month, so about a third had no margin. **Control:** the same page's all-adults split, 51 / 19 / 30, matches the published summary. No edit. Money L24/L26 and economy L31 were read and are clean (framing or already measured). Essentials L4 §3 ended: *"the two factors from the first section — paying on time and keeping utilization low — still do almost all of the work from there."* No commit has touched it since creation (`512852d`, 08-13).
+
+**Step 3.5: the premise, measured.**
+- **myFICO "What's in my FICO Scores"** (`curl` 200; a nonexistent sibling slug → 404): payment history **35%**, amounts owed **30%**, length of history **15%**, new credit **10%**, credit mix **10%**. **Control:** all five factor labels found with their weights, and they sum to 100.
+- Even on the generous reading (all of "amounts owed" counts as utilization), the two factors are **65%**. Length of history (15%) is exactly what a starting-from-zero reader doesn't have yet.
+- **Premise held:** "almost all" overstates it, and "most" is true. §1 already says the other factors "matter too, but less", so this sentence was the only place the lesson contradicted itself.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js`, L4 §3 last sentence, narrowed with no figure added (W-11.2). en *"still do most of the work from there."* es *la mayor parte del trabajo*; ko *대부분의 일을*; zh *大部分的作用*; ja *大部分の役割を* (the old ja *ほとんどの* reads as "almost all"). Each was hand-read against the English.
+- L4 es/ko/zh/ja re-marked `ai` (ledger 12 lines). `refresh-readiness --write`: en 167,309 → **167,303** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/fico/patch.mjs`: 5 pairs, old ×1 / new ×0 each before; a repeat refuses (exit 1) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's), read from a file |
+| Guard sees the file | planted *"You should buy stocks now."* after the new en clause → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0 |
+| Bundle | each of 5 new probes in exactly 1 file, its own `lessonContent.essentials.*` chunk; 5 old phrases + a nonsense probe → 0 files |
+| Live | `python3 -m http.server` over the build (404 control → 404), essentials 1-3 seeded, `#/lesson/4`. en: new true, old false, "Starting From Zero" heading as control. es/ko/zh/ja via the real select: own new true, own old false, no English left, `<html lang>` followed (es/ko/zh-Hans/ja). DOM `ZQXNONSENSEPROBE`: true, then false. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **True and neutral?** The sentence still credits the two factors §1 calls the biggest, and the quiz explain (*"usually the biggest factors"*) agrees. No advice, date or Dalio (diff grep 0; §10.1 plant above).
+- **Prior work / decisions:** `git log -S"almost all of the work"` → only creation and the file splits. DECISIONS.md mentions credit scores only for track/glossary scope. CLAIMS.md is silent. The glossary has no factor claim. **No conflict found.**
+
+**Seen, not fixed:** L31's *"productivity grows in a fairly straight, gentle line"*. Year-to-year productivity growth does dip below zero, but the claim is relative to credit, and L30 measured credit as the bigger swing. Arguable. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the credit-score lesson said on-time payment and low balances do "almost all" the work. FICO's own weights put them at about two-thirds, so it now says "most". Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q001 ("What drives the economy?") gets three distractors Lesson 29 contradicts, so its answer is no longer the longest option, or the only one in parentheses. Five languages.
+
+Rules: W-6.2 ok (open numbered item; the previous entry's "Seen, not fixed" was empty). W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.**
+- Instrument rebuilt (`scratchpad/rank.mjs`: relative margin (correct − longest distractor) / longest distractor, code points, per language). **Controls:** 2x → 1.000, +1 of 100 → 0.010. **Positive control:** strict-longest counts reproduce §65 exactly (en 34.8 / es 32.6 / ko 34.8 / zh 30.4 / ja 32.6).
+- **Held:** `q001` tops the ranking at en 29% / es 30% / **ko 117% / zh 100%** / ja 67%, as item 160 said. It is class B: the answer *"Total spending (money + credit)"* is already a bare phrase, against *"Only government spending"*, *"Gold reserves"*, *"Stock prices"*.
+- **The item understated it slightly:** the answer was also the only option with a parenthesis and a `+`, a second visual cue alongside length.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q001 distractors, worded to match each language's L29 text. Each is something L29 contradicts:
+  - *"Only what the government spends"*: L29 says households buy about two thirds, more than three times all government.
+  - *"Cash spent (credit doesn't count)"*: L29 says credit spends exactly like money. Same parenthesis form as the answer.
+  - *"Prices sellers decide to set"*: L29 says prices come *from* spending (total spent ÷ quantity sold).
+- The answer, its index (2) and `explain` are unchanged. The explain (*"Spending = money + credit"*) already refutes the second.
+- Lengths, distractors / answer: en 31/33/28 / 31; es 29/39/36 / 30; ko 9/14/11 / 13; zh 7/11/9 / 10; ja 9/14/9 / 10. Not strictly longest or shortest anywhere.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`, scoped to q001's `opts`: per file old ×1 / new ×0 before, U+FFFD ×0; a repeat refuses (exit 1). `git diff --stat`: 5 quiz files, 15+/15− |
+| Rank after | q001 out of the top 12. §65's own figures in the next row agree with the instrument |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 32.6 / es 30.4 / ko 32.6 / zh 28.3 / ja 30.4** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Guard sees the file | planted *"You should buy stocks now."* as a q001 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BE50B4X4.js`, system Node v24.18.0 |
+| Bundle | 7 new probes (en ×3, es, ko, zh, ja) each in 1 asset; old `Gold reserves` / `Only government spending` / `黄金储备` → 0; the answer → 1; nonsense → 0 |
+| Live | not run: the quiz draws its order, so q001 is checked by bundle, as the q008 entry did |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** Sellers do post prices, so the third distractor is the closest call. But the question asks what *drives* the economy, and L29 teaches prices as an output of spending in all five languages. The other two each contradict one L29 sentence directly.
+- **§10.1:** none of the new options is advice. Diff grep `dalio|bridgewater|should buy|you should|recommend|buy now` → 0, and `check-blindspot` passes. §10.2: the money + credit framing in L29 and the answer is untouched, and nothing quoted was added. §10.3 untouched.
+- **Inverse tell / position:** shortest-option rates unchanged; answer index unchanged, so §3's spread is unchanged.
+- **Prior work / decisions:** follows O-3's 10-10 record and item 160's class-B note. It doesn't redo the q008 run. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the first quiz question could be answered by picking the longest option, the only one with a parenthesis. Its wrong answers are now ideas Lesson 29 argues against. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-17 (scheduled dev-agent; named item 160, class B) — quiz q008's three one-phrase slogans are replaced by distractors Lesson 40 itself contradicts, so its answer is no longer the longest option in any language. Five languages.
+
+Rules: W-6.2 ok (open numbered item, per W-11.2: the previous entry's "Seen, not fixed" was empty); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.**
+- Item 160 parks its remainder as class B, "distractor prose in four unreviewed languages… O-3's", and W-10.3 repeats that. **That premise broke on 2026-10-10:** O-3 closed with option (a) re-affirmed (`DECISIONS.md` § Machine-translated lesson content). Since then runs have shipped new prose in all five languages routinely. Nothing recorded the unblock, so class B sat idle for a week.
+- Instrument: `scratchpad/rank.mjs` ranks every question by relative margin, (correct − longest distractor) / longest distractor, in code points, per language. **Controls:** a 2x option scores 1.000, +1 of 100 scores 0.010. **Positive control:** its strict-longest counts reproduce §65 exactly (en 37.0 / es 34.8 / ko 37.0 / zh 32.6 / ja 34.8).
+- **`q008` is still the largest tell: en 111%, es 133%, ko 77%, zh 57%, ja 100%.** Its answer (*"Don't let debt rise faster than income"*, 38) sat against *"Always buy stocks"*, *"Never borrow money"* and *"Save 50% of income"* (17-18). There was nothing to trim, so the fix is new distractors.
+
+#### What shipped
+- `quizText.{en,es,ko,zh,ja}.js` q008 distractors, worded to match each language's L40 text. Each one is something the lesson contradicts, so none is "also true":
+  - *"Let income rise faster than productivity"*: the reverse of L40's Rule 2.
+  - *"Borrow more whenever interest rates fall"*: L40's 1980-2007 story, which ended in 2008.
+  - *"Don't borrow in your own currency"*: L40 says a country that does has *more* room.
+- The answer, its index (3) and `explain` are unchanged. The explain already refutes two of the three (falling rates "can only fall so far"; own currency gives "more room").
+- Lengths, distractors / answer: en 40/40/33 / 38; es 61/57/34 / 56; ko 22/23/17 / 23; zh 10/12/9 / 11; ja 18/15/10 / 18. The answer is neither strict longest nor strict shortest anywhere.
+- `check-data.mjs` §65 header comment: one sentence saying O-3 closed, so this prose is now a run's work.
+- Item 160: a dated note that class B is unblocked, plus the next questions by per-language margin.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`: per file, old block ×1 / new ×0 before; ×0 / ×1 after; U+FFFD ×0; a repeat refuses (exit 1). `git diff --stat`: 5 quiz files, 15+/15− |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). **§65 longest: en 34.8 / es 32.6 / ko 34.8 / zh 30.4 / ja 32.6** (each −2.2), shortest unchanged 2.2/2.2/0.0/2.2/4.3 |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BAblGAXk.js`, system Node v24.18.0 |
+| Bundle | 6 new probes (en ×2, es, ko, zh, ja) each in 1 asset; old `Always buy stocks` / `Never borrow money` / `总是买股票` → 0; the answer → 2 (quizText + L40, expected); nonsense → 0 |
+| Live | not run: the quiz draws its order, so q008 is checked by bundle, as the 10-17 item-177 entry did |
+
+#### Step 5: adversarial self-check
+- **"Also true"?** Each distractor contradicts a sentence in L40 in all five languages (checked against each language's lesson text). The question asks for "the first rule", i.e. L40's Rule 1, so none of them is a defensible answer.
+- **§10.1:** "Borrow more whenever interest rates fall" is imperative, but it's a wrong answer, and the explain says why. `check-blindspot` passes. §10.2/§10.3 untouched.
+- **Inverse tell:** shortest-option rates unchanged, and the answer index is unchanged, so §3's position spread is unchanged.
+- **Decisions / prior work:** this follows O-3's 10-10 record rather than reopening it. Yesterday's item-177 wording of the answer is kept. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** on one quiz question you could pick the right answer just because it was the longest. Its wrong answers are now plausible rules the lesson argues against. More questions like it are listed under item 160 and are now ordinary run work, because your O-3 call settled the translation question. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-17 (scheduled dev-agent; free pick, the A3 WARN) — CLAIMS.md A3's debt clause measured for the first time: abridged pairs 93 → 47 → 0 over two months and the human share flat at 0%, so debt did not grow. Not refuted; next check 2026-11-07. No source change.
+
+Rules: W-6.2 ok (free pick: the WARN the previous entry's baseline named); W-9.4 n/a. Baseline `npm test` before editing: exit 0 / 0 FAIL / **2 WARN** (O-3's, and A3 past its 2026-10-16 check date).
+
+**Picking.** A3's row set 2026-10-16 as "the first day the clause can be evaluated". Its debt half asks for two consecutive months of growth, and the ledger begins 2026-08-11. `check-claims.mjs` says to record the result or move the date with a reason. That is owed work, and it can be measured today.
+
+**Step 3.5: the premise, measured.**
+- Row's premise: the debt half is checkable now; the usage half (non-English sessions) is blocked on O-2. **Held.** `analyticsConfig.js` still has no provider (O-2 open). The debt half needs only the repo.
+- Instrument: `scratchpad/a3/history.mjs`. For each date it `git archive`s the last commit on or before that date (`src/` + the review ledger), runs **today's** `completeness()` on it, and counts ledger `method` per language. The same instrument is used at every point, so a threshold change can't masquerade as a trend. (`translation-completeness.mjs` last changed `93fa06e`, 2026-08-27.)
+- **Positive control:** 2026-08-24 (`fe649d9`) and 2026-09-04 (`2c1d276`) both give **48, es/ko/zh/ja 12 each**, matching the two figures the row recorded. HEAD gives 0, matching `npm run translation-completeness`.
+
+| date (commit) | lessons | abridged pairs | human-reviewed |
+|---|---|---|---|
+| 08-16 (`01d6d6d`) | 40 | **93** | 0 of 160 |
+| 09-16 (`3585207`) | 44 | **47** (es 11) | 0 of 176 |
+| 10-16 (`2587ec2`) | 44 | **0** | 0 of 176 |
+
+Both months the abridged count fell and the human share stayed flat. **The clause is not met.** (Intermediate points 09-30 and 10-10 also read 0, which agrees with LAUNCH_READINESS §10.4's "0 as of 2026-09-22".)
+
+#### What shipped (1 file, no source change)
+- `CLAIMS.md` A3: check 2026-10-16 → **2026-11-07** (the next §9.3 audit, where every other row falls due). The measurable cell now says the debt half is measured and the usage half is blocked on O-2. The status cell carries the table's result, the control, and the earlier record kept verbatim under "Earlier record follows". The 2026-10-04 review paragraph's "A3… was not reviewed" gets a pointer to the row.
+- **Written down, not fixed:** both legs of the metric are now at their floor (0 abridged, 0% human). From here the clause can fire only if a lesson ships abridged. It cannot see "no fluent speaker has read any of it", which is O-3's question, closed by the owner 2026-10-10. The threshold is left as written. Re-aiming it after the result is in is what §9.1 forbids.
+
+#### Verification
+| check | result |
+|---|---|
+| Edit | two wording passes by a Node patch asserting each match count == 1; `git diff --stat`: CLAIMS.md 2+/2− |
+| `npm test` after | exit 0, 0 FAIL, **1 WARN** (O-3's). The A3 WARN is gone |
+| Parser reads the new date | `CLAIMS_TODAY=2026-11-08 check-claims` lists **A3** among 17 past-due rows; `CLAIMS_TODAY=2026-11-06` → 0 warnings |
+| Build | not run: the change is one Markdown file nothing imports; no bundle can differ |
+
+#### Step 5: adversarial self-check
+- **Blindspots:** no app text touched; §10.1/§10.2/§10.3 and the Markets stale-data fix can't regress from a register edit.
+- **DECISIONS.md:** O-3's 2026-10-10 re-affirmation stands; this entry doesn't reopen it and doesn't move A3's threshold.
+- **True?** "Not met" follows from the row's own definition (debt grows if abridged pairs rise or the human share falls), and neither happened in either month. The one way this could be wrong is the instrument reading old commits differently, and the 08-24/09-04 control rules that out.
+- **Prior work:** LAUNCH_READINESS §10.4 already records 0 abridged since 09-22; no figure there changed, so it isn't touched. **No conflict found.**
+
+**Seen, not fixed:** `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed (nothing to deploy).
+
+**Owner-facing, one line:** the "five languages are worth it" claim had its translation-debt half checked for the first time. Debt shrank both months (93 → 47 → 0 shortened translations), so it isn't refuted. That measure can't see that no human has reviewed the translations; that's your O-3 call, already made. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
+### 2026-10-17 (scheduled dev-agent; named item 177) — the last four 7-word runs shared with the "Economic Machine" video (L32, L33, L34 takeaway, q008's keyed option) are reworded in English. Meaning unchanged, so es/ko/zh/ja keep their text.
+
+Rules: W-6.2 ok (open numbered item, filed by the previous run's "Seen, not fixed"); W-9.4 n/a. Baseline `npm test` this run, before editing: exit 0 / 0 FAIL / **2 WARN** (O-3's, plus CLAIMS.md A3 past its 2026-10-16 check date. The clock, not this change).
+
+**Step 3.5: the premise, measured.**
+- Transcript: sozai.app `index.md` (200, 33,431 b; a nonexistent slug → **404**).
+- Instrument rebuilt (`scratchpad/ngram.mjs`: maximal shared runs of ≥7 normalized words vs every `src/**` .js/.jsx line, README, index.html). **Result: exactly the item's four, 7 words each.** **Negative control:** Wikipedia "Business cycle" (raw, 200) through the same instrument → 3 runs, all proper names (Federal Reserve Bank of New York / St. Louis).
+- **The item understated two of the four.** In context, L33's *"This is the long-term debt peak."* is the video's sentence, in the same place in the story (the cycle reverses → this sentence). q008's option is the video's Rule 1 word for word. L34's takeaway is the video's *"income needs to grow faster than debt grows"*. Only L32 was a sentence fragment (*"spending and incomes grow faster than the"*, the rest already the app's own). Disposition unchanged: reword all four.
+
+#### What shipped
+- `lessonContent.economy.en.js` L32 *"outrun what the town can really produce"*, L33 *"That turning point is the peak of the long-term debt cycle."* ("peak" kept, because the paragraph after it says "when these peaks hit"), L34 takeaway *"Income has to outpace debt."* `quizText.en.js` q008 *"Don't let debt rise faster than income"*, now the same as L40's Rule 1. Each says what the old one said. No figure added (W-11.2).
+- **es/ko/zh/ja unchanged, by reading.** Each language's four sentences already say what the new English says ("than the town can really produce"; "this is the peak of long-term debt"; "income must grow faster than debt"). The q008 option was already "don't let…" in all four. L32/L33/L34 re-marked `ai` after reading those sentences against the new source. Ledger diff: 72 lines, 12 entries; `review-status` stale 3 → **0** per language. quizText has no ledger.
+- `readiness --write`: en 167,500 → **167,511** chars.
+
+#### Verification
+| check | result |
+|---|---|
+| Patch | `scratchpad/patch.mjs`, 4 pairs: before old ×1 / new ×0; after old ×0 / new ×1 / U+FFFD ×0; a repeat refuses (exit 1) |
+| Instrument after | 4 → **0** runs at 7 words. Still fires at 6 (5 runs, one *"of the long term debt cycle"*: a term of art the item says to keep) |
+| `npm test` after | exit 0, 0 FAIL, 2 WARN (same two as baseline); §65 unchanged en 37.0 / es 34.8 / ko 37.0 / ja 34.8 / zh 32.6 |
+| Guard sees the file | planted *"You should buy stocks now."* into the new q008 option → `check-blindspot` **exit 1**; restored (`cmp`) → **exit 0** |
+| Build | `build-out-of-tree.sh --no-copy-back`, `index-BUz27ZjR.js`, system Node v24.18.0 |
+| Bundle | 3 new lesson probes each in 1 asset; q008's new option in 2 (quizText + L40's Rule 1, expected); 4 old phrases → 0; "The Long-Term Debt Cycle" control → 3; nonsense → 0 |
+| Live | `python3 -m http.server` over the build (404 control → 404), 29-33 seeded. en `#/lesson/32`, `/33`, `/34`: new true, old false; L33 heading control true. DOM `ZQXNONSENSEPROBE` planted true, removed false. q008 checked by bundle only (the quiz draws its order). localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **§10.2:** the diff only removes quoted wording. Diff grep `dalio|bridgewater` → 0. Item 158's open framing question (named quotes, "beautiful deleveraging") is untouched; I added one line to it about L40's three-rules structure rather than act on it. **§10.1:** diff grep `should buy|you should|recommend|buy now` → 0.
+- **True?** All four keep their claim. "Income has to outpace debt" is the condition for a debt burden to fall, which is what L34 teaches. q008 still keys the same option index, and its explain is unchanged.
+- **Prior work / decisions:** the four strings are absent from DECISIONS.md, CLAIMS.md, README and LAUNCH_*. This finishes what item 177 filed; it does not undo the 10-16 run. **No conflict found.**
+
+**Seen, not fixed:** only the item 158 note above. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** four more short lines (Lessons 32-34 and one quiz answer) still matched the "economic machine" video word for word. They're now in the app's own words. One framing question is yours, added to item 158: Lesson 40's "three rules" follow the video's structure. Still waiting on you: **O-2**.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ## Archived backlog (closed items)
 
