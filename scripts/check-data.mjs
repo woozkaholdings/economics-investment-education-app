@@ -10204,6 +10204,12 @@ function trendDirection(src) {
     { path: "Recession.f", lang: "ja", at: 78 }, { path: "Productivity Growth.ex", lang: "ja", at: 34 },
     { path: "Debt-to-GDP Ratio.f", lang: "ja", at: 53 }, { path: "Interest Rate.ex", lang: "ja", at: 37 },
     { path: "Yield Curve.f", lang: "ja", at: 37 }, { path: "Business Income.ex", lang: "ja", at: 58 },
+    // Read against the English on 2026-10-23 and complete: the three carry every
+    // clause of the 160-code-point English example (reinvests all profit, price
+    // high for current earnings, young company, classed as growth) and flag
+    // only because ko/zh/ja render it compactly.
+    { path: "Growth Stock.ex", lang: "ko", at: 64 }, { path: "Growth Stock.ex", lang: "zh", at: 38 },
+    { path: "Growth Stock.ex", lang: "ja", at: 50 },
   ];
   const SHRUNK_BELOW = 0.9;
   const readKey = (path, lang) => `${path}\u0000${lang}`;
@@ -10355,7 +10361,7 @@ function trendDirection(src) {
     }
     if (failures === before67) {
       const line = COMPLETENESS_LANGS.map((lang) => `${lang} ${gloss.abridged.filter((a) => a.lang === lang).length}`).join(", ");
-      console.log(`  §67 glossary translations are measured for content, not just presence: ${gloss.abridged.length}/${gloss.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${gloss.rows.length} unit(s); ${gloss.readComplete.length} under-threshold pair(s) read complete on 2026-09-02 and unchanged since (${READ_COMPLETE.length - gloss.readComplete.length} listed entries inert above threshold); 6 scorer control(s) fired.`);
+      console.log(`  §67 glossary translations are measured for content, not just presence: ${gloss.abridged.length}/${gloss.rows.length * COMPLETENESS_LANGS.length} pair(s) under ${Math.round(100 * ABRIDGED_BELOW)}% of their language's own p90 (${line}) across ${gloss.rows.length} unit(s); ${gloss.readComplete.length} under-threshold pair(s) read complete against the English and unchanged since (${READ_COMPLETE.length - gloss.readComplete.length} listed entries inert above threshold); 6 scorer control(s) fired.`);
     }
   }
 }

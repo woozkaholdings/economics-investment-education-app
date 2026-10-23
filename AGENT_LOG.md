@@ -3287,6 +3287,41 @@ same journey.
 
 ## Run log
 
+### 2026-10-23 (scheduled dev-agent; the previous entry's residual, the glossary gap) — the glossary now defines "Growth Stock" and "Value Stock", and lesson 38 chips both on its first section. L38 used "growth stocks" four sections before defining it, and the Market Dashboard's Stocks card compares the two without defining either. Five languages.
+
+Rules: W-6.2 ok (first residual of a free pick); W-9.4 n/a (new entries, not a hand read of an existing surface). `npm test` before any edit (HEAD `06589a4`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** Glossary keys: 43, none for growth or value (the same scan finds "Stock", the control). English content: "growth/value stock" appears only in L38 (§0, §1, §4) and the `markets.js` note. L38 §0 says "Growth stocks are often added…" and defines growth only in §4 ("priced mostly on profits still years away"). Value is defined inline in §0. **Premise held.** Two claims in the new text were measured rather than assumed. (1) **Style indexes sort on price-to-book, among other ratios** (WebSearch: Russell uses book-to-price plus growth forecasts; S&P uses B/P, E/P and S/P against three growth factors). So the text says "measures such as price-to-book". (2) **The example "a bank or utility often counts as value":** in Fama-French's 12-industry value-weighted BE/ME, Utils and Money were above the 12-industry median in **37 of 37** years from 1990 to 2026. **Control:** BusEq (tech) was never above the median in the 27 years since 2000, so the instrument separates the two groups.
+
+#### What shipped
+- `glossary.js`: two entries after Bond, with a dated 10-line source comment. They say what each label is and that it is relative: a company can move between groups. Value is "not a verdict that the stock is a bargain". The terms are the ones L38 and the card already use per language: es *acción de crecimiento / de valor*, ko 성장주/가치주, zh 成长股/价值股, ja グロース株/バリュー株. All five read by hand.
+- `lessonTerms.js` 38 §0: `+ "Growth Stock", "Value Stock"` (rule 3: first use).
+- `LAUNCH_PLAN.md` §1: 43 → 45 glossary terms, written by `npm run readiness -- --write`.
+- `check-data.mjs` §67: the length screen flagged `Growth Stock.ex` in ko 0.40 / zh 0.24 / ja 0.31. The English example runs 160 code points and CJK renders it compactly. I read each translation against the English, and each carries all four clauses. So they went into `READ_COMPLETE` with their lengths (64/38/50) and a dated comment. Its summary line no longer dates every listed read 2026-09-02.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's). §17b 150 → **152** uses, 109 → **111** chips, 0 unexplained. §67 0/360 flagged. §65 unchanged (en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1) |
+| §17b sees the term | removed the Growth Stock chip → `check-data` **exit 1** naming lesson 38 and "Growth Stock"; restored from a scratchpad copy (`cmp` equal) |
+| Guard sees the entry | planted *"You should buy growth stocks now."* in the en example → `check-blindspot` **exit 1** at `glossary.js:139`; restored (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-C1ms7hRd.js`, system Node v24.18.0 |
+| Bundle | 5 new probes (one per language) each in 1 asset; nonsense → 0; HEAD `./dist` finds the Stock definition (instrument control) |
+| Live | built `dist/` served statically (`/` 200, missing asset 404). Reference → Glossary lists both. Growth Stock detail read in en/ko/zh/ja/es via the real select. L38's chip not opened live: the lesson is locked on a fresh profile, and §17b's injection above covers the link. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **§10.1:** the definitions describe what each label is. Nothing says which to hold. Value's "not a verdict that the stock is a bargain" works against a buy reading. Diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. **§10.2/§10.3:** n/a. **No date or live figure:** the example names no numbers.
+- **Consistency:** L38 §4 says growth is "priced mostly on profits still years away". The glossary makes the comparative claim ("more of its price… than a value stock"), which is weaker and agrees.
+- **Prior work / decisions:** no log, archive or DECISIONS.md line declines these terms. The only mention is the 10-23 residual. `.js` content modules unchanged. **No conflict found.**
+- **The READ_COMPLETE additions** are the judgment call here. Control 6 fails any listed pair later cut below 90% of its recorded length.
+- **Commit safety (W-12.3):** staged count asserted = 5.
+
+**Seen, not fixed:** the Market Dashboard cards don't link to the glossary (only Sectors does), so the card's reader still has to look the terms up. Not filed (W-6.2 rule 2). `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** "growth stock" and "value stock" now have glossary entries in all five languages, and lesson 38 links them where it first uses them. Before, the lesson used "growth stocks" four sections before explaining it.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-23 (scheduled dev-agent; free pick, W-12.2 sweep of the Market Dashboard) — the rate-effects Stocks card no longer says "Growth names most sensitive": growth stocks were never the hardest-hit group when yields rose, and they beat value stocks over 4 of the last 5 hiking cycles. It now says that, with "hardest" labeled "on paper". Five languages.
 
 Rules: W-6.2 ok (free pick; the previous run was the archive chore); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `1e0645c`): exit 0 / 0 FAIL / 1 WARN (O-3's).
