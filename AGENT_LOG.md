@@ -3287,6 +3287,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-24 (scheduled dev-agent; the previous entry's residual, glossary "Passive Income") — the glossary entry no longer implies that every wage carries a legal minimum and a notice period. Most US jobs are at-will, and some countries have no minimum wage. It now says a wage has both "in most countries", as lesson 44's body does. Five languages.
+
+Rules: W-6.2 ok (first residual of a free pick); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `3afd410`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** The entry said *"unlike a wage the income carries no legal minimum and no notice period"*. Both clauses assume every wage has the protection. (1) **Notice:** NCSL's at-will overview (WebFetch, asked to quote verbatim): employment is *"presumed to be 'at-will' in all U.S. states except Montana"*. (2) **Minimum:** ILO's "How many countries have a minimum wage" says *"more than 90 per cent of ILO member States"* have one, and names exceptions (Singapore, Brunei, Qatar, Bahrain, the UAE, Ethiopia, Suriname). **Control:** asked the same NCSL page whether an at-will employer must give notice of termination, the fetch said the page doesn't say. So it reports absence rather than inventing a quote. **Premise held, and it was wider than logged:** the minimum-wage clause overstates too, so the qualifier covers both, as L44 §2 does (*"In most countries it comes with legal minimums, notice periods…"*). A Node scan of English `src` for `notice period|legal minimum|minimum wage` finds only this entry unqualified (L44 body, L44 takeaway and q046 all carry "in most countries").
+
+#### What shipped
+- `src/content/glossary.js` "Passive Income" `f`, the last sentence in each of five languages. en *"…came first, and unlike a wage, which in most countries comes with a legal minimum and a notice period, the income carries neither."* The qualifier reuses L44's own words: ko 대부분의 나라에서, es *en la mayoría de los países*, zh 在大多数国家, ja 多くの国では. ko/zh/ja split the long sentence in two. Each was hand-read against the new English. No figure added (W-11.2). A 5-line comment above the entry records the old text and both sources.
+- `scratchpad/passive.mjs` asserted old ×1 / new ×0 per string, the reverse after, and no U+FFFD; a re-run refuses (exit 1). The glossary is outside the translation ledger, so nothing was re-marked, and lesson chars are unchanged.
+
+#### Verification
+| check | result |
+|---|---|
+| Diff | 1 source file, 6+/1− (one line holds all five strings, plus the comment) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); WARN/FAIL lines `diff`-identical to the pre-edit run. §67 0/360 flagged, §65 unchanged (en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1) |
+| Guard sees the entry | planted *"You should buy dividend stocks now."* after the new en clause → `check-blindspot` **exit 1** at `glossary.js:180`; restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-CrnJJdqG.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset; the old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0; unchanged `ex` control → 1 |
+| Live | built `dist/` served statically (`/` 200, missing asset 404). Reference → Glossary in all five languages via the real select: new ✓, old ✗, the entry's `ex` control ✓, negative ✗. ⚠️ My first probe ran before dismissing the welcome notice and read false for everything, controls included. localStorage cleared, server stopped |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "In most countries" is true of both protections (ILO >90%; notice is law in most OECD countries, per the 10-23 entry). The entry still says passive income has neither, which is true everywhere. No country is singled out and no figure added, so nothing can go stale.
+- **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0, and the guard plant fired. The entry still describes the income and says nobody should pursue it. **§10.3:** not kids content. **No date or live figure.**
+- **Prior work / decisions:** this aligns the glossary with the 10-23 L44/q046 fix and touches neither. `.js` content modules unchanged. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2 (glossary.js, AGENT_LOG.md).
+
+**Seen, not fixed:** L44's takeaway and q046 qualify "notice periods" but not "legal minimums". ILO says minimums are not universal either, though the US has one, so it's true for the app's default reader. Low priority, not numbered (W-6.2 rule 2). `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the glossary's "Passive Income" entry implied that every job comes with a minimum wage and a notice period. Most US jobs are at-will, and some countries have no minimum wage, so it now says "in most countries".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-23 (scheduled dev-agent; free pick, W-12.2 sweep of money L41-44) — L44's takeaway and quiz q046's explanation no longer list "notice periods" as a protection every wage carries. Every US state but Montana is at-will, so most US jobs have no legal notice period. Both now say "in most countries", as L44's own body does. Five languages.
 
 Rules: W-6.2 ok (free pick; I declined the previous entry's residual, see below); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `7fceda2`): exit 0 / 0 FAIL / 1 WARN (O-3's).
