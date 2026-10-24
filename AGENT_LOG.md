@@ -3287,6 +3287,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-24 (scheduled dev-agent; the previous entry's residual, L35 §2's rate-cut sentence) — L35 no longer says that when the Fed cuts, "real estate recovers": home prices kept falling for years after the 2007 cuts began. Its "bond prices rise" now needs market rates to follow the Fed down: the 10-year yield rose after 4 of 7 first cuts. Five languages.
+
+Rules: W-6.2 ok (first residual of a free pick); W-9.4 n/a (measured accuracy fix). `npm test` at HEAD `71ad358` (a `git archive` copy with `node_modules` symlinked; I skipped this before the first edit and ran it on the copy instead): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** FRED CSV (keyless), first-cut months 1989-06, 1995-07, 1998-09, 2001-01, 2007-09, 2019-07, 2024-09. **Control:** Case-Shiller national NSA, 2006-07 peak → 2012-02 trough = **−27.4%**, the bust's published size, so the instrument reads housing correctly. (1) **Home prices (CSUSHPINSA):** year-on-year change was negative for all 37 months 0-36 after the 2007 cut, and for 14 of them after 1989. In every other cycle, prices were already rising at the first cut (year-on-year +1.7% to +9.2%), so there was nothing to "recover". **Premise held.** (2) **Wider than logged, bonds (GS10):** the 10-year yield 12 months after the first cut was higher in 1989 (8.28→8.48), 1995 (6.28→6.87), 1998 (4.81→5.92) and 2024 (3.72→4.12), and lower in 2001, 2007 and 2019. So long-bond prices did *not* rise in 4 of 7 cycles. **Index check on my own first draft:** I first wrote "didn't hit bottom until 2012". The trough is 2012-02 on Case-Shiller SA and 2012Q2 on FHFA all-transactions, but **2011-05** on FHFA purchase-only (HPIPONM226S). That year depends on the index, so I replaced it with "kept falling for years", which holds on all three (3.7-4.6 years).
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js` L35 §2 ¶5, the first sentence becomes two. en *"Cut rates, and the sequence tends to run in reverse: stocks rise, bond prices rise as long as market rates follow the Fed down, and gold often rises. Home prices don't always follow: after the Fed began cutting in 2007, they kept falling for years."* es *…siempre que las tasas del mercado sigan al Fed a la baja… Los precios de la vivienda no siempre acompañan: …siguieron bajando durante años.*; ko 시장 금리가 연준을 따라 내려가는 한 채권 가격이 오르고 … 집값은 늘 따라오지는 않습니다 … 몇 년 동안 계속 떨어졌습니다; zh 只要市场利率跟着美联储下行，债券价格就会上涨 … 房价却不一定跟上 … 又持续下跌了好几年; ja 市場金利がFRBに続いて下がる限り債券価格が上がり … 住宅価格はいつもついてくるとは限りません … 何年も下がり続けました. No figure added (W-11.2). "Stocks rise" stays, because the next paragraph already qualifies it with 1995-2008.
+- `scratchpad/cuts.mjs` and `cuts2.mjs` asserted old ×1 / new ×0 per file, the reverse after, and no U+FFFD; each refuses a re-run (exit 1).
+- Ledger: after each English edit, L35 es/ko/zh/ja were reported **stale** (4/4, the control). I re-marked them `ai` after reading each against the final English. `npm run readiness -- --write`: en chars 167,824 → **167,949** (+0.07%; W-12.6(iii) allows up to 168,348).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); WARN/FAIL lines and the §65/§67 lines are `diff`-identical to HEAD's run |
+| Guard sees the paragraph | planted *"You should buy a house now."* after the new en clause → `check-blindspot` **exit 1** at `lessonContent.economy.en.js:134`; restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-IKNXaKG4.js`, system Node v24.18.0 |
+| Bundle | 6 new probes (5 languages + the en bond clause) each in 1 asset (0 in HEAD's `./dist`). The old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire). The interim "2012" draft → 0, nonsense → 0, and the unchanged heading control → 1 |
+| Live | **not checked.** The bundle probe is the evidence for this one-sentence edit |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "As long as market rates follow the Fed down" is true by definition (prices rise when yields fall) and agrees with §1, which says market rates move on their own. "Don't always follow" doesn't claim home prices usually fall: they were higher a year later after 6 of the 7 first cuts.
+- **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0, and the guard plant fired. **§10.3:** not kids content. **No date or live figure**: 2007 is a historical anchor.
+- **Prior work / decisions:** today's §3 dual-mandate fix and §2's dollar and "Don't fight the Fed" sentences are untouched. No quiz quotes the old sentence (Node scan of `quizText.en.js` for rate-cut phrasing → 2 unrelated hits). `.js` content modules unchanged. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** nothing new in L35. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 35 said rate cuts make "real estate recover" and bond prices rise. Home prices kept falling for years after the 2007 cuts, and long-term yields rose after 4 of the last 7 first cuts, so it now says both depend on what the market does.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-24 (scheduled dev-agent; free pick, W-12.2 sweep of economy L31-35) — L35 no longer says Congress gave the Fed "two legally required goals": the statute names three. It now says the two at the center of its rate decisions are the dual mandate. Five languages.
 
 Rules: W-6.2 ok (free pick; I declined the previous entry's residual, see below); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `49f0b4b`): exit 0 / 0 FAIL / 1 WARN (O-3's).

@@ -887,25 +887,25 @@
     "es": {
       "reviewedBy": "Claude (Opus 5.5, scheduled dev-agent)",
       "reviewedDate": "2026-10-24",
-      "sourceHash": "a077c15810374ab3",
+      "sourceHash": "f686b7bb5fbd2891",
       "method": "ai"
     },
     "ja": {
       "reviewedBy": "Claude (Opus 5.5, scheduled dev-agent)",
       "reviewedDate": "2026-10-24",
-      "sourceHash": "a077c15810374ab3",
+      "sourceHash": "f686b7bb5fbd2891",
       "method": "ai"
     },
     "ko": {
       "reviewedBy": "Claude (Opus 5.5, scheduled dev-agent)",
       "reviewedDate": "2026-10-24",
-      "sourceHash": "a077c15810374ab3",
+      "sourceHash": "f686b7bb5fbd2891",
       "method": "ai"
     },
     "zh": {
       "reviewedBy": "Claude (Opus 5.5, scheduled dev-agent)",
       "reviewedDate": "2026-10-24",
-      "sourceHash": "a077c15810374ab3",
+      "sourceHash": "f686b7bb5fbd2891",
       "method": "ai"
     }
   },
