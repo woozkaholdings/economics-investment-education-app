@@ -3287,6 +3287,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-24 (scheduled dev-agent; free pick, W-12.2 sweep of economy L31-35) — L35 no longer says Congress gave the Fed "two legally required goals": the statute names three. It now says the two at the center of its rate decisions are the dual mandate. Five languages.
+
+Rules: W-6.2 ok (free pick; I declined the previous entry's residual, see below); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `49f0b4b`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** The previous residual (L44/q046 qualify "notice periods" but not "legal minimums") was filed as low priority because the US has a minimum wage, so I left it. Economy L29-35 had no sweep this week (only L30's car-loan residual). Read in English: L31, L32, L33, L34, L35. L31-34 turned up no false clause on this read. L33's "75-100 years" is the model's own span, and the NestedCycles chart and q003 depend on it, so it's not a sweep fix. In L35 §3: *"Congress gave the Fed two legally required goals at once, known as its dual mandate"*.
+
+**Step 3.5: the premise, measured.** 12 U.S.C. §225a (Cornell LII, WebFetch, asked to quote verbatim): *"so as to promote effectively the goals of maximum employment, stable prices, and moderate long-term interest rates."* The Chicago Fed's dual-mandate page quotes the same 1977 clause and calls only the first two *"known collectively as the 'dual mandate'"*. **Control:** asked the LII page for a numeric inflation target, the fetch said NONE FOUND. That's correct: 2% is the Fed's own choice, not statute. So it reports absence rather than inventing one. **Premise held:** the law names three goals, and "dual mandate" is the Fed's name for two of them.
+
+#### What shipped
+- `lessonContent.economy.{en,es,ko,zh,ja}.js` L35 §3 ¶1, one clause each. en *"…Congress set the Fed's goals in law, and the two at the center of its rate decisions are known as its dual mandate: stable prices (…) and maximum employment (…)."* es *el Congreso fijó por ley los objetivos del Fed, y los dos que están en el centro de sus decisiones sobre las tasas…*; ko 의회는 연준의 목표를 법으로 정해 두었고, 그중 금리 결정의 중심에 있는 두 가지를…; zh 国会以法律规定了美联储的目标，其中处于利率决策核心的两个…; ja 議会はFRBの目標を法律で定めており、そのうち金利の決定の中心にある二つを…. The heading ("Two Goals That Can Conflict") stays true. No figure added, and the third goal isn't spelled out (W-11.2: narrow, don't add).
+- `scratchpad/mandate.mjs` asserted old ×1 / new ×0 per file, the reverse after, and no U+FFFD; a re-run refuses (exit 1). A second asserted edit dropped a doubled 其 from the zh clause.
+- Ledger: L35 es/ko/zh/ja were reported **stale** after the English edit (the control) and re-marked `ai` after I read each against the new English. `npm run readiness -- --write` updated en chars 167,793 → **167,824** (`LAUNCH_READINESS.md` 2/2).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's); WARN/FAIL lines `diff`-identical to the pre-edit run. §65 unchanged (en 28.3 / es 26.1 / ko 28.3 / zh 23.9 / ja 26.1), §67 0/360 |
+| Guard sees the paragraph | planted *"You should buy bonds now"* after "dual mandate" → `check-blindspot` **exit 1** at `lessonContent.economy.en.js:138`; restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-B6aNWnVJ.js`, system Node v24.18.0 |
+| Bundle | 5 new probes each in 1 asset (0 in HEAD's `./dist`); the old en clause → 0 (→ 1 in HEAD's `./dist`, so the probe can fire); nonsense → 0; unchanged heading control → 1 |
+| Live | **not checked.** The bundle probe is the evidence for this one-clause edit |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** The new clause is true under the statute and the Fed's own usage. It doesn't claim the third goal is unimportant, only that two drive the rate decisions this section discusses. `policySimIntro`'s "The dual mandate has no formula" is still true and unchanged.
+- **§10.1/§10.2:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 added, and the guard plant fired. **§10.3:** not kids content. **No date or live figure.**
+- **Prior work / decisions:** the §3 section added in the archive (l.6945) is kept. Only its first clause narrows. `.js` content modules unchanged. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 8.
+
+**Seen, not fixed:** L35 §2 says that when rates are cut, *"real estate recovers"*. Home prices kept falling for years after the 2007 cuts began, and the next paragraph already says the pattern is mixed for stocks. Low priority, not numbered (W-6.2 rule 2). `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** lesson 35 said Congress gave the Fed two legal goals. The law names three (the third is moderate long-term interest rates), so it now says the two at the center of its rate decisions are what's called the dual mandate.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-24 (scheduled dev-agent; the previous entry's residual, glossary "Passive Income") — the glossary entry no longer implies that every wage carries a legal minimum and a notice period. Most US jobs are at-will, and some countries have no minimum wage. It now says a wage has both "in most countries", as lesson 44's body does. Five languages.
 
 Rules: W-6.2 ok (first residual of a free pick); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `3afd410`): exit 0 / 0 FAIL / 1 WARN (O-3's).
