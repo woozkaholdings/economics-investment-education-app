@@ -366,6 +366,61 @@
     return "";
   }
 
+  /* norm()'s notation problem plus the one thing norm() deliberately drops: ALPHA. ringBackdrop
+   * composites translucent layers (a lesson card's `color + "15"` tint is one), and a layer read
+   * as opaque would hand back the tint's full-strength hue as the backdrop. Returns [r,g,b,a],
+   * or null for anything it cannot parse — and the caller reports null, never skips it. */
+  function rgba(c) {
+    var m = String(c || "").trim()
+      .match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,\/]\s*([\d.]+)(%?))?\s*\)$/i);
+    if (!m) return null;
+    var a = m[4] === undefined ? 1 : (m[5] ? +m[4] / 100 : +m[4]);
+    return [+m[1], +m[2], +m[3], a];
+  }
+
+  /* WCAG relative luminance and contrast, with the 0.03928 knee check-data.mjs §28 uses, so a
+   * live ratio here and a static one there are the same number for the same pair. */
+  function luminance(c) {
+    var ch = [c[0], c[1], c[2]].map(function (v) {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+  }
+  function contrast(a, b) {
+    var x = luminance(a), y = luminance(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  function over(top, under) {
+    return [0, 1, 2].map(function (k) { return top[k] * top[3] + under[k] * (1 - top[3]); });
+  }
+
+  /* The ring's color, read off the stylesheet rather than off a focused element. Focusing needs
+   * the focusVisibleSelectors capability, which a fresh pane lacks (header note 2), and the ring
+   * is a property of one global rule: index.css's `:focus-visible` is the ONLY focus styling in
+   * the repo. The declaration is resolved on a planted span, so `var(--fill-accent)` resolves
+   * in whatever theme the document is in at the moment of the sweep — which is the point. */
+  function ringColor() {
+    var decl = "";
+    [].forEach.call(document.styleSheets, function (sheet) {
+      var rules;
+      try { rules = sheet.cssRules; } catch (e) { return; }   // cross-origin sheet: unreadable
+      [].forEach.call(rules || [], function (r) {
+        if (r.selectorText !== ":focus-visible" || !r.style) return;
+        decl = r.style.getPropertyValue("outline") || r.style.getPropertyValue("outline-color") || decl;
+      });
+    });
+    if (!decl) return { rgb: null, evidence: "no global :focus-visible rule with an outline found in document.styleSheets" };
+    var probe = document.createElement("span");
+    probe.setAttribute(SKIP_ATTR, "ring-color");
+    probe.style.cssText = "position:fixed;left:-9999px;top:0;";
+    probe.style.outline = decl;
+    document.body.appendChild(probe);
+    var css = getComputedStyle(probe).outlineColor;
+    probe.remove();
+    return { rgb: rgba(css), css: css, evidence: "declaration `" + decl + "` computed to " + css };
+  }
+
   function where(el) {
     var d = el.tagName.toLowerCase();
     if (el.id) d += "#" + el.id;
@@ -952,6 +1007,83 @@
      * `document.activeElement !== el` after .focus() means the element is not really focusable
      * (a disabled button — the Learn path renders 11 of them for locked lessons). Those are
      * skipped rather than counted, so `scanned` stays the number of elements actually measured. */
+    /* Backlog item 140. `outline-offset: 2px` paints the ring OUTSIDE the control's border box,
+     * so what it is seen against is the nearest ancestor that paints a background — never the
+     * control's own fill. check-data.mjs §28c asserts the ring against every --surface-* token
+     * and deliberately omits the --fill-* tokens (the ring IS --fill-accent, so that pair is
+     * 1.00:1 by construction). That is right only while no focusable sits inside a
+     * fill-backgrounded container, which is a LAYOUT fact no static check can see. On
+     * 2026-08-28 it was measured by hand: 8 sweeps, 106 controls, four distinct backdrops, none
+     * a fill. This probe is that measurement made repeatable.
+     *
+     * Needs only layout, not focus: the ring's color comes from the stylesheet (ringColor()),
+     * and where it paints comes from the tree. Disabled and inert controls are skipped because
+     * no Tab press can put a ring on them. A backdrop it cannot resolve — a background-image,
+     * or a color it cannot parse — is a FINDING, not a skip: an unmeasured control reported as
+     * passing is the lying zero this file exists to prevent.
+     *
+     * ⚠️ THE THEME IS THE OPERATOR'S TO SET. The pane follows the OS, and on 2026-08-28 a scan
+     * with `data-theme` unset measured dark while the operator believed it was light. Force
+     * `data-theme` on <html> for each palette and read `theme` back off the result. */
+    ringBackdrop: { needs: "layout", run: function () {
+      var ring = ringColor();
+      if (!ring.rgb) {
+        return { findings: ["could not resolve the focus ring's color (" + ring.evidence + ") — " +
+          "every ratio would be against a guess"], scanned: 0 };
+      }
+      var out = [], scanned = 0, backdrops = {}, worst = null;
+      [].forEach.call(document.querySelectorAll(FOCUSABLE), function (el) {
+        if (!visible(el) || !exposed(el)) return;
+        if (el.matches(":disabled") || el.closest("[inert]")) return;
+        scanned++;
+        var layers = [], painter = null, unresolved = "", n = el.parentElement;
+        while (n) {
+          var s = getComputedStyle(n);
+          if (s.backgroundImage && s.backgroundImage !== "none") {
+            unresolved = "background-image on " + where(n);
+            break;
+          }
+          var c = rgba(s.backgroundColor);
+          if (!c) {
+            unresolved = "unparseable background-color `" + s.backgroundColor + "` on " + where(n);
+            break;
+          }
+          if (c[3] > 0) {
+            layers.push(c);
+            if (!painter) painter = n;
+            if (c[3] >= 1) break;
+          }
+          n = n.parentElement;
+        }
+        if (unresolved) {
+          out.push("focus ring backdrop not measurable — " + unresolved + ": " + where(el));
+          return;
+        }
+        // Outermost first. Nothing opaque all the way up means the canvas shows through, and an
+        // unstyled canvas is white.
+        var bg = [255, 255, 255];
+        for (var i = layers.length - 1; i >= 0; i--) bg = over(layers[i], bg);
+        var key = "rgb(" + bg.map(Math.round).join(", ") + ")";
+        backdrops[key] = (backdrops[key] || 0) + 1;
+        var ratio = contrast(over(ring.rgb, bg), bg);
+        if (!worst || ratio < worst.ratio) worst = { ratio: ratio, backdrop: key, on: where(el) };
+        if (ratio < 3) {
+          out.push("focus ring " + ring.css + " on backdrop " + key + " = " + ratio.toFixed(2) +
+            ":1, under WCAG 1.4.11's 3:1 — backdrop painted by " +
+            (painter ? where(painter) : "the canvas") + ": " + where(el));
+        }
+      });
+      return {
+        findings: out,
+        scanned: scanned,
+        theme: document.documentElement.getAttribute("data-theme") ||
+          "UNSET — follows the OS; force data-theme before trusting this as either palette",
+        ring: ring.css,
+        backdrops: backdrops,
+        worst: worst ? worst.ratio.toFixed(2) + ":1 on " + worst.backdrop + ", " + worst.on : null
+      };
+    } },
+
     focusVisibleOnTab: { needs: "focusVisibleSelectors", run: function () {
       var park = document.createElement("button");
       park.setAttribute(SKIP_ATTR, "focus-park");
@@ -1142,6 +1274,17 @@
        * COMPUTED style — an inline `style="outline:none"` on the element would suppress the ring
        * in both states and the before/after comparison would see no difference for the wrong
        * reason, which is a control firing on its own account (the trap step 3.5 names). */
+      /* ringBackdrop's control: item 140's own plant, a focusable inside a `var(--fill-accent)`
+       * wrapper, which reads 1.00:1 in either palette because the ring IS that token. Between the
+       * two sits a fully transparent white layer, so the exact 1.00 also proves an alpha-0 layer
+       * is walked THROUGH rather than taken as the painter: read as opaque, it would be white,
+       * and the ratio would be the ring against white instead. (Partial alpha is not planted;
+       * its expected number would depend on the palette.) */
+      '<div style="background:var(--fill-accent);padding:8px">' +
+        '<div style="background:rgba(255,255,255,0);padding:4px">' +
+          '<button id="a11y-selftest-ringfill" style="width:60px;height:60px">f</button>' +
+        '</div>' +
+      '</div>' +
       '<style>#a11y-selftest-noring:focus, #a11y-selftest-noring:focus-visible ' +
         '{ outline: none !important; box-shadow: none !important; }</style>' +
       '<button id="a11y-selftest-noring" style="width:60px;height:60px">ring</button>';
@@ -1225,7 +1368,10 @@
       /* Matches the plant's own id rather than the shape, for unnamedRegions' reason: every
        * control in the app carries the global `:focus-visible` ring today, so a shape match
        * would pass off a REAL regression as a fired control the moment one of them lost it. */
-      focusVisibleOnTab: /a11y-selftest-noring/
+      focusVisibleOnTab: /a11y-selftest-noring/,
+      // The ratio AND the plant's id in one finding: the id alone would also match a "not
+      // measurable" finding on the plant, which is the probe failing, not firing.
+      ringBackdrop: /= 1\.00:1[^|]*a11y-selftest-ringfill/
     };
     var caps = capabilities(), results = {}, failed = [];
     Object.keys(expect).forEach(function (name) {

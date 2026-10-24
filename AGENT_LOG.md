@@ -2058,7 +2058,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 148. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-140. **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
+140. **✅ DONE 2026-10-24 (scheduled dev-agent): the hand measurement below is now `a11y-sweep.js`'s `ringBackdrop` probe, with a planted control in `selftest()` that §43 requires. Re-measured live: 9 screens × 2 palettes, 0 findings, the same four surfaces, worst 7.10:1. Residual, not an item: `a11y-states.js` sweeps whichever theme the page is in, so dark still needs the operator to set `data-theme` (item 149's axis note). Earlier text follows.**
+    **[A11y/Tooling — filed 2026-08-28 by the run that built §28c (item 139), as its stated
     residual rather than smuggled into the same commit.] §28c assumes the ring lands on a SURFACE.
     That is true today, it was measured rather than assumed, and nothing keeps it true.**
     - **State:** `outline-offset: 2px` paints the ring outside the control's border box, so the
@@ -3286,6 +3287,41 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-24 (scheduled dev-agent; open item 140, after a W-12.2 sweep found nothing) — the live a11y sweep now checks what every focus ring is drawn against. A ring on a `--fill-*` container would read ~1:1 while §28c stays green. Re-measured live: 0 findings across 9 screens in both palettes. No `src/` change.
+
+Rules: W-6.2 ok (the previous entry left no residual); W-9.4 n/a. `npm test` before any edit (HEAD `9a4186d`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** I read, by meaning, the surfaces this week's sweep had not reached: money L16-20, 22, 23, 25, 28 and economy L29, L40. No false clause turned up. L23's 1981 figures match Thaler's paper ($15→$20 in a month; $3,000→$4,000 in a year). L40's Rule 1 figures were FRED-measured on 10-08 (archive). W-12.2 says that when the sweep is clean, take 117, 140 or 149. 117 is the owner's judgment call, and 149 says not to pick it over other work. So I took 140.
+
+**Step 3.5: the premise, measured.** 140 says §28c checks the ring only against surfaces, and that only a live sweep can see a ring drawn on a fill. Both hold. `index.css:271` is still the only focus rule (`outline: 2px solid var(--fill-accent); outline-offset: 2px`). `fill.accent/ok/ink` are still used as backgrounds (`ui.jsx:179,184`, `LessonReader.jsx:81`). **Control on the guard:** I added the probe with no selftest plant first, and `check-data` §43 **failed**, naming `ringBackdrop`.
+
+#### What shipped (1 source file, no `src/` change)
+- `scripts/a11y-sweep.js`: a `ringBackdrop` probe (layout-gated). It reads the ring color from the global `:focus-visible` rule, resolved in the current theme, and walks each enabled, non-inert focusable's ancestors. Alpha-0 layers are skipped and partial alpha is composited. A ratio under 3:1 is a finding. A background-image or an unparseable color is also a finding, never a skip. It reports `theme` (and says UNSET if `data-theme` is unset), the backdrop tally and the worst ratio. Helpers: `rgba`, `luminance` (0.03928, same as §28), `contrast`, `over`, `ringColor`.
+- `selftest()` plant: a button inside a fully transparent layer inside a `var(--fill-accent)` wrapper. It expects `= 1.00:1` and the plant's id together.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN; WARN/FAIL/§65/§67 lines `diff`-identical to before. §43: 13 probes, 12 layout-gated, all planted |
+| selftest, live (built `dist/` served statically) | `ringBackdrop`: **control fired**, both on fresh load and after a reload (`focusVisibleOnTab` UNAVAILABLE without a Tab press, as documented) |
+| Ring color | light `rgb(47,67,196)` = `--fill-accent` #2f43c4; dark `rgb(169,182,255)` = #a9b6ff. By hand: #2f43c4 on white = **7.72:1**, which the probe also reports |
+| Live tree control | painted `--fill-accent` on the real parent of "Practice all questions (1)" → exactly 1 finding, 1.00:1, on that button; restored → 0 |
+| Sweep | Learn, lesson 29, Practice (fresh, and with `[29]` completed), Reference hub, Glossary, Market Dashboard, Sectors, Kids, About; each in light and dark: **0 findings**. Backdrops are only `--surface-canvas`/`--surface-card` in each palette. Worst **7.10:1** (light canvas), the same figure 140 recorded on 08-28 |
+
+**An instrument trap, caught by a count:** my first pass set the hash and swept in the next call. Practice, Reference and lesson 29 all came back with the same 5 controls, which were only the app shell, because the lazy screens hadn't rendered yet. The lesson then had 18 controls in the DOM. I re-swept with a content check before measuring, and every scanned count then matched the DOM count.
+
+#### Step 5: adversarial self-check
+- **Limit, stated:** the nearest-painting-ancestor model doesn't see a ring that spills over a *sibling's* fill within 4px. On today's screens no focusable sits next to a fill. Recorded here, not filed.
+- **§10.1/§10.2/§10.3, no date or figure:** tooling only. The diff grep `should|recommend|dalio` → 0.
+- **Prior work / decisions:** §28c is untouched, and the probe checks what §28c deliberately leaves out. `focusVisibleOnTab` and its plant are unchanged. `a11y-states.js` picks up the probe through `A11ySweep.run()` with no edit. DECISIONS.md has nothing on the sweep. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the accessibility sweep now checks the contrast of every keyboard focus ring against what it is drawn on. Today all of them pass in both themes (worst 7.1:1, minimum 3:1), and the check will catch it if a button ever lands on a colored panel.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-24 (scheduled dev-agent; the previous entry's residual, L35 §2's rate-cut sentence) — L35 no longer says that when the Fed cuts, "real estate recovers": home prices kept falling for years after the 2007 cuts began. Its "bond prices rise" now needs market rates to follow the Fed down: the 10-year yield rose after 4 of 7 first cuts. Five languages.
 
