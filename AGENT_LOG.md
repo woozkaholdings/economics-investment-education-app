@@ -3349,6 +3349,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-25 (scheduled dev-agent; the previous entry's "Seen, not fixed", the §10.1 directive gap) — `check-blindspot` now catches "you should <adverb> buy": one adverb between the modal and the verb passed in en/es/zh/ja, as did zh 应当 and bare 买, and ja べきだ. No content change.
+
+Rules: W-6.2 ok (one residual of a named pick); W-9.4 n/a (guard fix, not a hand read; W-13.1's second read can't be this run, since its run is one of the previous two). `npm test` before any edit (HEAD `c7f4164`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** I ran the 5 directive regexes against 19 probes (`scratchpad/probe.mjs`). The 5 known forms fire (control). These 13 pass: *You should now/probably/definitely/really…*, *Deberías ahora/definitivamente…*, 你应该现在/马上/尽快…, 你应当买入, 你应该买股票, 今すぐ株を買うべきだ, 買うべきでしょう, 사야만 합니다. **Held, and wider than reported:** the 10-25 note named zh only.
+
+**Corpus first** (`scratchpad/scan.mjs`, `\n` expanded as the guard does). Free one-word slot en/es: 0 hits. ja `べき` after the listed verbs: 0. zh 应该/应当: 13 contexts, all descriptive. One of them, essentials 应当承担买方中介, is what a free Han gap would flag. ko with plain 한다: 1 hit, money track 팔아야 한다는 압박 ("the pressure to sell"), which is descriptive.
+
+#### What shipped (1 file, no `src/` change)
+- `scripts/check-blindspot.mjs` directive class. en/es/zh now take one optional adverb from a closed list (now, really, definitely, consider…; ahora, ya, *-mente*; 现在, 马上, 尽快, 考虑…). zh adds 应当 and bare 买/卖, and ja accepts べきだ/べきでしょう but not 〜だろう or 〜でしょうか. I dropped "first"/先 in self-check: "you should first open an account" describes a procedure, which is the file's reason for leaving out "need to". Korean is unchanged because of the 한다 hit. 11 new `fires` samples, and the zh essentials sentence is a third live must-stay-clean control. A dated comment says why.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN; FAIL/WARN/§65/§67/§2.3 lines `diff`-identical. Only change: "3 shipped sentence(s)… stay clean" (was 2) |
+| Load-bearing | planted 你应该现在买入股票。 (essentials zh) and *"You should now buy stocks."* (essentials en). HEAD's guard → **exit 0**, new guard → **exit 1** on both lines. Restored from scratchpad copies (`cmp` equal) → exit 0 |
+| Narrow side | planted *"You should first open a brokerage account."* → exit 0, as intended. Restored, `cmp` equal |
+| New control can fire | a free-gap `/应当[一-鿿]{0,4}买/` matches the new clean sentence → true |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-V7bjfKrV.js` (same as the previous run, as expected with no `src/` change) |
+
+#### Step 5: adversarial self-check
+- **Over-broad?** Each added adverb makes a directive more pressing, not less, and negations are excluded by construction. The first draft's "first"/先 was the one procedural reading, and it's gone. The corpus is clean.
+- **§10.1/§10.2/§10.3, dates:** guard-only change. It widens §10.1, and no content moved.
+- **Prior work / decisions:** 10-21's verb list and its "need to" exclusion are kept. Item 164's must-stay-clean pair is unchanged, and 14 patterns still each fire on every sample. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** ko 사야만 합니다 still passes. Adding 한다 would flag shipped copy, so ko needs a different shape, and it's a rare form. W-13.1's second read is still owed, from the run after next. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the advice guard missed "you should now buy stocks" and its translations, because an adverb sat between "should" and "buy". It catches those now, and nothing shipped had them.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-25 (scheduled dev-agent; named item W-13.1) — the Market Dashboard Stocks card no longer tallies growth beating value. It now says stocks ended 4 of the last 5 hiking cycles higher, as the same screen's Principles line does. Five languages.
 
 Rules: W-13.1 named pick (run 1 of 2 under W-9.4); W-6.2 ok (not a residual). `npm test` before any edit (HEAD `f80b967`): exit 0 / 0 FAIL / 1 WARN (O-3's).

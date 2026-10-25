@@ -220,12 +220,23 @@ const readmePath = join(ROOT, "README.md");
   // buy shares"); "should" and "ought to" tell the reader what to do.
   // Japanese also takes the する-verb's short すべき form, which the
   // corpus uses (判断すべき, 調整すべき); 投資すべきです used to pass.
+  // WIDENED 2026-10-25: the modal had to touch the verb, so one adverb
+  // between them passed in four languages ("You should now buy stocks.",
+  // "Deberías ahora comprar acciones.", 你应该现在买入股票。), as did zh's
+  // 应当 and bare 买 (你应该买股票。) and ja's plain べきだ. The gap is a
+  // closed adverb list, not "any word": a free slot would also take "not"
+  // and "never", and zh's 应当承担买方… (essentials) shows a free Han gap
+  // reaching a 买 that belongs to a noun. "first" (先) is left out for the
+  // reason "need to" is: "you should first open an account" describes a
+  // procedure rather than telling the reader what to do. Korean is left as it was, because
+  // its plain 한다 form appears descriptively in shipped copy (money track:
+  // 팔아야 한다는 압박, "the pressure to sell").
   const directive = [
-    { re: /you( should| ought to| had better|['’]d better) (buy|sell|invest|open|put|move|transfer)/i, fires: ["You should buy stocks now.", "You should open a Roth IRA now.", "You should put your savings in index funds.", "You'd better move your money into bonds."] },
-    { re: /deber[ií]as?\s+(comprar|vender|invertir|abrir|poner|mover|transferir)/i, fires: ["Deberías comprar acciones.", "Deberías abrir una cuenta Roth IRA ahora."] },
+    { re: /you( should| ought to| had better|['’]d better)( (now|still|also|really|definitely|probably|certainly|seriously|consider|just|immediately|always|absolutely))? (buy|sell|invest|open|put|move|transfer)/i, fires: ["You should buy stocks now.", "You should open a Roth IRA now.", "You should put your savings in index funds.", "You'd better move your money into bonds.", "You should now buy stocks.", "You should definitely open a Roth IRA.", "You should consider buying bonds."] },
+    { re: /deber[ií]as?\s+((\p{L}+mente|ahora|ya|considerar)\s+)?(comprar|vender|invertir|abrir|poner|mover|transferir)/iu, fires: ["Deberías comprar acciones.", "Deberías abrir una cuenta Roth IRA ahora.", "Deberías ahora comprar acciones.", "Deberías definitivamente invertir."] },
     { re: /(사야|팔아야|투자해야|열어야|개설해야|넣어야|옮겨야)\s?합니다/, fires: ["지금 주식을 사야 합니다.", "지금 Roth IRA 계좌를 개설해야 합니다."] },
-    { re: /应该(购买|买入|卖出|投资|开立|开设|开户|转入)/, fires: ["你应该买入股票。", "你应该开立一个罗斯IRA账户。"] },
-    { re: /(買う|売る|投資す(る)?|開設す(る)?|開く|移す)べきです/, fires: ["株を買うべきです。", "今すぐ投資すべきです。", "ロスIRA口座を開設すべきです。"] },
+    { re: /应(该|当)(现在就?|马上|立即|立刻|尽快|尽早|赶紧|趁早|趁现在|早点|及早|立马|考虑|多|就)?(购买|买入|买进|买|卖出|卖|投资|开立|开设|开户|转入)/, fires: ["你应该买入股票。", "你应该开立一个罗斯IRA账户。", "你应该现在买入股票。", "你应该尽快开立一个罗斯IRA账户。", "你应当买入股票。", "你应该买股票。"] },
+    { re: /(買う|売る|投資す(る)?|開設す(る)?|開く|移す)べき(です|だ(?!ろう)|でしょう(?!か))/, fires: ["株を買うべきです。", "今すぐ投資すべきです。", "ロスIRA口座を開設すべきです。", "今すぐ株を買うべきだ。", "株を買うべきでしょう。"] },
   ];
   DIRECTIVE_ADVICE = directive;
   const patterns = [
@@ -513,10 +524,14 @@ const readmePath = join(ROOT, "README.md");
   const timing = [...(TIMING_ADVICE ?? []), ...(DIRECTIVE_ADVICE ?? [])];
   const advice = ADVICE_PATTERNS ?? [];
   // Verbatim from src/content/lessonContent.money.en.js and .es.js, in the
-  // corpus's real one-physical-line storage shape.
+  // corpus's real one-physical-line storage shape. The third sentence is from
+  // lessonContent.essentials.zh.js (added 2026-10-25): its 应当承担买方 is
+  // what a free gap after 应当 would flag, which is why the zh directive
+  // pattern's gap is an adverb list.
   const LIVE_MUST_STAY_CLEAN = [
     String.raw`"takeaway": "Needs are things you can't function without; wants are everything else, including plenty of things worth buying."`,
     String.raw`"body": "En el momento de comprar, ambas decisiones se sintieron iguales.\n\nTres años después no lo son."`,
+    String.raw`"body": "这个比例可以协商，并非固定；2024年的一项法律和解改变了美国的行业惯例，卖方不再被默认认为应当承担买方中介的那一半。"`,
   ];
   // `fires` is one sentence or a list; every listed sentence must match.
   const dead = timing.filter((entry) => [entry.fires].flat().some((s) => !matchesLine(s, entry.re)));
