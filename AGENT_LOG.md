@@ -227,6 +227,66 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-13 — set by the weekly review 2026-10-25. Supersedes W-12's *active* clauses below. The standing rules are UNCHANGED and still binding: W-12.3's staged-count assert, W-11.1's entry format, W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week: 29 commits since `4744658`: 27 dev-agent (27 runs), 2 market refreshes.** Run-log
+> entries match commits 27/27 (per day 2, 4, 4, 3, 4, 4, 4, 2). 10-21 has three runs because the
+> 12:00 slot has no commit and no entry, so it is a skipped run, not a mismatch. Build green. `npm test` exits 0 with
+> 0 FAIL and 1 WARN (O-3's disclosure). Grade **A−**. Every W-12 test passed and the review found no
+> factual error. But 22 of the 27 runs were one-clause narrowings, and the launch is still blocked
+> only on O-2.
+>
+> ### W-13.0 — W-12's tests, measured. All four pass, two with little room left.
+> (i) §65 at HEAD: en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9. That is exactly the ceiling,
+> and shortest-option rates are unchanged. (ii) The mean entry dated 10-19 → 10-25 is **5,363 b**
+> (n=25, cap 5,500), up from 4,962. The largest heading is **385 chars** (cap 400). (iii) English
+> lesson text is **168,197** chars, +0.41% against a 0.5% allowance. (iv) No empty commit among
+> the last 32.
+>
+> ### W-13.1 — the Stocks card's note: say what the arrow claims, not a growth-vs-value score.
+> `06589a4` was well measured (Fama-French, robust to breakpoints, with a Russell cross-check), and
+> its gold, real-estate and dollar siblings use the same "N of the last 5 cycles" form. The Stocks
+> note is the one that differs. It tallies one style **beating another**: *"yet they beat value
+> stocks in 4 of the last 5 hiking cycles"*. That is the closest thing on the dashboard to a "which
+> to hold when the Fed hikes" rule. The tally also hides magnitude: +5.2/+1.7/−26.4/+13.3/+9.0 nets
+> about +2.8 pts over five cycles, so "4 of 5" overstates a pattern that is roughly a wash. **Pick
+> for next week, with W-9.4's two runs:** keep the "on paper" theory label. Replace the relative
+> tally with what stocks themselves did over the same five cycles, first hike to last (measure it;
+> don't retype it from here). Or drop the history clause if no simple true statement fits. Five
+> languages. **Rule from now on:** no short string may rank one asset class or style against
+> another over a handful of cycles.
+>
+> ### W-13.2 — the accuracy sweep has covered the corpus. Shrink it, and don't manufacture.
+> This week touched every surface: economy, money and essentials lessons, the glossary, quiz
+> explanations, the parent guide and the dashboard. Eleven runs were residual chains of the run before.
+> The fixes I read are true (q028 vs *Egelhoff*, EITC refundability, the Fed's three statutory goals,
+> post-2007 home prices). But the content is now hedging faster than it is getting more accurate:
+> hedge words in the English lessons ("often/usually/can/may/most…") went from 12.35 to **12.49 per
+> 1,000 words** this week. That's a watch, not a defect. **From now on:** (a) narrow a claim only
+> when you can name a real, common case where the old wording misleads a learner. A rare exception
+> is not enough. (b) When a sweep run finds nothing, log a short entry (≤ 2,000 b) and stop. That is
+> a good outcome, not a wasted run. (c) Don't start a residual chain from a sentence that is already
+> true.
+>
+> ### W-13.3 — entry size is creeping back. Aim for a mean ≤ 5,000 b.
+> 4,962 → 5,363 b in one week, with a heading at 385/400. W-11.1's format holds. Cut the restated
+> sources and the per-language quotes of unchanged text first.
+>
+> ### W-13.4 — owner items, asked in the review, not restated in runs.
+> **O-2** (6th week) is still the only critical-path item. **O-5 / O-6** are unchanged. **New, O-7
+> (decision):** with content complete and the gate owner-held, should the dev agent keep running 4×
+> a day, or slow to 1× until O-2 lands? Runs must not change their own cadence.
+>
+> ### W-13.5 — deploy, measured.
+> `check-deployed --identify`: live = **`3afd410`** (Fri 10-23 19:50), byte-identical, and 5
+> content commits behind. The live `market.json` is asOf 10-23, so Sectors goes dark **Wed 10-28**
+> without a push. That's the usual weekday shape.
+>
+> ### W-13.6 — this block's test, for 2026-11-01.
+> (i) §65 at or below W-12.1's ceiling. (ii) Mean entry dated 10-26 → 11-01 ≤ 5,000 b, and no heading
+> over 400 chars. (iii) English lesson text grows ≤ 0.3% from **168,197**. (iv) No empty commit.
+> (v) W-13.1 resolved, either way. Run the instruments; don't retype these figures.
+
 > ## PRIORITY BLOCK W-12 — set by the weekly review 2026-10-18. Supersedes W-11's *active* clauses below. The standing rules are UNCHANGED and still binding: W-11.1's entry format (it worked, so it stays), W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week: 34 commits since `654f974`: 29 dev-agent (28 runs; one run made two commits, see
