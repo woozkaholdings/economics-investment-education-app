@@ -391,6 +391,12 @@ const VALUE = { en: "Value", es: "Valor", ko: "가치", zh: "价值", ja: "価�
 // IWF/IWD total return agrees for the 3 it covers). So "hardest" is labeled
 // as the textbook claim it is, and the note says what history did, as gold's,
 // real estate's and the dollar's do.
+// 2026-10-25: that history clause tallied growth BEATING value, a style-vs-style
+// ranking over 5 cycles whose gaps net about +3 points. It now says what stocks
+// themselves did over the same cycles, as ratePrinciples[4] below does: SPY
+// price +0.2/+7.1/+11.1/+20.8/+4.6% first hike to last (Tiingo; 4 of 5 positive
+// under every +/-1-day endpoint shift; 1994-95, -2.0 to +0.8%, is the one
+// ratePrinciples[4] calls "about flat", left out here to keep the card short).
 export const rateEffects = [
   {
     key: "stocks",
@@ -398,11 +404,11 @@ export const rateEffects = [
     name: { en: "Stocks", es: "Acciones", ko: "주식", zh: "股票", ja: "株式" },
     rising: "↓", falling: "↑",
     note: {
-      en: "On paper growth stocks are hit hardest, yet they beat value stocks in 4 of the last 5 hiking cycles",
-      es: "Sobre el papel, las de crecimiento son las más afectadas; aun así, superaron a las de valor en 4 de los últimos 5 ciclos de alzas",
-      ko: "이론상으로는 성장주가 가장 크게 타격을 받지만, 최근 다섯 번의 인상 사이클 중 네 번은 가치주를 앞섬",
-      zh: "按道理成长股受冲击最大，但在最近五轮加息周期中，有四轮跑赢了价值股",
-      ja: "理屈の上ではグロース株が最も打撃を受けるが、直近5回の利上げ局面のうち4回はバリュー株を上回った",
+      en: "On paper growth stocks are hit hardest, yet stocks ended 4 of the last 5 hiking cycles higher",
+      es: "Sobre el papel, las de crecimiento son las más afectadas; aun así, las acciones terminaron más altas en 4 de los últimos 5 ciclos de alzas",
+      ko: "이론상으로는 성장주가 가장 크게 타격을 받지만, 주가는 최근 다섯 번의 인상 사이클 중 네 번은 시작 때보다 높게 끝남",
+      zh: "按道理成长股受冲击最大，但在最近五轮加息周期中，有四轮股市结束时高于起点",
+      ja: "理屈の上ではグロース株が最も打撃を受けるが、直近5回の利上げ局面のうち4回は、株価が開始時より高く終わった",
     },
   },
   {

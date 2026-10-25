@@ -254,7 +254,8 @@ for the history. No open P1/P2 items.
 > tally with what stocks themselves did over the same five cycles, first hike to last (measure it;
 > don't retype it from here). Or drop the history clause if no simple true statement fits. Five
 > languages. **Rule from now on:** no short string may rank one asset class or style against
-> another over a handful of cycles.
+> another over a handful of cycles. **Picked 2026-10-25** (run 1 of 2 under W-9.4): the note now
+> says stocks ended 4 of the last 5 hiking cycles higher. A second read is owed.
 >
 > ### W-13.2 — the accuracy sweep has covered the corpus. Shrink it, and don't manufacture.
 > This week touched every surface: economy, money and essentials lessons, the glossary, quiz
@@ -3347,6 +3348,39 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-25 (scheduled dev-agent; named item W-13.1) — the Market Dashboard Stocks card no longer tallies growth beating value. It now says stocks ended 4 of the last 5 hiking cycles higher, as the same screen's Principles line does. Five languages.
+
+Rules: W-13.1 named pick (run 1 of 2 under W-9.4); W-6.2 ok (not a residual). `npm test` before any edit (HEAD `f80b967`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured.** Tiingo `SPY` daily, first hike → last hike on the 5 cycle dates the gold/home-price/dollar notes use (`scratchpad/spy.mjs`). Price **+0.2 / +7.1 / +11.1 / +20.8 / +4.6%**, total return +2.9 / +7.9 / +15.4 / +28.2 / +7.1%, max drawdown inside each −7.5 / −11.9 / −7.6 / −14.4 / −22.7%. Under all 9 ±1-day endpoint shifts, cycles 2-5 stay positive (min +2.6%). 1994-95 ranges **−2.0 to +0.8%**. **Controls:** a bad ticker → 404. FRED `SP500` (index, independent source) 2022-03-16 → 2023-07-26 = +4.8%, agreeing with SPY's +4.6%. A bad FRED id → 404. **Premise held:** the old clause ranked one style against another, and "stocks ended 4 of 5 higher" is a robust absolute statement.
+
+#### What shipped
+- `markets.js` `rateEffects` stocks `note`. en *"On paper growth stocks are hit hardest, yet stocks ended 4 of the last 5 hiking cycles higher"* (93 chars). es *…aun así, las acciones terminaron más altas en 4 de los últimos 5 ciclos de alzas*; ko 「…주가는 최근 다섯 번의 인상 사이클 중 네 번은 시작 때보다 높게 끝남」; zh 「…有四轮股市结束时高于起点」; ja 「…直近5回の利上げ局面のうち4回は、株価が開始時より高く終わった」. The "on paper" clause is unchanged, as W-13.1 asks. The ending reuses each language's real-estate note phrasing. All five read by hand.
+- A first draft added "and the other about flat". At 320 px it made the Stocks card the tallest in its row (en 118 px vs Bonds 101, es 168 vs 118), so I cut it. 1994-95's "about flat" is already on the same screen in `ratePrinciples[4]`, and the gold and dollar notes use the same bare "N of the last 5" form.
+- A 6-line dated comment records why and the figures. Patchers asserted old ×1 / new ×0, no U+FFFD.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN; FAIL/WARN/§65/§67/§2.3 lines `diff`-identical to before |
+| Guard sees the note | en plant *"…You should buy stocks now."* → `check-blindspot` **exit 1** at `markets.js:406`. zh plant with the guard's own sample 你应该买入股票 → **exit 1** at `:410`. Restored from scratchpad copies (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-V7bjfKrV.js`, system Node v24.18.0 |
+| Bundle | 5 new probes → 1 asset each. Old en and the dropped draft clause → 0 (old en → 1 in HEAD's `./dist`). Sibling home-price note → 1, nonsense → 0 |
+| Live | built `dist/` served statically (`/` 200, missing asset 404). Reference → Market Dashboard at 320 px, all five via the real select: new ✓, old ✗, doc width 320. Note height/width vs Bonds: en 101/101, zh 67/67, ko and ja 101/84, es 151/118. localStorage cleared, viewport reset, server stopped |
+
+#### Step 5: adversarial self-check
+- **W-13.1's own rule:** the note no longer ranks growth against value over a handful of cycles. "Hit hardest" stays as labeled theory, as the review asked. Node scan of `src/` for the old tally in all five languages: only the dated comment (control: the home-price note found). No other short string carries it.
+- **True?** "Ended higher" is price-only, nominal, first hike → last hike. It holds under every endpoint shift for the 4 it counts. It is the same claim `ratePrinciples[4]` has made since 09-18, so the screen is now consistent with itself.
+- **§10.1/§10.2/§10.3, no date or live figure:** the added-line grep for `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0, and both plants fired. Not kids content. The 2026-10-25 date is in a code comment, and §2.3 passes.
+- **Prior work / decisions:** 10-23's measurement comment is kept verbatim, and the gold/real-estate/dollar/bonds/cash notes are untouched. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** `check-blindspot`'s zh directive pattern needs 应该 right before the verb, so 你应该现在买入股票 ("you should now buy stocks") passes. A real guard gap. W-9.4: a second read of this note is owed. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the dashboard's Stocks card said growth stocks "beat value stocks in 4 of the last 5 hiking cycles", which read like a which-style-to-hold rule. It now says what stocks themselves did: they ended 4 of the last 5 hiking cycles higher.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-25 (scheduled dev-agent; residual of the previous entry, essentials L7's heading) — L7 §3's heading no longer says every big refund "is an interest-free loan": about 1 in 4 refunds carries the EITC, which is no loan. It now says "It's Often an Interest-Free Loan". Five languages.
 
