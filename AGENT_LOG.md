@@ -3288,6 +3288,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-25 (scheduled dev-agent; free pick, W-12.2 sweep of essentials L1/3/5/7/8/11) — essentials L7's refund section no longer treats every refund as over-withheld pay: a refundable credit such as the EITC can pay more than all the tax withheld, and only at filing. Five languages.
+
+Rules: W-6.2 ok (free pick; the previous entry left no residual); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `2605c2d`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** This week's runs had not named essentials L1, 3, 5, 7, 8 or 11, so I read L1, 3, 5 and 7 by meaning. L1's figures check ($1,200/$3,000 = 40%; $54 → $648). L3's Priya/Tom figures recompute at 6% monthly: **$398,290 vs $401,806** (0.9% apart), contributions $96,000/$144,000. L5's 2008/2022 figures were already measured. L7 §2 gave one: *"If the estimate withheld more than the real bill, the difference comes back as a refund. It was the worker's own money the whole time"*, under the heading *"A Big Refund Isn't a Gift — It's an Interest-Free Loan"*. `refundable|EITC|earned income` → 0 hits in log, archive, CLAIMS, DECISIONS (control: `W-4` → 44 in the archive).
+
+**Step 3.5: the premise, measured.** IRS "Refundable tax credits" (curl, tags stripped in Node): *"a credit you can get as a refund even if you don't owe any tax"*. IRS EITC statistics: about **24 million** filers got about **$70 billion**, averaging **$2,894** (TY2024), which is about the lesson's own "$3,000 refund". The 2025 filing-season average refund was **$2,947** (IRS filing-season statistics). Advance EITC through the paycheck (Form W-5) was repealed from 2011, so the credit comes only by filing. **Control:** a nonsense phrase returned NO MATCH on each page. **Held:** for ~24M filers, much of a "big refund" is a credit, not money withheld early. A W-4 change can't move it into the paycheck.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js` L7 §2 ¶2: one sentence appended. No figure added (W-11.2). en *"Part of a refund can be something else, though: a refundable tax credit, such as the Earned Income Tax Credit for lower-income workers, can make a refund larger than all the tax that was withheld, and that part is paid only when a return is filed."* es *…el Crédito Tributario por Ingreso del Trabajo (EITC)…*, ko 근로소득 세액공제(EITC), zh 劳动所得税抵免（EITC）, ja 勤労所得税額控除（EITC）. Each keeps "EITC" so the term is findable; the translated names weren't checked against IRS's own translated pages. `scratchpad/l7.mjs` asserted anchor ×1 / new ×0 per file, length grew by exactly the insert, and no U+FFFD. I hand-read all five paragraphs in full.
+- `lessonTerms.js` `deliberatelyUnlinked[7]`: `Credit` as other-sense (tax credit, not borrowed money). §3.0.3 **failed** on the new word first, which is the guard working. The glossary's "Credit" is borrowing.
+- Ledger: L7 es/ko/zh/ja went **stale** (4/4, the control). I re-marked them `ai` after the hand read. `readiness --write`: en **167,949 → 168,197** chars (+0.15%). Since W-12.1's 167,511 that's +0.41%, and W-12.6(iii) allows 0.5%.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN; WARN/FAIL/§65/§67 lines `diff`-identical to before |
+| Guard sees the paragraph | planted *"You should buy a house now."* after the new sentence → `check-blindspot` **exit 1** at `essentials.en.js:146`; restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-C7UJSZTk.js`, system Node v24.18.0 |
+| Bundle | each of the 5 new strings is in 1 asset (0 in the repo's stale `./dist`). The unchanged heading is in 1 of each (control); nonsense is in 0 |
+| Live | **not checked.** The bundle probe is the evidence for a one-sentence edit |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** The ¶ still says over-withholding is the worker's own money, which stays true. The new sentence only says part of a refund *can* be a credit. "Paid only when a return is filed" is true by construction: the part above all tax withheld can't come through withholding. The 2021 advance child tax credit has expired.
+- **§10.1/§10.2/§10.3, no date or figure:** the content diff grep for `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0 (the one diff hit is the dated "as of 2026-08-16" in the regenerated LAUNCH_READINESS row, which was there before). The guard plant fired. Not kids content, and no live figure.
+- **Prior work / decisions:** the W-4, benefits-cliff and 401(k) clauses fixed earlier in L7 are untouched. No quiz quotes the ¶ (`interest-free|W-4` in `quizText.en.js` → 0 L7 hits). `.js` content unchanged in kind. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 9.
+
+**Seen, not fixed:** the heading *"A Big Refund Isn't a Gift — It's an Interest-Free Loan"* is still unqualified, though its body now is. It's a short string, so W-9.4 applies, and it's left for a second read. L8 and L11 are not read yet. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the tax lesson said every big refund is your own over-withheld pay. For about 24 million lower-income filers, much of it is the Earned Income Tax Credit, which is paid only at filing. It now says so.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-24 (scheduled dev-agent; open item 140, after a W-12.2 sweep found nothing) — the live a11y sweep now checks what every focus ring is drawn against. A ring on a `--fill-*` container would read ~1:1 while §28c stays green. Re-measured live: 0 findings across 9 screens in both palettes. No `src/` change.
 
 Rules: W-6.2 ok (the previous entry left no residual); W-9.4 n/a. `npm test` before any edit (HEAD `9a4186d`): exit 0 / 0 FAIL / 1 WARN (O-3's).

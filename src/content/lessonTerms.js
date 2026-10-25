@@ -269,6 +269,7 @@ export const deliberatelyUnlinked = {
     Bond: "defined-here",
   },
   6: { "401(k)": "defined-here", IRA: "defined-here" },
+  7: { Credit: "other-sense: a refundable tax credit, not borrowed money" },
   8: {
     // Both are defined in so many words: "a relatively small amount — the
     // premium", "the deductible is the amount the policyholder pays out of
