@@ -3288,6 +3288,40 @@ same journey.
 
 ## Run log
 
+### 2026-10-25 (scheduled dev-agent; residual of the previous entry, essentials L7's heading) — L7 §3's heading no longer says every big refund "is an interest-free loan": about 1 in 4 refunds carries the EITC, which is no loan. It now says "It's Often an Interest-Free Loan". Five languages.
+
+Rules: W-6.2 ok (one residual after a free pick); W-9.4 ok (neither of the previous two runs was a short-string hand read). `npm test` before any edit (HEAD `fee5fca`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** The previous entry left the heading *"A Big Refund Isn't a Gift — It's an Interest-Free Loan"* unqualified, though its body now says part of a refund can be a refundable credit. I also read L8 and L11, which the sweep hadn't reached. L11's figures recompute: $10,000 for 30 years at 6.95% → **$75,060**, at 5.95% → **$56,630**, gap **24.6%** ("roughly a quarter"). L8 had no false clause (see "Seen, not fixed"). So I took the residual.
+
+**Step 3.5: the premise, measured.** IRS 2025 filing-season statistics (week ending Oct. 17, 2025; curl, tags stripped in Node): **102,122,000 refunds, $311.651 billion**, average $3,052. IRS EITC statistics: about **24 million** filers got about **$70 billion** (TY2024). **Control:** a nonsense phrase returned NO MATCH on both pages. **Held, both halves:** the EITC reaches roughly 1 in 4 refunds and about 22% of refund dollars, so the unqualified heading is false for a large minority. Most refunds still carry no EITC, so "often" is true. The refundable Child Tax Credit would raise the share; I didn't measure it, and the claim doesn't need it.
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js` L7 §3 heading. en *"A Big Refund Isn't a Gift — It's Often an Interest-Free Loan"*; es *…no es un regalo — a menudo es un préstamo sin intereses*; ko *큰 환급금은 선물이 아니다 — 무이자 대출인 경우가 많다*; zh *大额退税不是礼物——往往是一笔无息贷款*; ja *大きな還付金は贈り物ではなく、多くの場合は無利子の貸付である*. No figure added (W-11.2). `scratchpad/l7h.mjs` asserted old ×1 / new ×0 per file, an exact length delta and no U+FFFD. I hand-read all five strings in the diff.
+- Ledger: L7 es/ko/zh/ja went **stale** (4/4, the control). I re-marked them `ai` after the hand read. `readiness --write` found nothing to write. The heading adds 6 English chars.
+- Grep for `interest-free`, and its four translations, across `src/`: only the five lesson files. No quiz or glossary quotes the heading.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN. WARN/FAIL/§65/§67 lines `diff`-identical to before. §65 en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9 |
+| Guard sees the heading | planted *"You should buy a house now."* in it → `check-blindspot` **exit 1** at `essentials.en.js:145`. Restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-WmpAvO03.js`, system Node v24.18.0 |
+| Bundle | each of the 5 new strings is in 1 asset. The old en heading is in 0, the unchanged "Tax Brackets Are Layers" heading is in 1 (control), nonsense is in 0 |
+| Live | **not checked.** The bundle probe is the evidence for a heading edit |
+
+#### Step 5: adversarial self-check
+- **Overcorrected?** "Often" is the narrowest fix that makes the heading true. It doesn't say "usually", which would claim a share I measured only by count. "Isn't a Gift" stays: neither over-withholding nor an earned credit is a gift, and the body explains both.
+- **§10.1/§10.2/§10.3, no date or figure:** the content diff grep for `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20` → 0. The guard plant fired. Not kids content, and no live figure.
+- **Prior work / decisions:** the previous entry's EITC sentence and the earlier W-4 and benefits-cliff fixes are untouched. `.js` content unchanged in kind. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 7.
+
+**Seen, not fixed:** L8 §3 says insurance can't cover *"something that's already happened"*. That's true of a loss, but a reader could take it to include a known illness, which ACA health plans must cover. The sentence is ambiguous, not false, so I left it as a candidate for a later read. W-9.4 applies to the L7 heading: a second read is owed. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the tax lesson's heading said every big refund is an interest-free loan to the government. For the roughly 1 in 4 refunds that carry the Earned Income Tax Credit, it isn't, so the heading now says "often".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-25 (scheduled dev-agent; free pick, W-12.2 sweep of essentials L1/3/5/7/8/11) — essentials L7's refund section no longer treats every refund as over-withheld pay: a refundable credit such as the EITC can pay more than all the tax withheld, and only at filing. Five languages.
 
 Rules: W-6.2 ok (free pick; the previous entry left no residual); W-9.4 n/a (measured accuracy fix). `npm test` before any edit (HEAD `2605c2d`): exit 0 / 0 FAIL / 1 WARN (O-3's).
