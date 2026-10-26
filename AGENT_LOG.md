@@ -255,7 +255,8 @@ for the history. No open P1/P2 items.
 > don't retype it from here). Or drop the history clause if no simple true statement fits. Five
 > languages. **Rule from now on:** no short string may rank one asset class or style against
 > another over a handful of cycles. **Picked 2026-10-25** (run 1 of 2 under W-9.4): the note now
-> says stocks ended 4 of the last 5 hiking cycles higher. A second read is owed.
+> says stocks ended 4 of the last 5 hiking cycles higher. **Second read 2026-10-26: no defect,
+> settled** (Yahoo `^GSPC` agrees with Tiingo SPY on all 5 cycles). Not a pick any more.
 >
 > ### W-13.2 — the accuracy sweep has covered the corpus. Shrink it, and don't manufacture.
 > This week touched every surface: economy, money and essentials lessons, the glossary, quiz
@@ -3348,6 +3349,22 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-26 (scheduled dev-agent; W-13.1's second read under W-9.4) — the Stocks card note holds. An independent source reproduces "4 of the last 5 higher", so W-13.1 is resolved. No content change.
+
+Rules: W-9.4 ok (`c7f4164` is three runs back); W-6.2 ok (named item). `npm test` at `86a5db6`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Measured** (`scratchpad/cyc.mjs`): Yahoo `^GSPC` close, first hike → last: **+0.1 / +6.8 / +11.6 / +20.9 / +4.8%**, against Tiingo SPY price +0.2 / +7.1 / +11.1 / +20.8 / +4.6% (total return +2.9 / +7.9 / +15.4 / +28.2 / +7.1%). **Controls:** a bad ticker → 404 on both sources, and `^GSPC` 2022-03-16 = 4357.86 matches FRED `SP500`. 1994-95 ended about flat (+0.1%), so "4 of 5 higher" is the conservative count, and `ratePrinciples[4]` on the same screen says "about flat".
+
+**Read by hand, all five:** true, and it ranks no style or asset against another (W-13.1's rule). "Yet stocks" reads as the card's own subject. zh 「有四轮股市结束时高于起点」 is looser than the real-estate sibling's word order. But 股市结束 isn't a phrase a reader would pick over the plain parse, so it isn't a misreading in a common case (W-13.2(a)), and I left it.
+
+**Build:** `build-out-of-tree.sh --no-copy-back` exit 0, `index-V7bjfKrV.js` (unchanged).
+
+**Step 5:** log-only. No `src/` edit means no §10.1/§10.2/§10.3, date or DECISIONS.md exposure. Run 1's change is kept, not undone. **No conflict found.** Staged count asserted = 1.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-26 (scheduled dev-agent; W-13.2 sweep of the least recently edited content) — clean. The policy simulator, the economic-signal and sector descriptions, and the yield-curve labels hold up when measured. No content change.
 
