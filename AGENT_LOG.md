@@ -3350,6 +3350,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-26 (scheduled dev-agent; free pick, W-13.2 sweep of the UI strings in `src/locales/en.js`, a surface never swept) — the Market Dashboard's QE/QT notes now open "On paper:", and the QT note adds "yet stocks ended both QT rounds higher". It said "→ stocks ↓" while the S&P 500 rose through both runoffs, +18% and +67%. Five languages.
+
+Rules: W-6.2 ok (free pick, not a residual). W-9.4: an English-sourced, measured content fix, not a hand read of a translated surface. Flagged anyway, because the 06:03 run was one; a second read of the four translations is owed by a run that is not one of the next two. `npm test` before any edit (HEAD `1fe1565`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**The sweep.** I read all 48 strings of 6+ words. `relativeStrengthNote` matches `relativeStrength.js` (10/30/60 trading days, excess returns summed). A JSX hardcoded-text scan found 0 real hits; a planted probe file fired 2/2. The one finding is `qeNarrative`/`qtNarrative`. The 2026-09 fix corrected only their first segment, and nothing after the first `→` had ever been measured.
+
+**Step 3.5: the premise, measured** (`scratchpad/qeqt.mjs`, `robust.mjs`; FRED `WALCL`/`DGS10`/`DTWEXBGS`, Yahoo `^GSPC`). **QT, stocks:** runoff 2017-10 → 2019-07 **+18.3%**, 2022-06 → 2025-11 **+67.0%**. Both stay positive under every ±1-month endpoint shift (min +13.5 / +65.1%), and also over WALCL's own peak-to-trough windows. **QE, yields:** the 10-year ended all four rounds higher (+0.51 to +1.00 pp), but under shifted endpoints the sign flips (min −0.21 pp). That fails W-13.1's "simple true statement" test, so QE gets the label and no clause. **Controls:** bad ids → 404 on both sources; `^GSPC` 2022-03-16 = 4357.86 and DGS10 2020-03-09 = 0.54 match known values; 2019's 10y (−1.16 pp) and 2022's S&P (−20.0%) come out negative. **W-13.2(a):** the most recent QT is the case a learner is most likely to check, and the arrow says the opposite of what happened.
+
+#### What shipped
+- `src/locales/{en,es,ko,zh,ja}.js`: both notes open with the app's existing "on paper" wording from the Stocks card (es *Sobre el papel*, ko 이론상, zh 按道理, ja 理屈の上では). The QT note's ending reuses the siblings' "ended … higher" phrasing (es *aun así, las acciones terminaron más altas en las dos rondas de QT*; ko 그래도 주가는 두 번의 QT 모두 시작 때보다 높게 끝남; zh 但两轮QT结束时，股市都高于起点; ja それでも2回のQTでは、株価はいずれも開始時より高く終わった). Arrows unchanged. `scratchpad/edit.mjs` asserted old ×1 and new ×0 → ×1, exact length deltas, no U+FFFD. All five hand-read in the word diff. A 6-line measurement comment sits above the en strings.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN. WARN/§65/§67/§2.3 lines `diff`-identical; only §52/§59's line and block counts move (the comment) |
+| Guard sees the field | planted *"You should buy stocks now."* in en `qtNarrative` → `check-blindspot` **exit 1** at `en.js:131`. Restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js`, system Node v24.18.0 |
+| Bundle | each of the 6 new strings is in 1 asset; the old en opener `"Fed LETS bonds mature` in 0; the unchanged "Money Supply (M0, M1, M2)" in 1 (control); nonsense in 0 |
+| Live | `dist/` served statically, Reference › Market Dashboard: en and zh read back as written. The "Key Principles" heading control was MISSING on the first read (a welcome dialog), so that read counted for nothing; present on the second |
+
+#### Step 5: adversarial self-check
+- **§10.1:** could "yet stocks ended both QT rounds higher" read as "hold stocks through QT"? It ranks nothing and names no action. It has the same form as the Stocks card W-13.1 settled. The guard plant fired. Diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20|kid|child` → 0 on added lines.
+- **Dates/staleness:** no current date or live figure. "Both" stays true only until a third QT starts. WALCL bottomed 2025-12-03 and has risen since, so QT2 is over. The comment names the windows.
+- **Prior work / decisions:** the 2026-09 first-segment fix ("LETS bonds mature" in all five) is kept verbatim. DECISIONS.md mentions QE/QT only as lesson scope. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 6.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the dashboard's QT note said quantitative tightening sends stocks down, but stocks rose through both QT rounds. Both QE/QT notes are now labeled as theory, and the QT note says what happened.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-26 (scheduled dev-agent; the 10-25 L7 entry's "Seen, not fixed", essentials L8 §3) — the insurance lesson's list of uninsurable losses now says "one that's already happened (a house that has already burned down)", not "something that's already happened", which a reader with a known illness could take to mean them. Five languages.
 
 Rules: W-6.2 ok (a candidate from three runs back; neither of the previous two runs was a residual); W-9.4 n/a (a lesson-body clause, not a short-string hand read). `npm test` before any edit (HEAD `2142726`): exit 0 / 0 FAIL / 1 WARN (O-3's).

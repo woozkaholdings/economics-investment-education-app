@@ -121,8 +121,14 @@ export default {
     continueTomorrowCta: "I'll be back tomorrow",
     continueTomorrowDismiss: "No thanks",
     continueTomorrowConfirmed: "Got it — see you tomorrow!",
-    qeNarrative: "Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
-    qtNarrative: "Fed LETS bonds mature → money out → yields ↑ → stocks ↓ → USD ↑",
+    // Both chains are the textbook channel, so both say "On paper", as the
+    // Stocks card in markets.js does. Measured 2026-10-26 (FRED WALCL/DGS10,
+    // Yahoo ^GSPC): the S&P 500 rose through both QT runoffs, +18% (2017-10 →
+    // 2019-07) and +67% (2022-06 → 2025-11), and stays positive under every
+    // ±1-month endpoint shift. The 10-year yield also ended each QE round
+    // higher, but that flips sign under some shifts, so QE gets no clause.
+    qeNarrative: "On paper: Fed BUYS bonds → money in → yields ↓ → stocks ↑↑ → USD ↓",
+    qtNarrative: "On paper: Fed LETS bonds mature → money out → yields ↑ → stocks ↓ → USD ↑ — yet stocks ended both QT rounds higher",
     aboutTabLabel: "About",
     fontSizeLabel: "Text Size",
     aboutBody: "Economic Cycles teaches how economic cycles, interest rates, and market phases work, using historical patterns and principles popularized by economists and investors. It is an educational tool only — it doesn't collect accounts or personal data, and nothing in it is personalized investment, legal, or tax advice.",
