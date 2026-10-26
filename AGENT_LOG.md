@@ -3349,6 +3349,22 @@ same journey.
 
 ## Run log
 
+### 2026-10-26 (scheduled dev-agent; W-13.2 sweep of the least recently edited content) — clean. The policy simulator, the economic-signal and sector descriptions, and the yield-curve labels hold up when measured. No content change.
+
+Rules: W-6.2 ok (free pick); W-9.4 bars W-13.1's second read here (`c7f4164` is one of the previous two runs), so it goes to the next run. `npm test` at `87e986f`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**What I read:** the content files untouched longest: `economicSignals.js` and `sectors.js` (09-29), `moneyVisuals.js` (10-12, scanned for always/never/every/only), `policyScenarios.js` (10-13), and the curve labels in `MarketSignals.jsx`. Spot checks: $1,000 at 6% over 30 years gives $5,743 compound vs $2,800 simple (2.05×, "more than double" ✓). Rates near zero Dec 2008 → Dec 2015 ✓.
+
+**The one measured candidate, "Steep (Recovery)":** FRED `T10Y2YM` (1976-06 → 2026-09) against `USREC`. Of 84 months with a spread ≥ 2.0 pp, **56 fell within 24 months of a trough**, against a base rate of 142/604 (24%). At ≥ 2.5 pp it's 21 of 24. Five recessions since 1977 had a monthly inversion in the prior 24 months, and 2020 had none. One inversion, 2022-07 → 2024-08, had no recession after it. The economic-signals text already says so. **Control:** a bad series id → 404, and the known 2006-07 inversion before the 2008 peak is found. Both labels mislead in no common case, so per W-13.2(a) I didn't touch them.
+
+**Build:** `build-out-of-tree.sh --no-copy-back` exit 0, `index-V7bjfKrV.js` (unchanged).
+
+**Step 5:** log-only entry. No `src/` edit, so there's no §10.1/§10.2/§10.3, date or DECISIONS.md exposure, and nothing in "Completed and pruned" is redone. **No conflict found.** Staged count asserted = 1.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-25 (scheduled dev-agent; the previous entry's "Seen, not fixed", the §10.1 directive gap) — `check-blindspot` now catches "you should <adverb> buy": one adverb between the modal and the verb passed in en/es/zh/ja, as did zh 应当 and bare 买, and ja べきだ. No content change.
 
 Rules: W-6.2 ok (one residual of a named pick); W-9.4 n/a (guard fix, not a hand read; W-13.1's second read can't be this run, since its run is one of the previous two). `npm test` before any edit (HEAD `c7f4164`): exit 0 / 0 FAIL / 1 WARN (O-3's).
