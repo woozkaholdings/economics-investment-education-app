@@ -3350,6 +3350,38 @@ same journey.
 
 ## Run log
 
+### 2026-10-26 (scheduled dev-agent; the 10-25 L7 entry's "Seen, not fixed", essentials L8 §3) — the insurance lesson's list of uninsurable losses now says "one that's already happened (a house that has already burned down)", not "something that's already happened", which a reader with a known illness could take to mean them. Five languages.
+
+Rules: W-6.2 ok (a candidate from three runs back; neither of the previous two runs was a residual); W-9.4 n/a (a lesson-body clause, not a short-string hand read). `npm test` before any edit (HEAD `2142726`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**W-13.2, weighed.** (c) says not to start a chain from a sentence that is already true, and this one is literally true of a loss. (a) allows a narrowing when a real, common case misleads. That case is here: the clause comes one paragraph after "many countries make health insurance compulsory" and "applications… ask about health history", so "something that's already happened" reads in a health context. A learner with a chronic condition can take it to mean insurance can't cover them "at all". I judged (a) to apply. This entry opens no residual.
+
+**Step 3.5: the premise, measured** (curl, tags stripped in Node, `scratchpad/grepsrc.mjs`). KFF: **"27% of adult Americans under the age of 65"** have a condition that would have been declinable before the ACA. HealthCare.gov: Marketplace plans **"can't deny you coverage or raise your rates based only on your health"**. **Control:** a nonsense phrase → NO MATCH on both pages. **Held:** the misreading would hit roughly 1 in 4 US adults under 65, and it's false for the plans they'd most likely buy. Nothing else in `src/` mentions pre-existing conditions (grep; the control term "adverse selection" is found).
+
+#### What shipped
+- `lessonContent.essentials.{en,es,ko,zh,ja}.js` L8 §3, last paragraph: es *una pérdida que ya ocurrió (una casa que ya se quemó)*; ko *이미 발생한 손실(이미 불타 버린 집 등)*; zh *已经发生的损失（比如已经烧毁的房子）*; ja *すでに起きた損失（すでに焼けてしまった家など）*. No law and no figure is added (W-12.2): "loss" plus a concrete example points the clause at past damage. `scratchpad/l8.mjs` asserted old ×1 → ×0 and new ×0 → ×1 per file, an exact length delta, and no U+FFFD. I hand-read all five strings in the word diff.
+- Ledger: L8 es/ko/zh/ja went **stale** (4/4, the control), then I re-marked them `ai`. `readiness --write` regenerated LAUNCH_READINESS §4.3/§10.4 and LAUNCH_PLAN §4.0 (+33 English chars; ~29,400 → ~29,500 words is rounding).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN. WARN/§65/§67/§2.3 lines `diff`-identical. The only diffs are word count, §33 chars and §79's bracket counts (+2 ja/zh, the new parentheses) |
+| Guard sees the clause | planted *"You should buy a house now."* after the example → `check-blindspot` **exit 1** at `essentials.en.js:164`. Restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-LIO2Ek0I.js`, system Node v24.18.0 |
+| Bundle | each of the 5 new strings is in 1 asset. The old en clause is in 0, the unchanged next sentence is in 1 (control), and nonsense is in 0 |
+
+#### Step 5: adversarial self-check
+- **Does it actually fix the misreading?** Mostly, not airtight: "loss" plus a burned house points at damage already incurred. Saying outright that future bills for a known illness can be covered would add a claim that isn't universal (life insurance still underwrites), so I left it out.
+- **§10.1/§10.2/§10.3, dates:** diff grep `dalio|bridgewater|you should|recommend|buy now|should buy|as of 20|kid|child` → 0 on added lines. The guard plant fired. No date or live figure.
+- **Prior work / decisions:** L8's adverse-selection text and the 10-25 L7 fixes are untouched. `.js` content unchanged in kind. W-13.6(iii): +33 chars on 168,197 (+0.02%). **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 9.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the insurance lesson said insurance can't cover "something that's already happened", which someone with a chronic illness could read as "you can't be insured". It now says a loss that's already happened, like a house that has already burned down.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-26 (scheduled dev-agent; W-13.1's second read under W-9.4) — the Stocks card note holds. An independent source reproduces "4 of the last 5 higher", so W-13.1 is resolved. No content change.
 
 Rules: W-9.4 ok (`c7f4164` is three runs back); W-6.2 ok (named item). `npm test` at `86a5db6`: exit 0 / 0 FAIL / 1 WARN (O-3's).
