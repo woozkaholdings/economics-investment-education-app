@@ -720,6 +720,24 @@
     is: function () { return emptyKey(storageNow().bookmarks); }
   };
 
+  // ── which probes MAY be empty, and where they may not (item 149, 2026-10-27) ──────────────
+  // coverage() counts VACUOUS as a gap, and for most probes that is right: a screen with no
+  // headings or no landmarks is broken. These three are different. Their SUBJECT — an image, a
+  // <figure>, a named region — legitimately does not exist on most screens, so on the 19-state
+  // matrix they came back VACUOUS on 16, 16 and 14 rows (measured 2026-10-27, en, 1024px), and
+  // every sweep's verdict carried the same "3 probe(s) did not run on every state" line. A line
+  // that is always there can't flag a new problem. It also could not tell "nothing to check
+  // here" from "this screen lost its figure and the probe silently stopped asserting".
+  //
+  // So a state DECLARES the conditional probes it expects to be live (`expects`), the same opt-in
+  // shape `requires` uses for storage, and coverage() holds it to that in BOTH directions:
+  //   declared, came back VACUOUS     → a gap (the figure is gone, or the declaration is wrong)
+  //   undeclared, came back live      → DECLARATION MISMATCH (the screen gained one; declare it)
+  //   undeclared, came back VACUOUS   → honestly empty, counted but not a gap
+  // A probe NOT in this list is expected everywhere, as before, and may not be declared.
+  var CONDITIONAL_PROBES = ["imagesWithoutAlt", "figureClaims", "unnamedRegions"];
+  var FIGURES = ["imagesWithoutAlt", "figureClaims"];
+
   var STATES = [
     { name: "first-run-modal", reload: true, clear: true, hash: "#/learn",
       note: "item 110 — the only screen with 100% reach; the dialog must isolate the app behind it",
@@ -734,13 +752,13 @@
     // streak chip exists at all only when `streak > 0`. Measured cold vs warm this run: every one
     // of the five flipped. A sweep that does not say which side it read is reporting on a screen
     // it has not named.
-    { name: "learn", requires: COLD, steps: [{ dismissDialog: true }, { hash: "#/learn" }],
+    { name: "learn", requires: COLD, expects: ["unnamedRegions"], steps: [{ dismissDialog: true }, { hash: "#/learn" }],
       arrived: { says: 'Learn shows all three track sections (by id, not by label)',
         is: function () { return !!document.getElementById("track-economy-title") &&
                                  !!document.getElementById("track-money-title") &&
                                  !!document.getElementById("track-essentials-title"); } } },
 
-    { name: "learn-collapsed", requires: COLD, steps: [{ hash: "#/learn" }, { collapseTracks: true }],
+    { name: "learn-collapsed", requires: COLD, expects: ["unnamedRegions"], steps: [{ hash: "#/learn" }, { collapseTracks: true }],
       arrived: { says: 'no track section reports aria-expanded="true"',
         is: function () { return document.querySelectorAll('[aria-expanded="true"]').length === 0 &&
                                  document.querySelectorAll('[aria-expanded="false"]').length > 0; } } },
@@ -763,7 +781,7 @@
       arrived: { says: "a heading now carries the term name taken from the row's own aria-label",
         is: function () { return headingIsLastLabel(); } } },
 
-    { name: "reference-markets", steps: [{ hash: "#/reference" }, { menuItem: 1 }],
+    { name: "reference-markets", expects: FIGURES, steps: [{ hash: "#/reference" }, { menuItem: 1 }],
       arrived: { says: "the sub-screen <h1> matches the menu row that opened it",
         is: function () { return h1IsLastLabel(); } } },
 
@@ -805,12 +823,14 @@
     // unfinished reader renders EIGHT radios (four for the hook, four for the check); a completed
     // one renders four. That count is the language-independent signature of the hook's presence.
     { name: "lesson-unfinished", reload: true, clear: true, hash: "#/lesson/1",
+      expects: FIGURES.concat(["unnamedRegions"]),
       steps: [{ dismissDialog: true }],
       note: "item 106 — the hook block only exists before the lesson is completed",
       arrived: { says: 'the reader shows 8 radios (hook + check), i.e. the lesson is unfinished',
         is: function () { return radios().length === 8 && !!document.getElementById("lesson-section-0-title"); } } },
 
     { name: "lesson-midquiz", reload: true, clear: true, hash: "#/lesson/1",
+      expects: FIGURES.concat(["unnamedRegions"]),
       steps: [{ dismissDialog: true }, { radio: 4 }],
       note: "item 111 — the end-of-lesson check answered, explanation revealed",
       arrived: { says: 'an answer is chosen and the completion control has appeared',
@@ -822,7 +842,7 @@
     // rendered — see drive()'s precondition note for the three cards it could not tell apart.
     // `#review-empty-title` is the never-started/caught-up card's own heading; pairing it with
     // COLD pins this state to the never-started one.
-    { name: "practice-landing", requires: COLD, steps: [{ hash: "#/practice" }],
+    { name: "practice-landing", requires: COLD, expects: ["unnamedRegions"], steps: [{ hash: "#/practice" }],
       note: "item 118 — the never-started Review card, the variant item 117a's false copy lived in",
       arrived: { says: 'the Review landing shows the nothing-due card AND its #how-review-title panel',
         is: function () { return !!document.getElementById("how-review-title") &&
@@ -1171,6 +1191,8 @@
      *      a state swept without the Tab step is clean on ten probes, reports `status: "ok"`,
      *      and disappears into a total. `partialProbes` names any probe that was not `ok` on
      *      every row, with the states it missed — so a clean total can no longer hide it.
+     *      Since item 149 a CONDITIONAL probe counts only where a state's `expects` declares it,
+     *      and a live result that no declaration predicts refuses the claim (see CONDITIONAL_PROBES).
      */
     coverage: function () {
       var rows = ledgerRead();
@@ -1188,11 +1210,28 @@
       // A probe is fully covered only when it reported `ok` on every recorded row. VACUOUS and
       // UNAVAILABLE both mean "did not actually assert anything here", and both are counted as
       // gaps rather than as passes — probeTally keeps the breakdown.
-      var partial = {};
+      // The CONDITIONAL_PROBES exception (item 149): VACUOUS is not a gap where the state does
+      // not declare the probe, and a live result where it does not declare it is a mismatch.
+      var partial = {}, honestlyEmpty = {}, mismatches = [];
       rows.forEach(function (r) {
-        Object.keys(r.probeStatus || {}).forEach(function (k) {
-          if (r.probeStatus[k] !== "ok" && r.probeStatus[k] !== "FINDINGS") {
-            (partial[k] = partial[k] || []).push(r.state + ":" + r.probeStatus[k]);
+        if (!r.probeStatus) return;
+        var st = find(r.state), expects = (st && st.expects) || [];
+        expects.forEach(function (k) {
+          if (CONDITIONAL_PROBES.indexOf(k) === -1) {
+            mismatches.push(r.state + " expects " + k + ", which is not a conditional probe — every state expects it already");
+          } else if (!(k in r.probeStatus)) {
+            mismatches.push(r.state + " expects " + k + ", which this row never reported — renamed or removed in a11y-sweep.js?");
+          }
+        });
+        Object.keys(r.probeStatus).forEach(function (k) {
+          var s = r.probeStatus[k], live = s === "ok" || s === "FINDINGS";
+          var conditional = CONDITIONAL_PROBES.indexOf(k) !== -1, declared = expects.indexOf(k) !== -1;
+          if (conditional && !declared && live) {
+            mismatches.push(r.state + ": " + k + " came back " + s + " but the state does not declare it in `expects`");
+          } else if (conditional && !declared && s === "VACUOUS") {
+            (honestlyEmpty[k] = honestlyEmpty[k] || []).push(r.state);
+          } else if (!live) {
+            (partial[k] = partial[k] || []).push(r.state + ":" + s + (declared ? " (declared live in `expects`)" : ""));
           }
         });
       });
@@ -1209,13 +1248,20 @@
         verdict = notSwept.length + " of " + rows.length + " recorded state(s) were never actually swept (" +
                   notSwept.map(function (r) { return r.state + ":" + r.status; }).join(", ") +
                   ") — their zeros do not exist.";
+      } else if (mismatches.length) {
+        verdict = "DECLARATION MISMATCH (" + mismatches.length + ") — a state's `expects` disagrees with what " +
+                  "its sweep found, so which empty probes are honest is unknown. See declarationMismatches, " +
+                  "fix the declaration in STATES, and re-run coverage().";
       } else {
         verdict = clean.length + " clean / " + withFindings.length + " with findings, over " + rows.length +
                   " of " + known.length + " state(s), all at " + axisKeys[0] +
                   (missing.length ? " — NOT full coverage: " + missing.length + " state(s) unswept." : " — every state in the matrix.") +
                   (Object.keys(partial).length
-                    ? " ⚠️ " + Object.keys(partial).length + " probe(s) did not run on every state; see partialProbes."
-                    : " All probes ran on every state.");
+                    ? " ⚠️ " + Object.keys(partial).length + " probe(s) did not run on every state they apply to; see partialProbes."
+                    : " All probes ran on every state they apply to" +
+                      (Object.keys(honestlyEmpty).length
+                        ? " (" + Object.keys(honestlyEmpty).length + " conditional probe(s) empty only where no state declares them; see honestlyEmpty)."
+                        : "."));
       }
 
       return JSON.stringify({
@@ -1228,6 +1274,8 @@
         statesByAxis: byAxis,
         probeTally: probeTally(rows),
         partialProbes: partial,
+        honestlyEmpty: honestlyEmpty,
+        declarationMismatches: mismatches,
         rows: rows.map(function (r) {
           return { state: r.state, reload: r.reload, status: r.status, findings: r.findings, axis: axisOf(r) };
         }),
@@ -1512,6 +1560,38 @@
                 ledgerRecord([{ state: otherState, status: "ok", findings: 0, probeStatus: { headingOrder: "ok" },
                   env: { htmlLang: "en", rootFontSizePx: 16, viewportWidth: 320, layoutViewportWidth: 305 } }]);
                 var ledgerDedupes = JSON.parse(A11yStates.coverage()).recorded === 2;
+
+                /* The `expects` control (item 149), two-sided on the pair the item named: a state
+                 * that declares figureClaims and one that declares nothing, each planted with
+                 * figureClaims both live and VACUOUS. A mechanism that read both states the same
+                 * way would pass one pair and fail the other. Taken from the REAL matrix, so
+                 * deleting the declarations fails this too. */
+                var withFig = STATES.filter(function (s) { return (s.expects || []).indexOf("figureClaims") !== -1; })[0];
+                var noDecl = STATES.filter(function (s) { return !s.expects; })[0];
+                function declCase(st, figStatus) {
+                  var ps = { headingOrder: "ok" };
+                  CONDITIONAL_PROBES.forEach(function (k) { ps[k] = (st.expects || []).indexOf(k) !== -1 ? "ok" : "VACUOUS"; });
+                  ps.figureClaims = figStatus;
+                  sessionStorage.removeItem(LEDGER_KEY);
+                  ledgerRecord([{ state: st.name, status: "ok", findings: 0, probeStatus: ps,
+                    env: { htmlLang: "en", rootFontSizePx: 16, viewportWidth: 375, layoutViewportWidth: 360 } }]);
+                  return JSON.parse(A11yStates.coverage());
+                }
+                var declOk = false, decl = { ran: !!(withFig && noDecl) };
+                if (decl.ran) {
+                  var dLive = declCase(withFig, "ok"), dGone = declCase(withFig, "VACUOUS"),
+                      uEmpty = declCase(noDecl, "VACUOUS"), uLive = declCase(noDecl, "ok");
+                  decl.declaredLivePasses = !dLive.declarationMismatches.length && !dLive.partialProbes.figureClaims;
+                  decl.declaredVacuousIsGap = !!dGone.partialProbes.figureClaims && !dGone.declarationMismatches.length;
+                  decl.undeclaredVacuousIsHonest = !uEmpty.partialProbes.figureClaims && !uEmpty.declarationMismatches.length &&
+                    (uEmpty.honestlyEmpty.figureClaims || []).indexOf(noDecl.name) !== -1;
+                  decl.undeclaredLiveRefuses = uLive.declarationMismatches.length === 1 &&
+                    uLive.verdict.indexOf("DECLARATION MISMATCH") === 0;
+                  decl.pair = withFig.name + " / " + noDecl.name;
+                  declOk = decl.declaredLivePasses && decl.declaredVacuousIsGap &&
+                           decl.undeclaredVacuousIsHonest && decl.undeclaredLiveRefuses;
+                }
+
                 if (ledgerBefore === null) sessionStorage.removeItem(LEDGER_KEY);
                 else sessionStorage.setItem(LEDGER_KEY, ledgerBefore);
                 var ledgerRestored = (sessionStorage.getItem(LEDGER_KEY) || null) === ledgerBefore;
@@ -1520,7 +1600,7 @@
                 var preconOk = d.status === "PRECONDITION" && d.findings === null && !d.threw &&
                                e.status !== "PRECONDITION";
                 var ok = a.status === "MISSED" && b.status === "MISSED" && !!b.threw &&
-                         a.findings === null && b.findings === null && preconOk && vwOk && ledgerOk &&
+                         a.findings === null && b.findings === null && preconOk && vwOk && ledgerOk && declOk &&
                          (c.ran ? c.rejected === true : true);
                 return JSON.stringify({
                   unreachableAssertion: { status: a.status, findingsIsNull: a.findings === null },
@@ -1534,8 +1614,9 @@
                     rejectsWrongWidth: vwRejects, declarationRestored: EXPECT_VW === vwBefore },
                   coverageLedger: { countsOneRow: ledgerCounts, refusesMixedAxes: ledgerRefuses,
                     replacesRatherThanAccumulates: ledgerDedupes, ledgerRestored: ledgerRestored },
+                  probeDeclarations: decl,
                   verdict: ok
-                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, setLang refuses when it cannot confirm the switch, expectViewport accepts the true width while refusing a wrong one, and the coverage ledger counts one row, replaces rather than accumulates a repeat, and refuses to state one claim across two viewports. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
+                    ? "PASS — a state that is not reached reports MISSED with null findings (assertion failure AND step throw), a state in the wrong storage reports PRECONDITION without running its steps while a satisfiable one does not, setLang refuses when it cannot confirm the switch, expectViewport accepts the true width while refusing a wrong one, the coverage ledger counts one row, replaces rather than accumulates a repeat, and refuses to state one claim across two viewports, and `expects` makes a declared figure that went VACUOUS a gap while an undeclared one that went live is a mismatch. Zeros from run()/runAll()/sweepLangs() are meaningful this session."
                     : "FAIL — a control did not fire; every recipe and every language row in this file is an unverified zero until this passes."
                 }, null, 2);
               });

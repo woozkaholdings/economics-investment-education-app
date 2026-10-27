@@ -2091,7 +2091,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 150. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-149. **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
+149. **✅ DONE 2026-10-27 (scheduled dev-agent): states now declare the conditional probes they expect (`expects`), and `coverage()` holds them to it both ways. Declared + VACUOUS is a gap, undeclared + live is a DECLARATION MISMATCH, and undeclared + VACUOUS counts as honestly empty. Premise corrected: 6 states need a declaration, not ~4. Measured live over all 19 states: 0 mismatches, 0 partial probes. See that day's run-log entry.** Earlier text follows.
+    **[Process/QA — filed 2026-08-29 by the run that built `A11yStates.coverage()`, as its stated
     residual rather than smuggled into the same commit.] `coverage()` can now name a probe that did
     not run on every state. It cannot tell "not applicable here" apart from "should have applied and
     silently did not" — and the first real run of it returned three such probes.**
@@ -3349,6 +3350,40 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-27 (scheduled dev-agent; open item 149, per W-12.2 now that W-13.2 has retired the content sweep) — the a11y coverage claim can now tell "nothing to check here" from "should have fired and didn't". States declare which conditional probes they expect (`expects`), and `coverage()` holds them to it both ways. No `src/` change.
+
+Rules: W-6.2 ok (the previous entry left no residual); W-9.4 bars the QE/QT second read this run and next, so it is not taken. `npm test` before any edit (HEAD `9fe1796`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** W-13.2 says the sweep has covered the corpus, and the 10-26 runs swept the last unswept surfaces. 117(a) is the owner's call. Of the open low-priority items, 149 is the only one with a known lying-zero shape behind it.
+
+**Step 3.5: the premise, measured** (built `dist/` served statically; both selftests PASS; all 19 states swept, 12 via `runAll()` and 7 via `begin/finish` with the Tab step, en, 1024px). `partialProbes` came back exactly as filed: `imagesWithoutAlt` and `figureClaims` were VACUOUS on 16 of 19 states and `unnamedRegions` on 14 (no-reload set: 11/11/9, the 08-29 figures). **Correction:** the live states are reference-markets, lesson-unfinished and lesson-midquiz (figures), plus learn, learn-collapsed, practice-landing and both lesson states (regions). That is **6 states**, not "roughly four".
+
+#### What shipped (1 source file, no `src/` change)
+- `scripts/a11y-states.js`: `CONDITIONAL_PROBES` (those three) and per-state `expects` on the 6 states. In `coverage()`: declared + VACUOUS → `partialProbes`, tagged "declared live"; undeclared + live → `declarationMismatches`, and the verdict refuses with "DECLARATION MISMATCH"; undeclared + VACUOUS → `honestlyEmpty`. UNAVAILABLE stays a gap everywhere, as before, and so does any non-conditional probe. An `expects` that names a non-conditional or unreported probe is a mismatch.
+- `selftest()`: a two-sided control on the pair item 149 named. reference-markets (declares `figureClaims`) and the first undeclared state are each planted with the probe live and VACUOUS, all four outcomes must be right, and the ledger is restored.
+
+#### Verification
+| check | result |
+|---|---|
+| Negative control | same file with the 6 `expects` stripped: selftest **FAIL** (`probeDeclarations.ran: false`); `coverage()` over the 19 rows → **DECLARATION MISMATCH (11)**, exactly 3+3+5 |
+| Real file | selftest PASS (4/4 declaration cases). Over 19 rows: 0 mismatches, 0 `partialProbes`, honestlyEmpty 16/16/14. Verdict: "All probes ran on every state they apply to" |
+| Fresh sweep | cleared storage, Tab, `runAll()`: 12 reached, 0 missed, 0 precondition; coverage unchanged |
+| Live gap plant | removed the 12 figure/img nodes from `main` just before `run('reference-markets')`: row still `status: ok`, and coverage names it the **only** gap, for 2 probes. Re-swept unplanted → 6 figures, 0 gaps |
+| `npm test` after | exit 0, 0 FAIL; the only diff is §59's comment-block count, 1772 → 1774. §48 still reads 19 states |
+| Build | no `src/` change; HEAD's `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` |
+
+#### Step 5: adversarial self-check
+- **Can the exemption hide a regression?** On a declared state, no: the plant shows it. **Limit:** a *new* state added without `expects` treats an empty conditional probe as honest. Before, that VACUOUS sat among 11 identical ones, so it was just as invisible. The undeclared-live branch catches the reverse.
+- **Prior work:** `requires`, the axis refusals, ledger dedupe and the MIXED AXES / not-swept ordering are untouched (the original ledger control still passes). `sweepLangs()` still records nothing. Items 112/118/119/140 not undone.
+- **§10.1/§10.2/§10.3, dates, DECISIONS.md:** tooling only, no learner-visible text. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the accessibility sweep's summary used to warn "3 probes did not run on every state" every time, so it couldn't flag a real lost figure. Now it warns only when a screen that should have figures comes back without them.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-26 (scheduled dev-agent; free pick, W-13.2 sweep of the UI strings in `src/locales/en.js`, a surface never swept) — the Market Dashboard's QE/QT notes now open "On paper:", and the QT note adds "yet stocks ended both QT rounds higher". It said "→ stocks ↓" while the S&P 500 rose through both runoffs, +18% and +67%. Five languages.
 
