@@ -2234,7 +2234,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 121. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-120. **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
+120. **✅ DONE 2026-10-27 (scheduled dev-agent): `auditWarmBegin()`/`auditWarmFinish()` diff a second warm fixture, and §48(e) holds both to the same keys. The first run found `reference-glossary-term` too coarse; it now declares NO_BOOKMARKS (see that day's run-log entry).**
+    **[Process/QA — filed 2026-08-26 by the run that closed item 119, as its stated residual
     rather than smuggled into the same commit.] The storage audit tests ONE point in
     storage-space, so a `requires` that is too COARSE still passes it.**
     - **State:** `A11yStates.auditBegin/auditFinish` diffs each no-reload state cold against a
@@ -3350,6 +3351,40 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-27 (scheduled dev-agent; open item 120, the sibling of the previous run's item 149) — the storage audit now tests a second warm store, and on its first run it caught a state the one-point audit had called "provably storage-independent": `reference-glossary-term`, which now declares `NO_BOOKMARKS`. No `src/` change.
+
+Rules: W-6.2 ok (the previous entry left no residual). W-9.4 still bars the QE/QT second read this run; it is owed next run. `npm test` before any edit (HEAD `b814d6c`): exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Picking.** All open items are low priority, and 117(a) is the owner's call. 120 is the one with a named blind spot in a live instrument.
+
+**Step 3.5: the premise, measured.** Holds as filed: both `requires` predicates (COLD, NO_BOOKMARKS) assert emptiness, the audit has one `WARM_FIXTURE`, and there are 12 no-reload states. Live, cold vs A reproduced 08-26 exactly: 12 states, 4 vary, 8 independent, 0 gaps. **Sharper than filed:** the blind spot is not only magnitude but *which* value. A bookmarked only "Inflation", while `reference-glossary-term` opens row 0, "401(k)" in en.
+
+#### What shipped (2 files, no `src/` change)
+- `scripts/a11y-states.js`: `WARM_FIXTURE_B` has the same 9 keys with different values where the key's shape allows (44 lessons, a 30-day streak, 20 due cards, other bookmarks). The 3 boolean flags can't differ, and `FIXTURE_SAME_IN_BOTH` names them. `auditWarmBegin()`/`auditWarmFinish()` diff A against B. Controls: A vs A must be byte-identical, B must prove it applied, and every declared state must vary A vs B. A state that admits both stores and renders two screens is **TOO COARSE**. `fixtureHolds` takes the fixture (analytics marker quoted). `reference-glossary-term` gets `requires: NO_BOOKMARKS`, and A adds "401(k)" so the cold audit reaches that row.
+- `scripts/check-data.mjs` §48(e): both fixtures must set the same keys. A key that B lacks keeps A's value and reads "same screen".
+
+#### Verification
+| check | result |
+|---|---|
+| Finding (pre-fix file, A = ["Inflation"], B with "401(k)") | A vs B: **1 TOO COARSE**, `reference-glossary-term`. The toggle reads `aria-pressed="false"` at A and `"true"` at B, and at B the state MISSED, since the label is "401(k), Saved". Positive control PASS |
+| Fixed file, live | runAll cold: 12 reached, 0 missed, 0 precondition. Cold vs A: **5 vary, 7 independent, 0 gaps, 0 over-declared**, positive PASS. The glossary-term delta is the same `aria-pressed` flip. A vs B: stability PASS, 9/9 applied, **0 too coarse of 7 admitting both**, positive PASS (all 5 declared vary) |
+| §48(e) control | planted B without `ecycles_seen_practice_coachmark` → `check-data` **exit 1** naming it (A only). Restored from a scratchpad copy (`cmp` equal) → exit 0 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN. Diffs: the §48 line (+ "the warm-vs-warm fixture sets the same 9") and §59's block count, 1774 → 1781 |
+| Build | no `src/` change; `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` (unchanged). The served copy differs from the committed file only in header comments |
+
+#### Step 5: adversarial self-check
+- **Was this a shipped lying zero?** No. On a store with row 0 saved, the state MISSED, which is honest. The false claim was the audit's "provably storage-independent". It now reports PRECONDITION and quotes the store.
+- **Over-declaration:** NO_BOOKMARKS is one key wider than the screen needs (a saved "Inflation" alone changes nothing). The parent state makes the same trade. Cold runAll is unaffected.
+- **Limits:** the audit runs in en, so the fixture's reach of row 0 is en-specific. The declaration is key-level and holds in every language. Two warm points are still two points.
+- **Prior work:** 119's audit verdicts, 149's `expects`, `requires` refusals and the ledger are untouched; selftest PASS. **§10.1/§10.2/§10.3, dates, DECISIONS.md:** tooling only. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 3.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the check that decides which test screens depend on a learner's saved data had tested only one sample of saved data. It now tests two, and the second sample found one screen it had wrongly cleared.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-27 (scheduled dev-agent; open item 149, per W-12.2 now that W-13.2 has retired the content sweep) — the a11y coverage claim can now tell "nothing to check here" from "should have fired and didn't". States declare which conditional probes they expect (`expects`), and `coverage()` holds them to it both ways. No `src/` change.
 

@@ -87,6 +87,17 @@
  * new localStorage key. RESULT 2026-08-26: 12 states, 4 vary, 8 provably independent, 1 gap
  * (`reference-glossary`, now declaring NO_BOOKMARKS), 0 over-declared.
  *
+ * That audit tests ONE warm point, and every `requires` is an emptiness assertion, so a state
+ * that admits two different non-empty stores can still sweep two screens (item 120). Two more
+ * calls, from where auditFinish() leaves the tab, diff warm A against a second fixture:
+ *
+ *   await A11yStates.auditWarmBegin()   // snapshots A twice (stability control), writes B, reloads
+ *   ...re-eval both files after the reload...
+ *   await A11yStates.auditWarmFinish()  // names TOO COARSE states; every declared one must vary
+ *
+ * RESULT 2026-10-27: 1 too coarse (`reference-glossary-term`, now declaring NO_BOOKMARKS); cold
+ * vs A then reads 5 vary, 7 provably independent, 0 gaps; A vs B, 0 too coarse in 7.
+ *
  * States marked `reload: true` seed localStorage, which the app only reads at mount. Writing
  * ecycles_review while the app is running does nothing — useAppState holds review state in React
  * and saves over it (item 109 lost a reading to exactly this). Those states are therefore a
@@ -131,6 +142,7 @@
   var PENDING_KEY = "__a11ystates_pending";
   var PENDING_AXES = "__a11ystates_axes";
   var AUDIT_KEY = "__a11ystates_audit_cold";
+  var AUDIT_WARM_KEY = "__a11ystates_audit_warm_a";
 
   /* ── the yield ──────────────────────────────────────────────────────────────────────────── */
   function tick() {
@@ -776,7 +788,12 @@
         is: function () { return h1IsLastLabel() &&
           document.querySelectorAll('main [role="button"][aria-label]').length > 10; } } },
 
-    { name: "reference-glossary-term",
+    // NO_BOOKMARKS, measured by the warm-vs-warm audit (item 120, 2026-10-27): if the first row's
+    // term is saved, the detail's toggle is aria-pressed="true" and the row's label gains
+    // ", Saved", so the heading never matches it and the state MISSES. The declaration turns that
+    // into a PRECONDITION that quotes the store. It is one key wider than the screen needs (a
+    // saved "Inflation" alone changes nothing here), the same trade NO_BOOKMARKS makes above.
+    { name: "reference-glossary-term", requires: NO_BOOKMARKS,
       steps: [{ hash: "#/reference" }, { menuItem: 0 }, { termRow: 0 }],
       arrived: { says: "a heading now carries the term name taken from the row's own aria-label",
         is: function () { return headingIsLastLabel(); } } },
@@ -1064,11 +1081,44 @@
     ecycles_seen_practice_coachmark: "true",
     // The live candidate item 119 names: a bookmarked row renders a second aria-label form
     // (`${term}, ${t.bookmarkedLabel}`) plus a bookmark icon. Must be a term the list renders.
-    ecycles_glossary_bookmarks: JSON.stringify(["Inflation"])
+    // "401(k)" added 2026-10-27 (item 120): it sorts first in en, so it is the row
+    // `reference-glossary-term` opens. With "Inflation" alone this fixture never reached that
+    // row, and the audit called a bookmark-dependent screen "provably storage-independent".
+    ecycles_glossary_bookmarks: JSON.stringify(["Inflation", "401(k)"])
   };
   // Deliberately NOT in the fixture, and named so the exclusion is reviewable rather than an
   // oversight. If one of these ever stops being a pure presentation preference, it belongs above.
   var FIXTURE_EXCLUDES = ["ecycles_lang", "ecycles_theme_mode", "ecycles_font_scale"];
+
+  // ── a SECOND warm point (item 120, 2026-10-27) ──────────────────────────────────────────────
+  // cold-vs-WARM_FIXTURE answers "does this screen vary between empty and non-empty?". It cannot
+  // answer "does it vary between two non-empty stores?", and every `requires` here is an
+  // emptiness assertion, so a state whose declaration admits both stores (today: every state
+  // that declares nothing) can still sweep two different screens and report `ok` for both. Same
+  // keys as WARM_FIXTURE; every value differs where the key's shape allows it — magnitudes (all
+  // 44 lessons, a 30-day streak, 20 due cards, 3 bookmarks) and, for bookmarks, WHICH terms.
+  // Three keys cannot differ and are named rather than hidden: each is a "true" flag whose only
+  // non-empty value is the one WARM_FIXTURE already has.
+  //
+  // MEASURED 2026-10-27, the first run: with WARM_FIXTURE bookmarking only "Inflation" and this
+  // one bookmarking "401(k)" (the first en row), `reference-glossary-term` came back TOO COARSE —
+  // the term detail's toggle read aria-pressed="false" at A and "true" at B, and at B the state
+  // MISSED, because the row's label became "401(k), Saved". It now declares NO_BOOKMARKS and
+  // WARM_FIXTURE bookmarks "401(k)" too. B leaves "401(k)" out on purpose: the positive control
+  // below needs every declared state to differ between A and B, that state included.
+  var WARM_FIXTURE_B = {
+    ecycles_seen_disclaimer: "true",
+    ecycles_completed_lessons: JSON.stringify([29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+      11, 12, 13, 14, 15, 41, 42, 43, 44, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]),
+    ecycles_streak: JSON.stringify({ count: 30, lastDate: todayLocal() }),
+    ecycles_continue_pref: JSON.stringify({ optedIn: false, lastPromptDate: todayLocal() }),
+    ecycles_review: seededReview(20),
+    ecycles_analytics_log: JSON.stringify([{ event: "audit_fixture_b", ts: LONG_PAST_DUE }]),
+    ecycles_legacy_lesson_id_migrated: "true",
+    ecycles_seen_practice_coachmark: "true",
+    ecycles_glossary_bookmarks: JSON.stringify(["Bond", "Bubble", "Inflation"])
+  };
+  var FIXTURE_SAME_IN_BOTH = ["ecycles_seen_disclaimer", "ecycles_legacy_lesson_id_migrated", "ecycles_seen_practice_coachmark"];
 
   // Did the fixture survive the reload? Byte-equality for eight of the nine — but NOT for
   // `ecycles_analytics_log`, and the exception is a measurement rather than a concession.
@@ -1077,11 +1127,16 @@
   // append-only and its post-reload value is NEVER the value written before the reload; asserting
   // equality there would fail this audit forever, for a reason that has nothing to do with the
   // audit. The honest assertion for an append-only key is that the seeded entry is still IN it.
-  function fixtureHolds(key) {
+  // The marker is quoted, so A's "audit_fixture" does not match inside B's "audit_fixture_b".
+  function fixtureHolds(key, fixture) {
+    var fix = fixture || WARM_FIXTURE;
     var got = localStorage.getItem(key);
     if (got === null) return false;
-    if (key === "ecycles_analytics_log") return got.indexOf("audit_fixture") >= 0;
-    return got === WARM_FIXTURE[key];
+    if (key === "ecycles_analytics_log") return got.indexOf('"' + JSON.parse(fix[key])[0].event + '"') >= 0;
+    return got === fix[key];
+  }
+  function fixtureApplied(fixture) {
+    return Object.keys(fixture).filter(function (k) { return fixtureHolds(k, fixture); });
   }
 
   // The snapshot. <main> is the screen; the header (language <select>) and the tab bar sit
@@ -1101,7 +1156,11 @@
       var bare = {};
       Object.keys(s).forEach(function (k) { if (k !== "requires") bare[k] = s[k]; });
       chain = chain.then(function () { return drive(bare); }).then(function (r) {
+        // `admits`: would drive() let this state sweep the store it is running on? Undeclared
+        // states admit every store. Read here, from the live store, because the warm-vs-warm
+        // verdict is about stores the declaration lets through, not about stores in general.
         out.push({ state: s.name, declares: s.requires ? s.requires.says : null,
+                   admits: s.requires ? s.requires.is() : true,
                    reached: r.status !== "MISSED", status: r.status, dom: snapshotMain() });
       });
     });
@@ -1406,7 +1465,7 @@
       // The warm half has to prove it is warm, for the same reason the cold half does. A fixture
       // that silently failed to apply would make every state look storage-independent — the
       // exact lying zero this audit exists to close, one level up.
-      var applied = Object.keys(WARM_FIXTURE).filter(fixtureHolds);
+      var applied = fixtureApplied(WARM_FIXTURE);
       if (applied.length !== Object.keys(WARM_FIXTURE).length) {
         return Promise.resolve(JSON.stringify({
           status: "FIXTURE-NOT-APPLIED", applied: applied,
@@ -1456,6 +1515,115 @@
           verdict: gaps.length
             ? gaps.length + " state(s) vary with learner storage and declare nothing — they need `requires`"
             : "every undeclared state is provably storage-independent under the fixture",
+          rows: rows
+        }, null, 2);
+      });
+    },
+
+    // ── the warm-vs-warm audit (item 120) ──────────────────────────────────────────────────
+    // Two more calls, started where auditFinish() leaves the tab (on WARM_FIXTURE). auditWarmBegin()
+    // snapshots every no-reload state at warm point A twice — the stability control again, because
+    // a warm screen can carry instability a cold one does not (a streak chip, a due count) — then
+    // writes WARM_FIXTURE_B and reloads. Re-eval both files, then auditWarmFinish() snapshots at B
+    // and diffs. Unlike auditBegin(), a MISSED state does not stop it: `practice-landing` is
+    // supposed to miss on a warm store (its assertion names the empty card), and its DOM is still
+    // the screen a warm learner sees.
+    auditWarmBegin: function () {
+      var applied = fixtureApplied(WARM_FIXTURE);
+      if (applied.length !== Object.keys(WARM_FIXTURE).length) {
+        return Promise.resolve(JSON.stringify({
+          error: "auditWarmBegin needs the tab on WARM_FIXTURE — warm point A is the baseline",
+          missing: Object.keys(WARM_FIXTURE).filter(function (k) { return applied.indexOf(k) < 0; }),
+          fix: "run auditBegin() then auditFinish() first; auditFinish() leaves the tab on WARM_FIXTURE"
+        }, null, 2));
+      }
+      return auditPass().then(function (a) {
+        return auditPass().then(function (b) {
+          var mb = byName(b);
+          var unstable = a.filter(function (r) { return mb[r.state] && mb[r.state].dom !== r.dom; })
+                          .map(function (r) { return r.state; });
+          if (unstable.length) {
+            return JSON.stringify({
+              status: "INSTRUMENT-NOT-USABLE", stabilityControl: "FAIL", unstableStates: unstable,
+              verdict: "warm A vs warm A was not byte-identical, so an A-vs-B diff would be noise. Fix before reading any result.",
+              sample: firstDelta(byName(a)[unstable[0]].dom, mb[unstable[0]].dom)
+            }, null, 2);
+          }
+          var stored = true, keep = function (withDom) {
+            return a.map(function (r) {
+              return { state: r.state, declares: r.declares, admits: r.admits, reached: r.reached,
+                       domLen: r.dom.length, dom: withDom ? r.dom : null };
+            });
+          };
+          try { sessionStorage.setItem(AUDIT_WARM_KEY, JSON.stringify(keep(true))); }
+          catch (e) { stored = false; sessionStorage.setItem(AUDIT_WARM_KEY, JSON.stringify(keep(false))); }
+          Object.keys(WARM_FIXTURE_B).forEach(function (k) { localStorage.setItem(k, WARM_FIXTURE_B[k]); });
+          location.replace(location.pathname);
+          return JSON.stringify({
+            status: "WARM-A-CAPTURED",
+            stabilityControl: "PASS — " + a.length + " state(s), warm A vs warm A byte-identical",
+            captured: a.length, fullSnapshotsStored: stored,
+            missedAtA: a.filter(function (r) { return !r.reached; }).map(function (r) { return r.state; }),
+            sameValueInBoth: FIXTURE_SAME_IN_BOTH,
+            reloading: true, then: "re-eval both files, then await A11yStates.auditWarmFinish()"
+          }, null, 2);
+        });
+      });
+    },
+
+    auditWarmFinish: function () {
+      var raw = sessionStorage.getItem(AUDIT_WARM_KEY);
+      if (!raw) return Promise.resolve(JSON.stringify({ error: "no warm-A baseline — call auditWarmBegin() first." }));
+      var warmA;
+      try { warmA = JSON.parse(raw); } catch (e) { return Promise.resolve(JSON.stringify({ error: "warm-A baseline unreadable: " + e.message })); }
+      // B has to prove it is B. If it silently were still A, every row would read "same screen".
+      var applied = fixtureApplied(WARM_FIXTURE_B);
+      if (applied.length !== Object.keys(WARM_FIXTURE_B).length) {
+        return Promise.resolve(JSON.stringify({
+          status: "FIXTURE-NOT-APPLIED", applied: applied,
+          missing: Object.keys(WARM_FIXTURE_B).filter(function (k) { return applied.indexOf(k) < 0; }),
+          verdict: "the store is not WARM_FIXTURE_B, so every 'same screen' below would be meaningless"
+        }, null, 2));
+      }
+      sessionStorage.removeItem(AUDIT_WARM_KEY);
+      return auditPass().then(function (warmB) {
+        var mb = byName(warmB);
+        var rows = warmA.map(function (x) {
+          var y = mb[x.state];
+          var same = y && (x.dom === null ? null : x.dom === y.dom);
+          var admitsBoth = !!(x.admits && y && y.admits);
+          var d = (same === false) ? firstDelta(x.dom, y.dom) : null;
+          return {
+            state: x.state, declaresRequires: !!x.declares, admitsBoth: admitsBoth,
+            reachedA: x.reached, reachedB: !!(y && y.reached),
+            variesAB: same === null ? "UNKNOWN (baseline truncated)" : !same,
+            verdict: same === null ? "unknown"
+              : !admitsBoth ? "pinned — its declaration refuses a warm store, so A vs B is not its question"
+              : same ? "same screen at both warm points"
+              : x.declares ? "TOO COARSE — its declaration admits both stores, and they give two screens"
+              : "TOO COARSE — declares nothing, and two non-empty stores give two screens",
+            delta: d && { atChar: d.atChar, lenA: d.lenCold, lenB: d.lenWarm, a: d.cold, b: d.warm }
+          };
+        });
+        var coarse = rows.filter(function (r) { return r.verdict.indexOf("TOO COARSE") === 0; });
+        var declared = rows.filter(function (r) { return r.declaresRequires; });
+        return JSON.stringify({
+          status: "AUDITED-WARM",
+          fixtureApplied: applied.length + "/" + Object.keys(WARM_FIXTURE_B).length,
+          sameValueInBoth: FIXTURE_SAME_IN_BOTH,
+          audited: rows.length,
+          admitBoth: rows.filter(function (r) { return r.admitsBoth; }).length,
+          // The POSITIVE control. Every declared state was measured to branch on learner storage,
+          // and each one renders a count or a label that A and B set differently (streak, due
+          // cards, saved bookmarks). If one does not vary, B is not reaching the app — or is not
+          // different from A where the app reads it — and every "same screen" row is a lying zero.
+          positiveControl: declared.length && declared.every(function (r) { return r.variesAB === true; })
+            ? "PASS — every declared state varies between A and B"
+            : "FAIL — a declared state did not vary; the two fixtures are not different where the app reads them",
+          tooCoarse: coarse.map(function (r) { return { state: r.state, reachedA: r.reachedA, reachedB: r.reachedB, delta: r.delta }; }),
+          verdict: coarse.length
+            ? coarse.length + " state(s) admit both warm stores and render two different screens — their declaration is too coarse"
+            : "every state that admits both warm stores renders the same screen at both",
           rows: rows
         }, null, 2);
       });

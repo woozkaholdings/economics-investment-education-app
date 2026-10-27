@@ -6656,6 +6656,15 @@ if (keyedGroupsChecked < 4) {
   const uncoveredKeys = appKeys.filter((k) => !covered.has(k));
   const excludedSet = new Set(excludesBlock.match(/ecycles_[a-z_]+/g) || []);
   const excludedCount = appKeys.filter((k) => excludedSet.has(k)).length;
+  // §48(e), second fixture (item 120, 2026-10-27). auditWarmBegin() writes WARM_FIXTURE_B over
+  // WARM_FIXTURE's store with setItem, so a key A sets and B does not keeps A's value at B, and
+  // every screen reading it comes back "same screen at both warm points". Same keys, both ways.
+  const bStart = raw.indexOf("var WARM_FIXTURE_B = {");
+  const bBlock = bStart < 0 ? "" : raw.slice(bStart, raw.indexOf("var FIXTURE_SAME_IN_BOTH", bStart));
+  const aKeys = new Set(fixtureBlock.match(/^\s*(ecycles_[a-z_]+):/gm)?.map((m) => m.trim().slice(0, -1)) || []);
+  const bKeys = new Set(bBlock.match(/^\s*(ecycles_[a-z_]+):/gm)?.map((m) => m.trim().slice(0, -1)) || []);
+  const fixtureSkew = [...aKeys].filter((k) => !bKeys.has(k)).map((k) => `${k} (A only)`)
+    .concat([...bKeys].filter((k) => !aKeys.has(k)).map((k) => `${k} (B only)`));
 
   if (!matrix || names.length === 0) {
     fail(`§48: could not find a populated \`var STATES = [\` array in ${file}. This section is pointed at a structure that no longer exists — repoint it rather than leaving it green.`);
@@ -6673,10 +6682,14 @@ if (keyedGroupsChecked < 4) {
     fail(`§48: the no-reload state(s) ${leakyStates.map((n) => `"${n}"`).join(", ")} answer a question ({ answer: N } or { radio: N }), which writes ecycles_review. runAll() and sweepLangs() run the no-reload set in ONE page session — sweepLangs runs it once per language — so this changes the screen every LATER state sweeps, and the same state in every later language, while every row still reports "ok". Mark it \`reload: true\` (with \`clear\`) so it runs behind begin()/finish() instead of in the shared session.`);
   } else if (appKeys.length === 0 || covered.size === 0) {
     fail("§48(e): could not read src/lib/storage.js's KEYS or a11y-states.js's WARM_FIXTURE/FIXTURE_EXCLUDES. This check is pointed at a structure that no longer exists — repoint it rather than leaving it green.");
+  } else if (bKeys.size === 0) {
+    fail("§48(e): could not read a11y-states.js's WARM_FIXTURE_B (bounded by FIXTURE_SAME_IN_BOTH). This check is pointed at a structure that no longer exists — repoint it rather than leaving it green.");
+  } else if (fixtureSkew.length > 0) {
+    fail(`§48(e): WARM_FIXTURE and WARM_FIXTURE_B in a11y-states.js set different keys: ${fixtureSkew.join(", ")}. auditWarmBegin() overwrites A's store with B's keys only, so a key B lacks keeps A's value and every screen reading it reports "same screen at both warm points". Give both fixtures the same keys.`);
   } else if (uncoveredKeys.length > 0) {
     fail(`§48(e): src/lib/storage.js persists ${uncoveredKeys.join(", ")}, which A11yStates' WARM_FIXTURE does not set and FIXTURE_EXCLUDES does not name. The storage audit decides which states need a \`requires\` declaration by diffing each screen cold against that fixture, so a key it never sets is a key no screen is measured against — every screen reading it comes back "provably storage-independent". Add it to WARM_FIXTURE (with a shape its reader in storage.js actually accepts), or name it in FIXTURE_EXCLUDES with why.`);
   } else {
-    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present, practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}, ${entrySplit.length - leakyStates.length} of ${entrySplit.length} state(s) keep the no-reload set side-effect-free, and all ${appKeys.length} persisted key(s) are covered by the storage audit's fixture (${appKeys.length - excludedCount} set, ${excludedCount} explicitly excluded). (Static — only A11yStates.runAll()'s \`missed\`/\`preconditionFailed\` counts and auditFinish()'s \`gaps\` can say whether a recipe still arrives, in the storage it declares.)`);
+    console.log(`  §48 a11y state matrix: ${names.length} state(s), each with an \`arrived\` assertion; the ${Object.keys(REGRESSION_STATES).length} regression states are present, practice-batch-pause answers ${pauseMatch[1]} to Practice.jsx's BATCH_SIZE = ${batchMatch[1]}, ${entrySplit.length - leakyStates.length} of ${entrySplit.length} state(s) keep the no-reload set side-effect-free, and all ${appKeys.length} persisted key(s) are covered by the storage audit's fixture (${appKeys.length - excludedCount} set, ${excludedCount} explicitly excluded), and the warm-vs-warm fixture sets the same ${bKeys.size}. (Static — only A11yStates.runAll()'s \`missed\`/\`preconditionFailed\` counts and auditFinish()'s \`gaps\` can say whether a recipe still arrives, in the storage it declares.)`);
   }
 }
 
