@@ -228,13 +228,18 @@ const readmePath = join(ROOT, "README.md");
   // and "never", and zh's 应当承担买方… (essentials) shows a free Han gap
   // reaching a 买 that belongs to a noun. "first" (先) is left out for the
   // reason "need to" is: "you should first open an account" describes a
-  // procedure rather than telling the reader what to do. Korean is left as it was, because
-  // its plain 한다 form appears descriptively in shipped copy (money track:
-  // 팔아야 한다는 압박, "the pressure to sell").
+  // procedure rather than telling the reader what to do. Korean keeps its
+  // 합니다 ending, because its plain 한다 form appears descriptively in
+  // shipped copy (money track: 팔아야 한다는 압박, "the pressure to sell").
+  // WIDENED 2026-10-27: Korean listed only the native verbs 사다/팔다, so
+  // 매수해야 합니다 ("should buy" in the Sino-Korean form, the counterpart of
+  // zh 买入) passed, as did 매도/구매/구입, the honorific 사셔야 합니다, the
+  // emphatic 사야만 합니다 and the polite 사야 해요. Each was checked against
+  // the current corpus (0 hits) before landing.
   const directive = [
     { re: /you( should| ought to| had better|['’]d better)( (now|still|also|really|definitely|probably|certainly|seriously|consider|just|immediately|always|absolutely))? (buy|sell|invest|open|put|move|transfer)/i, fires: ["You should buy stocks now.", "You should open a Roth IRA now.", "You should put your savings in index funds.", "You'd better move your money into bonds.", "You should now buy stocks.", "You should definitely open a Roth IRA.", "You should consider buying bonds."] },
     { re: /deber[ií]as?\s+((\p{L}+mente|ahora|ya|considerar)\s+)?(comprar|vender|invertir|abrir|poner|mover|transferir)/iu, fires: ["Deberías comprar acciones.", "Deberías abrir una cuenta Roth IRA ahora.", "Deberías ahora comprar acciones.", "Deberías definitivamente invertir."] },
-    { re: /(사야|팔아야|투자해야|열어야|개설해야|넣어야|옮겨야)\s?합니다/, fires: ["지금 주식을 사야 합니다.", "지금 Roth IRA 계좌를 개설해야 합니다."] },
+    { re: /(사|팔아|열어|넣어|옮겨|(매수|매도|구매|구입|투자|개설)해|(사|파|여|넣으|옮기|(매수|매도|구매|구입|투자|개설)하)셔)야만?\s?(합니다|해요)/, fires: ["지금 주식을 사야 합니다.", "지금 Roth IRA 계좌를 개설해야 합니다.", "지금 주식을 매수해야 합니다.", "지금 주식을 매도해야 합니다.", "지금 금을 구입해야 합니다.", "지금 주식을 사셔야 합니다.", "지금 매수하셔야 합니다.", "지금 주식을 사야만 합니다.", "지금 주식을 사야 해요."] },
     { re: /应(该|当)(现在就?|马上|立即|立刻|尽快|尽早|赶紧|趁早|趁现在|早点|及早|立马|考虑|多|就)?(购买|买入|买进|买|卖出|卖|投资|开立|开设|开户|转入)/, fires: ["你应该买入股票。", "你应该开立一个罗斯IRA账户。", "你应该现在买入股票。", "你应该尽快开立一个罗斯IRA账户。", "你应当买入股票。", "你应该买股票。"] },
     { re: /(買う|売る|投資す(る)?|開設す(る)?|開く|移す)べき(です|だ(?!ろう)|でしょう(?!か))/, fires: ["株を買うべきです。", "今すぐ投資すべきです。", "ロスIRA口座を開設すべきです。", "今すぐ株を買うべきだ。", "株を買うべきでしょう。"] },
   ];

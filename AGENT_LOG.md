@@ -3352,6 +3352,34 @@ same journey.
 
 ## Run log
 
+### 2026-10-27 (scheduled dev-agent; the 10-25 entry's "Seen, not fixed", ko 사야만) — `check-blindspot` now catches Korean "should buy" in its everyday forms. 매수해야 합니다, the Sino-Korean form and zh 买入's counterpart, passed §10.1, as did 매도/구매/구입, the honorific 사셔야 and the polite 해요. No content change.
+
+Rules: W-6.2 ok (a two-day-old note, not the previous run's residual); W-9.4 n/a (tooling). `npm test` at `46d0161`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Learner-visible failure (W-6.2 rule 3):** a Korean lesson telling the reader 지금 주식을 매수해야 합니다 ("you must buy stocks now") would have shipped with §10.1 green.
+
+**Step 3.5: the premise, measured** (`scratchpad/ko-probe.mjs`). The filed note named only 사야만, a rare form. Against HEAD's ko regex, 사야 합니다 fires (control) and all 8 others pass: 매수해야, 매도해야, 구매해야, 구입해야, 사야만, 사셔야, 매수하셔야, 투자하셔야. **Wider than filed:** the 10-21 widening added account verbs but never the Sino-Korean buy/sell. A corpus scan of the 39 files under `src/content`, `src/locales` and `index.html` (a superset of the check's 38) for every conjugation of these verbs + 야 + an ending finds 2 hits, both 한다 forms (팔아야 한다는 압박, 팔아야 할 경우), which the 합니다/해요 ending keeps out.
+
+#### What shipped (1 file, no `src/` change)
+- `scripts/check-blindspot.mjs`: the ko directive pattern is a superset of the old one. It adds the 하다 verbs 매수/매도/구매/구입, honorific 셔 forms for every verb (파셔, 여셔, 옮기셔…), optional 만, and the 해요 ending. 한다 stays out. `fires` grows from 2 to 9 sentences, all checked by the existing timing control.
+
+#### Verification
+| check | result |
+|---|---|
+| End-to-end plant | 지금 주식을 매수해야 합니다. appended to the 압박이 생깁니다 line of `lessonContent.money.ko.js`: HEAD's script **PASS**, new script **FAIL** at `:93`. Restored from a scratchpad copy (`cmp` equal, `git diff` clean) |
+| Clean corpus | `check-blindspot` exit 0; the timing control passes, with all 9 ko `fires` matching and the 3 must-stay-clean lines clean against 34 patterns |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN. Output identical to the baseline |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` (unchanged) |
+
+#### Step 5: adversarial self-check
+- **False positives:** 0 corpus hits. A future descriptive "만기 전에 매도해야 합니다" would fail loudly, the trade the existing 팔아야 합니다 already made. A bare `사` before 야 can't reach 검사해야 (해 sits between).
+- **Prior work:** every old form still matches (사, 팔아, 투자해, 열어, 개설해, 넣어, 옮겨 + 야). The 10-25 and 10-21 widenings are untouched. **§10.1/§10.2/§10.3, dates, DECISIONS.md:** tooling only. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** the imperative 매수하세요 / 사세요 still passes. 사세요 is plausible money-track consumption advice ("buy only what you need"), so it needs its own corpus read. Low priority, not numbered (W-6.2 rule 2). `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-27 (scheduled dev-agent; the QE/QT notes' second read, owed under W-9.4 by `d9d315d`) — the notes hold. An independent source reproduces both QT figures, and the four translations read true and match their siblings. No content change.
 
 Rules: W-9.4 ok (the previous two runs, `b814d6c` and `b7c41f1`, were tooling); W-6.2 ok (named item). `npm test` at `b7c41f1`: exit 0 / 0 FAIL / 1 WARN (O-3's).
