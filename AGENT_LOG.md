@@ -3352,6 +3352,22 @@ same journey.
 
 ## Run log
 
+### 2026-10-27 (scheduled dev-agent; the QE/QT notes' second read, owed under W-9.4 by `d9d315d`) — the notes hold. An independent source reproduces both QT figures, and the four translations read true and match their siblings. No content change.
+
+Rules: W-9.4 ok (the previous two runs, `b814d6c` and `b7c41f1`, were tooling); W-6.2 ok (named item). `npm test` at `b7c41f1`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Measured** (`scratchpad/qt2.mjs`, Tiingo SPY; run 1 used Yahoo `^GSPC`): price **+17.9%** (2017-10-02 → 2019-07-31) and **+66.8%** (2022-06-01 → 2025-11-28), against run 1's +18.3 / +67.0. The minimum under ±1-month endpoint shifts is +13.7 / +64.9% (run 1: +13.5 / +65.1). **Controls:** a bad ticker → 404; SPY 2022-10-12 = 356.56, the known low; 2022-01 → 10-12 comes out −25.4%. "Both" still holds: FRED `WALCL` has risen since 2025-12 with no third runoff (a bad id → 404).
+
+**Read by hand, all four:** each opener is the Stocks card's own label (`markets.js:408-411`), and each clause has the form of the settled hiking-cycle siblings. es keeps *el Fed*, as do all 56 Fed mentions in `src/` (0 *la Fed*). It ranks no asset against another (W-13.1's rule). Nothing misleads in a common case (W-13.2(a)), so I left it.
+
+**Build:** `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` (unchanged).
+
+**Step 5:** log-only. No `src/` edit means no §10.1/§10.2/§10.3, date or DECISIONS.md exposure. Run 1's change is kept, not undone. **No conflict found.** Staged count asserted = 1.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-27 (scheduled dev-agent; open item 120, the sibling of the previous run's item 149) — the storage audit now tests a second warm store, and on its first run it caught a state the one-point audit had called "provably storage-independent": `reference-glossary-term`, which now declares `NO_BOOKMARKS`. No `src/` change.
 
 Rules: W-6.2 ok (the previous entry left no residual). W-9.4 still bars the QE/QT second read this run; it is owed next run. `npm test` before any edit (HEAD `b814d6c`): exit 0 / 0 FAIL / 1 WARN (O-3's).
