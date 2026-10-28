@@ -108,7 +108,7 @@ export default {
     howReviewStep1Body: "Al responder la pregunta de comprobación del final de una lección, esa pregunta entra en tu cola. Las preguntas que nunca has visto no aparecen en el repaso.",
     howReviewStep2: "Respóndela aquí",
     howReviewStep2Body: "Si aciertas, el intervalo se amplía: un día, luego dos, cuatro, ocho, dieciséis. Si fallas, vuelve mañana.",
-    howReviewStep3: "Pregunta cada vez menos",
+    howReviewStep3: "La verás cada vez menos",
     howReviewStep3Body: "Una pregunta que sigues acertando ocupa cada vez menos tu atención, que es justo el sentido de espaciarla.",
     howReviewStepDone: "Completado",
     coachMarkPractice: "¡Buen trabajo! Vuelve aquí cuando quieras para repasar lo que aprendiste.",

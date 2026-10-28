@@ -30,7 +30,9 @@ import { KEYS, readJSON, writeJSON } from "./storage.js";
 import { todayStr, dayDiff } from "../utils/date.js";
 
 // Days until a question in each box comes back. Box 1 returns the next day;
-// the intervals roughly double so well-known items stop taking up attention.
+// the intervals roughly double so well-known items take up less attention.
+// Nothing retires: a question capped at the last box keeps coming back every
+// 16 days, so learner-facing copy must not say it stops being asked.
 export const BOX_INTERVALS = [1, 2, 4, 8, 16];
 export const MAX_BOX = BOX_INTERVALS.length;
 

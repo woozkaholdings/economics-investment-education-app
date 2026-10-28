@@ -3358,6 +3358,29 @@ same journey.
 
 ## Run log
 
+### 2026-10-28 (scheduled dev-agent; the second read of `howReviewStep3` that `0909c73` left owed) — en, zh and ja hold. es did not: after two imperative headings, "Pregunta cada vez menos" reads first as "Ask less and less!", an order to the learner. It now says "La verás cada vez menos" ("you'll see it less and less"). The scheduler's comment no longer says items "stop taking up attention".
+
+Rules: W-9.4 ok (the previous run called itself a code-vs-copy fix, and the run before it was the log); W-13.2(a): every Spanish learner who opens Review reads the rail. `npm test` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN (O-3's) for this tree.
+
+**Step 3.5: the premise, measured.** The claim under re-read was that each new heading says the question comes back less often and never says it goes away. Steps 1 and 2 checked against `src/lib/review.js` too: `BOX_INTERVALS` = [1, 2, 4, 8, 16], a wrong answer → box 1, due +1 day, and `dueQuestions` drops never-answered ids. Both bodies hold. en "It asks less often", zh 它问得越来越少 and ja だんだん出番が減る each carry a subject (It / 它 / 出番が), so none reads as an instruction. **es has no subject.** Its steps 1 and 2 are tú imperatives ("Responde…", and "Respóndela", whose enclitic *-la* only an imperative takes here). For a regular -ar verb, the tú imperative is spelled like the 3rd-person present, so *pregunta* is both "it asks" and "ask!". The rail's parallel structure picks the second reading. The old "Deja de preguntar" had the same flaw ("Stop asking!"), so `0909c73` kept a defect rather than adding one. **Control:** ko 점점 덜 물어봅니다 is a declarative ending (the imperative is 물어보세요) and stays unchanged.
+
+#### What shipped (2 files)
+- `src/locales/es.js`: `howReviewStep3` only. "La verás" is 2nd-person future and can't be an imperative. *La* is the question, as in step 2's "Respóndela". "cada vez menos" keeps the meaning of the line it replaces and the body's own wording. The edit was asserted at 1 match before and after.
+- `src/lib/review.js`: comment only. Items "take up less attention". Nothing retires, so the copy must not say a question stops being asked. The old wording ("stop taking up attention") is where the false heading came from.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh` exit 0, `index-DLlYCVIA.js` → `index-CbTJsIhX.js`; new es string in 1 asset, old es string in 0, en/zh strings in 1 each (control) |
+| Live, `dist/` served statically (bogus `.js` → 404, real asset → 200) | Review via the real language picker, all 5 languages: step 3 reads "It asks less often", 점점 덜 물어봅니다, 它问得越来越少, だんだん出番が減る, "La verás cada vez menos". The old es string is on no page |
+
+**Step 5:** the scheduler is unchanged, and the copy still matches it. No §10.1/§10.2/§10.3 exposure: this is a future-tense description, not an instruction, and `check-blindspot` passes. No date. Nothing in DECISIONS.md applies. This finishes `0909c73`'s owed read rather than redoing it. **No conflict found.** Not narrowed: "cada vez menos", like ko's 점점 덜, plateaus once the 16-day box is reached. Under W-13.2(a), a plateau after a month is not a case that misleads a learner. Staged count asserted = 3.
+
+**Seen, not fixed:** none. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-28 (scheduled dev-agent; free pick, a live first-session walkthrough at 375px, since the backlog holds only parked, owner-held or exhausted items) — Review's "How review works" rail no longer says a question "stops asking". The scheduler never retires one: past box 5 it comes back every 16 days. Four languages; ko already said "asks less and less".
 
 Rules: W-6.2 ok (not a residual); W-9.4 ok (a code-vs-copy mismatch, not a translated-surface hand read; the previous two runs were tooling and log). W-13.2(a): every learner who keeps answering right meets it. `npm test` at `480ac7b`: exit 0 / 0 FAIL / 1 WARN (O-3's).
