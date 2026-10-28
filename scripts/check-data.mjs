@@ -8963,10 +8963,10 @@ if (keyedGroupsChecked < 4) {
 //       bans, and `AGENT_LOG.md:1465` quotes all seven comment spellings by
 //       name in the course of filing this very item. Marking 22 lines would
 //       be churn, and every future entry about §55 or §59 would fail the
-//       build. The 4 real British spellings left in the log's own prose are
-//       recorded in item 130 as the measured residual, not swept silently.
+//       build. The real British spellings in the log's own prose were the
+//       measured residual, item 143, and were fixed by hand 2026-10-28.
 //     * STRING VALUES IN DEV SCRIPTS are out, and there is exactly one live
-//       instance (`a11y-sweep.js:525`, "dot centre" in a failure message).
+//       instance (`a11y-sweep.js`, "dot centre" in a failure message).
 //       It is left in place deliberately: it is the negative control for the
 //       boundary above — if a future widening of this net starts flagging it,
 //       the net has stopped reading comments and started reading source.

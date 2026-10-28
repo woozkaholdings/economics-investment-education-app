@@ -2159,7 +2159,13 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 145. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-143. **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
+143. **✅ DONE 2026-10-28 (scheduled dev-agent). Premise corrected first: the 4 uses named below are no
+    longer in the live log (archived verbatim, so exempt as dated records), and the live prose held 2
+    others, both in item 76: `tokeniser` and `capitalised-phrase` (the code's rule is
+    `capitalized-phrase`). Both fixed. A line scan with `us-english.mjs`'s `scan()` now finds only
+    mentions (a marked quote and this item). The `:525` pointer had rotted to `:732`; the §59 header
+    now names the file without a line.** The original text follows.
+    **[Docs/Integrity — filed 2026-08-29 by the run that built §59 (item 130), as the measured
     remainder §59 deliberately does not cover.] Four British spellings live in `AGENT_LOG.md`'s
     own prose, and one lives in a dev-script string; §59 sees neither by design.**
     - **Measured 2026-08-29, and the split is the whole point.** `AGENT_LOG.md` carries 27 real
@@ -2393,8 +2399,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
       strings are a pattern across 32 entries × 4 languages or the only two instances. **Rewriting them
       on one run's reading is exactly the unmeasured multi-language drift item 69 was filed to prevent
       — do not do it, and do not treat "I read them and they look fine" as measurement.**
-    - **The unblocking work is a per-language tokeniser**, and it is genuinely a piece of work, not a
-      flag: `norm()` needs a Unicode-aware form, the acronym/capitalised-phrase rules need per-script
+    - **The unblocking work is a per-language tokenizer**, and it is genuinely a piece of work, not a
+      flag: `norm()` needs a Unicode-aware form, the acronym/capitalized-phrase rules need per-script
       replacements, and zh/ja need real word segmentation (ko can lean on eojeol spacing but still
       needs non-English head nouns). `DECISIONS.md:311` already accepted a related trade-off for the
       same reason. **Scope it before building it, and check whether a dependency-free segmenter is even
@@ -3351,6 +3357,29 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-28 (scheduled dev-agent; open item 143, since the previous entry left no residual) — item 143 closed on corrected facts. The 4 British spellings it named had been archived, and 2 it never named were live in item 76: `tokeniser` and `capitalised-phrase`. Both fixed, and §59's header no longer cites a line number that had rotted. No `src/` change.
+
+Rules: W-6.2 ok (open item, not a residual); W-9.4 / W-13.2 n/a (no content). `npm test` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN (O-3's) for this tree.
+
+**Step 3.5: the premise, measured** (`scratchpad/brit-log.mjs`: `us-english.mjs`'s own `scan()`, line by line over `AGENT_LOG.md`). **Control:** a planted line fires on all 4 words, and its US twin returns 0. **Result:** 6 hit lines. 4 are mentions: the marked quote at `:1492` and item 143's own 3 lines. The other 2 are uses, both in item 76: `tokeniser`, and `capitalised-phrase`, where the code's rule is `capitalized-phrase`. None of the 4 the item named is in the live log any more. The archive keeps them verbatim, and dated records are exempt. The item's `a11y-sweep.js:525` now sits at `:732`, and §59's header in `check-data.mjs` cited the same stale line.
+
+#### What shipped (2 files)
+- `AGENT_LOG.md`: item 76's 2 words in US spelling. Item 143 marked DONE, with the correction, above its original text.
+- `scripts/check-data.mjs`: comment only. §59's header names `a11y-sweep.js` with no line number, and no longer says 4 British spellings are left in the log.
+
+#### Verification
+| check | result |
+|---|---|
+| Re-scan | 5 hit lines, all mentions (`:1492` plus item 143's quoted forms) |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN; §59 passes over the edited comment block |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` (unchanged) |
+
+**Step 5:** I made no blind replace. The 22 mentions and the archive are untouched, and §59's scope is unchanged. "Exactly one live instance" still holds: `scripts/` has one other "centre", in §59's own probe data. No learner-visible, §10.x, date or DECISIONS.md exposure. **No conflict found.** Staged count asserted = 2.
+
+**Seen, not fixed:** none. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-28 (scheduled dev-agent; the previous entry's "Seen, not fixed", ko 매수하세요) — `check-blindspot` now catches the bare imperative "Buy stocks now." in all five languages. The gap was not Korean-only, as filed: no language had an imperative class, so the plainest advice sentence there is passed §10.1 everywhere. No content change.
 
