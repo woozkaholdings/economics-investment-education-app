@@ -107,6 +107,8 @@ let MONTH_YEAR_PATTERN = null;
 let TIMING_ADVICE = null;
 // The "you should <verb>" class, widened 2026-10-21, held for the same control.
 let DIRECTIVE_ADVICE = null;
+// The bare-imperative class ("Buy stocks now."), added 2026-10-28, held for the same control.
+let IMPERATIVE_ADVICE = null;
 
 const srcFiles = walk(join(ROOT, "src"), [".js", ".jsx"]);
 const contentFiles = walk(join(ROOT, "src", "content"), [".js"]);
@@ -244,6 +246,26 @@ const readmePath = join(ROOT, "README.md");
     { re: /(買う|売る|投資す(る)?|開設す(る)?|開く|移す)べき(です|だ(?!ろう)|でしょう(?!か))/, fires: ["株を買うべきです。", "今すぐ投資すべきです。", "ロスIRA口座を開設すべきです。", "今すぐ株を買うべきだ。", "株を買うべきでしょう。"] },
   ];
   DIRECTIVE_ADVICE = directive;
+  // The bare imperative, added 2026-10-28. The directive class needs a modal
+  // ("you should buy"), so the plainest advice sentence of all, "Buy stocks
+  // now.", passed this check in all five languages, as did 매수하세요,
+  // 现在就买入股票 and 今すぐ株を買いましょう. Each pattern needs three things in
+  // one clause: an imperative buy/sell/invest, a named asset, and an urgency
+  // word. Without the asset, a quoted ad ("Buy now!") or money-track advice
+  // (필요한 것만 사세요, "buy only what you need") would fail the build. Without
+  // the urgency word, a how-to step ("Buy shares through your broker's app.")
+  // would. en/es want the verb to open the clause, and zh wants the clause
+  // start or a 你/您/请 subject, so a historical "panicked investors sold
+  // stocks immediately" (恐慌的投资者立即卖出股票) stays clean. ja's bare 金 skips
+  // お金/預金/税金. Checked against the current corpus (0 hits) before landing.
+  const imperative = [
+    { re: /(^|[.!?:;"“(]\s*|\n)(((right )?now|today),? (buy|sell|invest in)\b[^.!?\n]{0,15}\b(stocks?|shares|equities|bonds?|gold|silver|(index )?funds?|ETFs?|crypto(currency)?|bitcoin|real estate)\b|(buy|sell|invest in)\b[^.!?\n]{0,15}\b(stocks?|shares|equities|bonds?|gold|silver|(index )?funds?|ETFs?|crypto(currency)?|bitcoin|real estate)\b[^.!?\n]{0,30}\b(now|today|immediately|right away)\b)/i, fires: ["Buy stocks now.", "Sell your bonds today.", "Invest in gold now.", "Don't wait: buy stocks today.", "Now, buy stocks.", "Rates fell. Sell stocks immediately."] },
+    { re: /(^|[.!?¡:;"“(]\s*|\n)¡?((ahora|hoy),? (compra|compre|compren|vende|venda|vendan|invierte en|invierta en|inviertan en)\b[^.!?\n]{0,15}\b(acciones|bonos|oro|plata|fondos?|ETFs?|cripto\p{L}*|bitcoin|bienes ra[ií]ces|inmuebles)\b|(compra|compre|compren|vende|venda|vendan|invierte en|invierta en|inviertan en)\b[^.!?\n]{0,15}\b(acciones|bonos|oro|plata|fondos?|ETFs?|cripto\p{L}*|bitcoin|bienes ra[ií]ces|inmuebles)\b[^.!?\n]{0,30}\b(ahora|hoy|ya|de inmediato|cuanto antes)\b)/iu, fires: ["Compre acciones ahora.", "Compra acciones ahora.", "Invierte en oro ahora.", "Venda sus bonos hoy.", "Ahora, compre acciones."] },
+    { re: /(지금|오늘|당장|즉시|바로|서둘러)[^.!?\n]{0,20}((주식|채권|펀드|ETF|코인|비트코인|부동산|암호화폐)(을|를|에|도)?|금(을|에|도))\s*(사|파|(매수|매도|구매|구입|투자)하)(세요|십시오)/, fires: ["지금 주식을 매수하세요.", "지금 주식을 사세요.", "지금 금에 투자하세요.", "오늘 채권을 파세요.", "당장 주식을 매도하십시오."] },
+    { re: /(^|[。！？：；“"\n]|请|你|您)\s*(现在就|现在|立即|马上|立刻|赶紧|赶快|今天就|尽快)(买入|买进|购买|买|卖出|卖掉|卖|投资)[一-鿿]{0,2}?(股票|债券|黄金|白银|基金|ETF|比特币|加密货币|房产)/, fires: ["现在就买入股票。", "立即买入股票。", "请立即买入股票。", "你现在就买股票。", "今天就卖出债券吧。"] },
+    { re: /(今すぐ|すぐに|今日中に|今日|今のうちに|今)[^。！？\n]{0,20}(株式?|債券|ゴールド|投資信託|ファンド|ETF|ビットコイン|仮想通貨|暗号資産|不動産|(?<![お預料税資現賃年基貯])金)(を|に)\s*((買い|売り|投資し)(ましょう|なさい)|(買っ|売っ|投資し)て(ください|下さい))/, fires: ["今すぐ株を買いましょう。", "今すぐ株を買ってください。", "今株を買いなさい。", "今日債券を売りましょう。", "今すぐ金に投資しましょう。"] },
+  ];
+  IMPERATIVE_ADVICE = imperative;
   const patterns = [
     // English
     /best investments\s*:/i,
@@ -270,9 +292,10 @@ const readmePath = join(ROOT, "README.md");
     /強気になるべき|強気を推奨/,
     /慎重になるべき/,
     /推奨します|お勧めします|おすすめします/,
-    // The timing and "you should <verb>" classes, in all five languages.
+    // The timing, "you should <verb>" and bare-imperative classes, in all five languages.
     ...timing.map((entry) => entry.re),
     ...directive.map((entry) => entry.re),
+    ...imperative.map((entry) => entry.re),
   ];
   // index.html joins the scan 2026-08-24 (backlog item 98), for the same
   // reason README.md joined §10.2 above: a rule only covers the files it
@@ -525,18 +548,22 @@ const readmePath = join(ROOT, "README.md");
 // teaching copy is worse than one that is slightly narrow — it trains runs to
 // route around the check.
 {
-  // The directive class carries `fires` lists too, so it is checked the same way.
-  const timing = [...(TIMING_ADVICE ?? []), ...(DIRECTIVE_ADVICE ?? [])];
+  // The directive and imperative classes carry `fires` lists too, so they are checked the same way.
+  const timing = [...(TIMING_ADVICE ?? []), ...(DIRECTIVE_ADVICE ?? []), ...(IMPERATIVE_ADVICE ?? [])];
   const advice = ADVICE_PATTERNS ?? [];
   // Verbatim from src/content/lessonContent.money.en.js and .es.js, in the
   // corpus's real one-physical-line storage shape. The third sentence is from
   // lessonContent.essentials.zh.js (added 2026-10-25): its 应当承担买方 is
   // what a free gap after 应当 would flag, which is why the zh directive
-  // pattern's gap is an adverb list.
+  // pattern's gap is an adverb list. The fourth is from kidsContent.js (added
+  // 2026-10-28): its 现在就买个更小的 ("rather than buying a smaller one now",
+  // about a toy) is what a bare-买 imperative draft flagged, which is why the
+  // zh imperative pattern needs a named asset.
   const LIVE_MUST_STAY_CLEAN = [
     String.raw`"takeaway": "Needs are things you can't function without; wants are everything else, including plenty of things worth buying."`,
     String.raw`"body": "En el momento de comprar, ambas decisiones se sintieron iguales.\n\nTres años después no lo son."`,
     String.raw`"body": "这个比例可以协商，并非固定；2024年的一项法律和解改变了美国的行业惯例，卖方不再被默认认为应当承担买方中介的那一半。"`,
+    String.raw`zh: "如果你想要的玩具比存钱罐里的钱贵，你可以等一等继续存钱，而不是现在就买个更小的。为更大的目标而等待，也是一种理财能力。"`,
   ];
   // `fires` is one sentence or a list; every listed sentence must match.
   const dead = timing.filter((entry) => [entry.fires].flat().some((s) => !matchesLine(s, entry.re)));
@@ -555,7 +582,7 @@ const readmePath = join(ROOT, "README.md");
     );
   } else {
     ok(
-      `§10.1 timing control: ${timing.length} timing and directive pattern(s) each fire on their own advice sentence (en/es/ko/zh/ja), ` +
+      `§10.1 timing control: ${timing.length} timing, directive and imperative pattern(s) each fire on their own advice sentence (en/es/ko/zh/ja), ` +
         `and ${LIVE_MUST_STAY_CLEAN.length} shipped sentence(s) that a wider draft flagged stay clean against all ${advice.length} advice patterns.`,
     );
   }

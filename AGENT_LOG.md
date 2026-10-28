@@ -3352,6 +3352,35 @@ same journey.
 
 ## Run log
 
+### 2026-10-28 (scheduled dev-agent; the previous entry's "Seen, not fixed", ko 매수하세요) — `check-blindspot` now catches the bare imperative "Buy stocks now." in all five languages. The gap was not Korean-only, as filed: no language had an imperative class, so the plainest advice sentence there is passed §10.1 everywhere. No content change.
+
+Rules: W-6.2 ok (first residual pick in this chain); W-9.4 n/a (tooling); W-13.2(c) n/a (no content sentence). `npm test` at `fb6cac5`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Learner-visible failure (W-6.2 rule 3):** a lesson line "Buy stocks now." (or 지금 주식을 매수하세요, 现在就买入股票, 今すぐ株を買いましょう, Compre acciones ahora) would have shipped with §10.1 green.
+
+**Step 3.5: the premise, measured** (`scratchpad/probe-blindspot.mjs`, HEAD's patterns). The note named ko 매수하세요/사세요 only. The control "You should buy stocks now." and 매수해야 합니다 are CAUGHT. All 20 imperatives probed, 4 per language, pass. **Premise corrected: a class gap, not a ko gap.** A broad scan of the 38 scanned files (`imp-scan.mjs`; its regexes fire on planted probes) found 0 en/ko/ja imperatives, 79 es hits (the noun *la compra*), and 1 zh hit, kidsContent's 而不是现在就买个更小的 ("rather than buying a smaller [toy] now"). So a bare-verb pattern would fail the build on shipped kids copy.
+
+#### What shipped (1 file, no `src/` change)
+- `scripts/check-blindspot.mjs`: a new `imperative` class with 5 patterns, one per language, held in `IMPERATIVE_ADVICE` and checked by the existing `fires` control. Each needs three things in one clause: an imperative buy/sell/invest, a **named asset**, and an **urgency word**. The asset keeps a quoted ad ("Buy now!") and 필요한 것만 사세요 clean. The urgency word keeps a how-to step ("Buy shares through your broker's app.") clean. en/es need the verb to open the clause. zh needs the clause start or a 你/您/请 subject, so 恐慌的投资者立即卖出股票 stays clean. The kids zh sentence joins `LIVE_MUST_STAY_CLEAN` (3 → 4). Advice patterns go 34 → 39; `fires`-checked patterns go 14 → 19, with 26 sentences.
+
+#### Verification
+| check | result |
+|---|---|
+| Candidate test (`imp-cand2.mjs`) | 26/26 `fires` match; 18 must-stay-clean sentences (ad quotes, consumption advice, descriptive selling, お金, the kids zh line) stay clean; corpus 0 hits |
+| End-to-end plant | one imperative per language prefixed to `lessonContent.money.{en,es,ko,zh,ja}.js:33`'s body: HEAD's script **PASS**, new script **FAIL** on all 5 lines. Restored from scratchpad copies (`cmp` equal ×5, `git status` shows only the script) |
+| Clean corpus | `check-blindspot` exit 0; the timing control reports 19 patterns firing, 4 shipped sentences clean against 39 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BF1c2WQv.js` (unchanged) |
+
+#### Step 5: adversarial self-check
+- **False positives:** 0 corpus hits. A future quoted impulse, e.g. *your gut says "Sell stocks now!"*, would fail loudly. The author would need to reword it or add a must-stay-clean line. That is the same trade the directive class made with 팔아야 합니다. Without urgency, 주식을 매수하세요 still passes: a deliberate narrowing, so procedural copy stays clean.
+- **Prior work:** the timing/directive classes and their 2026-10-21/25/27 widenings are untouched; every old `fires` sentence still matches. **§10.1/§10.2/§10.3, dates, DECISIONS.md:** tooling only. **No conflict found.**
+- **Commit safety (W-12.3):** staged count asserted = 2.
+
+**Seen, not fixed:** none. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-27 (scheduled dev-agent; the 10-25 entry's "Seen, not fixed", ko 사야만) — `check-blindspot` now catches Korean "should buy" in its everyday forms. 매수해야 합니다, the Sino-Korean form and zh 买入's counterpart, passed §10.1, as did 매도/구매/구입, the honorific 사셔야 and the polite 해요. No content change.
 
 Rules: W-6.2 ok (a two-day-old note, not the previous run's residual); W-9.4 n/a (tooling). `npm test` at `46d0161`: exit 0 / 0 FAIL / 1 WARN (O-3's).
