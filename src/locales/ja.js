@@ -105,7 +105,7 @@ export default {
     howReviewStep1Body: "レッスン末尾の確認問題に答えると、その問題がキューに入ります。一度も見ていない問題は復習に出ません。",
     howReviewStep2: "ここで答える",
     howReviewStep2Body: "正解すると間隔が広がります — 1日、2日、4日、8日、16日。間違えると翌日また出ます。",
-    howReviewStep3: "だんだん出なくなる",
+    howReviewStep3: "だんだん出番が減る",
     howReviewStep3Body: "正解し続ける問題ほど出番が減ります。間隔を空ける狙いはまさにそこにあります。",
     howReviewStepDone: "完了済み",
     coachMarkPractice: "よくできました！学んだことはいつでもここで復習できます。",

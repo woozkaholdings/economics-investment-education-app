@@ -3358,6 +3358,31 @@ same journey.
 
 ## Run log
 
+### 2026-10-28 (scheduled dev-agent; free pick, a live first-session walkthrough at 375px, since the backlog holds only parked, owner-held or exhausted items) — Review's "How review works" rail no longer says a question "stops asking". The scheduler never retires one: past box 5 it comes back every 16 days. Four languages; ko already said "asks less and less".
+
+Rules: W-6.2 ok (not a residual); W-9.4 ok (a code-vs-copy mismatch, not a translated-surface hand read; the previous two runs were tooling and log). W-13.2(a): every learner who keeps answering right meets it. `npm test` at `480ac7b`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Learner-visible failure:** the third step of the rail, under the 16d box, promised the question goes away. It keeps arriving every 16 days, forever.
+
+**Step 3.5: the premise, measured** (`scratchpad/leitner.mjs`, `src/lib/review.js`'s own `recordAnswer`/`dueQuestions`). Answered right every time it is due, one question is asked **29 times in 400 days**, the last four 16 days apart, final `box 5`. **Control:** one wrong answer gives `box 1`, due the next day, as step 2 says. Per language: en "It stops asking", es "Deja de preguntar", zh 它会渐渐不再问你 and ja だんだん出なくなる each say it goes away. ko 점점 덜 물어봅니다 says it asks less and less, which is true. The body line ("takes less and less of your attention") is true and is unchanged.
+
+#### What shipped (4 files)
+`src/locales/{en,es,zh,ja}.js`: `howReviewStep3` only. Now "It asks less often", "Pregunta cada vez menos", 它问得越来越少, だんだん出番が減る (the last echoes its own body's 出番が減ります). Each edit asserted 1 match before and after.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh` exit 0, `index-BF1c2WQv.js` → `index-DLlYCVIA.js`; new en string in it, old en string in 0 assets |
+| Live, `dist/` served statically (bogus `.js` → 404, real asset → 200) | Review at 375px, all 5 languages via the real picker: each renders only its new heading and none of the 4 old ones. ko's unchanged string is found (positive control). Per-language text lengths all differ |
+| Deploy | before the edit, `check-deployed --identify`: live = HEAD `480ac7b`, byte-identical, market.json asOf 10-27. W-13.5's "Sectors dark 10-28" did not happen |
+
+**Step 5:** the scheduler is unchanged: the copy now matches it, and nothing in DECISIONS.md says questions retire. No §10.1/§10.2/§10.3 or date exposure; `check-blindspot` passes. No prior entry or archived item touched `howReviewStep3`. **No conflict found.** Staged count asserted = 5. The four translated headings are owed a second read in a later run, per W-13.1's precedent.
+
+**Seen, not fixed:** none. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-28 (scheduled dev-agent; open item 143, since the previous entry left no residual) — item 143 closed on corrected facts. The 4 British spellings it named had been archived, and 2 it never named were live in item 76: `tokeniser` and `capitalised-phrase`. Both fixed, and §59's header no longer cites a line number that had rotted. No `src/` change.
 
 Rules: W-6.2 ok (open item, not a residual); W-9.4 / W-13.2 n/a (no content). `npm test` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN (O-3's) for this tree.

@@ -175,7 +175,7 @@ export default {
     howReviewStep1Body: "Answering the check question at the end of a lesson puts it in your queue. Questions you have never seen stay out of review.",
     howReviewStep2: "Answer it here",
     howReviewStep2Body: "Get it right and the gap widens — a day, then two, four, eight, sixteen. Get it wrong and it returns tomorrow.",
-    howReviewStep3: "It stops asking",
+    howReviewStep3: "It asks less often",
     howReviewStep3Body: "A question you keep getting right takes less and less of your attention, which is the point of spacing it out.",
     howReviewStepDone: "Done",
     coachMarkPractice: "Nice work! Come back here anytime to review what you've learned.",
