@@ -3358,6 +3358,33 @@ same journey.
 
 ## Run log
 
+### 2026-10-29 (scheduled dev-agent; free pick, a live walk of deep links at 375px) — A locked lesson link opened from Review or Reference now shows the "That lesson isn't open yet" notice. Before, it landed on the path with no notice, and the first Back stayed on the path. On the path itself, the address bar no longer keeps the refused `#/lesson/<id>`. No copy change.
+
+Rules: W-6.2 ok (free pick; the previous entry left no residual). W-9.4 n/a (no string). W-13.2 n/a (a code fix, not a narrowed claim). `npm test` at `f4934a0`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured live** (`dist/` at `f4934a0` served statically; real asset 200, bogus `.js` 404). I pasted `#/lesson/30` (locked) into a returning learner's tab:
+- **From Review:** the path rendered with **no notice**, at 0, 50, 150, 400 and 1000 ms. An event log showed why. `popstate` routed the link and set `missed`. The hash effect then pushed `#/learn`. `hashchange` fired last, and by then `location.hash` was already `#/learn`, though its `newURL` still said `/lesson/30`. So the second `sync` resolved `#/learn` and cleared `missed`. The old comment's premise ("`sync` is idempotent") holds only for a link that opens.
+- **From Reference:** same, plus 2 history entries. Back 1 stayed on the path at `#/lesson/30` and only now showed the notice. Back 2 reached Reference.
+- **From the path (control):** the notice did show, because nothing changed state and nothing was pushed. But the address bar kept `#/lesson/30`, so a reload or a copied link carried the refused lesson.
+**Controls:** a first-visit load of `#/lesson/30` opened lesson 1 and rewrote the hash, as `initialRoute` intends. A returning visitor's full load showed the notice at `#/learn`. Both confirm the notice instrument fires, and both are the load path, not the in-tab path.
+
+#### What shipped (1 file)
+`src/lib/deepLink.js`, `useDeepLink` only. `sync` now writes the resolved place's own hash over a refused one with `replaceState`, in the same entry, keeping its stamp. The listener now skips `hashchange` when the address bar already names the app's current hash (`hashRef`), so the second call can't clear `missed`. `resolveRoute`, `initialRoute` and the pure half are unchanged, so §18 still covers them. Two stale comments corrected.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BrD57vrr.js` → `index-DpcBx8_w.js` |
+| Live, new bundle | Review → `#/lesson/30`: notice, `#/learn`, +1 entry. Reference → same, +1 entry (was +2), and one Back returns to Reference. Path → notice, `#/learn`. Unknown `#/lesson/999` from Review: its notice, `#/learn`. `scrollWidth` 375 |
+| Controls, new bundle | a valid link from Review opens lesson 29 and keeps its hash, and Back returns to Review. Back from Reference › Glossary closes the glossary and keeps `#/reference`. First-visit load → lesson 1. Returning load of locked `#/lesson/31` → notice at `#/learn`. Pasting unlocked `#/lesson/30` on the path opens it |
+
+**Step 5:** no string changed, so no §10.1/§10.2/§10.3, date or translation exposure. DECISIONS.md's hash-routing and "a locked link does not open" decisions are kept: `resolveRoute` is untouched. Item 31, the 09-06 Back dismissal and the 09-08 `missed` notice are kept, and the last two were re-measured above. No `src/` code writes the hash, and the skip link is a `<button>` (`App.jsx:472`), so the new skip can't swallow an in-page anchor. **No conflict found.** Not covered: a browser that fires `hashchange` without `popstate` would stamp the pasted entry with the index below it. That gap was already there; the effect's same-hash branch does the same.
+
+**Seen, not fixed:** an unknown-id link shows the heading "That lesson isn't open yet" over "Your link pointed to a lesson that isn't in this app". The heading is false for a lesson that will never open. It is rare (a hand-edited or rotted link). `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` (asOf 10-28) aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-29 (scheduled dev-agent; `reviewEmptyBody`'s second read, owed under W-9.4 by `5db9708`) — the four translations hold. Each says what the scheduler does and matches its own rail. No content change.
 
 Rules: W-9.4 ok (the previous two runs: `d54e3f3` was a code change, and `5db9708` was a behavior fix, not a hand read, as `d54e3f3`'s entry counted it). W-6.2 ok (named item). `npm test` at `d54e3f3`: exit 0 / 0 FAIL / 1 WARN (O-3's).

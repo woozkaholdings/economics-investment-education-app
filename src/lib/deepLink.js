@@ -293,7 +293,8 @@ export function dismissAll(stack) {
  * site as they expect — while in-app navigation does build history and the
  * Back button works. Feedback loops end on their own: a state change whose
  * hash already matches the address bar writes nothing, and a hash change
- * resolves to state that formats back to the same hash.
+ * resolves to state that formats back to the same hash — EXCEPT a refused
+ * one, which is why `sync` rewrites the address bar itself (see there).
  */
 export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
   const hash = routeHash({ tab, reading, lessons });
@@ -346,8 +347,42 @@ export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
+    // A refused link (locked, unknown id, or no route at all) resolves to a
+    // place whose hash is NOT the one in the address bar, so `sync` writes the
+    // place's own hash over it, in the same entry. Measured on the built app
+    // 2026-10-29 before this, with `#/lesson/30` (locked) pasted in a returning
+    // learner's tab:
+    //   - from Review or Reference: the path rendered with NO notice. `popstate`
+    //     set `missed`, the hash effect then PUSHED `#/learn`, and `hashchange`
+    //     (which fires after both) re-resolved the address bar's new `#/learn`
+    //     and cleared it. Its `newURL` still said `/lesson/30`.
+    //   - also from Reference: that push left `#/lesson/30` one entry down, so
+    //     the first Back stayed on the path and only showed the notice. The
+    //     second Back reached Reference.
+    //   - from the path itself: the notice showed (the control), but the
+    //     address bar kept `#/lesson/30`, so a reload or a copied link carried
+    //     the refused lesson, not the screen.
+    // Replacing in place means the effect finds the address bar already right
+    // and pushes nothing, and `hashchange` finds nothing to route.
     const sync = () => {
-      onRouteRef.current(resolveRoute(window.location.hash, lessons, isUnlocked));
+      const route = resolveRoute(window.location.hash, lessons, isUnlocked);
+      onRouteRef.current(route);
+      const canonical = routeHash({ ...route, lessons });
+      if (window.location.hash !== canonical) {
+        try {
+          window.history.replaceState(window.history.state ?? { i: entryIndex.current }, "", canonical);
+        } catch {
+          // Same reason as the effect above.
+        }
+      }
+    };
+    // `hashchange` fires after `popstate` has already routed this navigation,
+    // and after the app may have rewritten the hash. When the address bar
+    // already names the screen the app is on, there is nothing left to route,
+    // and routing it again would clear the `missed` notice `popstate` just set.
+    const onHashChange = () => {
+      if (window.location.hash === hashRef.current) return;
+      sync();
     };
     // Only BACK can mean "close the pushed view I am looking at" (see
     // `useDismissOnBack` above). Forward is a destination the learner already
@@ -383,14 +418,14 @@ export function useDeepLink({ tab, reading, lessons, isUnlocked, onRoute }) {
     // `popstate` covers Back/Forward after a `pushState`; `hashchange` covers
     // a hash typed or pasted into the address bar. Those two overlap more than
     // the original comment here said — a fragment navigation fires BOTH, and
-    // so does a Back across differing hashes — but `sync` is idempotent, so a
-    // doubled call resolves to the state the app is already in and writes
-    // nothing.
+    // so does a Back across differing hashes. A doubled call was assumed to be
+    // harmless because `sync` is idempotent, and it is for a link that opens.
+    // It was not for a refused one: see `onHashChange` above.
     window.addEventListener("popstate", onPop);
-    window.addEventListener("hashchange", sync);
+    window.addEventListener("hashchange", onHashChange);
     return () => {
       window.removeEventListener("popstate", onPop);
-      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("hashchange", onHashChange);
     };
   }, [lessons, isUnlocked]);
 }
