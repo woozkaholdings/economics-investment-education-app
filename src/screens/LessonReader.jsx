@@ -311,7 +311,14 @@ export default function LessonReader({ t, lang, lessons, index, completedLessons
     setCelebrating(true);
     // Consumed by the focus effect above, on the render this click causes.
     wantsCompletionFocusRef.current = true;
-    if (!wasContinuePromptShownToday()) {
+    // Not on the completion that finishes the path. "Keep the streak going…
+    // continue where you left off" has nothing behind it then: only a lesson
+    // completion bumps the streak, and none is left (measured live at 43/44 →
+    // 44/44 on 2026-10-29, before this check). The same "every lesson" test
+    // as Learn's `pathComplete`, which sends the learner on to Review instead.
+    // `completedLessons` is the render's copy, from before this click.
+    const finishesPath = lessons.every((l) => l.id === lesson.id || completedLessons.includes(l.id));
+    if (!finishesPath && !wasContinuePromptShownToday()) {
       recordContinueChoice(null); // records "asked today"; the answer follows
       setPrompt("asking");
     }

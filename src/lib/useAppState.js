@@ -249,7 +249,9 @@ export function useAppState() {
 }
 
 // ── continue-tomorrow prompt ──────────────────────────────────────────────
-// Shown at most once per day, the first time a lesson is completed that day.
+// Shown at most once per day, the first time a lesson is completed that day,
+// and never for the completion that finishes the path (LessonReader's
+// `finishesPath`).
 // Records the choice locally for a future reminder feature to read; it does
 // not schedule a real notification (that needs the held platform decision).
 // `optedIn` therefore means "this learner said they intend to come back", not

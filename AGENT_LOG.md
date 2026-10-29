@@ -3358,6 +3358,30 @@ same journey.
 
 ## Run log
 
+### 2026-10-29 (scheduled dev-agent; free pick, UI copy that describes app behavior, checked against the code) — Finishing the last lesson no longer asks the learner to "Keep the streak going. Come back tomorrow to continue where you left off." Nothing is left to continue, and only a lesson completion bumps the streak. No copy change.
+
+Rules: W-9.4 bars a translated-surface hand read this run (`2b24c4f` was one), so `reviewEmptyBody`'s owed second read waits for the next run. This is a code change with no new string. W-6.2 ok (not a residual). W-13.2(a): every learner whose last lesson is their first completion that day sees it. `npm test` at `5db9708` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN.
+
+**Step 3.5: the premise, measured live** (`dist/` at `5db9708` served statically; real asset 200, bogus `.js` 404). I seeded 43/44 complete, streak 5 dated yesterday, prompt last shown yesterday, then opened lesson 28 and clicked Mark Complete. Result: 44/44, streak 6, and the prompt rendered with its title, body and "I'll be back tomorrow" CTA. `useAppState.js` confirms the streak moves only in `completeLesson`: review answers never bump it, so tomorrow the chip still shows 6, and the day after it shows 0. The Learn screen at 44/44 says "Nothing left to unlock — what happens now is review". The reader contradicted it one click earlier. **Instrument check:** my first seed came back with lesson 16 missing, not 28, because the legacy-id migration remapped unflagged ids. I re-seeded with `ecycles_legacy_lesson_id_migrated` set before trusting any reading.
+
+#### What shipped (2 files)
+- `src/screens/LessonReader.jsx`: `handleComplete` skips the prompt when this completion finishes the path. The test is the same as Learn's `pathComplete` (every lesson in `lessons`, which is all 44 via `lessonsByTrack()`), run against the render's pre-click `completedLessons`. On that completion nothing is written to `ecycles_continue_pref` either.
+- `src/lib/useAppState.js`: comment only. The prompt's contract now names the exception.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh` exit 0, `LessonReader-DJg2aCT7.js` → `LessonReader-Dfj5v5ON.js`, `index-CTXP7WIo.js` → `index-BrD57vrr.js` |
+| Live, new bundle, 43/44 → 44/44 | no prompt and no CTA. Streak 5 → 6, `continue_pref` untouched, focus on Next Lesson |
+| Control, 42/44 → 43/44 (lesson 15 still open) | prompt and CTA render, and `continue_pref` records "asked today" |
+
+**Step 5:** no string changed, so no §10.1/§10.2/§10.3, date or translation exposure, and `check-blindspot` passes. DECISIONS.md has nothing on the prompt, and storage stays localStorage-only. LAUNCH_PLAN §4's opt-in is kept on every completion that has a next lesson. On the one that finishes the path, the opt-in was recording a promise to "continue" that had nothing behind it. The archive's two prompt entries (its 08-03 build and the 08-31 CTA rewording) are untouched. No a11y state clicks Mark Complete, so no fixture depends on this. **No conflict found.**
+
+**Seen, not fixed:** at 44/44 the reader still offers "Next Lesson" to an already-finished lesson, because `hasNext` is positional. That is harmless, and the Learn screen's path-done card is where the learner is sent next. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-29 (scheduled dev-agent; free pick, the UI strings that describe review's behavior, checked against `src/lib/review.js`) — Review's "You're all caught up" card no longer says questions "come back here a day or two after you answer them". After the first two right answers the gap is 4, 8, then 16 days, as the rail and box chart right below it say. Five languages.
 
 Rules: W-6.2 ok (not a residual; the previous entry left none). W-13.2(a): the case is any learner past their first week of review, and every learner sent to Review by `pathDoneAction`. `npm test` at `2b24c4f`: exit 0 / 0 FAIL / 1 WARN (O-3's).
