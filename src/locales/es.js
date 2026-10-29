@@ -131,7 +131,7 @@ export default {
     reviewNotStartedTitle: "Aún no hay nada que repasar",
     reviewNotStartedBody: "Responde la pregunta de comprobación del final de una lección y empezará a aparecer aquí.",
     reviewEmptyTitle: "Estás al día",
-    reviewEmptyBody: "Las preguntas vuelven aquí uno o dos días después de responderlas, para que se fijen.",
+    reviewEmptyBody: "Una pregunta vuelve aquí un día después de que la respondas por primera vez, y luego a intervalos más largos si la sigues acertando.",
     reviewNoStorageTitle: "El repaso no se puede guardar aquí",
     reviewNoStorageBody: "Tu navegador está bloqueando el almacenamiento del sitio, así que las preguntas que respondas se pierden al recargar o cerrar esta página y no pueden volver aquí para repasarlas más adelante.",
     practiceAllTemplate: "Practicar todas las preguntas ({n})",

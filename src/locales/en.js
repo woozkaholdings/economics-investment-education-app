@@ -207,7 +207,7 @@ export default {
     reviewNotStartedTitle: "Nothing to review yet",
     reviewNotStartedBody: "Answer the check question at the end of a lesson and it starts showing up here.",
     reviewEmptyTitle: "You're all caught up",
-    reviewEmptyBody: "Questions come back here a day or two after you answer them, so they stick.",
+    reviewEmptyBody: "A question comes back here a day after you first answer it, then at wider gaps as you keep getting it right.",
     reviewNoStorageTitle: "Review can't be saved here",
     reviewNoStorageBody: "Your browser is blocking site storage, so questions you answer are lost when you reload or close this page, and can't come back here for review later.",
     practiceAllTemplate: "Practice all questions ({n})",

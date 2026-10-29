@@ -128,7 +128,7 @@ export default {
     reviewNotStartedTitle: "まだ復習する内容はありません",
     reviewNotStartedBody: "レッスン末尾の確認問題に答えると、その問題がここに出てくるようになります。",
     reviewEmptyTitle: "すべて復習済みです",
-    reviewEmptyBody: "問題は回答から1〜2日後にまた出てきて、記憶に定着させます。",
+    reviewEmptyBody: "問題は最初に答えた翌日にここに戻り、正解を続けると間隔が長くなっていきます。",
     reviewNoStorageTitle: "ここでは復習を保存できません",
     reviewNoStorageBody: "ブラウザーがサイトのストレージをブロックしているため、回答した問題はこのページを再読み込みするか閉じると消え、あとでここで復習することはできません。",
     practiceAllTemplate: "全 {n} 問を練習",

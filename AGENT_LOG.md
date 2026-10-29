@@ -3358,6 +3358,28 @@ same journey.
 
 ## Run log
 
+### 2026-10-29 (scheduled dev-agent; free pick, the UI strings that describe review's behavior, checked against `src/lib/review.js`) — Review's "You're all caught up" card no longer says questions "come back here a day or two after you answer them". After the first two right answers the gap is 4, 8, then 16 days, as the rail and box chart right below it say. Five languages.
+
+Rules: W-6.2 ok (not a residual; the previous entry left none). W-13.2(a): the case is any learner past their first week of review, and every learner sent to Review by `pathDoneAction`. `npm test` at `2b24c4f`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: the premise, measured, and it partly broke.** Ran `scratchpad/caughtup.mjs` and `caughtup2.mjs` (review.js's own `recordAnswer`/`dueQuestions`) on simulated learners: one lesson a day or every 3 days, visits every 1/2/3/7 days, 0/10/20% wrong. **What held up against the card:** the *soonest* return was ≤2 days on every caught-up day of all 15 patterns. A learner who reads the card as "come back in a day or two" has never been sent back too late. **What broke:** 66–87% of a learner's answered questions are more than 2 days out on an average caught-up day (77–87% once the path is done). The weekly visitor answers 15 questions, all in box 5, and the card says they return "a day or two after you answer them". They return in 16. So the defect is how the card describes spacing, which is what the rail below exists to teach. It is not an instruction to come back. **Control:** one right answer → due in 1 day, a second → 2. The card was true for the first two answers, which is why a fresh-storage walkthrough never shows the problem. **Instrument check:** soonest stayed ≤2 days even for the all-box-5 weekly visitor, which looked wrong. A dump showed questions answered two visits earlier sitting 16−14 = 2 days from due, so the instrument was right.
+
+#### What shipped (5 files)
+`src/locales/{en,es,ko,zh,ja}.js`: `reviewEmptyBody` only. en now reads "A question comes back here a day after you first answer it, then at wider gaps as you keep getting it right." A first answer, right or wrong, lands in box 1 (+1 day). It carries no number, so it can't drift from `BOX_INTERVALS`. Each edit asserted old 1→0, new 0→1, then read in the diff. `Practice.jsx:542` still quotes the old string as a dated 10-18 measurement. Left as written.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh` exit 0, `index-CbTJsIhX.js` → `index-CTXP7WIo.js`. New en string in 1 asset, old in 0, new zh in 1 |
+| Live, `dist/` served statically (real asset 200, bogus `.js` 404) | 375px, seeded state with boxes 1/4/5 and nothing due, all 5 languages through the real picker. Each renders its new body under its own caught-up title, none of the 5 old strings is on the page, `scrollWidth` 375 |
+
+**Step 5:** this says what the scheduler does: box 1 is +1 for any first answer, and right answers move up the boxes. Nothing in DECISIONS.md applies. No §10.1/§10.2/§10.3 or date exposure, and `check-blindspot` passes. The 10-28 runs changed `howReviewStep3`, a different key; this undoes none of it. **No conflict found.** Not narrowed: "wider gaps" stops widening at 16 days, the same plateau the 10-28 entry accepted. Under W-9.4, the es/ko/zh/ja strings are owed a second read in a later run.
+
+**Seen, not fixed:** none. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` (asOf 10-28) aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-28 (scheduled dev-agent; the second read of `howReviewStep3` that `0909c73` left owed) — en, zh and ja hold. es did not: after two imperative headings, "Pregunta cada vez menos" reads first as "Ask less and less!", an order to the learner. It now says "La verás cada vez menos" ("you'll see it less and less"). The scheduler's comment no longer says items "stop taking up attention".
 
 Rules: W-9.4 ok (the previous run called itself a code-vs-copy fix, and the run before it was the log); W-13.2(a): every Spanish learner who opens Review reads the rail. `npm test` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN (O-3's) for this tree.
