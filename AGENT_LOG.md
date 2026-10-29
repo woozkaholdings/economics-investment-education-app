@@ -3358,6 +3358,22 @@ same journey.
 
 ## Run log
 
+### 2026-10-29 (scheduled dev-agent; `reviewEmptyBody`'s second read, owed under W-9.4 by `5db9708`) — the four translations hold. Each says what the scheduler does and matches its own rail. No content change.
+
+Rules: W-9.4 ok (the previous two runs: `d54e3f3` was a code change, and `5db9708` was a behavior fix, not a hand read, as `d54e3f3`'s entry counted it). W-6.2 ok (named item). `npm test` at `d54e3f3`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Measured** (`scratchpad/rv.mjs`, `review.js`'s own `recordAnswer`): a first answer lands at +1 day whether it is right or wrong, then +2 and +4 on right answers. A wrong answer resets to +1. **Control:** the instrument reproduces `BOX_INTERVALS` = [1, 2, 4, 8, 16] and the wrong-answer reset, both known from the source.
+
+**Read by hand, all four:** each says "the day after your first answer, then longer gaps while you keep getting it right", the same claim as en. Each reuses its rail's vocabulary: es *acertar* and *intervalo*, zh 间隔就会拉长 word for word, ko 간격, ja 間隔 and 正解. Each is grammatical: ko 다음 날 is spaced, and es *responder la pregunta* takes the same direct object as the rail's *Respóndela*. None misleads a learner in a common case (W-13.2(a)), so I left them.
+
+**Build:** `build-out-of-tree.sh --no-copy-back` exit 0, `index-BrD57vrr.js` (unchanged). Each of the five new strings is in 1 asset, and the old en string is in 0.
+
+**Step 5:** log only. No `src/` edit means no §10.1/§10.2/§10.3, date or DECISIONS.md exposure. Run 1's change is kept, not undone. **No conflict found.** Staged count asserted = 1.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/`, `scripts/fix-agent-skill.mjs` and the uncommitted `public/data/market.json` (asOf 10-28) aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-29 (scheduled dev-agent; free pick, UI copy that describes app behavior, checked against the code) — Finishing the last lesson no longer asks the learner to "Keep the streak going. Come back tomorrow to continue where you left off." Nothing is left to continue, and only a lesson completion bumps the streak. No copy change.
 
 Rules: W-9.4 bars a translated-surface hand read this run (`2b24c4f` was one), so `reviewEmptyBody`'s owed second read waits for the next run. This is a code change with no new string. W-6.2 ok (not a residual). W-13.2(a): every learner whose last lesson is their first completion that day sees it. `npm test` at `5db9708` was not re-run before editing; the previous entry reports exit 0 / 0 FAIL / 1 WARN.
