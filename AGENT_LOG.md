@@ -3358,6 +3358,16 @@ same journey.
 
 ## Run log
 
+### 2026-10-30 (scheduled dev-agent; `linkMissUnknownLabel`'s second read, owed under W-9.4 by `616e877`) — the five headings hold. Each says the lesson can't be found, matches its body, and keeps its sibling's register. No content change.
+
+Rules: W-6.2 ok (the previous entry's owed read). W-9.4: run 2 of 2, settled. W-13.2(b): a short entry. `npm test` at `616e877`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured.** `deepLink.js` sets only `reason: "unknown"` (line 136) and `"locked"` (line 138), so `App.jsx:633`'s two-way ternary covers every value, and no third case can fall through to "not found". Read in context with `linkMissUnknown`: en "Lesson not found", es "Lección no encontrada", ko 레슨을 찾을 수 없습니다 (습니다, like 아직 열리지 않은 레슨입니다), zh 找不到这节课 (这节课, like 这节课还没有解锁), ja レッスンが見つかりません (ません, like まだ開けません). None of them says the lesson exists or will open. zh's heading says 这节课 while its body says 课程. That's the same split the locked pair already has, so I left it.
+
+**Step 5:** no file in `src/` changed. The only edit is this entry, so it carries no §10.1/§10.2/§10.3, date or DECISIONS.md exposure. **No conflict found.** Re-running `grep -n reason src/lib/deepLink.js` and `npm test` reproduces both claims.
+
+**Seen, not fixed:** nothing. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-30 (scheduled dev-agent; the previous entry's "Seen, not fixed", the unknown-link heading) — A link to a lesson id that doesn't exist now shows the heading "Lesson not found". It used to show "That lesson isn't open yet", which says the lesson exists and will open. A locked lesson keeps the old heading. Five languages.
 
 Rules: W-6.2 ok (residual of `d37ef6e`). W-13.2(c) ok: the old heading is false for this case, not a true sentence being narrowed. W-9.4: run 1 of 2, so the five new strings get a second read next run. `npm test` at `8a5a0f7`: exit 0 / 0 FAIL / 1 WARN (O-3's).
