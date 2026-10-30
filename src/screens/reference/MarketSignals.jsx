@@ -7,9 +7,26 @@
 // the charts a lesson just introduced.
 //
 // All copy lives in `content/markets.js`, translated; this file is layout.
+//
+// ── GLOSSARY CHIPS (2026-10-30) ───────────────────────────────────────────
+// Each section ends in the lessons' own term row (`GlossaryTerms`, §3.0.3),
+// for the same reason the lessons have it: a reader who has to leave this
+// screen to find out what a yield curve is has lost the card they were
+// reading. Measured on the built app that day: the rendered screen used ten
+// glossary terms — GDP, inflation, interest rates, stocks, bonds, growth
+// stocks, the yield curve, QE, QT, recessions — and defined none of them,
+// while the lessons chip every term on first use. M0/M1/M2 get no chip
+// because the money-supply list right here IS their definition.
+// Each term is chipped once, in the section that uses it first, and the row
+// keeps the lessons' "Terms in this section" label, which is true here too:
+// every row sits inside the section it lists, right under the text that uses
+// the terms (the first one in the screen's opening, under the <h1>). A key missing from
+// `glossary.js` renders no chip, silently, so a renamed key must be updated
+// here as well as in `lessonTerms.js`.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { Bar, CycleChart, YieldCurve } from "../../components/charts.jsx";
+import GlossaryTerms from "../../components/GlossaryTerms.jsx";
 import { Disclaimer, Note, Stack, Text } from "../../components/ui.jsx";
 import {
   balanceSheetCaption, balanceSheetDescription, balanceSheetFormat, balanceSheetHistory, balanceSheetUnit,
@@ -35,15 +52,18 @@ export default function MarketSignals({ t, lang }) {
         description={cycleChartDescription[lang]}
       />
 
-      <Note tone="warn" label={t.currentState} icon="info" style={{ marginBottom: space["5"] }}>
+      <Note tone="warn" label={t.currentState} icon="info">
         {scenario[lang]}
       </Note>
+      <div style={{ marginBottom: space["5"] }}>
+        <GlossaryTerms terms={["GDP", "Inflation"]} t={t} lang={lang} />
+      </div>
 
       {/* The direct push of a rate move on each asset class, all else equal (see markets.js) */}
       <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
         {t.rateHow}
       </Text>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: space["2"], marginBottom: space["5"] }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: space["2"] }}>
         {rateEffects.map((asset) => (
           <div key={asset.key} style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.md, padding: space["3"] }}>
             <Text variant="caption" color={ink.strong} style={{ fontWeight: 700, marginBottom: space["2"] }}>
@@ -106,6 +126,9 @@ export default function MarketSignals({ t, lang }) {
           </div>
         ))}
       </div>
+      <div style={{ marginBottom: space["5"] }}>
+        <GlossaryTerms terms={["Interest Rate", "Stock", "Bond", "Growth Stock"]} t={t} lang={lang} />
+      </div>
 
       {/* Yield-curve shapes */}
       <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
@@ -130,7 +153,7 @@ export default function MarketSignals({ t, lang }) {
           use `minmax(0, 1fr)`, ui.jsx uses `minmax(min(…, 100%), 1fr)`, and the sibling grid
           above pins an explicit 120px floor. This was the one bare `1fr` under src/, and it is
           the one that clipped. check-data.mjs asserts there is not a second. */}
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: space["2"], marginBottom: space["5"] }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: space["2"] }}>
         {CURVE_TYPES.map((type) => (
           <YieldCurve
             key={type}
@@ -139,6 +162,9 @@ export default function MarketSignals({ t, lang }) {
             description={yieldCurveDescriptions[type][lang]}
           />
         ))}
+      </div>
+      <div style={{ marginBottom: space["5"] }}>
+        <GlossaryTerms terms={["Yield Curve"]} t={t} lang={lang} />
       </div>
 
       {/* QE / QT, and the balance sheet that results from them.
@@ -164,10 +190,13 @@ export default function MarketSignals({ t, lang }) {
       <Text as="h2" variant="heading" color={ink.strong} style={{ marginBottom: space["3"] }}>
         {t.qeQtSection}
       </Text>
-      <Stack gap={space["2"]} style={{ marginBottom: space["5"] }}>
+      <Stack gap={space["2"]}>
         <Note tone="ok" label={t.qeLabel} icon="chart">{t.qeNarrative}</Note>
         <Note tone="bad" label={t.qtLabel} icon="chart">{t.qtNarrative}</Note>
       </Stack>
+      <div style={{ marginBottom: space["5"] }}>
+        <GlossaryTerms terms={["QE", "QT"]} t={t} lang={lang} />
+      </div>
 
       <Bar
         title={t.balanceSheet}
@@ -228,6 +257,7 @@ export default function MarketSignals({ t, lang }) {
           </li>
         ))}
       </ul>
+      <GlossaryTerms terms={["Recession"]} t={t} lang={lang} />
 
       <Disclaimer text={t.disclaimer} />
     </div>

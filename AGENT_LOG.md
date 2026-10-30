@@ -3358,6 +3358,28 @@ same journey.
 
 ## Run log
 
+### 2026-10-30 (scheduled dev-agent; free pick, the 10-23 residual "the Market Dashboard cards don't link to the glossary") — The Market Dashboard now ends each section with the lessons' "Terms in this section" chip row. Its 10 glossary terms open in place, as they do in a lesson. No new string.
+
+Rules: W-6.2 ok (free pick; the previous entry left no residual). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (the label is the existing `lessonTermsLabel`, and the definitions are existing glossary text). `npm test` at `ba4e933`: exit 0 / 0 FAIL / 1 WARN (O-3's), per the previous entry.
+
+**Step 3.5: measured live** (`dist/` at `ba4e933`, served statically; real asset 200, bogus `.js` 404; entry `index-BaI4lg7u.js`, the previous entry's). The residual's premise was half wrong, as the 10-23 L41-44 entry had already noted: Sectors links no glossary chip either. It explains "relative strength" inline. I scanned the rendered dashboard text (3,638 chars, en) for all 45 glossary names. It uses 10 and defines none on screen: GDP, inflation, interest rates, stocks, bonds, growth stocks, the yield curve, QE, QT and recessions. M0/M1/M2 also appear, but the money-supply list defines them. **Control:** the same scan over all of `markets.js` found "Deleveraging" 6 times, and the rendered text has 0, so the scan reads what is on screen, not the module.
+
+#### What shipped (1 file)
+`src/screens/reference/MarketSignals.jsx`: five `GlossaryTerms` rows. Opening: GDP, Inflation. Rate effects: Interest Rate, Stock, Bond, Growth Stock. Yield curve: Yield Curve. QE/QT: QE, QT. Principles: Recession. Each term is chipped once, in its first section, per DECISIONS.md's curated in-place rule. Four `marginBottom`s moved from the block onto its chip row, so the spacing between sections is unchanged. There is a dated header comment. One judgment call: the rate cards say "Rates ↑", not the literal "interest rate".
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-BaI4lg7u.js` → `index-DD8tNH4W.js` |
+| Live, 375px | 10 chips in 5 rows, 5 distinct `aria-controls`, panels `role="status"`. Yield Curve then Bond (another row): both open, each panel shows its own term. Stock swaps Bond's panel within its row. `scrollWidth` 375. Screenshot shows the opening row |
+| Languages | es/ko/zh/ja via the real language select: 10 chips each, in that language's glossary names |
+| a11y | `A11ySweep.selftest()` PASS, `A11yStates.selftest()` PASS, `runAll()` at 375: 12/12 no-reload states clean, `reference-markets` included. `coverage()` mismatches: [] |
+
+**Step 5:** no new copy, so no §10.1/§10.2/§10.3 or date exposure. The chips show glossary text that lessons already show, and `check-blindspot` passed. DECISIONS.md "In-lesson glossary links are a curated map" holds: the lists are hand-curated, the definitions open in place, and nothing navigates. Its §17 literal-name check covers `lessonTerms.js` only, so nothing enforces these keys. A renamed key would silently drop a chip. The header says so, and I didn't add a check (W-6.3). The 10-23 run passed on this as "a feature, not a fix" and did not decline it. **No conflict found.**
+
+**Seen, not fixed:** `Sectors.jsx`'s comment says "relative strength" has "no glossary entry". `glossary.js` now has `Relative Strength`, so the comment is stale. Comment only, not numbered. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-30 (scheduled dev-agent; `linkMissUnknownLabel`'s second read, owed under W-9.4 by `616e877`) — the five headings hold. Each says the lesson can't be found, matches its body, and keeps its sibling's register. No content change.
 
 Rules: W-6.2 ok (the previous entry's owed read). W-9.4: run 2 of 2, settled. W-13.2(b): a short entry. `npm test` at `616e877`: exit 0 / 0 FAIL / 1 WARN (O-3's).
