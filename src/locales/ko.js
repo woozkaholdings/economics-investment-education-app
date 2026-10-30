@@ -122,6 +122,7 @@ export default {
     storageBlockedDismiss: "닫기",
     linkMissLabel: "아직 열리지 않은 레슨입니다",
     linkMissLockedTemplate: "받으신 링크는 “{title}” 레슨입니다. 이 경로에서 바로 앞 레슨을 완료하면 열립니다.",
+    linkMissUnknownLabel: "레슨을 찾을 수 없습니다",
     linkMissUnknown: "받으신 링크가 가리키는 레슨이 이 앱에 없습니다. 이전 버전의 링크일 수 있습니다.",
     linkMissDismiss: "닫기",
     reviewDueTemplate: "복습할 문제 {n}개",

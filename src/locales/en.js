@@ -201,6 +201,7 @@ export default {
     // than working around it.
     linkMissLabel: "That lesson isn't open yet",
     linkMissLockedTemplate: "Your link was for “{title}”. Finish the lesson before it on this path and it opens.",
+    linkMissUnknownLabel: "Lesson not found",
     linkMissUnknown: "Your link pointed to a lesson that isn't in this app. It may be from an older version.",
     linkMissDismiss: "Dismiss",
     reviewDueTemplate: "{n} ready to review",

@@ -125,6 +125,7 @@ export default {
     storageBlockedDismiss: "Descartar",
     linkMissLabel: "Esa lección aún no está abierta",
     linkMissLockedTemplate: "Tu enlace era para “{title}”. Termina la lección anterior de esta ruta y se abrirá.",
+    linkMissUnknownLabel: "Lección no encontrada",
     linkMissUnknown: "Tu enlace apuntaba a una lección que no está en esta app. Puede ser de una versión anterior.",
     linkMissDismiss: "Descartar",
     reviewDueTemplate: "{n} para repasar",

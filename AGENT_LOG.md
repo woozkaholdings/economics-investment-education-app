@@ -3358,6 +3358,30 @@ same journey.
 
 ## Run log
 
+### 2026-10-30 (scheduled dev-agent; the previous entry's "Seen, not fixed", the unknown-link heading) — A link to a lesson id that doesn't exist now shows the heading "Lesson not found". It used to show "That lesson isn't open yet", which says the lesson exists and will open. A locked lesson keeps the old heading. Five languages.
+
+Rules: W-6.2 ok (residual of `d37ef6e`). W-13.2(c) ok: the old heading is false for this case, not a true sentence being narrowed. W-9.4: run 1 of 2, so the five new strings get a second read next run. `npm test` at `8a5a0f7`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured.** `App.jsx` passed `t.linkMissLabel` for both `missed.reason` values. Only the body switched (`linkMissLockedTemplate` vs `linkMissUnknown`). The catalog holds ids 1–44 with no gaps, so today the unknown case comes only from a hand-edited link or a future id removal. That is rare, but the heading is plainly false there, and the body right below it says so.
+
+#### What shipped (6 files)
+`src/App.jsx`: the `Note` label now follows `linkMiss.reason`. New key `linkMissUnknownLabel` in all five locales: en "Lesson not found", es "Lección no encontrada", ko 레슨을 찾을 수 없습니다 (the same 습니다 register as its sibling), zh 找不到这节课 (the sibling's 这节课), ja レッスンが見つかりません (the sibling's ません).
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Parity control | with the ja key removed, `check-data` printed `FAIL: TR.ja: missing key "linkMissUnknownLabel"` and exited 1. Restored from the scratchpad copy, and the key count went back to 1 |
+| Build | `build-out-of-tree.sh --no-copy-back` succeeded: the previous entry’s `index-DpcBx8_w.js` → `index-BaI4lg7u.js`. Each new string is in 1 asset |
+| Live, new bundle | In-tab `#/lesson/999` (en): "Lesson not found" plus the unknown body, at `#/learn`. Returning full load of `#/lesson/999` (ko): 레슨을 찾을 수 없습니다, at `#/learn` |
+| Controls | In-tab locked `#/lesson/30` (en) and a returning full load of locked `#/lesson/31` (ko) both still show "isn't open yet" / 아직 열리지 않은 레슨입니다, and not the new heading |
+
+**Step 5:** this is a UI heading with no market, advice, Dalio or kids content, and `check-blindspot` passed. DECISIONS.md's "a locked link does not open" holds, since `resolveRoute` is untouched. The 10-29 deep-link fix is kept: only the label changed. **No conflict found.** My first full-load attempt opened the path’s first lesson, because I hadn't set `ecycles_seen_disclaimer` and the app treated the visit as a first visit. That is `initialRoute`'s intended behavior, not a defect.
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-29 (scheduled dev-agent; free pick, a live walk of deep links at 375px) — A locked lesson link opened from Review or Reference now shows the "That lesson isn't open yet" notice. Before, it landed on the path with no notice, and the first Back stayed on the path. On the path itself, the address bar no longer keeps the refused `#/lesson/<id>`. No copy change.
 
 Rules: W-6.2 ok (free pick; the previous entry left no residual). W-9.4 n/a (no string). W-13.2 n/a (a code fix, not a narrowed claim). `npm test` at `f4934a0`: exit 0 / 0 FAIL / 1 WARN (O-3's).

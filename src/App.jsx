@@ -628,7 +628,9 @@ export default function App() {
           <Note
             tone="neutral"
             icon="info"
-            label={t.linkMissLabel}
+            // "Isn't open yet" promises the lesson exists and will open, which
+            // is false for an id no lesson carries, so that reason has its own.
+            label={linkMiss.reason === "locked" ? t.linkMissLabel : t.linkMissUnknownLabel}
             style={{ marginBottom: space["4"] }}
           >
             {linkMiss.reason === "locked"

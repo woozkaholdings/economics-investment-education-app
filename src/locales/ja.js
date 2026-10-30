@@ -122,6 +122,7 @@ export default {
     storageBlockedDismiss: "閉じる",
     linkMissLabel: "このレッスンはまだ開けません",
     linkMissLockedTemplate: "リンク先は「{title}」です。このパスでその一つ前のレッスンを終えると開きます。",
+    linkMissUnknownLabel: "レッスンが見つかりません",
     linkMissUnknown: "リンク先のレッスンはこのアプリにありません。以前のバージョンのリンクかもしれません。",
     linkMissDismiss: "閉じる",
     reviewDueTemplate: "復習する問題 {n} 問",

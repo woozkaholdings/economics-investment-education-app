@@ -122,6 +122,7 @@ export default {
     storageBlockedDismiss: "关闭",
     linkMissLabel: "这节课还没有解锁",
     linkMissLockedTemplate: "你的链接指向“{title}”。完成这条路径上它前面的一节课，它就会打开。",
+    linkMissUnknownLabel: "找不到这节课",
     linkMissUnknown: "你的链接指向的课程不在本应用中，可能来自旧版本。",
     linkMissDismiss: "关闭",
     reviewDueTemplate: "{n} 题待复习",
