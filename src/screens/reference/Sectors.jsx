@@ -9,12 +9,25 @@
 // ticker is never a headline, and "relative strength" is shown as a rank
 // against the benchmark rather than as a bare number, because a rank is
 // something a first-time reader can actually act on.
+//
+// ── GLOSSARY CHIPS (2026-10-30) ───────────────────────────────────────────
+// "The economy right now" ends in the lessons' term row (`GlossaryTerms`), as
+// the Market Dashboard's sections have since 6408ce4. Measured on the built
+// app that day: the rendered screen used five glossary terms. Three of them
+// (relative strength, the fed funds rate, CPI) each carry a line defining
+// them right where they appear, so they get no chip, the same rule that
+// spared M0/M1/M2 on the dashboard. The other two, recessions and the
+// inflation rate, were never defined, and neither was the curve-spread
+// line's "inversion", which is the Yield Curve entry's subject. Those three
+// get chips, keyed to the signal that uses them, so a reading the data file
+// lacks takes its chip with it.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
 import { economicSignals } from "../../content/economicSignals.js";
 import { BENCHMARK, sectors } from "../../content/sectors.js";
 import { formatEconomicReading, formatPercent, priceSourceName, useMarketData } from "../../lib/useMarketData.js";
+import GlossaryTerms from "../../components/GlossaryTerms.jsx";
 import Icon from "../../components/Icon.jsx";
 import { EmptyState, Note, Segmented, Text } from "../../components/ui.jsx";
 import { ink, line, space } from "../../theme.js";
@@ -24,6 +37,12 @@ const WINDOWS = [
   { key: "3m", label: "3M" },
   { key: "6m", label: "6M" },
 ];
+
+// Signal key → the glossary keys its `what` line uses without defining.
+const SIGNAL_TERMS = {
+  curveSpread: ["Yield Curve", "Recession"],
+  cpiIndex: ["Inflation"],
+};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // The §10.1 disclaimer is a property of THIS SCREEN, not of one of its states.
@@ -198,10 +217,11 @@ export default function Sectors({ t, lang }) {
             `economicSignals.what`); the one number that ORDERS the list did
             not, so the reader met the term for the first and only time as an
             unexplained ranking.
-            It is explained here rather than as a glossary entry because no
-            lesson teaches it: a reader confused by this list is on this
-            screen, not in the glossary, and a key no lesson uses would owe
-            §17b a chip or an exclusion for nothing.
+            It is explained here because no lesson teaches it: a reader
+            confused by this list is on this screen, not in the glossary.
+            (The glossary gained a "Relative Strength" entry the same day,
+            0d803b3. That entry says what the measure is; this line says how
+            this list computes it, so it stays, and the term gets no chip.)
             The second sentence is the reconciliation the sort note leaves
             open — with the shipped data (asOf 2026-09-01) the biggest return
             in the list sits at rank 2 on the 3M tab and rank 6 on 6M, so a
@@ -324,6 +344,11 @@ export default function Sectors({ t, lang }) {
               );
             })}
           </ul>
+          <GlossaryTerms
+            terms={economicSignals.filter((s) => data.economics[s.key]).flatMap((s) => SIGNAL_TERMS[s.key] ?? [])}
+            t={t}
+            lang={lang}
+          />
 
           {/* The economics block is FRED and only FRED — `FRED_SERIES` in
               src/lib/marketData/fred.js is a fixed list of Federal Reserve and

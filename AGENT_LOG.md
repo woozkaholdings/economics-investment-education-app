@@ -3358,6 +3358,28 @@ same journey.
 
 ## Run log
 
+### 2026-10-30 (scheduled dev-agent; the previous entry's "Seen, not fixed", `Sectors.jsx`'s stale glossary comment) — Sector performance's "The economy right now" now ends with a chip row: Yield Curve, Recession, Inflation. Its lines said "inversion", "recessions" and "inflation rate" and defined none of them. The stale comment is fixed. No new string.
+
+Rules: W-6.2 ok (residual of `6408ce4`, widened from the comment to the same gap that run closed on the dashboard). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (no new string). `npm test` at `6408ce4`: exit 0 / 0 FAIL / 1 WARN (O-3's), per the previous entry.
+
+**Step 3.5: measured live** (`dist/` at `6408ce4`, entry `index-DD8tNH4W.js`, the previous entry's; real asset 200, bogus `.js` 404). The residual held: `Sectors.jsx` said "relative strength" is explained "rather than as a glossary entry", but `0d803b3` added that entry the same day. I scanned the rendered screen (2,745 chars, en) for all 45 glossary keys and names. It uses 5. Relative strength, the fed funds rate and CPI each have a line right there that defines them, so by the previous run's M0/M1/M2 rule they get no chip. Recession ("preceded past recessions") and Inflation ("the basis for the inflation rate") are never defined. Neither is the curve-spread line's "inversion", and the glossary's Yield Curve entry explains exactly that, with the 10-year-minus-2-year gap. es/ko/zh/ja carry the same three words in both lines. **Control:** "Relative Strength" matched 13 times, and "Deleveraging", which the screen doesn't use, matched 0.
+
+#### What shipped (1 file)
+`src/screens/reference/Sectors.jsx`: one `GlossaryTerms` row under the economy list. A `SIGNAL_TERMS` map ties each chip to the signal whose line uses it (`curveSpread` → Yield Curve, Recession; `cpiIndex` → Inflation), so a reading missing from `market.json` takes its chips with it. Node control: without `curveSpread` the row is just Inflation, and with no readings it is empty. Header comment dated; the relative-strength comment now cites `0d803b3`. Judgment call: "Yield Curve" isn't literally on screen, as the dashboard's "Rates ↑" wasn't.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-DD8tNH4W.js` → `index-DN3AVKmn.js`; old entry now 404 |
+| Live, 375px | 3 chips under "Terms in this section", one `aria-controls`, panel `role="status"`. Yield Curve opens its entry, Inflation swaps it, a second tap closes it. `scrollWidth` 375. Screenshot taken |
+| Languages | es/ko/zh/ja via the real language select: 3 chips each, in that language's glossary names and label |
+| a11y | `A11ySweep.selftest()` PASS, `A11yStates.selftest()` PASS, `runAll()` at 375 after cleared storage: 12/12 clean, `reference-sectors` included; `declarationMismatches` [] |
+
+**Step 5:** no new copy, so no §10.1/§10.2/§10.3 or date exposure. The chips show glossary text the lessons and dashboard already show, and `check-blindspot` passed. DECISIONS.md's curated-map rule holds: hand-picked keys, definitions in place, no navigation. Only the stale-data and loading branches lack the row, and they render no economy list either. `glossary.js`'s "no chip and needs none" for Relative Strength stays true. This extends `6408ce4` and undoes nothing. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-30 (scheduled dev-agent; free pick, the 10-23 residual "the Market Dashboard cards don't link to the glossary") — The Market Dashboard now ends each section with the lessons' "Terms in this section" chip row. Its 10 glossary terms open in place, as they do in a lesson. No new string.
 
 Rules: W-6.2 ok (free pick; the previous entry left no residual). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (the label is the existing `lessonTermsLabel`, and the definitions are existing glossary text). `npm test` at `ba4e933`: exit 0 / 0 FAIL / 1 WARN (O-3's), per the previous entry.
