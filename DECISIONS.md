@@ -220,6 +220,14 @@ Add a new entry when a run makes a choice future work should be able to look up 
     generated per page load and held in memory only. **The cost is stated rather than discovered:
     "unique users" in a PostHog dashboard will read as "sessions".** Plausible is sent no id at all,
     since it counts visitors server-side.
+  - **Added 2026-10-31: the IP address is the one thing the code can't keep back, so PostHog needs a
+    project setting.** The PostHog payload carries no `$ip` (measured with `buildEventRequest`), so
+    PostHog uses the request's IP and stores it with each event. Its docs make "Discard client IP
+    data" the default only for EU organizations, and `analyticsConfig.js` defaults to the US host.
+    Settings › About (`aboutBody`, five languages) says the app "doesn't collect accounts or personal
+    data", so turning that toggle on is part of choosing PostHog. `analyticsConfig.js` and README §
+    Analytics step 2 say so. Not done in code: whether a `$ip` property overrides the request IP
+    can't be measured without an account, and PostHog's own docs point to the toggle instead.
   - ⛔ **The bug this cost, worth keeping because it is invisible when it happens:
     `navigator.sendBeacon` always sends with credentials mode `include`.** A non-simple content type
     (`application/json`) therefore triggers a *credentialed* preflight, which any endpoint answering

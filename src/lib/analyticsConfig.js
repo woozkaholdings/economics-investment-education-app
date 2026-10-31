@@ -63,6 +63,16 @@ export const analyticsConfig = {
 
   // provider: "posthog" — the PUBLIC Project API Key (starts `phc_`) and the
   // region host shown in PostHog's project settings.
+  //
+  // ⛔ BEFORE THE FIRST DEPLOY WITH POSTHOG, turn on Settings › Project › IP
+  // data capture configuration › "Discard client IP data". Settings › About
+  // tells every learner, in all five languages (`aboutBody`), that the app
+  // "doesn't collect accounts or personal data". The events below carry no
+  // `$ip`, so PostHog falls back to the request's IP address and stores it
+  // with each event unless that toggle is on. PostHog's docs (Controlling data
+  // collection, read 2026-10-31) default it to discarded only for EU
+  // organizations, and the host below is the US one. Plausible doesn't store
+  // IPs, so this step is PostHog's alone.
   posthog: {
     projectApiKey: "",
     host: "https://us.i.posthog.com",

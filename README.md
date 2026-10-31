@@ -289,7 +289,10 @@ device until someone changes it.
    banner and weighs 1–2 KB, but costs money or measures less. `DECISIONS.md` has the trade in
    full — it is a real choice.
 2. Put that provider's **public** site id or ingest key in `src/lib/analyticsConfig.js` and set
-   `provider` to `"plausible"`, `"posthog"` or `"custom"`.
+   `provider` to `"plausible"`, `"posthog"` or `"custom"`. **With PostHog, also turn on
+   Settings › Project › IP data capture configuration › "Discard client IP data"** before the
+   first deploy. Otherwise PostHog stores each visitor's IP address, and Settings › About says
+   the app doesn't collect personal data. `analytics-check` can't see this setting.
 3. **`npm run analytics-check`** — verify the key is accepted *before* you ship it.
 4. Commit and push to `main`. The workflow builds and publishes; § Deploying › To publish an
    update says how to verify that the live site picked it up.
@@ -316,7 +319,9 @@ seconds, a quiz score. `sanitizeProps` drops anything that is not a number, a bo
 id-shaped string, so prose and typed text cannot leave the device even if a future call site
 passes them. No cookie is set and no persistent id is stored; PostHog's required `distinct_id`
 is random per page load and held in memory, which means **"unique users" there reads as
-"sessions"**.
+"sessions"**. The app sends no IP address, but the request itself carries one. PostHog stores
+it with each event unless "Discard client IP data" is on (step 2), and it defaults to on only
+for EU organizations.
 
 **Verifying it without a provider account.** Set `provider: "custom"` with `endpoint` pointing
 at any local server that accepts a JSON POST, `npm run build`, and open the app: you should see

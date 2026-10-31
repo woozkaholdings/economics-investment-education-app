@@ -131,7 +131,9 @@ for the history. No open P1/P2 items.
 > 1. Create an account at one provider — **PostHog** (free at this volume; its funnels compute
 >    §4.3's ≥40% gate directly) or a **cookieless** one (Plausible/Umami: no consent banner, ~1-2 KB,
 >    but paid or less capable). The trade is written out in `DECISIONS.md`; it is a real choice, not
->    a formality.
+>    a formality. **With PostHog, turn on "Discard client IP data"** (Settings › Project) before the
+>    first deploy, or Settings › About's "doesn't collect personal data" stops being true (added
+>    2026-10-31; README § Analytics step 2).
 > 2. Paste that provider's **public** site id / ingest key into `src/lib/analyticsConfig.js` and set
 >    `provider`. ⛔ **Never paste a private or personal API key** — the file ships to every visitor
 >    and says so.
@@ -3357,6 +3359,28 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-10-31 (scheduled dev-agent; free pick, the app's own privacy claim checked against the analytics code) — O-2's PostHog route now carries the step that keeps Settings › About true. About tells every learner the app "doesn't collect accounts or personal data". A US PostHog project stores each event's IP address unless "Discard client IP data" is on, and nothing told the owner to turn it on. Comments and docs only. No learner-visible change today.
+
+Rules: W-6.2 ok (free pick; the previous entry left no residual). W-6.3: no `scripts/` lines added. W-13.2 n/a (no content claim narrowed). W-9.4 n/a (no string). `npm test` at `69c8ef2`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured, with a control.** `buildEventRequest` with a test PostHog config (`phc_test`) sends `lessonId`, `distinct_id`, `$current_url`, and no `$ip`. The control is `distinct_id`, which is present, so the probe reads the real properties. The host defaults to `us.i.posthog.com`. PostHog's docs ("Controlling data storage" and "Controlling data collection", read today): IPs are stored with events unless the project's "Discard client IP data" is on, and only EU organizations get that toggle on by default. Plausible's data policy: "We do not store raw User-Agent strings or IP addresses." So the gap is PostHog's alone. `aboutBody` makes the claim in all five locales. The premise held.
+
+#### What shipped (4 files)
+- `src/lib/analyticsConfig.js`: a ⛔ note on the `posthog` block, the file the owner edits to turn analytics on. It names the toggle, the About claim it protects, and why the code can't do it.
+- `README.md` § Analytics: step 2 names the toggle and says `analytics-check` can't see it. "What is and is not collected" now covers the request IP.
+- `DECISIONS.md`: a dated bullet under the 2026-09-05 analytics update. It says why there's no code fix: whether a `$ip` property overrides the request IP can't be measured without an account, and PostHog's docs point to the toggle.
+- O-2 step 1 above names the toggle.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0. Entry `index-BY0MkOJL.js`, the same hash as `69c8ef2`, so the bundle didn't change |
+
+**Step 5:** no learner-facing copy changed, so this adds no §10.1/§10.2/§10.3 or date exposure. I did check the one claim I had first written from memory, "Plausible doesn't store IPs", against Plausible's policy (quoted above). DECISIONS.md holds: config stays a committed `.js` file, `provider` stays `"none"`, and the provider choice stays the owner's. The note adds a cost to one option and decides nothing. Nothing in "Completed and pruned" is redone. **No conflict found.**
+
+**Seen, not fixed:** README step 1 and DECISIONS' 2026-09-05 bullet say PostHog "sets a persistent id and ships a heavy SDK". That describes PostHog's SDK, which this app doesn't load: it posts to `/i/v0/e/` with an in-memory id. The trade they describe may overstate PostHog's cost. That's the owner's comparison, so I didn't edit it. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-31 (scheduled dev-agent; the gap named in the previous three entries' Step 5, "§17 checks only `lessonTerms.js`") — The Reference screens' glossary chips are now checked. A renamed glossary key used to drop its chip from the Market Dashboard, Sector performance or the parent guide silently. It now fails the build. No learner-visible change.
 
