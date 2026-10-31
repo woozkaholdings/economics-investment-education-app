@@ -3358,6 +3358,30 @@ same journey.
 
 ## Run log
 
+### 2026-10-31 (scheduled dev-agent; free pick, the next undefined-terms surface after `6408ce4` and `4f250bb`) — The parent guide (Reference › Kids) now ends each age band with the lessons' "Terms in this section" chip row. 13-17 uses 8 glossary terms and defines none, including "deleveraging" and "bubble". 9-12 leaves "recessions" undefined. No new string.
+
+Rules: W-6.2 ok (free pick; the previous entry left no residual). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (the label is the existing `lessonTermsLabel`, and the definitions are existing glossary text). `npm test` at `fea128a`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured.** A Node scan of `kidsContent.js` (en) for all 45 glossary keys, word-bounded, plural-tolerant. Results: 5-8 uses 1 term, 9-12 uses 4, 13-17 uses 9. Then I applied the M0/M1/M2 rule from the earlier runs, which gives no chip to a term defined where it appears. 5-8's Inflation is defined in card 2's "why", so that band gets no row. 9-12 defines Credit (card 1, "pay it back with interest") and Inflation (the activity) in place, and Savings Account (card 5) too. Recession, in card 2's "news about recessions", is not defined. 13-17 defines none of its terms. Its Credit is "credit cards" and "credit score", not the glossary's sense, so that leaves 8. **Control:** Deleveraging matched in 13-17 card 3, where I had read it live. es/ko/zh/ja carry all 8 terms in the same cards (desapalancamiento, 디레버리징, 去杠杆, デレバレッジ…).
+
+#### What shipped (1 file)
+`src/screens/reference/ParentGuide.jsx`: a `BAND_TERMS` map and one `GlossaryTerms` row at the end of the band panel, after the activity and the tip. 13-17: Inflation, Recession, Interest Rate, Bubble, Deleveraging, Bond, Stock, Savings Account. 9-12: Recession. 5-8: none, so the row renders nothing. The row is `key={band}`. Without the key, `openTerm` would outlive a band switch, leaving a definition open under a row that no longer has its chip. That case is reasoned from `GlossaryTerms`' state and measured only with the key in place. The header comment is dated and records the measurement.
+
+#### Verification
+| check | result |
+|---|---|
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, `index-DN3AVKmn.js` → `index-B3NYhe76.js`. The server returned 200 for a real asset and 404 for a bogus `.js` |
+| Live, 375px | 13-17: 8 chips in 3 rows, each 44px tall, one shared `aria-controls`, panel `role="status"`. Bubble opens its entry, and Deleveraging swaps it in place. After a switch to 9-12, the row is Recession alone and the panel is empty. 5-8: 0 chips. `scrollWidth` 375 |
+| Languages | Switched with the real language select, checked against the en clause "Real-World Economics", which is gone in the other four. es/ko/zh/ja each show 8 chips in their glossary names |
+| a11y | From cleared storage: `A11ySweep.selftest()` PASS after one real Tab, `A11yStates.selftest()` PASS, `runAll()` at 375 found 0 findings in 12 of 12 states, including `reference-kids-9-12` and `-13-17`. `declarationMismatches` [] |
+
+Screenshot: the pane rendered only the top of the screen, so the chip row was verified through the DOM, not pixels.
+
+**Step 5:** no new copy, so this adds no §10.1/§10.2 or date exposure, and `check-blindspot` passed. §10.3 holds. The chips are definitions for the grown-up reading the card, the screen still addresses the parent, and nothing on it is child-directed. The Stock entry describes ownership, not a purchase. DECISIONS.md's curated in-place rule holds: hand-picked keys, definitions open in place, no navigation. §17 checks only `lessonTerms.js`, so a renamed key would drop a chip silently, as on the dashboard. This extends `6408ce4`/`4f250bb` and undoes nothing. **No conflict found.**
+
+**Seen, not fixed:** ko's chip says 예금 계좌 and ja's says 普通預金口座, while the 13-17 activity says 저축 계좌 and 貯蓄口座. Both pairs mean a savings account, so a reader can still connect them. This is the glossary's wording, not a defect in this change, so I didn't number it. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-30 (scheduled dev-agent; the previous entry's "Seen, not fixed", `Sectors.jsx`'s stale glossary comment) — Sector performance's "The economy right now" now ends with a chip row: Yield Curve, Recession, Inflation. Its lines said "inversion", "recessions" and "inflation rate" and defined none of them. The stale comment is fixed. No new string.
 
 Rules: W-6.2 ok (residual of `6408ce4`, widened from the comment to the same gap that run closed on the dashboard). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (no new string). `npm test` at `6408ce4`: exit 0 / 0 FAIL / 1 WARN (O-3's), per the previous entry.

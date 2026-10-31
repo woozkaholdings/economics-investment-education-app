@@ -8,14 +8,34 @@
 //
 // Concretely: the copy addresses the parent, there are no child accounts, and
 // no advertising may ever appear on or near this screen.
+//
+// ── GLOSSARY CHIPS (2026-10-31) ───────────────────────────────────────────
+// Each band ends in the lessons' term row (`GlossaryTerms`), as the Market
+// Dashboard and Sector performance have since 6408ce4 and 4f250bb. The chips
+// are for the grown-up reading the card, not the child. Measured that day
+// against kidsContent.js: 5-8 uses only inflation, and card 2's "why" defines
+// it. 9-12 defines credit (card 1) and inflation (the activity) where they
+// appear, and leaves "recessions" undefined. 13-17 names eight terms and
+// defines none: card 2's inflation, recession and rates, card 3's bubble,
+// deleveraging and bonds, and the activity's stock and savings account. Credit
+// in 13-17 is "credit cards" and "credit score", not the glossary's sense
+// (money borrowed and repaid with interest), so it gets no chip.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
 import { kidsContent } from "../../content/kidsContent.js";
+import GlossaryTerms from "../../components/GlossaryTerms.jsx";
 import { Note, Segmented, Stack, Text } from "../../components/ui.jsx";
 import { ink, line, space } from "../../theme.js";
 
 const AGE_BANDS = ["5-8", "9-12", "13-17"];
+
+// Band → the glossary keys its cards use without defining.
+const BAND_TERMS = {
+  "5-8": [],
+  "9-12": ["Recession"],
+  "13-17": ["Inflation", "Recession", "Interest Rate", "Bubble", "Deleveraging", "Bond", "Stock", "Savings Account"],
+};
 
 export default function ParentGuide({ t, lang }) {
   const [band, setBand] = useState(AGE_BANDS[0]);
@@ -66,6 +86,10 @@ export default function ParentGuide({ t, lang }) {
           <Note tone="ok" label={t.kidsActivity} icon="users">{content.activity[lang]}</Note>
           <Note tone="accent" label={t.kidsParentTip} icon="info">{content.parentTip[lang]}</Note>
         </Stack>
+
+        {/* Keyed by band so an open definition closes on a band switch rather
+            than staying up under a row that no longer has its chip. */}
+        <GlossaryTerms key={band} terms={BAND_TERMS[band]} t={t} lang={lang} />
       </div>
     </div>
   );
