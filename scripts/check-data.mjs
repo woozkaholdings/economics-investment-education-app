@@ -15,6 +15,7 @@ import { lessonContent } from "../src/content/lessonContent.js";
 import { quizData } from "../src/content/quizData.js";
 import { glossary } from "../src/content/glossary.js";
 import { TAIL, deliberatelyUnlinked, lessonTerms } from "../src/content/lessonTerms.js";
+import { marketSignalsTerms, parentGuideBandTerms, sectorSignalTerms } from "../src/content/screenTerms.js";
 import { kidsContent } from "../src/content/kidsContent.js";
 import * as marketsContent from "../src/content/markets.js";
 import * as moneyVisualsContent from "../src/content/moneyVisuals.js";
@@ -1816,6 +1817,57 @@ if (keyedGroupsChecked < 4) {
         "this row lessonTerms' TAIL entries are data no learner can reach.",
     );
   }
+}
+
+// 17c. src/content/screenTerms.js — the Reference screens' term rows (Market
+//      Dashboard, Sector performance, parent guide). §17's (a)-(c) for maps
+//      that live outside the lessons: every key is a glossary key, every
+//      group names a real band or signal, and the dashboard chips a term once.
+//      No (d): two of these chips are curated against a word that is not the
+//      key ("Rates ↑" → Interest Rate, "inversion" → Yield Curve), so a
+//      literal-presence test would fail on purpose-made choices.
+//
+//      Learner-visible failure it catches: a renamed or deleted glossary key
+//      silently removes that chip and its definition from the screen.
+//      Measured 2026-10-31: a parent-guide "Deleverage" passed with 0 FAIL.
+//
+//      And the maps must stay the screens' only source. A chip list typed
+//      inline into a <GlossaryTerms> again would be invisible to this check.
+{
+  const groups = [
+    ["marketSignalsTerms", marketSignalsTerms, null],
+    ["sectorSignalTerms", sectorSignalTerms, new Set(economicSignals.map((s) => s.key))],
+    ["parentGuideBandTerms", parentGuideBandTerms, new Set(Object.keys(kidsContent))],
+  ];
+  let chips = 0;
+  for (const [name, map, validGroups] of groups) {
+    for (const [group, terms] of Object.entries(map)) {
+      const path = `${name}["${group}"]`;
+      if (validGroups && !validGroups.has(group)) fail(`${path}: no such ${name === "sectorSignalTerms" ? "economicSignals key" : "kidsContent band"}`);
+      if (!Array.isArray(terms)) {
+        fail(`${path}: must be an array of glossary keys`);
+        continue;
+      }
+      for (const term of terms) {
+        chips++;
+        if (!glossary[term]) fail(`${path}: "${term}" is not a key in glossary.js — its chip renders nothing`);
+      }
+    }
+  }
+  const dash = Object.values(marketSignalsTerms).flat();
+  for (const term of new Set(dash)) {
+    if (dash.filter((x) => x === term).length > 1) fail(`marketSignalsTerms: "${term}" is chipped more than once on the dashboard`);
+  }
+  for (const band of Object.keys(kidsContent)) {
+    if (!(band in parentGuideBandTerms)) fail(`parentGuideBandTerms: no entry for kidsContent band "${band}" (use [] for none)`);
+  }
+
+  for (const file of ["MarketSignals.jsx", "Sectors.jsx", "ParentGuide.jsx"]) {
+    const src = readFileSync(new URL(`../src/screens/reference/${file}`, import.meta.url), "utf8");
+    if (!/from "\.\.\/\.\.\/content\/screenTerms\.js"/.test(src)) fail(`${file} must take its chips from screenTerms.js (§17c)`);
+    if (/<GlossaryTerms[^>]*terms=\{\s*\[/.test(src)) fail(`${file}: an inline terms={[...]} list bypasses §17c — put it in screenTerms.js`);
+  }
+  console.log(`  §17c: ${chips} chip keys across 3 Reference screens, all glossary keys`);
 }
 
 // 17b. §3.0.3 COVERAGE — the other direction from §17 (backlog item 57).

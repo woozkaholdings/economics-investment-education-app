@@ -22,7 +22,8 @@
 // every row sits inside the section it lists, right under the text that uses
 // the terms (the first one in the screen's opening, under the <h1>). A key missing from
 // `glossary.js` renders no chip, silently, so a renamed key must be updated
-// here as well as in `lessonTerms.js`.
+// in `screenTerms.js` as well as in `lessonTerms.js`; §17c fails the build
+// until it is.
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { Bar, CycleChart, YieldCurve } from "../../components/charts.jsx";
@@ -33,6 +34,7 @@ import {
   cycleChartDescription, moneyAggregates, moneySupplyCaption, phaseNames,
   rateEffects, ratePrinciples, scenario, trendLabel, yieldCurveDescriptions,
 } from "../../content/markets.js";
+import { marketSignalsTerms } from "../../content/screenTerms.js";
 import { graph, ink, line, radius, space, surface } from "../../theme.js";
 
 const CURVE_TYPES = ["normal", "flat", "inverted", "steep"];
@@ -56,7 +58,7 @@ export default function MarketSignals({ t, lang }) {
         {scenario[lang]}
       </Note>
       <div style={{ marginBottom: space["5"] }}>
-        <GlossaryTerms terms={["GDP", "Inflation"]} t={t} lang={lang} />
+        <GlossaryTerms terms={marketSignalsTerms.opening} t={t} lang={lang} />
       </div>
 
       {/* The direct push of a rate move on each asset class, all else equal (see markets.js) */}
@@ -127,7 +129,7 @@ export default function MarketSignals({ t, lang }) {
         ))}
       </div>
       <div style={{ marginBottom: space["5"] }}>
-        <GlossaryTerms terms={["Interest Rate", "Stock", "Bond", "Growth Stock"]} t={t} lang={lang} />
+        <GlossaryTerms terms={marketSignalsTerms.rateEffects} t={t} lang={lang} />
       </div>
 
       {/* Yield-curve shapes */}
@@ -164,7 +166,7 @@ export default function MarketSignals({ t, lang }) {
         ))}
       </div>
       <div style={{ marginBottom: space["5"] }}>
-        <GlossaryTerms terms={["Yield Curve"]} t={t} lang={lang} />
+        <GlossaryTerms terms={marketSignalsTerms.yieldCurve} t={t} lang={lang} />
       </div>
 
       {/* QE / QT, and the balance sheet that results from them.
@@ -195,7 +197,7 @@ export default function MarketSignals({ t, lang }) {
         <Note tone="bad" label={t.qtLabel} icon="chart">{t.qtNarrative}</Note>
       </Stack>
       <div style={{ marginBottom: space["5"] }}>
-        <GlossaryTerms terms={["QE", "QT"]} t={t} lang={lang} />
+        <GlossaryTerms terms={marketSignalsTerms.qeQt} t={t} lang={lang} />
       </div>
 
       <Bar
@@ -257,7 +259,7 @@ export default function MarketSignals({ t, lang }) {
           </li>
         ))}
       </ul>
-      <GlossaryTerms terms={["Recession"]} t={t} lang={lang} />
+      <GlossaryTerms terms={marketSignalsTerms.principles} t={t} lang={lang} />
 
       <Disclaimer text={t.disclaimer} />
     </div>

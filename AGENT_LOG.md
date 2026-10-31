@@ -3358,6 +3358,30 @@ same journey.
 
 ## Run log
 
+### 2026-10-31 (scheduled dev-agent; the gap named in the previous three entries' Step 5, "§17 checks only `lessonTerms.js`") — The Reference screens' glossary chips are now checked. A renamed glossary key used to drop its chip from the Market Dashboard, Sector performance or the parent guide silently. It now fails the build. No learner-visible change.
+
+Rules: W-6.2 ok (first residual pick after a free pick). W-6.3: `scripts/` 24,772 lines vs app 10,808, 2.29x (W-6.0: 2.3x). This adds 52 check lines, and the check names its learner-visible failure: a chip and its definition vanish from a screen. W-13.2 n/a. W-9.4 n/a (no string). `npm test` at `fc22872`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured, with a control.** I changed the parent guide's `"Deleveraging"` to `"Deleverage"`, which is not a glossary key, and ran `check-data.mjs`: exit 0, 0 FAIL. `GlossaryTerms` filters unknown keys out, so the 13-17 row would have lost that chip and nothing would have said so. I restored the file from a scratchpad copy, and `git diff` was empty. The premise held. The 22 keys were spread over 3 files: 5 inline arrays in `MarketSignals.jsx` and a const map in each of the other two. `check-data` cannot import JSX, so the keys had to move to a `.js` module first.
+
+#### What shipped (5 files)
+- `src/content/screenTerms.js` (new): `marketSignalsTerms` (5 sections), `sectorSignalTerms`, `parentGuideBandTerms`. The keys are byte-identical to what the screens held.
+- `MarketSignals.jsx`, `Sectors.jsx`, `ParentGuide.jsx` import the module. Their own maps are deleted. The dashboard header's "a renamed key must be updated here" now points at `screenTerms.js`.
+- `scripts/check-data.mjs` §17c: every key is a glossary key, every Sectors group is an `economicSignals` key, and every parent-guide group is a `kidsContent` band, with every band present. The dashboard chips a term once. The three screens must import `screenTerms.js` and may not pass an inline `terms={[...]}`. There is no (d) literal-presence test, because "Rates ↑" → Interest Rate and "inversion" → Yield Curve are curated choices that it would fail.
+
+#### Verification
+| check | result |
+|---|---|
+| §17c clean | `22 chip keys across 3 Reference screens` (10 + 3 + 9) |
+| Controls, each injected then restored from a scratchpad copy | bad key `Deleverage` → FAIL; duplicate dashboard `GDP` → FAIL; signal `cpiIdx` → FAIL; inline `terms={["Yield Curve"]}` in `MarketSignals.jsx` → FAIL. Restored → exit 0 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, entry `index-BY0MkOJL.js`. Served statically: asset 200, bogus `.js` 404 |
+| Live, 375px | Dashboard: 10 chips in 5 rows (GDP+Inflation / 4 / Yield Curve / QE+QT / Recession). Sectors: 3. Parent guide: 5-8 0, 9-12 1, 13-17 8, the same as the previous three entries. Deleveraging opens its definition. `scrollWidth` 375, no console errors |
+
+**Step 5:** no copy changed, so this adds no §10.1/§10.2/§10.3 or date exposure, and `check-blindspot` passed. DECISIONS.md holds: content stays in a `.js` module, and the "curated map" rule holds because the keys are hand-picked and nothing matches prose. This undoes nothing in "Completed and pruned". It only gives `6408ce4`/`4f250bb`/`fc22872` the guard that `lessonTerms.js` has had since item 28. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-10-31 (scheduled dev-agent; free pick, the next undefined-terms surface after `6408ce4` and `4f250bb`) — The parent guide (Reference › Kids) now ends each age band with the lessons' "Terms in this section" chip row. 13-17 uses 8 glossary terms and defines none, including "deleveraging" and "bubble". 9-12 leaves "recessions" undefined. No new string.
 
 Rules: W-6.2 ok (free pick; the previous entry left no residual). W-13.2 n/a (a feature, not a narrowed claim). W-9.4 n/a (the label is the existing `lessonTermsLabel`, and the definitions are existing glossary text). `npm test` at `fea128a`: exit 0 / 0 FAIL / 1 WARN (O-3's).

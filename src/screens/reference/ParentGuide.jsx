@@ -24,18 +24,12 @@
 
 import { useState } from "react";
 import { kidsContent } from "../../content/kidsContent.js";
+import { parentGuideBandTerms } from "../../content/screenTerms.js";
 import GlossaryTerms from "../../components/GlossaryTerms.jsx";
 import { Note, Segmented, Stack, Text } from "../../components/ui.jsx";
 import { ink, line, space } from "../../theme.js";
 
 const AGE_BANDS = ["5-8", "9-12", "13-17"];
-
-// Band → the glossary keys its cards use without defining.
-const BAND_TERMS = {
-  "5-8": [],
-  "9-12": ["Recession"],
-  "13-17": ["Inflation", "Recession", "Interest Rate", "Bubble", "Deleveraging", "Bond", "Stock", "Savings Account"],
-};
 
 export default function ParentGuide({ t, lang }) {
   const [band, setBand] = useState(AGE_BANDS[0]);
@@ -89,7 +83,7 @@ export default function ParentGuide({ t, lang }) {
 
         {/* Keyed by band so an open definition closes on a band switch rather
             than staying up under a row that no longer has its chip. */}
-        <GlossaryTerms key={band} terms={BAND_TERMS[band]} t={t} lang={lang} />
+        <GlossaryTerms key={band} terms={parentGuideBandTerms[band]} t={t} lang={lang} />
       </div>
     </div>
   );

@@ -25,6 +25,7 @@
 
 import { useState } from "react";
 import { economicSignals } from "../../content/economicSignals.js";
+import { sectorSignalTerms } from "../../content/screenTerms.js";
 import { BENCHMARK, sectors } from "../../content/sectors.js";
 import { formatEconomicReading, formatPercent, priceSourceName, useMarketData } from "../../lib/useMarketData.js";
 import GlossaryTerms from "../../components/GlossaryTerms.jsx";
@@ -37,12 +38,6 @@ const WINDOWS = [
   { key: "3m", label: "3M" },
   { key: "6m", label: "6M" },
 ];
-
-// Signal key → the glossary keys its `what` line uses without defining.
-const SIGNAL_TERMS = {
-  curveSpread: ["Yield Curve", "Recession"],
-  cpiIndex: ["Inflation"],
-};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // The §10.1 disclaimer is a property of THIS SCREEN, not of one of its states.
@@ -345,7 +340,7 @@ export default function Sectors({ t, lang }) {
             })}
           </ul>
           <GlossaryTerms
-            terms={economicSignals.filter((s) => data.economics[s.key]).flatMap((s) => SIGNAL_TERMS[s.key] ?? [])}
+            terms={economicSignals.filter((s) => data.economics[s.key]).flatMap((s) => sectorSignalTerms[s.key] ?? [])}
             t={t}
             lang={lang}
           />
