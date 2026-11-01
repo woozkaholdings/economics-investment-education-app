@@ -229,6 +229,62 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-14 — set by the weekly review 2026-11-01. Supersedes W-13's *active* clauses below. The standing rules are UNCHANGED and still binding: W-13.1's no-ranking rule, W-13.2(a)–(c), W-12.3's staged-count assert, W-11.1's entry format, W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week: 30 commits since `f80b967`: 26 dev-agent (26 runs), 4 market refreshes.** Run-log
+> entries match commits 26/26 (per day 2, 4, 4, 4, 4, 4, 3, 1). On 10-31 the 18:00 slot has no
+> commit and no entry, so it was a skipped run, not a mismatch. Build green. `npm test` exits 0 with
+> 0 FAIL and 1 WARN (O-3's disclosure). Grade **A**. W-13.2 worked: content narrowings fell from 22
+> of 27 runs to 3 of 26, and the runs went to learner-visible defects instead (copy that
+> contradicted the scheduler, a refused deep link with no notice, undefined terms on three Reference
+> screens, the privacy claim vs PostHog's IP default). The launch is still blocked only on O-2.
+>
+> ### W-14.0 — W-13's tests, measured. Four of five pass.
+> (i) §65 at HEAD: en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9, exactly the ceiling. ✅
+> (ii) Mean entry dated 10-26 → 11-01: **3,347 b** (n=24, cap 5,000), down from 5,363. ✅ But one
+> heading is **457 chars** (cap 400): the 10-31 analytics entry. ❌ (iii) English lesson text
+> **168,230** chars, +0.02%. ✅ (iv) No empty commit. ✅ (v) W-13.1 resolved (`c7f4164` + second read
+> `2142726`). ✅ Hedge words in the three English lesson files: 471 → 471, flat for the first week.
+>
+> ### W-14.1 — PRIORITY, next run: the W-5.3 archiving pass. Before any other pick.
+> `check-log-size` at `0bce6f5`: run log **243,037 b = 97.2%** of the 250,000 b warn budget, 15 live
+> days (oldest 10-18), about **2 runs** of headroom. Archive the oldest days per W-5.3, with its
+> usual byte-exact proofs. This is housekeeping, not a free pick, and it doesn't count toward
+> W-6.2's residual chain.
+>
+> ### W-14.2 — keep this week's shape: code vs copy, and live walks.
+> The best runs this week compared what a string *says* with what the code *does* (`0909c73`,
+> `5db9708`, `d54e3f3`, `616e877`) or walked a flow live at 375px (`d37ef6e`). Keep picking those
+> over sweeps. Two surfaces not yet walked that way: (a) a first session end to end in **es and ko**,
+> including Review and a deep link, and (b) every string that states a number about app behavior
+> (days, counts, minutes), checked against the constant it describes.
+>
+> ### W-14.3 — the dashboard's past-episode tallies: no new ones.
+> The Market Dashboard now pairs textbook arrows with "N of the last 5" tallies on four cards. Stocks
+> "ended 4 of the last 5 hiking cycles higher", home prices "each of the last 5", and gold "fell in
+> only 1". The QT note adds "yet stocks ended both QT rounds higher". Each is measured and true, and
+> "on paper vs what happened" is a good lesson. Read together, though, they start to say "assets
+> rise whatever the Fed does", which is closer to a holding rule than any single string.
+> `ratePrinciples[4]` is the model to follow: it gives the 1973-74 exception and the 23% drawdowns
+> along the way. **Rule:** no new tally of an asset ending higher or lower over a set of past
+> episodes, on any surface. Not a defect, and nothing to change in the ones that exist.
+>
+> ### W-14.4 — headings ≤ 400 chars, every entry.
+> The heading says what changed for the learner. Move the "why it matters" to the body.
+>
+> ### W-14.5 — owner items and deploy, asked in the review, not restated in runs.
+> **O-2** (7th week) is still the only critical-path item. **O-7** (cadence: 4 runs/day or 1 until
+> O-2 lands) is unanswered, and runs still must not change their own cadence. **O-5 / O-6** are
+> unchanged. Deploy: `check-deployed --identify` found live = **`fea128a`** (Fri 10-30 19:50),
+> byte-identical, 4 content commits behind. The live `market.json` is asOf 10-30, so Sectors goes
+> dark **Wed 11-04** without a push.
+>
+> ### W-14.6 — this block's test, for 2026-11-08.
+> (i) §65 at or below the ceiling. (ii) Mean entry dated 11-02 → 11-08 ≤ 5,000 b, and **no** heading
+> over 400 chars. (iii) Run log under the 250 KB warn budget at every commit after W-14.1's pass.
+> (iv) English lesson text grows ≤ 0.3% from **168,230**. (v) No empty commit. (vi) No new
+> past-episode tally (W-14.3). Run the instruments; don't retype these figures.
+
 > ## PRIORITY BLOCK W-13 — set by the weekly review 2026-10-25. Supersedes W-12's *active* clauses below. The standing rules are UNCHANGED and still binding: W-12.3's staged-count assert, W-11.1's entry format, W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week: 29 commits since `4744658`: 27 dev-agent (27 runs), 2 market refreshes.** Run-log
