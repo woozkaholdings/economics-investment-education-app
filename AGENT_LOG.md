@@ -1691,6 +1691,8 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
+178. **[Content/i18n — filed 2026-11-01 by the run that fixed the ko half] A glossary name the lessons don't use can't be found by search, and its chip names a word that isn't on screen.** `Glossary.jsx`'s search matches only the English key or the localized `s`. ko is fixed: `Savings Account` was 예금 계좌, which no lesson says, while the lessons say 저축 계좌. **Open, measured 2026-11-01:** (a) **ja** uses four words for a savings account across `*.ja.js`, `kidsContent`, `glossary` and `moneyVisuals`: 貯金口座 11, 貯蓄口座 8, bare 預金口座 7, 普通預金口座 4 (the glossary name). Searching for 貯金口座 or 貯蓄口座 finds nothing. The fix is to pick one word and edit the lessons, a multi-file ja edit that needs a hand read. Don't just rename `s`, because no single name matches more than 11 of 30 uses. (b) **zh** writes 通胀 43 times and the glossary's 通货膨胀 4 times. 通缩 appears 4 times and 通货紧缩 0 times. 通胀 is not a substring of 通货膨胀, so a search for the word a zh learner reads finds nothing. That one may be a search fix (an alias field), not a content fix. es misses are plurals ("acciones", "tasas de interés"), which a search for the singular still finds, so es is not affected. The instrument is `chipmatch.mjs` in the 2026-11-01 entry. Its control: en 111/111.
+
 177. **✅ DONE 2026-10-17 (scheduled dev-agent): the four 7-word runs are reworded in English, and the rebuilt instrument finds 0 (see that day's run-log entry). L31's 5-word "borrow from your future self" is left: it is a common personal-finance phrase.** Original text follows. **Four short phrases still shared with the "How the Economic Machine Works" transcript (§10.2, found 2026-10-16).** That run removed the six complete sentences the app had quoted (L29, L31, q004, q009). Its 7-word overlap instrument (`ngram.mjs` in that entry; a Wikipedia "Business cycle" control gives 1 run, a proper name) still finds four 7-word runs: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008's keyed option *"Don't have debt rise faster than income"*. L40 already words that rule *"Don't let debt rise faster than income"*, so the option is the cheapest fix, and it keeps option length unchanged for §65. Also L31's thinkAbout *"borrow from your future self"* (5 words). **Arguable:** these are short and close to common phrasing. Reword only with the instrument re-run, and do not turn this into a sweep of ordinary terms like "short-term debt cycle", which the lessons need.
 
 176. **✅ Closed 2026-10-02 (dev-agent).** `check-blindspot.mjs`'s zh timing pattern now allows up to four Han characters between the verb and `的好`, and accepts bare `买`/`卖`. Its `fires` list (all must match) covers `买入的好时机`, `买入股票的好时机` and `买股票的好时机`. Live instances were 0 and are still 0. Details are in the 2026-10-02 run-log entry.
@@ -3359,6 +3361,30 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-11-01 (scheduled dev-agent; the 10-31 parent-guide entry's "Seen, not fixed", ko 예금 계좌) — The Korean glossary now calls a savings account 저축 계좌, the word the app uses 23 times. Before, the chip on 7 lessons and the parent guide named 예금 계좌, which appears on none of them. A glossary search for 저축 계좌 or 저축 found nothing. Korean only.
+
+Rules: W-6.2 ok (residual of `fc22872`). W-13.2 n/a (a term rename, not a narrowed claim). W-9.4: one word swapped in four strings, read below. `npm test` at `9a239b0`: exit 0 / 0 FAIL / 1 WARN (O-3's).
+
+**Step 3.5: measured, with a control.** A Node scan (`chipmatch.mjs`, scratchpad) checked every lesson chip: does the chip's localized glossary name appear in that section's localized text? **Control: en 111/111**, which §17(d) enforces. ko missed 20. `Savings Account` missed 7 of 7 (L2, 3, 9, 13, 16, 25, 35), and each of those sections says 저축 계좌. Across `src/`, 저축 계좌 appeared 23 times (lessons 13, quiz 5, kids 3, visuals 2) and 예금 계좌 4 times (glossary 3, quiz q10 1). **Live, before the change (ko):** the search 저축 계좌 → "검색과 일치하는 용어가 없습니다" (no matching terms), and 저축 → the same. Control: 예금 계좌 → the entry. The premise held, and it was wider than filed. The 10-31 note saw one mismatched chip. The scan found seven, plus a search that couldn't find the word.
+
+#### What shipped (2 files, 4 strings, ko only)
+- `glossary.js` `Savings Account` ko `s` and `ex`: 예금 계좌 → 저축 계좌. The `f` keeps "예치 계좌", matching en's "A deposit account".
+- `glossary.js` `Interest Rate` ko `f`: "그래서 저축 계좌가 버는 이자는", matching en's "a savings account earns".
+- `quizText.ko.js` q10 `explain`: "주택담보대출, 저축 계좌, 신용카드까지".
+Each swap is 2 characters for 2, so §67's length fingerprints don't move. The translation ledger doesn't hash glossary or quiz text.
+
+#### Verification
+| check | result |
+|---|---|
+| Re-scan | ko misses 20 → 13. `Savings Account` 0. 예금 계좌 left in `src/`: 0 |
+| `npm test` after | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0. Entry `index-BY0MkOJL.js` → `index-DPjgO_-E.js`. Served statically: asset 200, bogus `.js` 404 |
+| Live, ko, 375px | Search: 저축 계좌 → the entry; 저축 → the entry; "Savings" → the entry; 예금 계좌 → no results (see Step 5). L2 (lesson 1 seeded done): chips 금리/주식/저축 계좌/보험료, and the paragraph above says 저축 계좌. Tapping the chip opens the new `ex`. `scrollWidth` 375. Screenshot taken: the pane was visible |
+
+**Step 5:** this changes one Korean noun, with no advice, quote or date, and `check-blindspot` passed. DECISIONS.md holds: content stays in `.js` modules, and no decision ever chose 예금 계좌 (grep of DECISIONS and both logs). Bookmarks are keyed by the English term, so saved bookmarks survive. The ko sort moves the row from ㅇ to ㅈ, which is the collator doing its job. **One real cost:** a learner who searches 예금 계좌 now finds nothing. That word appears nowhere else in the app, while the 23 uses teach 저축 계좌, and "Savings" still matches the English key. Nothing in "Completed and pruned" is undone. **No conflict found.**
+
+**Seen, not fixed:** ja and zh have the same failure, and neither is a one-string fix. Filed as **item 178** with the counts. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed. **Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-10-31 (scheduled dev-agent; free pick, the app's own privacy claim checked against the analytics code) — O-2's PostHog route now carries the step that keeps Settings › About true. About tells every learner the app "doesn't collect accounts or personal data". A US PostHog project stores each event's IP address unless "Discard client IP data" is on, and nothing told the owner to turn it on. Comments and docs only. No learner-visible change today.
 
