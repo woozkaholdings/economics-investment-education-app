@@ -10,7 +10,7 @@
 // repository root are reference material and are deliberately not imported.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { lessonsByTrack } from "./content/lessons.js";
 import { EVENTS, track } from "./lib/analytics.js";
 import { chunk, isChunkLoadError } from "./lib/chunkError.js";
@@ -93,17 +93,64 @@ const LANGUAGES = [
   { code: "ja", name: "日本語" },
 ];
 
+// The language picker. One component because it renders in two places — the
+// header and the first-run notice — and two copies of the option list would be
+// free to drift. Non-English stays marked beta until a native speaker reviews
+// it (LAUNCH_PLAN §3.5 / §10.4).
+const LanguageSelect = forwardRef(function LanguageSelect({ t, lang, setLang }, ref) {
+  return (
+    <select
+      ref={ref}
+      value={lang}
+      onChange={(e) => setLang(e.target.value)}
+      aria-label={t.langLabel}
+      style={{
+        background: surface.card, color: ink.body,
+        border: `1px solid ${line.strong}`, borderRadius: radius.sm,
+        padding: `4px ${space["2"]}px`, fontSize: "0.75rem", cursor: "pointer",
+        // 27px before this. The one control on every screen in the app,
+        // and the only way to reach four of the five languages.
+        minHeight: MIN_TAP,
+      }}
+    >
+      {LANGUAGES.map((l) => (
+        <option key={l.code} value={l.code}>
+          {l.name}{l.code !== "en" ? " (Beta)" : ""}
+        </option>
+      ))}
+    </select>
+  );
+});
+
 // ── First-run notice ──────────────────────────────────────────────────────
-// Required before first use by LAUNCH_PLAN §10.1. One focusable control, so
-// trapping focus means re-focusing it on Tab rather than tracking boundaries.
-function FirstRunNotice({ t, onDismiss }) {
+// Required before first use by LAUNCH_PLAN §10.1.
+//
+// It carries its own language picker, and that is the point of it, not a
+// convenience. Everything behind this dialog is `inert`, header included, so
+// until 2026-11-03 the header's picker — the only way to reach four of the
+// five languages — could not be reached until the dialog was dismissed. A
+// first visit always opens in English (nothing reads the browser's language),
+// so a Spanish or Korean reader's first act in the app was accepting a
+// disclaimer they could not read, in a language they did not choose. Measured
+// live at 375px from cleared storage: the dialog held one control, and the
+// header's <select> sat inside `inert`. Picking a language here re-renders this
+// dialog in it and persists, exactly as the header's picker does.
+//
+// Two focusable controls, so the Tab trap alternates between them; with two,
+// Tab and Shift+Tab land on the same "other" one. Focus still starts on the
+// button, so Enter accepts as it always has.
+function FirstRunNotice({ t, lang, setLang, onDismiss }) {
   const buttonRef = useRef(null);
+  const selectRef = useRef(null);
 
   useEffect(() => {
     buttonRef.current?.focus();
     const onKeyDown = (e) => {
       if (e.key === "Escape") onDismiss();
-      else if (e.key === "Tab") { e.preventDefault(); buttonRef.current?.focus(); }
+      else if (e.key === "Tab") {
+        e.preventDefault();
+        (document.activeElement === buttonRef.current ? selectRef : buttonRef).current?.focus();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -117,6 +164,11 @@ function FirstRunNotice({ t, onDismiss }) {
       style={{ position: "fixed", inset: 0, background: "rgba(28,26,23,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: space["5"] }}
     >
       <Card style={{ maxWidth: 380, width: "100%", boxShadow: shadow.overlay }}>
+        {/* Top-right, where the header puts it, so a reader who cannot read
+            the title still finds it where they will find it afterwards. */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: space["3"] }}>
+          <LanguageSelect ref={selectRef} t={t} lang={lang} setLang={setLang} />
+        </div>
         {/* h1, not h2. `aria-modal` above plus the `inert` on everything
             behind this dialog mean that while it is open, this dialog IS the
             document — so its title is that document's top-level heading. As an
@@ -502,7 +554,7 @@ export default function App() {
         {t.skipToNav}
       </button>
 
-      {showDisclaimer && <FirstRunNotice t={t} onDismiss={dismissDisclaimer} />}
+      {showDisclaimer && <FirstRunNotice t={t} lang={lang} setLang={setLang} onDismiss={dismissDisclaimer} />}
       {/* The announcer is mounted for the life of the app and empty until the
           coach mark is actually shown, so the region pre-exists its message.
           ONE condition drives both halves deliberately: two copies of it would
@@ -536,27 +588,8 @@ export default function App() {
           {/* Progress deliberately lives on the Learn screen only. Repeating it
               here squeezed the title into an ellipsis at 375px, and duplicating
               a number is exactly what §3.1 removed from the old Home/Learn
-              split. Non-English stays marked beta until a native speaker
-              reviews it (LAUNCH_PLAN §3.5 / §10.4). */}
-          <select
-            value={lang}
-            onChange={(e) => setLang(e.target.value)}
-            aria-label={t.langLabel}
-            style={{
-              background: surface.card, color: ink.body,
-              border: `1px solid ${line.strong}`, borderRadius: radius.sm,
-              padding: `4px ${space["2"]}px`, fontSize: "0.75rem", cursor: "pointer",
-              // 27px before this. The one control on every screen in the app,
-              // and the only way to reach four of the five languages.
-              minHeight: MIN_TAP,
-            }}
-          >
-            {LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code}>
-                {l.name}{l.code !== "en" ? " (Beta)" : ""}
-              </option>
-            ))}
-          </select>
+              split. */}
+          <LanguageSelect t={t} lang={lang} setLang={setLang} />
         </div>
       </header>
 

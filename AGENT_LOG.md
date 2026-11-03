@@ -3418,6 +3418,34 @@ same journey.
 
 ## Run log
 
+### 2026-11-03 (scheduled dev-agent; W-14.2(a)+(b), a live first-session walk) — The first-run disclaimer now carries the language picker. Before, the header's picker sat behind the dialog's `inert`, so an es/ko/zh/ja reader's first act was accepting an English-only disclaimer they could not read.
+
+Rules: W-6.2 ok (named weekly-review item, not a residual); W-9.4 ok (not a translated-string hand read); W-13.2(a) n/a (no claim narrowed); W-14.3 n/a.
+
+**W-14.2(b) first, and it found nothing.** Every en locale string that states a number about app behavior, checked against its constant: the review gaps "a day, then two, four, eight, sixteen" and "returns tomorrow" = `BOX_INTERVALS [1,2,4,8,16]` and `recordAnswer`'s wrong→box 1; "roughly two weeks, six weeks and three months" = `WJ_PERIODS [10,30,60]` trading days; "Eleven sectors" = 11 symbols in `sectors.js` and 11 in today's `market.json`; "{n} day streak" / "come back tomorrow" = `bumpStreak` (+1 per calendar day with a new completion); `≈{n} min` is already enforced by `check-data` §2. A Node digit-parity scan over all 183 locale keys × 4 languages (control: an injected 3-vs-4 pair fires) flagged 6, all numerals standing in for en's number words, none a different number.
+
+**Step 3.5 for (a), measured live, with a control.** Built HEAD out of tree, served `dist/` statically, 375px, storage cleared. The first screen is English (nothing reads `navigator.languages`; the pane's own list was `en-US, ko`). The dialog held one control; the header `<select>` sat inside `[inert]`, so the picker was unreachable until dismissal. Control: after dismissing, the header was not inert and the select was reachable, so the scan could see both states.
+
+#### What shipped (1 file)
+- `src/App.jsx`: the picker becomes one `LanguageSelect` component (same options, Beta labels, 44px tap target, tokens only), rendered in the header and at the top right of `FirstRunNotice`. The Tab trap alternates button ↔ select; focus still starts on the button. Everything behind the dialog stays `inert` (item 110 untouched).
+
+#### Verification
+| check | result |
+|---|---|
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0; entry `index-DPjgO_-E.js` → `index-_i67DJGL.js` (served bundle confirmed) |
+| Dialog, 375px | the select in the dialog is not inert. Picking es re-renders the dialog in Spanish, writes `ecycles_lang=es`, sets `<html lang=es>`, and the header follows; ko the same. `scrollWidth` 375; select 121×44 inside the card. Screenshot taken |
+| Focus trap | synthetic Tab/Shift+Tab: SELECT→BUTTON→SELECT→BUTTON→SELECT; from outside → BUTTON |
+| First session, ko and es | dismiss → lesson 1 (`#/lesson/29`) → check correct → `q001` box 1 due 11-04 → Review says "the day after you first answer it", strip 1 in the 1-day box → `#/lesson/33` shows the localized "not open yet" notice. No defect beyond the one fixed |
+| `npm test` | exit 0, 0 FAIL, 1 WARN (O-3's); `check-blindspot` PASS |
+
+**Step 5: adversarial self-check.** §10.1: the disclaimer text is unchanged and still has to be dismissed before first use. What changed is that four of five languages can now read it first. §10.2/10.3 and dates aren't touched. DECISIONS.md: language still persists only to `localStorage` via the same `setLang`. Beta labeling is unchanged. I deliberately did **not** auto-select from the browser language, since that would route first visits into unreviewed Beta content, which is O-3's territory. Item 110's `inert`/h1 work is intact, and the dialog still has an h1. A reviewer re-running the served build at 375px gets the same states. **No conflict found.** Commit safety (W-12.3): staged count asserted = 2.
+
+**Seen, not fixed:** whether a first visit should *open* in the browser's language (es/ko/zh/ja are Beta) is a product call for the review, not a run. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** a first-time visitor can now switch language from inside the welcome disclaimer. Before, they had to accept it in English first.
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-11-02 (scheduled dev-agent; W-14.1, the W-5.3 archiving pass) — run log days 2026-10-18 → 10-31 (54 entries, 239,365 b) moved verbatim to the archive. No source change.
 
 Rules: a standing chore, not a residual, so W-6.2 n/a; W-9.4 n/a; W-14.3 n/a (no content). W-5.3's **twenty-fifth** firing.
