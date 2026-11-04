@@ -5,6 +5,13 @@
 // Search matches the English key *and* the translated name, so a Korean reader
 // can find "수익률 곡선" without knowing it is filed under "Yield Curve".
 //
+// It also matches an entry's optional `a` (aliases): the short form a
+// language's lessons actually use when the glossary files the full name. zh
+// lessons write 通胀 43 times and the entry's name 通货膨胀 4 times, and 通胀
+// is not a substring of 通货膨胀, so until 2026-11-04 a zh reader searching the
+// word on their screen got "no matching terms". Aliases are search-only: the
+// row and the sort still use `s`, so nothing a reader sees moves.
+//
 // THE LIST IS SORTED FOR THE READER'S LANGUAGE, and that is the only ordering
 // this screen has ever had a reason to use. `glossary.js` is in AUTHORING
 // order — batches accreted over time (the original macro entries, the
@@ -101,7 +108,8 @@ export default function Glossary({ t, lang }) {
       .map(([term, translations]) => ({ term, entry: translations[lang] || translations.en }))
       .filter(({ term }) => !savedOnly || bookmarks.includes(term))
       .filter(({ term, entry }) =>
-        !q || term.toLowerCase().includes(q) || (entry.s || "").toLowerCase().includes(q)
+        !q || term.toLowerCase().includes(q) || (entry.s || "").toLowerCase().includes(q) ||
+        (entry.a || []).some((alias) => alias.toLowerCase().includes(q))
       )
       .sort((a, b) => collator.compare(a.entry.s || a.term, b.entry.s || b.term));
   }, [query, lang, savedOnly, bookmarks]);

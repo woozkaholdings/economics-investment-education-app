@@ -504,6 +504,16 @@ const estimateMinutes = (lesson, content) =>
         checkNonEmptyString(def.s, `${path}.${lang}.s`);
         checkNonEmptyString(def.f, `${path}.${lang}.f`);
         checkNonEmptyString(def.ex, `${path}.${lang}.ex`);
+        // Optional search aliases (Glossary.jsx). A bare string here would
+        // be skipped by the search's array test, so the zh reader typing 通胀
+        // would get "no matching terms" again with nothing failing.
+        if (def.a !== undefined) {
+          if (!Array.isArray(def.a) || def.a.length === 0) {
+            fail(`${path}.${lang}.a: expected a non-empty array of strings`);
+          } else {
+            def.a.forEach((alias, i) => checkNonEmptyString(alias, `${path}.${lang}.a[${i}]`));
+          }
+        }
       }
     }
   }

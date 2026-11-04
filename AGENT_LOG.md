@@ -1747,7 +1747,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-178. **[Content/i18n — filed 2026-11-01 by the run that fixed the ko half] A glossary name the lessons don't use can't be found by search, and its chip names a word that isn't on screen.** `Glossary.jsx`'s search matches only the English key or the localized `s`. ko is fixed: `Savings Account` was 예금 계좌, which no lesson says, while the lessons say 저축 계좌. **Open, measured 2026-11-01:** (a) **ja** uses four words for a savings account across `*.ja.js`, `kidsContent`, `glossary` and `moneyVisuals`: 貯金口座 11, 貯蓄口座 8, bare 預金口座 7, 普通預金口座 4 (the glossary name). Searching for 貯金口座 or 貯蓄口座 finds nothing. The fix is to pick one word and edit the lessons, a multi-file ja edit that needs a hand read. Don't just rename `s`, because no single name matches more than 11 of 30 uses. (b) **zh** writes 通胀 43 times and the glossary's 通货膨胀 4 times. 通缩 appears 4 times and 通货紧缩 0 times. 通胀 is not a substring of 通货膨胀, so a search for the word a zh learner reads finds nothing. That one may be a search fix (an alias field), not a content fix. es misses are plurals ("acciones", "tasas de interés"), which a search for the singular still finds, so es is not affected. The instrument is `chipmatch.mjs` in the 2026-11-01 entry. Its control: en 111/111.
+178. **[Content/i18n — filed 2026-11-01 by the run that fixed the ko half] A glossary name the lessons don't use can't be found by search, and its chip names a word that isn't on screen.** `Glossary.jsx`'s search matches only the English key or the localized `s`. ko is fixed: `Savings Account` was 예금 계좌, which no lesson says, while the lessons say 저축 계좌. **Open, measured 2026-11-01:** (a) **ja** uses four words for a savings account across `*.ja.js`, `kidsContent`, `glossary` and `moneyVisuals`: 貯金口座 11, 貯蓄口座 8, bare 預金口座 7, 普通預金口座 4 (the glossary name). Searching for 貯金口座 or 貯蓄口座 finds nothing. The fix is to pick one word and edit the lessons, a multi-file ja edit that needs a hand read. Don't just rename `s`, because no single name matches more than 11 of 30 uses. (b) **zh** writes 通胀 43 times and the glossary's 通货膨胀 4 times. 通缩 appears 4 times and 通货紧缩 0 times. 通胀 is not a substring of 通货膨胀, so a search for the word a zh learner reads finds nothing. That one may be a search fix (an alias field), not a content fix. es misses are plurals ("acciones", "tasas de interés"), which a search for the singular still finds, so es is not affected. The instrument is `chipmatch.mjs` in the 2026-11-01 entry. Its control: en 111/111. ✅ **(b) zh CLOSED 2026-11-04:** an optional `a` (search aliases) field; zh Inflation `a: ["通胀"]`, Deflation `a: ["通缩"]`, matched by `Glossary.jsx` search, shape-checked by `check-data` §4. **(a) ja stays open** and is not an alias job (see above).
 
 177. **✅ DONE 2026-10-17 (scheduled dev-agent): the four 7-word runs are reworded in English, and the rebuilt instrument finds 0 (see that day's run-log entry). L31's 5-word "borrow from your future self" is left: it is a common personal-finance phrase.** Original text follows. **Four short phrases still shared with the "How the Economic Machine Works" transcript (§10.2, found 2026-10-16).** That run removed the six complete sentences the app had quoted (L29, L31, q004, q009). Its 7-word overlap instrument (`ngram.mjs` in that entry; a Wikipedia "Business cycle" control gives 1 run, a proper name) still finds four 7-word runs: L32 *"spending and incomes grow faster than the…"*, L33 *"this is the long-term debt peak"*, L34 *"income needs to grow faster than debt"*, and q008's keyed option *"Don't have debt rise faster than income"*. L40 already words that rule *"Don't let debt rise faster than income"*, so the option is the cheapest fix, and it keeps option length unchanged for §65. Also L31's thinkAbout *"borrow from your future self"* (5 words). **Arguable:** these are short and close to common phrasing. Reword only with the instrument re-run, and do not turn this into a sweep of ordinary terms like "short-term debt cycle", which the lessons need.
 
@@ -3417,6 +3417,34 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-11-04 (scheduled dev-agent; item 178(b), zh glossary search) — In Chinese, a Glossary search for 通胀 now finds Inflation and 通缩 finds Deflation. Before, both returned "no matching terms". Those are the words the zh lessons use (43 and 4 times); the glossary files the full names 通货膨胀 and 通货紧缩, which don't contain them.
+
+Rules: W-6.2 ok (item 178 is the 11-01 residual; 11-02 and 11-03 weren't residual picks, so chain = 1); W-9.4 ok (a search fix, not a hand read of translated strings); W-13.2(a) n/a; W-14.3 n/a.
+
+**Step 3.5: measured, with controls.** A Node scan (`zhscan.mjs`, scratchpad) replicates `Glossary.jsx`'s filter. zh corpus (`*.zh.js` + `locales/zh.js`): 通胀 **43**, 通货膨胀 **4**, 通缩 **4**, 通货紧缩 **0**. These match item 178's figures. Search 通胀 → `[]`, 通缩 → `[]`. Controls: 通货膨胀 → Inflation, 收益率曲线 → Yield Curve. The premise held. The scan also lists 9 zh names with 0 corpus uses. Seven (GDP, CPI, M1, M2, VIX, IRA, Vesting) are still found by the English key or a substring the lessons use (GDP, 归属). Debt-to-GDP's "债务/GDP比率" vs 债务与GDP比率 still matches on GDP / GDP比率, so neither needs an alias.
+
+#### What shipped (3 files)
+- `glossary.js`: optional per-language `a` (search aliases), header comment. zh Inflation `a: ["通胀"]`, zh Deflation `a: ["通缩"]`. No displayed string changed.
+- `Glossary.jsx`: search also matches `entry.a`. Row, sort and detail still use `s`.
+- `check-data.mjs` §4: `a`, if present, must be a non-empty array of non-empty strings. Learner-visible failure it catches: a bare-string alias is skipped by the array test, so the reader's 通胀 search goes back to "no matching terms" with nothing failing.
+
+#### Verification
+| check | result |
+|---|---|
+| Re-scan | 通胀 → Inflation, 通缩 → Deflation; full names and 收益率曲线 unchanged |
+| §4 control | injected `a: "通胀"` → `FAIL: glossary["Inflation"].zh.a`, exit 1; restored from a scratchpad copy (`cmp` identical) → exit 0 |
+| `npm test` | exit 0, 0 FAIL, 1 WARN (O-3's) |
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0; entry `index-BQee98jc.js`; the alias is in `markets-Dg1L41yI.js`. Served statically: `/` 200, bogus `.js` 404 |
+| Live, zh | Typed in the Glossary search box: 通胀 → [通货膨胀]; 通缩 → [通货紧缩]; 通货膨胀 → [通货膨胀]; "inflation" → [通货膨胀]; 不存在 → the "没有与你的搜索匹配的术语" empty state (negative control); empty query → 45 rows. Screenshot taken |
+
+**Step 5: adversarial self-check.** No prose, advice, quote, date or market figure changed: two aliases are added, and each is a word the zh lessons already print. `check-blindspot` passed. DECISIONS.md holds: content stays in `.js` modules and state in `localStorage`. The translation ledger doesn't cover the glossary, and §67's fingerprints didn't move (`npm test` green). Bookmarks and chips are keyed by the English term, so they're untouched. Nothing in "Completed and pruned" is undone. Item 178(a) (ja) is **deliberately not** done with aliases, since the item says the fix there is one ja word across the lessons. A reviewer re-running the scan, `npm test` and the served search gets the same results. **No conflict found.**
+
+**Seen, not fixed:** nothing new. The uncommitted `public/data/market.json` (asOf 11-03), `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** a Chinese-language learner who searches the Glossary for 通胀 or 通缩, the words the lessons use, now finds inflation and deflation instead of "no matching terms".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-11-03 (scheduled dev-agent; W-14.2(a)+(b), a live first-session walk) — The first-run disclaimer now carries the language picker. Before, the header's picker sat behind the dialog's `inert`, so an es/ko/zh/ja reader's first act was accepting an English-only disclaimer they could not read.
 
