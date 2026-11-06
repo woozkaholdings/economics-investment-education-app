@@ -572,8 +572,14 @@
      *   2. THE VISUALLY-HIDDEN IDIOM (`clip-path` not `none`, or `clip` not `auto`). Learn's
      *      sr-only "Current lesson" span reports scrollWidth 90 against a 1px box at every
      *      scale, by design — and it is the FIRST thing an unexcluded probe finds.
-     *   3. DELIBERATE TRUNCATION (`white-space: nowrap` + `text-overflow: ellipsis`). The
-     *      header's brand text is 224px of content in a 42px box at 200%, ellipsised on purpose.
+     *   3. DELIBERATE TRUNCATION (`white-space: nowrap` + `text-overflow: ellipsis`). Its
+     *      remaining user is the review runner's lesson-source caption (Practice.jsx). Until
+     *      2026-11-06 the example here was the header's brand text, "224px of content in a 42px
+     *      box at 200%, ellipsised on purpose". That one-line ellipsis also cut the app's name at
+     *      320px from the 115% text size up, so the header now wraps the name and moves the
+     *      language picker to its own row when needed (App.jsx). Measured that day at 160px, i.e.
+     *      200% zoom on a 320px phone: 1-2 lines in all five languages, nothing cut, so the brand
+     *      no longer needs this exclusion and is scanned like any other text.
      *   4. SCROLLABLE SELF OR ANCESTOR — see `inScrollableBox` above.
      *
      * ⚠️ AND THE DEEPEST-ELEMENT RULE, which is about counting rather than filtering. Overflow

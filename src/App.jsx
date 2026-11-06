@@ -572,19 +572,50 @@ export default function App() {
         style={{
           position: "sticky", top: 0, zIndex: 100,
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: space["3"],
+          flexWrap: "wrap",
           padding: `${space["3"]}px ${space["4"]}px`,
           background: surface.canvas,
           borderBottom: `1px solid ${line.hairline}`,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: space["2"], minWidth: 0 }}>
+        {/* THE APP'S NAME WRAPS; IT IS NOT CUT. From the 2026-08-04 rebuild
+            until 2026-11-06 it was one line (`nowrap` + ellipsis), which undid
+            what the pre-rebuild app had been checked for on purpose at 320px
+            and the 130% text size: "the header title wraps to two lines
+            gracefully rather than clipping". Measured on the built app
+            2026-11-06 at 320px: the name was cut in en and es from 115% up and
+            in ja at 130% ("Economic Cycles" showed 102 of its 147px); at 375px
+            es was cut at 130%. The 130% step exists for readers who need
+            bigger text, and they were the ones losing the name.
+            Three parts, each measured:
+              - The name takes the space the picker leaves (`flex: 1 1 0%`) and
+                wraps inside it, to at most two lines.
+              - `minWidth: min-content` + the header's `flexWrap`: when the
+                name's LONGEST WORD cannot fit beside the picker, the picker
+                drops to its own row instead of the word being broken. That is
+                es at 320px/130%, where "Económicos" needs 105.5px and the box
+                beside the picker is 102px. `overflowWrap: anywhere` would have
+                broken it mid-word, because `anywhere` (unlike `break-word`)
+                shrinks min-content and so would never trigger the wrap.
+              - The two-line clamp is the backstop for 200% browser zoom, which
+                scripts/a11y-sweep.js measures (its exclusion 3). */}
+        <div style={{ display: "flex", alignItems: "center", gap: space["2"], flex: "1 1 0%", minWidth: "min-content" }}>
           <span style={{ color: ink.accent, display: "flex" }}><Icon name="path" size="1.15rem" /></span>
-          <Text as="span" variant="small" color={ink.strong} style={{ fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <Text
+            as="span"
+            variant="small"
+            color={ink.strong}
+            style={{
+              fontWeight: 700,
+              display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: 2,
+              overflow: "hidden", overflowWrap: "break-word",
+            }}
+          >
             {t.appTitle}
           </Text>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: space["3"], flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: space["3"], flexShrink: 0, marginLeft: "auto" }}>
           {/* Progress deliberately lives on the Learn screen only. Repeating it
               here squeezed the title into an ellipsis at 375px, and duplicating
               a number is exactly what §3.1 removed from the old Home/Learn

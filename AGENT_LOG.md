@@ -3418,6 +3418,36 @@ same journey.
 
 ## Run log
 
+### 2026-11-06 (scheduled dev-agent; W-14.2, a live zh/ja walk) — The app's name in the header now wraps instead of being cut off. At 320px it lost its end in en and es from the 115% text size up, and in ja at 130%; at 375px, es at 130%. When "Económicos" can't fit beside the language picker, the picker moves to its own row.
+
+Rules: W-6.2 ok (a new finding, not a residual: chain 0); W-9.4 ok (layout, no translated string read or changed); W-13.2(a) n/a; W-14.3 n/a.
+
+**First, a negative, recorded so no run repeats it.** I scanned every “title” cross-reference in lesson prose (`xref.mjs`, scratchpad) in all five languages: 59 per language resolve to a real lesson title, and in English each one says something true about its target (hand-checked: the tractor farmer, the mortgage family, the 6% example, "master dial", the 2% target). The instrument failed twice before it worked: zh returned 0 (《》 and full-width colons), then an ASCII `"` in the pattern collided with JSON delimiters. **This is already guarded:** `check-data` §16/§16b/§58/§75. §75 deliberately leaves cross-track references out of scope. Nothing to change.
+
+**Step 3.5: the walk, measured, with controls.** Built HEAD out of tree (`index-Y_0DEzXi.js`, same as 11-05), served `dist/` statically, cleared storage. zh then ja at 375px: dialog → lesson 1 → check → complete → Learn, Review, Reference and its five screens. I scanned for overflow and for Latin words in text and `aria-label`s. Control: an injected "Probe Leak" + `aria-label` fired, and removing it cleared. Result: clean, apart from source names (Tiingo, Baa, a "Vesting" gloss). **At 320px/130% the header brand was cut**: "経済サイクル" 104 > 102px. A grid of 3 widths × 4 sizes × 5 languages showed en/es cut at 320px from 115% up, ja at 320px/130%, and es at 375px/130%. **History:** the archive's August a11y run checked 320px/130% on purpose ("the header title wraps to two lines gracefully rather than clipping"). The 08-04 rebuild's `nowrap` + ellipsis undid that. `a11y-sweep.js`'s exclusion 3 skipped the brand as "ellipsised on purpose", which is why nothing caught it.
+
+#### What shipped (2 files)
+- `src/App.jsx` header: the name takes the space the picker leaves (`flex: 1 1 0%`), wraps to at most 2 lines (clamp), and breaks with `break-word`. `minWidth: min-content` + `flexWrap` drop the picker to its own row only when the longest word can't fit (es 320px/130%: "Económicos" 105.5px vs a 102px box). `anywhere` was tried first. It broke the word into 3 lines because it shrinks min-content.
+- `scripts/a11y-sweep.js`: exclusion 3's comment no longer cites the brand.
+
+#### Verification
+| check | result |
+|---|---|
+| Build | `build-out-of-tree.sh --no-copy-back` exit 0, entry `index-BObG51Bk.js` (served bundle confirmed) |
+| Grid after, 320px | 0 of 20 cut. es 130% → 1 line, picker on row 2, header 69 → 109px. en/ja 130% → 2 lines. Picker 16px from the right edge in every cell |
+| 375px | 0 of 15 cut. Only es 130% wraps (2 lines) |
+| 160px (≈200% zoom on 320px, emulated) | 0 of 5 cut, header `scrollWidth` 160 |
+| Regression, es 320px/130% | Learn, lessons 29/30, Review, Reference: no overflow, sticky header at top 0. First-run dialog: picker reachable, header inert. Screenshot taken |
+| `npm test` | exit 0, 0 FAIL, 1 WARN (O-3's); `check-blindspot` PASS |
+
+**Step 5: adversarial self-check.** Layout only: no copy, figure, date, advice or disclaimer changed, and the disclaimer still gates first use. DECISIONS.md says nothing about the header. "Progress lives on Learn only" (the reason for the old 375px ellipsis) is untouched. Real costs, stated: at 320px/130% the header is 12px taller (en/ja) or 40px taller (es), and es at 320px/100% now shows 2 lines where it used to show 1 line that was a subpixel short. Unmeasured: Safari. The pane is Chromium; `-webkit-line-clamp` and `min-width: min-content` are both Safari-supported, but no run has measured them there. A reviewer re-running the grid on the served build gets the same table. **No conflict found.**
+
+**Seen, not fixed:** nothing new. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** at large text sizes on small phones, the header now shows the app's whole name instead of "Economic Cy…".
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
+
 ### 2026-11-05 (scheduled dev-agent; item 178(a), ja "savings account") — In Japanese, "savings account" is now one word, 貯金口座, everywhere. Before, it had four, and lesson 1 called the *checking* account 普通預金. Lesson 2 and the glossary chip used 普通預金口座 for *savings*. A glossary search for the word most lessons print found nothing.
 
 Rules: W-6.2 ok (178(a) is the 11-04 run's open half, so chain = 2, the limit. The next run takes no residual of this one); W-9.4 ok (neither of the previous two runs was a translated-string hand read; the next run may not be one); W-13.2(a) n/a (no claim narrowed); W-14.3 n/a.
