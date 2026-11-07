@@ -1562,6 +1562,31 @@ const sh = (x, y) => `${x},${+(y + trendOffset(x)).toFixed(2)}`;
 const PHASE_POINTS = [{ x: 37, y: 32 }, { x: 75, y: 15 }, { x: 187, y: 68 }, { x: 225, y: 82 }]
   .map((p) => ({ ...p, y: p.y + trendOffset(p.x) }));
 
+// THE PHASE NAMES ARE SIZED FOR A PHONE, and placed off the curve. Until
+// 2026-11-07 they were `fontSize="8"` in a 300x100 viewBox drawn at a fixed
+// 88px height, so the scale is min(width/300, 0.88). That put them at 6.8px
+// on a 320px phone and no more than 7.0px at ANY width, against the app's
+// smallest HTML text, `caption`, at 12px. Measured live, all five languages.
+// The trend's name was the same size, and "Contracción" sat under the curve
+// as it fell (the path crossed its box).
+//
+// 11 units = 9.3px at 320px and 9.7px from about 375px up. 12 was tried
+// first: with "Contraction" above its dot it collides with "Trough" (es
+// "Contracción"/"Valle" overlapped from 10 units up). So each name sits on the
+// side of its dot that the curve leaves empty: Peak above, Trough below,
+// Contraction below-left (the curve falls through its upper-left), and
+// Expansion above, nudged left so the rise toward the peak clears its end.
+// Those placements were scored live at 320px in en/es/ko/zh/ja: no name leaves
+// the viewBox, none overlaps another, and the cycle path crosses none.
+// `trendLabel` is no longer drawn here; see the key under the chart.
+const PHASE_LABEL_SIZE = 11;
+const PHASE_LABEL_AT = [
+  { dx: -4, dy: -8, anchor: "middle" }, // Expansion
+  { dx: 0, dy: -8, anchor: "middle" },  // Peak
+  { dx: -6, dy: 13, anchor: "end" },    // Contraction
+  { dx: 0, dy: 15, anchor: "middle" },  // Trough
+];
+
 // The faint ghost curve (the idealized cycle) and the drawn cycle path.
 const GHOST_PATH = `M${sh(0, 50)} Q${sh(37, 50)} ${sh(75, 15)} Q${sh(112, 50)} ${sh(150, 50)} Q${sh(187, 50)} ${sh(225, 85)} Q${sh(262, 50)} ${sh(300, 50)}`;
 const CYCLE_PATH = `M${sh(0, 50)} Q${sh(37, 45)} ${sh(75, 20)} T${sh(150, 50)} Q${sh(187, 55)} ${sh(225, 80)} T${sh(300, 50)}`;
@@ -1572,24 +1597,36 @@ export function CycleChart({ phaseNames, trendLabel, description }) {
       <svg viewBox="0 0 300 100" style={{ width: "100%", height: 88 }} role="img" aria-label={description}>
         {/*
           The long-run trend the cycle oscillates around. `graph.neutral`, not
-          `line.strong`: `trendLabel` is drawn directly beneath it and names
-          it, so a caption refers to this line and the reader has to be able to
+          `line.strong`: `trendLabel` names it (in the key below the chart), so
+          a caption refers to this line and the reader has to be able to
           find the thing the caption is about. 1.4.11 applies — `line.strong`
           was 1.71:1 light / 1.62:1 dark on `surface.card`, `graph.neutral` is
           5.24:1 / 4.47:1. Kept lighter than the cycle path itself (`graph.blue`)
           so the oscillation still reads as the subject and the trend as datum.
         */}
         <line x1="0" y1={TREND_Y0} x2="300" y2={TREND_Y1} stroke={graph.neutral} strokeDasharray="4" />
-        <text x="150" y="98" textAnchor="middle" fill={ink.muted} fontSize="8">{trendLabel}</text>
         <path d={GHOST_PATH} fill="none" stroke={graph.blue} strokeWidth="2" opacity="0.25" />
         <path d={CYCLE_PATH} fill="none" stroke={graph.blue} strokeWidth="2.5" strokeLinecap="round" />
         {PHASE_POINTS.map((p, i) => (
           <g key={phaseNames[i]}>
             <circle cx={p.x} cy={p.y} r="3.5" fill={PHASE_DOT[i]} />
-            <text x={p.x} y={p.y - 9} textAnchor="middle" fill={PHASE_INK[i]} fontSize="8" fontWeight="700">{phaseNames[i]}</text>
+            <text x={p.x + PHASE_LABEL_AT[i].dx} y={p.y + PHASE_LABEL_AT[i].dy} textAnchor={PHASE_LABEL_AT[i].anchor} fill={PHASE_INK[i]} fontSize={PHASE_LABEL_SIZE} fontWeight="700">{phaseNames[i]}</text>
           </g>
         ))}
       </svg>
+      {/* The trend's name is HTML, for `NestedCycles`' reason: SVG does not
+          wrap, and es "Tendencia de productividad a largo plazo" is 41
+          characters. Placed inside the viewBox at a readable size it crossed
+          the curve wherever it went (measured: top right, 24-41 path points
+          inside its box). Here it is `caption`-size, follows the text-size
+          setting and wraps. The miniature is the trend line itself: the same
+          dash, in the same token. */}
+      <div style={{ display: "flex", alignItems: "center", gap: space["2"], marginTop: space["2"] }}>
+        <svg aria-hidden="true" focusable="false" width="20" height="4" style={{ flexShrink: 0 }}>
+          <line x1="0" y1="2" x2="20" y2="2" stroke={graph.neutral} strokeDasharray="4" />
+        </svg>
+        <Text as="span" variant="caption" color={ink.muted}>{trendLabel}</Text>
+      </div>
     </figure>
   );
 }
