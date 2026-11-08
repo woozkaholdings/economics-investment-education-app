@@ -12,7 +12,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useRef, useState } from "react";
-import { graph, ink, line, radius, space, surface } from "../theme.js";
+import { FONT_SCALE_STEPS, graph, ink, line, radius, space, surface } from "../theme.js";
 import { Text } from "./ui.jsx";
 
 // ── Bar ───────────────────────────────────────────────────────────────────
@@ -152,8 +152,48 @@ function prefersReducedMotion() {
 // the reader moves between shapes, which is the case this exists for.
 //
 // `maxHeight` defaults to the four-up grid's 64px so that call site is
-// untouched by this prop existing.
-export function YieldCurve({ type, label, description, animated = false, maxHeight = 64 }) {
+// untouched by this prop existing. It caps the PLOT (viewBox y 0-75, axis at
+// 70), not the whole figure: the tenor strip below the axis adds its own
+// height, so a capped figure keeps exactly the scale it had before the strip.
+//
+// THE TENOR LABELS (2Y/10Y/30Y), changed 2026-11-08 (backlog item 179(a)).
+// They were `fontSize="7"` at x=15/60/112, ABOVE the axis at y=68. Measured
+// live at 320px on the served build: the dashboard's four-up grid draws the
+// viewBox at 0.814 px/unit, so they rendered at **5.7px** (≤ 6.0px at any
+// width, the 64px height cap binds), against `caption`'s 12px. And on both
+// call sites the Steep curve, which starts at (10,70), ran through "2Y"
+// (15 sampled path points inside its box). Now:
+//   - they sit BELOW the axis, so no shape can cross them at any size;
+//   - their size is per call site (`tickSize`, viewBox units at 100% text),
+//     because the same 7 units were 5.7px in the grid but 13.1px in lesson 36
+//     (`maxHeight={190}`, 1.87 px/unit). Grid: 12 units → 9.8px at 320px,
+//     the size `CycleChart`'s phase names got the day before;
+//   - they follow the app's text-size setting: `rem` in an SVG `font-size`
+//     resolves against the root, which `useAppState` scales, and the result is
+//     read in user units. `min()` caps it at the setting's own ceiling
+//     (`FONT_SCALE_STEPS`' 130%), so browser zoom past that cannot push a
+//     label out of the strip, which is sized for exactly that ceiling;
+//   - 2Y/30Y anchor to the axis ends and 10Y to its middle, so a larger size
+//     grows inward and never leaves the viewBox.
+const CURVE_PLOT_H = 75;
+const CURVE_TICK_MAX_SCALE = Math.max(...FONT_SCALE_STEPS.map((s) => s.value));
+const CURVE_TICKS = [
+  { x: 10, anchor: "start", text: "2Y" },
+  { x: 70, anchor: "middle", text: "10Y" },
+  { x: 130, anchor: "end", text: "30Y" },
+];
+
+export function YieldCurve({ type, label, description, animated = false, maxHeight = 64, tickSize = 12 }) {
+  const tickMax = +(tickSize * CURVE_TICK_MAX_SCALE).toFixed(2);   // 15.6, not 15.600000000000001, in the style string
+  // Sized on the font's whole em box, not its ink: measured 2026-11-08 the
+  // app's stack puts the box 0.972em above the baseline and 0.205em below it.
+  // A cap-height fit (0.72em) left the largest label's box touching the
+  // Steep curve's start on the axis and spilling 0.8 units under the strip.
+  // So: the box top clears the axis by 1 unit at the 130% ceiling, and the
+  // strip ends 0.25em under the baseline. At 100% the ink then sits ~8 units
+  // under the axis in the grid (6.5px at 320px).
+  const tickBaseline = +(71 + tickMax).toFixed(1);
+  const viewH = Math.ceil(tickBaseline + tickMax * 0.25);
   // The rendered heights, which are not `CURVE_YS[type]` while a move is in
   // flight. `ysRef` tracks the same value so an interruption (a second tap
   // before the first move lands) departs from where the curve visibly IS
@@ -196,12 +236,12 @@ export function YieldCurve({ type, label, description, animated = false, maxHeig
 
   return (
     <figure style={{ background: surface.card, border: `1px solid ${line.hairline}`, borderRadius: radius.lg, padding: space["3"], textAlign: "center", margin: 0 }}>
-      <svg viewBox="0 0 140 75" style={{ width: "100%", maxHeight }} role="img" aria-label={description || label}>
+      <svg viewBox={`0 0 140 ${viewH}`} style={{ width: "100%", maxHeight: (maxHeight * viewH) / CURVE_PLOT_H }} role="img" aria-label={description || label}>
         <line x1="10" y1="70" x2="130" y2="70" stroke={line.hairline} strokeWidth="1" />
         <line x1="10" y1="5" x2="10" y2="70" stroke={line.hairline} strokeWidth="1" />
-        <text x="15" y="68" fill={ink.muted} fontSize="7">2Y</text>
-        <text x="60" y="68" fill={ink.muted} fontSize="7">10Y</text>
-        <text x="112" y="68" fill={ink.muted} fontSize="7">30Y</text>
+        {CURVE_TICKS.map((tick) => (
+          <text key={tick.text} x={tick.x} y={tickBaseline} textAnchor={tick.anchor} fill={ink.muted} style={{ fontSize: `min(${tickSize / 16}rem, ${tickMax}px)` }}>{tick.text}</text>
+        ))}
         {/* The stroke color belongs to the DESTINATION shape from the first
             frame, not to the shape being left: the color and the label change
             together on tap, and only the geometry travels. Animating the color

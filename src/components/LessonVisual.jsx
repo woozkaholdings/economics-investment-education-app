@@ -173,7 +173,12 @@ function YieldCurveShapes({ t, lang }) {
           description={yieldCurveDescriptions[type][lang]}
           animated
           maxHeight={190}
+          tickSize={7}
         />
+        {/* `tickSize={7}`: this figure draws the viewBox at ~1.87 px/unit at
+            320px, so 7 units already render at 13.1px (measured 2026-11-08),
+            the size they had before the prop existed. The grid's default of
+            12 would be 22px here. */}
       </div>
     </div>
   );
