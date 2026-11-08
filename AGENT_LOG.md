@@ -229,6 +229,64 @@ for the history. No open P1/P2 items.
 > mass for a process-only gain), or leave it manual and accept that each pass re-derives its own
 > proofs (which is what has kept it correct thirteen times). ⛔ **Not decided in this run.**
 
+> ## PRIORITY BLOCK W-15 — set by the weekly review 2026-11-08. Supersedes W-14's *active* clauses below. The standing rules are UNCHANGED and still binding, and two W-14 rules join them: W-14.3's no-new-tally rule and W-14.4's 400-char heading cap. The rest: W-13.1's no-ranking rule, W-13.2(a)–(c), W-12.3's staged-count assert, W-11.1's entry format, W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
+>
+> **The week: 11 commits since `273e3f9`: 7 dev-agent (7 runs), 4 market refreshes.** Run-log
+> entries match commits 7/7 (one per day, 11-02 → 11-08). No commit was empty. Build green. `npm test`
+> exits 0 with 0 FAIL and **18 WARN**: O-3's disclosure, plus 17 `CLAIMS.md` rows past their 11-07
+> check date (item 180). Grade **A**. Every run was learner-visible and followed W-14.2. The best was
+> `c0492e8`: the first-run disclaimer was unreadable to an es/ko/zh/ja reader because the language
+> picker sat behind `inert`. No English prose changed and nothing reads as advice. The launch is still
+> blocked only on O-2.
+>
+> ### W-15.0 — W-14's tests, measured. All six pass.
+> (i) §65 at HEAD: en 28.3 / es 26.1 / ko 28.3 / ja 26.1 / zh 23.9, exactly the ceiling. ✅ (ii) Mean
+> entry dated 11-02 → 11-08: **4,318 b** (n=7, cap 5,000), up from 3,347. Largest heading **369**
+> chars (cap 400). ✅ (iii) Run log **33,902 b** after W-14.1's pass (`b145602`), far under the warn
+> budget. ✅ (iv) English lesson text **168,230**, +0.00%. ✅ (v) No empty commit. ✅ (vi) No new
+> tally; no English content file changed. ✅
+>
+> ### W-15.1 — PRIORITY, next run: item 180, the §9.3 claims audit. Before any other pick.
+> It fell due 2026-11-07 and nothing ran it, so `npm test` now prints 17 claim WARNs. A warning
+> nobody acts on stops being read. Re-measure each row (don't re-read it), then record the result or
+> move the date with a reason, as `check-claims.mjs` asks. The next §9.3 date is **2026-12-05**.
+> **Keep each new note short.** For a row still blocked on O-2, one dated line is enough: what you
+> measured, and that the block holds. Don't add another "Earlier record follows" paragraph.
+> `CLAIMS.md` is **38,444 b**, up from 36,713 b at W-10.6(b)'s 10-04 measurement, so it still needs
+> no size guard. A3's debt clause and A6's lesson count can be measured today. This is housekeeping,
+> so it doesn't count toward W-6.2's residual chain.
+>
+> ### W-15.2 — keep W-14.2's shape, but close item 179 and then change surface.
+> Item 179(b) (the 7.6px axis labels on L3, L12 and L23) is a fair next pick. 179(c) is optional.
+> After that, **don't open a sweep of every SVG in the app.** Three runs on chart labels is enough
+> for one theme. Surfaces not yet walked end to end: (a) a first session in **ja and zh**, the
+> same walk `c0492e8` did in es and ko; (b) the parent guide and Reference in a non-English language
+> at 320px and 130% text; (c) one lesson and its quiz using only the keyboard. ⓘ `5daefaf`'s ja
+> choice (貯金口座 for savings, 当座預金口座 for checking) is consistent and defensible. In Japan,
+> though, 当座預金 is mostly a business account, so leave the wording for a human ja reviewer (O-3).
+> Don't change it in a run.
+>
+> ### W-15.3 — cadence changed, and nothing records why.
+> Last week had 26 runs, four a day. This week had **7, one a day at about 00:00**. That may be the
+> owner's answer to O-7, or the second Mac may be asleep for the other slots. The repo can't tell
+> which. **Runs must not guess at the reason in their entries, and must not change their own
+> cadence.** At this rate the run log grows about 4.3 KB a day. With 216 KB of headroom, the next
+> W-5.3 pass is weeks away, so no run should start one early.
+>
+> ### W-15.4 — owner items and deploy, asked in the review, not restated in runs.
+> **O-2** (8th week) is still the only critical-path item. **O-7**: please confirm whether the
+> change to one run a day was intended. If it was, O-7 is closed. **O-5 / O-6** are unchanged, and
+> O-6 matters less at one run a day. Deploy: `check-deployed --identify` found live = **`c94f5a0`**
+> (Thu 11-05 19:50), byte-identical, 4 build-input commits behind. The live `market.json` is
+> asOf 11-05, so Sectors goes dark **Tue 2026-11-10** without a push.
+>
+> ### W-15.5 — this block's test, for 2026-11-15.
+> (i) §65 at or below the ceiling. (ii) Mean entry dated 11-09 → 11-15 ≤ 5,000 b, and no heading
+> over 400 chars. (iii) Item 180 closed, so `check-claims` prints **0** past-due WARNs and `npm
+> test` is back to 1 WARN. (iv) `CLAIMS.md` grows by no more than **4,000 b** from 38,444. (v) English
+> lesson text grows ≤ 0.3% from **168,230**. (vi) No empty commit and no new tally. Run the
+> instruments; don't retype these figures.
+
 > ## PRIORITY BLOCK W-14 — set by the weekly review 2026-11-01. Supersedes W-13's *active* clauses below. The standing rules are UNCHANGED and still binding: W-13.1's no-ranking rule, W-13.2(a)–(c), W-12.3's staged-count assert, W-11.1's entry format, W-9.4's two-run bar on short-string hand reads, W-7.2 rules 1–3 on closed text, W-6.2's residual-chain rule, W-6.3's ratio-quoting rule, W-5.3's archiving rule. Read this first.
 >
 > **The week: 30 commits since `f80b967`: 26 dev-agent (26 runs), 4 market refreshes.** Run-log
