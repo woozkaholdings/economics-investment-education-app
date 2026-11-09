@@ -1805,7 +1805,7 @@ instead of hand-rolling an eighth mover. A working one is in this run's scratchp
 
 147. **✅ Closed; archived verbatim 2026-09-27** to `AGENT_LOG.archive.md`, "Archived backlog (closed items)".
 
-180. **[Process — filed 2026-11-08 by the dev-agent run] The §9.3 monthly claims audit fell due 2026-11-07 and nothing has run it: 17 `CLAIMS.md` rows (A1–A8, B1–B4, C1–C2, D1–D3) are past their check date, so `npm test` prints 17 new WARNs.** The 2026-10-04 review moved every row's date to 2026-11-07 ("the next first Saturday and so the next §9.3 audit"). Last time a dev-agent run did that audit a day late (`91557e0`). Re-measure each row, don't re-read it, then record the result or move the date with a reason, as `check-claims.mjs`'s message asks. Most rows are still blocked on O-2, so expect short entries for those. A3's debt clause and A6's lesson count are measurable today. Not done in the run that filed it: one focused change per run.
+180. **✅ Closed 2026-11-09 (dev-agent).** The §9.3 audit that fell due 2026-11-07 ran two days late. All 17 `CLAIMS.md` rows were re-measured with controls and moved to 2026-12-05, each with one dated line, plus a short "The 2026-11-09 review" section. Nothing was refuted. Seven rows (A3 by half) are still blocked on O-2, and the live bundle still ships `provider:"none"`. `npm test` is back to 1 WARN. Details are in that day's run-log entry.
 
 179. **[UX/a11y — filed 2026-11-07 by the run that fixed `CycleChart`] The other SVG chart labels are still below caption size on a phone, and none follow the text-size setting.** SVG `<text>` is sized in viewBox units, so its rendered size is `fontSize × min(width/vbW, height/vbH)`, independent of `fontScale`. `a11y-sweep.js`'s `textOverflow` skips SVG on purpose (exclusion 1), so nothing measures these. Measured live 2026-11-07, served build, es and en, 320px: (a) **`YieldCurve` four-up grid** (Reference → Market dashboard), `fontSize="7"` in a 140×75 viewBox at `maxHeight` 64. The tenor labels 2Y/10Y/30Y render at **5.7px**, and at no more than 6.0px at any width (the height bound 64/75 caps them). Tried live at 12 units, they come out at 9.8px with no overlap and no clipping. **But** lesson 36 renders the same component at `maxHeight={190}`, where 7 units already come out at 13px, so the size must depend on the call site, not on one literal. (b) The `fontSize="9"` axis/end labels of `growthCurve` (L3), `preferenceFlip` (L23) and `splitBand` (L12) render at **7.6px** at 320px and ~9.3px at 375px. (c) `CycleChart`'s phase names are now 9.3–9.7px, but they still don't scale with the text-size setting. The app's smallest HTML text is `caption`, 12px × `fontScale`. **Measure with the run-log 2026-11-07 instrument** (clip, label-to-label overlap, path points inside a label box, each with a planted control), in all five languages, before and after. ✅ **(a) CLOSED 2026-11-08:** `YieldCurve`'s tenor labels sit under the axis, sized per call site (`tickSize`: the grid's 12 units render 9.8px at 320px and 10.2px at 375px; lesson 36 keeps 7 → 13.1px), and follow the text-size setting up to its 130% ceiling via `font-size: min(<n>rem, <n×1.3>px)`, with the strip sized on the font's em box for that ceiling. The premise held (5.7px) and was sharper: at HEAD the Steep curve ran through "2Y" on both call sites (15 path points). Costs: grid cards +13px at 320px, lesson figure +15px. **Still open: (b) and (c)**; the `min(rem, px)` + strip-for-the-ceiling pattern is reusable for both.
 
@@ -3479,6 +3479,38 @@ only the keyboard walk is unfalsifiable. The pair that means something is keyboa
 same journey.
 
 ## Run log
+
+### 2026-11-09 (scheduled dev-agent; item 180, the §9.3 claims audit, per W-15.1) — All 17 `CLAIMS.md` rows that came due 2026-11-07 are re-measured and moved to 2026-12-05, each with one dated line. Nothing was refuted. `npm test` is back to 1 WARN (O-3's), down from 18.
+
+Rules: W-6.2 n/a (housekeeping, per W-15.1); W-9.4 n/a (no translated string read or changed); W-14.3 n/a (no tally); W-13.1 ok.
+
+**Step 3.5: premise held.** `check-claims` printed **17 past due** (A1–A8, B1–B4, C1–C2, D1–D3), every one dated 2026-11-07. `CLAIMS.md` was **38,444 b**, as W-15.1 says.
+
+#### What shipped (2 files, no source change)
+- `CLAIMS.md`: every row's check date is now **2026-12-05** (a Saturday, checked with `Date`), and its Status cell starts with a `**Reviewed 2026-11-09:**` line saying what was measured. There is also a 7-line "The 2026-11-09 review" section under the 10-04 one. No claim, threshold or old note was changed. The word-diff removes only the 17 dates and A3's "measured 2026-10-17". **+3,175 b** (cap 4,000, W-15.5(iv)).
+- `AGENT_LOG.md`: item 180 closed to one paragraph (W-7.2 rule 1), and this entry.
+
+#### Verification
+| row(s) | measured | control |
+|---|---|---|
+| O-2 block (A1, A4, A5, A7, A8, C2, A3's usage half) | `analyticsConfig.js` `provider: "none"`. Live entry `index-Y_0DEzXi.js` (curl): `provider:"none"` 1, `provider:"posthog"` 0, `phc_` 0 | PostHog host string 2 in the same file |
+| A1 | imported `lessonUnlock.js`: 3 of 44 open with nothing completed (29, 41, 1) | 4 after completing 29 |
+| A3 debt | `translation-completeness`: 0 of 44 abridged; `review-status`: 44/44 AI, 0 human in all four | today's script over `git archive fe649d9` (08-24): 12 lessons abridged, matching the row's record |
+| A6 | 44 lessons (12/17/15), 177 min; `refresh-readiness --check` agrees | 174 min at `91557e0`, the figure the 10-04 note gave |
+| A7 | hosts `[35]` both ways, 2 scenarios | `scenariosForLesson(29)` → 0 |
+| B1–B4 | no payment SDK in `package.json`; `PAYWALL_VIEWED` fired nowhere | `LESSON_STARTED` fired at `LessonReader.jsx:210` |
+| C1 | `check-deployed` reached live (DIVERGED, as W-8.1 expects); no clip recorded in three docs | its 404 control fired; "clip" does hit `DECISIONS.md` |
+| `check-claims` | 0 FAIL, **0 WARN** | `CLAIMS_TODAY=2026-12-06` → 17 WARN |
+| `npm test` | exit 0 (read directly), 0 FAIL, 1 WARN | — |
+| Build | `build-out-of-tree.sh` exit 0, entry `index-BmRkB-67.js` (same as 11-08: no build input changed) | — |
+
+**Step 5: adversarial self-check.** I found one real error and fixed it before commit. My first summary said "twelve rows" were blocked on O-2. Counted by script over the Measurable cells, it is **seven** (A3 by half). The B rows' old line said the payment terms appear "only in comments". Measured, "checkout" and "subscription" also appear in lesson and quiz prose. B1's new line says so, and B2–B4 point to B1 rather than repeat it. D1–D3 say "no new instances counted" because I didn't count any; a count with no control would mean nothing (the 10-04 note says the same). No product file changed, so §10.1/10.2/10.3 and the date rule can't regress (`check-blindspot` PASS inside `npm test`). DECISIONS.md is not touched. The 10-04 audit is the previous monthly pass, not work redone. **No other conflict found.**
+
+**Seen, not fixed:** A3's two debt legs are both at their floor (0 abridged, 0% human), as the 10-17 note said, so the clause can fire only if a lesson ships abridged. That is O-3's question, closed by the owner. `Migration/`, `UIUX/` and `scripts/fix-agent-skill.mjs` aren't mine and are left alone. **W-8.1:** committed, not deployed.
+
+**Owner-facing, one line:** the monthly check of the app's stated bets is done. Nothing is disproved, and most still wait on the analytics key (O-2).
+
+**Schedule:** the cron is the owner's lever; not read, not touched.
 
 ### 2026-11-08 (scheduled dev-agent; item 179(a), a live walk of the yield-curve labels) — On a phone, the 2Y/10Y/30Y labels on the Market dashboard's four yield curves are now readable: 9.8px at 320px, up from 5.7px. They sit under the axis, where the Steep curve no longer runs through "2Y", and they grow with the text-size setting. Lesson 36 keeps its 13.1px.
 
