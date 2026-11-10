@@ -298,9 +298,46 @@ export function ProportionBar({ title, segments, colors, labelInks, formatValue,
 // Two series over the same x-axis, for lesson 3. The whole point of compound
 // interest is the *shape* of the divergence, so a straight line and a curve
 // from one shared origin is the explanation rather than an illustration of it.
+// THE AXIS-END LABELS of GrowthCurve, PreferenceFlip and SplitBand, changed
+// 2026-11-10 (backlog item 179(b)). They were SVG `<text fontSize="9">` under
+// the plot. These three figures draw a 300-unit viewBox at the card's width,
+// so at 320px (0.847 px/unit) they rendered at **7.62px**, measured live on
+// the served build, against `caption`'s 12px, and they ignored the text-size
+// setting. Growing them inside the SVG does not work: lesson 23's Spanish pair
+// ("Ambos a un año vista" / "Los $50 están disponibles hoy") already spans
+// most of the axis at 9 units, and SVG text does not wrap. So they are now an
+// HTML caption row under the plot, the way `TradeoffPlot` and `BalanceBand`
+// already draw theirs: 12px × the text-size setting, and they wrap.
+//
+// For that row to line up with the axis, the SVG must fill its box. Before,
+// each one had a fixed pixel height and was letterboxed: at 320px lesson 23's
+// 150px-tall box held 118px of drawing. Now the SVG is `height: auto` inside
+// a wrapper capped at the width where the old fixed height used to bind. So
+// the drawing has exactly the old scale at every width (`min(width/300, cap)`),
+// and the row's side padding is the plot's own inset as a percentage of it.
+// The empty strip that held the old labels is gone from each viewBox. Every
+// plot keeps its height in units, so nothing inside the plot moved.
+function figureFrame(viewW, maxScale) {
+  return { maxWidth: +(viewW * maxScale).toFixed(1), margin: "0 auto" };
+}
+function AxisEndLabels({ labels, inset, viewW }) {
+  const pad = `${+((inset / viewW) * 100).toFixed(3)}%`;
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", gap: space["3"], marginTop: space["1"], paddingLeft: pad, paddingRight: pad }}>
+      <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1, textAlign: "left" }}>{labels[0]}</Text>
+      <Text as="span" variant="caption" color={ink.muted} style={{ flex: 1, textAlign: "right" }}>{labels[1]}</Text>
+    </div>
+  );
+}
+
 const CURVE_W = 300;
-const CURVE_H = 120;
-const CURVE_PAD = { left: 6, right: 6, top: 8, bottom: 20 };
+// Was 120 with `bottom: 20`; the 16 units dropped were the old labels' strip.
+// The round-capped series start ON the axis and overhang it by 1.25 units,
+// which the remaining 4 hold.
+const CURVE_H = 104;
+const CURVE_PAD = { left: 6, right: 6, top: 8, bottom: 4 };
+// The old `height: 132` over a 120-unit viewBox.
+const CURVE_MAX_SCALE = 132 / 120;
 
 // `xSuffix` defaults to empty: the lesson titles above these charts already
 // carry the unit ("over 30 years") in all five languages, and abbreviating
@@ -327,7 +364,8 @@ export function GrowthCurve({ title, xValues, series, colors, labelInks, formatV
           own text alternative states: the two series start together, one is drawn
           straight while the other curves, and the gap between them widens. They
           are inert markup — nothing renders differently for their presence. */}
-      <svg viewBox={`0 0 ${CURVE_W} ${CURVE_H}`} style={{ width: "100%", height: 132 }} role="img" data-figure="growthCurve" aria-label={description}>
+      <div style={figureFrame(CURVE_W, CURVE_MAX_SCALE)}>
+      <svg viewBox={`0 0 ${CURVE_W} ${CURVE_H}`} style={{ display: "block", width: "100%", height: "auto" }} role="img" data-figure="growthCurve" aria-label={description}>
         <line x1={CURVE_PAD.left} y1={py(0)} x2={CURVE_W - CURVE_PAD.right} y2={py(0)} stroke={line.hairline} strokeWidth="1" />
         {xValues.filter((x) => x > 0 && x < lastX).map((x) => (
           <line key={x} x1={px(x)} y1={CURVE_PAD.top} x2={px(x)} y2={py(0)} stroke={line.hairline} strokeWidth="0.5" strokeDasharray="3" />
@@ -348,9 +386,9 @@ export function GrowthCurve({ title, xValues, series, colors, labelInks, formatV
         {series.map((s, i) => (
           <circle key={s.label} cx={px(lastX)} cy={py(s.values[s.values.length - 1])} r="3.5" fill={colors[i]} />
         ))}
-        <text x={CURVE_PAD.left} y={CURVE_H - 6} fill={ink.muted} fontSize="9">0{xSuffix}</text>
-        <text x={CURVE_W - CURVE_PAD.right} y={CURVE_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{lastX}{xSuffix}</text>
       </svg>
+      <AxisEndLabels labels={[`0${xSuffix}`, `${lastX}${xSuffix}`]} inset={CURVE_PAD.left} viewW={CURVE_W} />
+      </div>
       <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
         {series.map((s, i) => (
           <li key={s.label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
@@ -456,9 +494,23 @@ export function AsymmetryChart({ title, axisLabel, bars, colors, labelInks, desc
 //
 // `crossing` arrives already solved by the caller; deriving it from the sampled
 // points here would put the marker wherever the sampling happened to be dense.
+//
+// THE MARKER LABEL ("the answer flips") stays in the SVG, because it names the
+// dashed line it sits beside. Changed 2026-11-10 (item 179(b)) from
+// `fontSize="9"`, which was 7.62px at 320px, to `YieldCurve`'s pattern:
+// `min(<n>rem, <n×1.3>px)` follows the text-size setting up to its 130%
+// ceiling. 12 units renders 10.2px at 320px. The top pad grew 18 → 22 so the
+// label's whole em box (0.972em above the baseline, measured 2026-11-08) fits
+// above the viewBox's top edge at that ceiling. The plot stays 100 units tall.
+// The bottom pad's 18 dropped units were the axis labels' strip (see
+// `AxisEndLabels`).
 const FLIP_W = 300;
-const FLIP_H = 140;
-const FLIP_PAD = { left: 6, right: 6, top: 18, bottom: 22 };
+const FLIP_H = 126;
+const FLIP_PAD = { left: 6, right: 6, top: 22, bottom: 4 };
+// The old `height: 150` over a 140-unit viewBox.
+const FLIP_MAX_SCALE = 150 / 140;
+const FLIP_MARKER_SIZE = 12;
+const FLIP_MARKER_MAX = +(FLIP_MARKER_SIZE * Math.max(...FONT_SCALE_STEPS.map((s) => s.value))).toFixed(2);
 
 export function PreferenceFlip({ title, xValues, series, crossing, yNorm, colors, labelInks, zones, zoneColors, zoneEdges, markerLabel, axisLabels, description, caption }) {
   const lastX = xValues[xValues.length - 1];
@@ -481,7 +533,8 @@ export function PreferenceFlip({ title, xValues, series, crossing, yNorm, colors
           </Text>
         </figcaption>
       )}
-      <svg viewBox={`0 0 ${FLIP_W} ${FLIP_H}`} style={{ width: "100%", height: 150 }} role="img" data-figure="preferenceFlip" aria-label={description}>
+      <div style={figureFrame(FLIP_W, FLIP_MAX_SCALE)}>
+      <svg viewBox={`0 0 ${FLIP_W} ${FLIP_H}`} style={{ display: "block", width: "100%", height: "auto" }} role="img" data-figure="preferenceFlip" aria-label={description}>
         {/* The two decision regions, drawn first so everything else sits on top. */}
         <rect x={FLIP_PAD.left} y={FLIP_PAD.top} width={flipX - FLIP_PAD.left} height={plotH} fill={zoneColors[0]} />
         <rect x={flipX} y={FLIP_PAD.top} width={FLIP_W - FLIP_PAD.right - flipX} height={plotH} fill={zoneColors[1]} />
@@ -500,7 +553,7 @@ export function PreferenceFlip({ title, xValues, series, crossing, yNorm, colors
           `ink.muted` measures 6.20/6.26 in light and 6.10/6.06 in dark.
         */}
         <line data-figure-part="marker" x1={flipX} y1={FLIP_PAD.top} x2={flipX} y2={floorY} stroke={ink.muted} strokeWidth="1" strokeDasharray="3 2" />
-        <text x={flipX - 4} y={FLIP_PAD.top - 6} textAnchor="end" fill={ink.muted} fontSize="9">{markerLabel}</text>
+        <text x={flipX - 4} y={FLIP_PAD.top - 6} textAnchor="end" fill={ink.muted} style={{ fontSize: `min(${FLIP_MARKER_SIZE / 16}rem, ${FLIP_MARKER_MAX}px)` }}>{markerLabel}</text>
         {series.map((s, i) => (
           <polyline
             data-figure-part="series"
@@ -517,9 +570,9 @@ export function PreferenceFlip({ title, xValues, series, crossing, yNorm, colors
         {series.map((s, i) => (
           <circle key={s.label} cx={px(lastX)} cy={py(s.values[s.values.length - 1])} r="3.5" fill={colors[i]} />
         ))}
-        <text x={FLIP_PAD.left} y={FLIP_H - 6} fill={ink.muted} fontSize="9">{axisLabels[0]}</text>
-        <text x={FLIP_W - FLIP_PAD.right} y={FLIP_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{axisLabels[1]}</text>
       </svg>
+      <AxisEndLabels labels={axisLabels} inset={FLIP_PAD.left} viewW={FLIP_W} />
+      </div>
       <ul role="list" style={{ listStyle: "none", margin: `${space["2"]}px 0 0`, padding: 0, display: "flex", flexWrap: "wrap", gap: `${space["1"]}px ${space["4"]}px` }}>
         {series.map((s, i) => (
           <li key={s.label} style={{ display: "flex", alignItems: "center", gap: space["2"] }}>
@@ -1925,8 +1978,13 @@ export function NestedCycles({ title, seriesLabel, shortLabel, spanLabel, colors
 // and the dot, so the three together read as one crosshair. §70 (d) asserts
 // the ratio against both palettes rather than trusting this paragraph.
 const SPLIT_W = 300;
-const SPLIT_H = 140;
-const SPLIT_PAD = { left: 6, right: 6, top: 10, bottom: 22 };
+// Was 140 with `bottom: 22`: the 18 units dropped were the end labels' strip,
+// which is an HTML row now (`AxisEndLabels`, 2026-11-10). The band is still
+// 108 units tall, and both regions still close on its floor.
+const SPLIT_H = 122;
+const SPLIT_PAD = { left: 6, right: 6, top: 10, bottom: 4 };
+// The old `height: 150` over a 140-unit viewBox.
+const SPLIT_MAX_SCALE = 150 / 140;
 // The boundary, the crossing marker and the crossing dot are one color, named
 // once so they cannot drift apart. See the COLOR note above for why it is a
 // surface token in a file whose convention is `graph` for marks.
@@ -1955,7 +2013,8 @@ export function SplitBand({ title, samples, share, crossing, segmentLabels, mark
           </Text>
         </figcaption>
       )}
-      <svg viewBox={`0 0 ${SPLIT_W} ${SPLIT_H}`} style={{ width: "100%", height: 150 }} role="img" data-figure="splitBand" aria-label={description}>
+      <div style={figureFrame(SPLIT_W, SPLIT_MAX_SCALE)}>
+      <svg viewBox={`0 0 ${SPLIT_W} ${SPLIT_H}`} style={{ display: "block", width: "100%", height: "auto" }} role="img" data-figure="splitBand" aria-label={description}>
         {/*
           The two regions are one boundary read from both sides — the top
           polygon closes along the band's flat top edge, the bottom one along
@@ -1983,9 +2042,9 @@ export function SplitBand({ title, samples, share, crossing, segmentLabels, mark
         */}
         <line data-figure-part="marker" x1={crossX} y1={SPLIT_PAD.top} x2={crossX} y2={floorY} stroke={SPLIT_SEPARATOR} strokeWidth="1" strokeDasharray="3 2" />
         <circle data-figure-part="crossing" cx={crossX} cy={crossY} r="3.5" fill={SPLIT_SEPARATOR} />
-        <text x={SPLIT_PAD.left} y={SPLIT_H - 6} fill={ink.muted} fontSize="9">{endLabels[0]}</text>
-        <text x={SPLIT_W - SPLIT_PAD.right} y={SPLIT_H - 6} textAnchor="end" fill={ink.muted} fontSize="9">{endLabels[1]}</text>
       </svg>
+      <AxisEndLabels labels={endLabels} inset={SPLIT_PAD.left} viewW={SPLIT_W} />
+      </div>
       {/*
         The keys are HTML and not SVG text, for `BalanceBand`'s measured
         reason: these are five-language strings, two of them full parenthetical

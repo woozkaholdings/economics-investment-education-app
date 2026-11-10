@@ -11030,11 +11030,17 @@ function trendDirection(src) {
       }
       // ⚠️ NO SCALE ON THE VERTICAL AXIS. Lesson 12 states no payment amount and
       // no interest rate, and "mostly" is the only word it gives for how
-      // lopsided the early payments are. The two end labels are the only text
-      // the SVG may carry; a third would almost certainly be a tick.
+      // lopsided the early payments are. Since 2026-11-10 (item 179(b)) the
+      // two end labels are an HTML row under the SVG (`AxisEndLabels`), the
+      // way §71 (d)'s NestedCycles carries its labels, so the SVG carries no
+      // text at all and any <text> node in it is a tick by elimination. It
+      // was "exactly 2" while the end labels were SVG text at 7.62px.
       const textNodes = (slice.match(/<text\b/g) ?? []).length;
-      if (textNodes !== 2) {
-        fail(`§70 (f): SplitBand's SVG renders ${textNodes} <text> node(s), expected exactly 2 (the two end labels). A third is almost certainly a tick or a percentage on the vertical axis — lesson 12 states no payment, no rate and no share, so a number there would be the figure claiming what the prose declines to.`);
+      if (textNodes !== 0) {
+        fail(`§70 (f): SplitBand's SVG renders ${textNodes} <text> node(s), expected 0 (the end labels are the HTML row under it). A text node here is almost certainly a tick or a percentage on the vertical axis — lesson 12 states no payment, no rate and no share, so a number there would be the figure claiming what the prose declines to.`);
+      }
+      if (!slice.includes("<AxisEndLabels labels={endLabels}")) {
+        fail("§70 (f): SplitBand no longer renders its end labels through `<AxisEndLabels labels={endLabels} …>`. Those two labels are lesson 12's own words for the ends of the term (§70 (b) checks their wording); without them the axis has no ends.");
       }
     }
 
